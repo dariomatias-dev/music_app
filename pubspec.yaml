@@ -40,7 +40,12 @@ dependencies:
   # riverpod_generator (analyzer ^7-9).
   drift: 2.31.0
   sqlite3: ^2.4.6
+  # Pinned: 0.6.0 is EOL ("update to sqlite3 3.x instead"), which the pin
+  # above on sqlite3 2.x can't use. Bundles the native SQLite binaries that
+  # sqlite3 2.x still relies on for Android/iOS.
+  sqlite3_flutter_libs: 0.5.42
   path_provider: ^2.1.6
+  path: ^1.9.1
 
   # Internationalization
   # Pinned: version forced by flutter_localizations from the Flutter SDK.

@@ -1,0 +1,22 @@
+import 'package:drift/drift.dart';
+import 'package:music_app/src/core/database/tables/playlist_table.dart';
+import 'package:music_app/src/core/database/tables/track_table.dart';
+
+/// Ordered membership of tracks within a playlist.
+///
+/// Implements [PlaylistTable]'s `trackIds`, which SQLite cannot represent
+/// as a native column, and is what enables reordering.
+@DataClassName('PlaylistTrackRow')
+class PlaylistTrackTable extends Table {
+  /// Primary key.
+  IntColumn get id => integer().autoIncrement()();
+
+  /// The playlist this entry belongs to.
+  TextColumn get playlistId => text().references(PlaylistTable, #id)();
+
+  /// The referenced track.
+  TextColumn get trackId => text().references(TrackTable, #id)();
+
+  /// Position of the track within the playlist.
+  IntColumn get position => integer()();
+}
