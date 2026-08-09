@@ -5,3 +5,6 @@ linter:
     # Dependencies are grouped by purpose (state, navigation, audio, etc.),
     # not alphabetically.
     sort_pub_dependencies: false
+    # Single-method abstractions (IdGenerator, AudioPlayerService, etc.) are
+    # deliberate here to allow substitution in tests, not accidental.
+    one_member_abstracts: false
