@@ -2,7 +2,9 @@
 library;
 
 export 'src/animations/pressable.dart';
+export 'src/components/artwork/app_artwork.dart';
 export 'src/components/buttons/buttons.dart';
+export 'src/components/cards/cards.dart';
 export 'src/components/inputs/inputs.dart';
 export 'src/theme/app_theme.dart';
 export 'src/theme/app_theme_extensions.dart';
