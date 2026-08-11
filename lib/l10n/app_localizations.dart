@@ -102,6 +102,30 @@ abstract class AppLocalizations {
     Locale('pt', 'BR'),
     Locale('zh'),
   ];
+
+  /// No description provided for @homeTabLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get homeTabLabel;
+
+  /// No description provided for @searchTabLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get searchTabLabel;
+
+  /// No description provided for @libraryTabLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Library'**
+  String get libraryTabLabel;
+
+  /// No description provided for @settingsTabLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settingsTabLabel;
 }
 
 class _AppLocalizationsDelegate

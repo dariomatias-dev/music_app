@@ -1,3 +1,7 @@
 {
-  "@@locale": "en"
+  "@@locale": "en",
+  "homeTabLabel": "Home",
+  "searchTabLabel": "Search",
+  "libraryTabLabel": "Library",
+  "settingsTabLabel": "Settings"
 }

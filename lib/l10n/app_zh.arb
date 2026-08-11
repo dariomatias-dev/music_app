@@ -1,3 +1,7 @@
 {
-  "@@locale": "zh"
+  "@@locale": "zh",
+  "homeTabLabel": "主页",
+  "searchTabLabel": "搜索",
+  "libraryTabLabel": "音乐库",
+  "settingsTabLabel": "设置"
 }

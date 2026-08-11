@@ -1,3 +1,7 @@
 {
-  "@@locale": "pt_BR"
+  "@@locale": "pt_BR",
+  "homeTabLabel": "Início",
+  "searchTabLabel": "Buscar",
+  "libraryTabLabel": "Biblioteca",
+  "settingsTabLabel": "Configurações"
 }

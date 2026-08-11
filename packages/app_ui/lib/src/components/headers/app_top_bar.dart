@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 class AppTopBar extends StatelessWidget {
   /// Creates an [AppTopBar].
   const AppTopBar({
-    required this.backButtonSemanticLabel,
+    this.backButtonSemanticLabel,
     this.title,
     this.leading,
     this.trailing,
@@ -17,10 +17,15 @@ class AppTopBar extends StatelessWidget {
     this.centerTitle = true,
     this.showBack = true,
     super.key,
-  });
+  }) : assert(
+         !showBack || backButtonSemanticLabel != null,
+         'backButtonSemanticLabel is required when showBack is true and '
+         'leading is not set.',
+       );
 
-  /// Spoken by screen readers for the default back button.
-  final String backButtonSemanticLabel;
+  /// Spoken by screen readers for the default back button. Required when
+  /// [showBack] is `true` and [leading] is not set.
+  final String? backButtonSemanticLabel;
 
   /// The bar's title.
   final String? title;
@@ -56,7 +61,7 @@ class AppTopBar extends StatelessWidget {
                 (showBack
                     ? AppIconButton(
                         icon: Icons.arrow_back,
-                        semanticLabel: backButtonSemanticLabel,
+                        semanticLabel: backButtonSemanticLabel!,
                         onPressed:
                             onBack ?? () => Navigator.of(context).maybePop(),
                       )

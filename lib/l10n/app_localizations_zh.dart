@@ -7,4 +7,16 @@ import 'app_localizations.dart';
 /// The translations for Chinese (`zh`).
 class AppLocalizationsZh extends AppLocalizations {
   AppLocalizationsZh([String locale = 'zh']) : super(locale);
+
+  @override
+  String get homeTabLabel => '主页';
+
+  @override
+  String get searchTabLabel => '搜索';
+
+  @override
+  String get libraryTabLabel => '音乐库';
+
+  @override
+  String get settingsTabLabel => '设置';
 }
