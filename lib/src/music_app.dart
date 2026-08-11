@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:music_app/l10n/app_localizations.dart';
 import 'package:music_app/src/core/navigation/app_router.dart';
+import 'package:music_app/src/core/navigation/route_transitions.dart';
 import 'package:music_app/src/features/settings/presentation/view_models/locale_view_model.dart';
 
 /// Root widget of the application.
@@ -14,9 +15,12 @@ class MusicApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final locale = ref.watch(localeViewModelProvider).value;
     final brightness = MediaQuery.platformBrightnessOf(context);
-    final theme = brightness == Brightness.dark
+    final baseTheme = brightness == Brightness.dark
         ? AppTheme.dark
         : AppTheme.light;
+    final theme = baseTheme.copyWith(
+      pageTransitionsTheme: appPageTransitionsTheme,
+    );
     final router = ref.watch(appRouterProvider);
 
     return MaterialApp.router(
