@@ -2,6 +2,7 @@ import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:music_app/l10n/app_localizations.dart';
+import 'package:music_app/src/core/navigation/app_router.dart';
 import 'package:music_app/src/features/settings/presentation/view_models/locale_view_model.dart';
 
 /// Root widget of the application.
@@ -16,8 +17,9 @@ class MusicApp extends ConsumerWidget {
     final theme = brightness == Brightness.dark
         ? AppTheme.dark
         : AppTheme.light;
+    final router = ref.watch(appRouterProvider);
 
-    return MaterialApp(
+    return MaterialApp.router(
       theme: theme,
       locale: locale,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -36,7 +38,7 @@ class MusicApp extends ConsumerWidget {
           ),
         );
       },
-      home: const Placeholder(),
+      routerConfig: router,
     );
   }
 }
