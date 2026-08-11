@@ -3,6 +3,12 @@ abstract final class RouteNames {
   /// The splash route.
   static const splash = 'splash';
 
+  /// The onboarding route.
+  static const onboarding = 'onboarding';
+
+  /// The media permission route.
+  static const permissions = 'permissions';
+
   /// The Home tab.
   static const home = 'home';
 

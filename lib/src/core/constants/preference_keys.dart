@@ -2,4 +2,7 @@
 abstract final class PreferenceKeys {
   /// Stores the user's selected locale.
   static const locale = 'locale';
+
+  /// Stores whether the user has completed onboarding.
+  static const onboardingCompleted = 'onboardingCompleted';
 }

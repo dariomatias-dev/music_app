@@ -4,8 +4,11 @@ import 'package:music_app/src/core/navigation/main_shell.dart';
 import 'package:music_app/src/core/navigation/not_found_screen.dart';
 import 'package:music_app/src/core/navigation/route_names.dart';
 import 'package:music_app/src/core/navigation/route_paths.dart';
+import 'package:music_app/src/core/navigation/route_redirect.dart';
 import 'package:music_app/src/features/home/presentation/screens/home_screen.dart';
 import 'package:music_app/src/features/library/presentation/screens/library_screen.dart';
+import 'package:music_app/src/features/onboarding/presentation/screens/onboarding_screen.dart';
+import 'package:music_app/src/features/onboarding/presentation/screens/permission_screen.dart';
 import 'package:music_app/src/features/search/presentation/screens/search_screen.dart';
 import 'package:music_app/src/features/settings/presentation/screens/settings_screen.dart';
 import 'package:music_app/src/features/splash/presentation/screens/splash_screen.dart';
@@ -14,11 +17,22 @@ import 'package:music_app/src/features/splash/presentation/screens/splash_screen
 final appRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     initialLocation: RoutePaths.splash,
+    redirect: (context, state) => appRouteRedirect(ref: ref, state: state),
     routes: [
       GoRoute(
         name: RouteNames.splash,
         path: RoutePaths.splash,
         builder: (context, state) => const SplashScreen(),
+      ),
+      GoRoute(
+        name: RouteNames.onboarding,
+        path: RoutePaths.onboarding,
+        builder: (context, state) => const OnboardingScreen(),
+      ),
+      GoRoute(
+        name: RouteNames.permissions,
+        path: RoutePaths.permissions,
+        builder: (context, state) => const PermissionScreen(),
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) =>
