@@ -1,0 +1,53 @@
+import 'package:app_ui/app_ui.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+Future<void> _showDialog(WidgetTester tester, ThemeData theme) async {
+  await tester.pumpWidget(
+    MaterialApp(
+      theme: theme,
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        backgroundColor: theme.scaffoldBackgroundColor,
+        body: Builder(
+          builder: (context) {
+            return Center(
+              child: ElevatedButton(
+                onPressed: () => AppInformationDialog.show(
+                  context,
+                  title: 'About shuffle',
+                  message:
+                      'Shuffle plays tracks in your queue in a '
+                      'randomized order.',
+                  dismissLabel: 'Got it',
+                ),
+                child: const Text('Trigger'),
+              ),
+            );
+          },
+        ),
+      ),
+    ),
+  );
+  await tester.tap(find.byType(ElevatedButton));
+  await tester.pump();
+  await tester.pump(const Duration(milliseconds: 300));
+}
+
+void main() {
+  testWidgets('AppInformationDialog - light', (tester) async {
+    await _showDialog(tester, AppTheme.light);
+    await expectLater(
+      find.byType(AppDialog),
+      matchesGoldenFile('goldens/app_information_dialog_light.png'),
+    );
+  });
+
+  testWidgets('AppInformationDialog - dark', (tester) async {
+    await _showDialog(tester, AppTheme.dark);
+    await expectLater(
+      find.byType(AppDialog),
+      matchesGoldenFile('goldens/app_information_dialog_dark.png'),
+    );
+  });
+}

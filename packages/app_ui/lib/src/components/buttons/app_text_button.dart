@@ -13,6 +13,7 @@ class AppTextButton extends StatelessWidget {
     required this.label,
     required this.onPressed,
     this.isLoading = false,
+    this.color,
     super.key,
   });
 
@@ -26,10 +27,14 @@ class AppTextButton extends StatelessWidget {
   /// taps.
   final bool isLoading;
 
+  /// Text color. Defaults to the theme's secondary text color.
+  final Color? color;
+
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
     final isEnabled = onPressed != null && !isLoading;
+    final foreground = color ?? colors.textSecondary;
 
     return Opacity(
       opacity: isEnabled || isLoading ? 1 : 0.4,
@@ -47,14 +52,12 @@ class AppTextButton extends StatelessWidget {
                   height: AppSizes.iconExtraSmall,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    color: colors.textSecondary,
+                    color: foreground,
                   ),
                 )
               : Text(
                   label,
-                  style: AppTypography.action.copyWith(
-                    color: colors.textSecondary,
-                  ),
+                  style: AppTypography.action.copyWith(color: foreground),
                 ),
         ),
       ),
