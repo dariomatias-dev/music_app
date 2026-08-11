@@ -5,6 +5,7 @@ export 'src/animations/pressable.dart';
 export 'src/components/artwork/app_artwork.dart';
 export 'src/components/buttons/buttons.dart';
 export 'src/components/cards/cards.dart';
+export 'src/components/feedback/app_toast.dart';
 export 'src/components/inputs/inputs.dart';
 export 'src/components/media/media.dart';
 export 'src/components/states/states.dart';
