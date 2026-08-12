@@ -65,6 +65,27 @@ class LibraryLocalDataSourceImpl implements LibraryLocalDataSource {
     return _database.trackDao.deleteById(id);
   }
 
+  @override
+  Stream<List<Track>> watchTracks() {
+    return _database.trackDao.watchAll().map(
+      (rows) => rows.map((row) => row.toEntity()).toList(),
+    );
+  }
+
+  @override
+  Stream<List<Album>> watchAlbums() {
+    return _database.albumDao.watchAll().map(
+      (rows) => rows.map((row) => row.toEntity()).toList(),
+    );
+  }
+
+  @override
+  Stream<List<Artist>> watchArtists() {
+    return _database.artistDao.watchAll().map(
+      (rows) => rows.map(_artistFromRow).toList(),
+    );
+  }
+
   Artist _artistFromRow(ArtistRow row) {
     return Artist(
       id: row.id,

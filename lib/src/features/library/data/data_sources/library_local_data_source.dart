@@ -27,4 +27,13 @@ abstract interface class LibraryLocalDataSource {
 
   /// Permanently deletes the track with [id].
   Future<void> deleteTrack(String id);
+
+  /// Watches every indexed track.
+  Stream<List<Track>> watchTracks();
+
+  /// Watches every indexed album.
+  Stream<List<Album>> watchAlbums();
+
+  /// Watches every indexed artist.
+  Stream<List<Artist>> watchArtists();
 }

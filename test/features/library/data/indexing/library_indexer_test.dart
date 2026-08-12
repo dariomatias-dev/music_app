@@ -100,6 +100,15 @@ class _FakeLibraryLocalDataSource implements LibraryLocalDataSource {
   Future<void> deleteTrack(String id) async {
     tracks.remove(id);
   }
+
+  @override
+  Stream<List<Track>> watchTracks() => Stream.value(tracks.values.toList());
+
+  @override
+  Stream<List<Album>> watchAlbums() => Stream.value(albums.values.toList());
+
+  @override
+  Stream<List<Artist>> watchArtists() => Stream.value(artists.values.toList());
 }
 
 class _FakeIdGenerator implements IdGenerator {
