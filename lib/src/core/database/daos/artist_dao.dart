@@ -17,6 +17,11 @@ class ArtistDao extends DatabaseAccessor<AppDatabase> with _$ArtistDaoMixin {
   Future<ArtistRow?> getById(String id) =>
       (select(artistTable)..where((t) => t.id.equals(id))).getSingleOrNull();
 
+  /// Reads a single artist by its [sourceId].
+  Future<ArtistRow?> getBySourceId(String sourceId) => (select(
+    artistTable,
+  )..where((t) => t.sourceId.equals(sourceId))).getSingleOrNull();
+
   /// Inserts or updates [entry].
   Future<void> upsertOne(Insertable<ArtistRow> entry) =>
       into(artistTable).insertOnConflictUpdate(entry);

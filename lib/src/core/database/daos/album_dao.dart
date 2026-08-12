@@ -17,6 +17,11 @@ class AlbumDao extends DatabaseAccessor<AppDatabase> with _$AlbumDaoMixin {
   Future<AlbumRow?> getById(String id) =>
       (select(albumTable)..where((t) => t.id.equals(id))).getSingleOrNull();
 
+  /// Reads a single album by its [sourceId].
+  Future<AlbumRow?> getBySourceId(String sourceId) => (select(
+    albumTable,
+  )..where((t) => t.sourceId.equals(sourceId))).getSingleOrNull();
+
   /// Inserts or updates [entry].
   Future<void> upsertOne(Insertable<AlbumRow> entry) =>
       into(albumTable).insertOnConflictUpdate(entry);

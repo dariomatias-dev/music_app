@@ -1,0 +1,60 @@
+import 'package:music_app/src/core/database/app_database.dart';
+import 'package:music_app/src/features/library/data/data_sources/library_local_data_source.dart';
+import 'package:music_app/src/features/library/data/models/album_mapper.dart';
+import 'package:music_app/src/features/library/data/models/track_mapper.dart';
+import 'package:music_app/src/features/library/domain/entities/album.dart';
+import 'package:music_app/src/features/library/domain/entities/artist.dart';
+import 'package:music_app/src/features/library/domain/entities/track.dart';
+
+/// [LibraryLocalDataSource] implementation backed by [AppDatabase].
+class LibraryLocalDataSourceImpl implements LibraryLocalDataSource {
+  /// Creates a [LibraryLocalDataSourceImpl].
+  const LibraryLocalDataSourceImpl(this._database);
+
+  final AppDatabase _database;
+
+  @override
+  Future<Artist?> findArtistBySourceId(String sourceId) async {
+    final row = await _database.artistDao.getBySourceId(sourceId);
+    return row == null ? null : _artistFromRow(row);
+  }
+
+  @override
+  Future<void> upsertArtist(Artist artist) {
+    return _database.artistDao.upsertOne(
+      ArtistTableCompanion.insert(
+        id: artist.id,
+        sourceId: artist.sourceId,
+        name: artist.name,
+        albumCount: artist.albumCount,
+        trackCount: artist.trackCount,
+      ),
+    );
+  }
+
+  @override
+  Future<Album?> findAlbumBySourceId(String sourceId) async {
+    final row = await _database.albumDao.getBySourceId(sourceId);
+    return row?.toEntity();
+  }
+
+  @override
+  Future<void> upsertAlbum(Album album) {
+    return _database.albumDao.upsertOne(album.toCompanion());
+  }
+
+  @override
+  Future<void> upsertTrack(Track track) {
+    return _database.trackDao.upsertOne(track.toCompanion());
+  }
+
+  Artist _artistFromRow(ArtistRow row) {
+    return Artist(
+      id: row.id,
+      sourceId: row.sourceId,
+      name: row.name,
+      albumCount: row.albumCount,
+      trackCount: row.trackCount,
+    );
+  }
+}
