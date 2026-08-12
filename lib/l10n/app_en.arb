@@ -4,5 +4,14 @@
   "homeTabLabel": "Home",
   "searchTabLabel": "Search",
   "libraryTabLabel": "Library",
-  "settingsTabLabel": "Settings"
+  "settingsTabLabel": "Settings",
+  "onboardingSkip": "Skip",
+  "onboardingNext": "Next",
+  "onboardingStartListening": "Start listening",
+  "onboarding1Title": "Your music, on your device",
+  "onboarding1Body": "Your files, read straight from the device. No signal, no account, no waiting, and it works the same on a plane as it does at home.",
+  "onboarding2Title": "Built for one hand",
+  "onboarding2Body": "The player stays within reach at the bottom of every screen. Swipe it sideways to skip, or up to open it full screen.",
+  "onboarding3Title": "It learns what you play",
+  "onboarding3Body": "Recently played and your listening stats come from what you actually listen to, and nothing is sent anywhere."
 }

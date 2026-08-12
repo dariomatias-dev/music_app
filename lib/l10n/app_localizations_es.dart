@@ -22,4 +22,34 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get settingsTabLabel => 'Configuración';
+
+  @override
+  String get onboardingSkip => 'Saltar';
+
+  @override
+  String get onboardingNext => 'Siguiente';
+
+  @override
+  String get onboardingStartListening => 'Empezar a escuchar';
+
+  @override
+  String get onboarding1Title => 'Tu música, en tu dispositivo';
+
+  @override
+  String get onboarding1Body =>
+      'Tus archivos, leídos del dispositivo. Sin señal, sin cuenta, sin esperas, y funciona igual en un avión que en casa.';
+
+  @override
+  String get onboarding2Title => 'Hecho para una mano';
+
+  @override
+  String get onboarding2Body =>
+      'El reproductor queda al alcance abajo en cada pantalla. Deslízalo a los lados para saltar, o hacia arriba para abrirlo completo.';
+
+  @override
+  String get onboarding3Title => 'Aprende lo que reproduces';
+
+  @override
+  String get onboarding3Body =>
+      'Las reproducidas hace poco y tus datos vienen de lo que realmente escuchas, y nada se envía a ninguna parte.';
 }

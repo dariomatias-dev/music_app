@@ -22,4 +22,34 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsTabLabel => 'Settings';
+
+  @override
+  String get onboardingSkip => 'Skip';
+
+  @override
+  String get onboardingNext => 'Next';
+
+  @override
+  String get onboardingStartListening => 'Start listening';
+
+  @override
+  String get onboarding1Title => 'Your music, on your device';
+
+  @override
+  String get onboarding1Body =>
+      'Your files, read straight from the device. No signal, no account, no waiting, and it works the same on a plane as it does at home.';
+
+  @override
+  String get onboarding2Title => 'Built for one hand';
+
+  @override
+  String get onboarding2Body =>
+      'The player stays within reach at the bottom of every screen. Swipe it sideways to skip, or up to open it full screen.';
+
+  @override
+  String get onboarding3Title => 'It learns what you play';
+
+  @override
+  String get onboarding3Body =>
+      'Recently played and your listening stats come from what you actually listen to, and nothing is sent anywhere.';
 }

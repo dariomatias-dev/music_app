@@ -4,5 +4,14 @@
   "homeTabLabel": "Início",
   "searchTabLabel": "Buscar",
   "libraryTabLabel": "Biblioteca",
-  "settingsTabLabel": "Configurações"
+  "settingsTabLabel": "Configurações",
+  "onboardingSkip": "Pular",
+  "onboardingNext": "Avançar",
+  "onboardingStartListening": "Começar a ouvir",
+  "onboarding1Title": "Sua música, no seu aparelho",
+  "onboarding1Body": "Seus arquivos, lidos direto do aparelho. Sem sinal, sem conta, sem espera, e funciona igual no avião e em casa.",
+  "onboarding2Title": "Feito para uma mão só",
+  "onboarding2Body": "O player fica ao alcance no rodapé de toda tela. Arraste para o lado para pular, ou para cima para abrir em tela cheia.",
+  "onboarding3Title": "Ele aprende o que você toca",
+  "onboarding3Body": "As tocadas recentemente e os seus dados de escuta vêm do que você realmente ouve, e nada é enviado a lugar nenhum."
 }
