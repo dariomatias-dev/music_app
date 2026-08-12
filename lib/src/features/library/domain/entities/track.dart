@@ -19,6 +19,7 @@ abstract class Track with _$Track {
     required bool hasEmbeddedArtwork,
     required DateTime dateAdded,
     required DateTime dateModified,
+    @Default(false) bool isMissing,
     int? trackNumber,
     int? discNumber,
     int? year,

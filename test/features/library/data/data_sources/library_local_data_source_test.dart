@@ -102,4 +102,63 @@ void main() {
     final row = await database.trackDao.getById('track-1');
     expect(row?.title, 'Night Drive');
   });
+
+  group('with an indexed artist, album and track', () {
+    late Track track;
+
+    setUp(() async {
+      const artist = Artist(
+        id: 'artist-1',
+        sourceId: 'charcoal',
+        name: 'Charcoal',
+        albumCount: 1,
+        trackCount: 1,
+      );
+      await dataSource.upsertArtist(artist);
+
+      const album = Album(
+        id: 'album-1',
+        sourceId: 'charcoal::chill vibes',
+        title: 'Chill Vibes',
+        artistId: 'artist-1',
+        trackCount: 1,
+        totalDuration: Duration(minutes: 3, seconds: 30),
+      );
+      await dataSource.upsertAlbum(album);
+
+      track = Track(
+        id: 'track-1',
+        sourceId: '42',
+        filePath: '/music/night-drive.mp3',
+        title: 'Night Drive',
+        artistId: 'artist-1',
+        albumId: 'album-1',
+        duration: const Duration(minutes: 3, seconds: 30),
+        format: 'mp3',
+        fileSize: 5000000,
+        hasEmbeddedArtwork: false,
+        dateAdded: DateTime(2026),
+        dateModified: DateTime(2026),
+      );
+      await dataSource.upsertTrack(track);
+    });
+
+    test('findTrackBySourceId finds the track', () async {
+      expect(await dataSource.findTrackBySourceId('42'), track);
+    });
+
+    test('findTrackBySourceId returns null for an unknown sourceId', () async {
+      expect(await dataSource.findTrackBySourceId('missing'), isNull);
+    });
+
+    test('findAllTracks returns every indexed track', () async {
+      expect(await dataSource.findAllTracks(), [track]);
+    });
+
+    test('deleteTrack removes the track', () async {
+      await dataSource.deleteTrack('track-1');
+
+      expect(await dataSource.findAllTracks(), isEmpty);
+    });
+  });
 }

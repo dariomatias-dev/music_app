@@ -81,8 +81,24 @@ class _FakeLibraryLocalDataSource implements LibraryLocalDataSource {
   }
 
   @override
+  Future<Track?> findTrackBySourceId(String sourceId) async {
+    for (final track in tracks.values) {
+      if (track.sourceId == sourceId) return track;
+    }
+    return null;
+  }
+
+  @override
+  Future<List<Track>> findAllTracks() async => tracks.values.toList();
+
+  @override
   Future<void> upsertTrack(Track track) async {
     tracks[track.id] = track;
+  }
+
+  @override
+  Future<void> deleteTrack(String id) async {
+    tracks.remove(id);
   }
 }
 

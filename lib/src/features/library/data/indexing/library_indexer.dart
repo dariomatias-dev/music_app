@@ -13,18 +13,30 @@ const _unknownAlbum = 'Unknown Album';
 /// Progress of an in-flight [LibraryIndexer.indexLibrary] run.
 class IndexingProgress {
   /// Creates an [IndexingProgress].
-  const IndexingProgress({required this.processed, required this.total});
+  const IndexingProgress({
+    required this.processed,
+    required this.total,
+    required this.trackSourceId,
+  });
 
   /// Number of files processed so far.
   final int processed;
 
   /// Total number of files to process.
   final int total;
+
+  /// Source id of the file that was just indexed.
+  final String trackSourceId;
 }
 
 /// Scans the device, reads each file's metadata and writes the resulting
 /// tracks, albums and artists to the local library, grouping tracks by
 /// artist and album.
+///
+/// Each run is treated as a full picture of the device: tracks, albums and
+/// artists already known by their `sourceId` keep their identifiers and have
+/// their aggregates (track/album counts, total duration) recomputed from
+/// scratch, so re-scans don't double count previously indexed files.
 class LibraryIndexer {
   /// Creates a [LibraryIndexer].
   const LibraryIndexer({
@@ -93,9 +105,13 @@ class LibraryIndexer {
       artistsBySourceId[artist.sourceId] = artist;
       await _dataSource.upsertArtist(artist);
 
+      final trackSourceId = file.mediaStoreId.toString();
+      final existingTrack = await _dataSource.findTrackBySourceId(
+        trackSourceId,
+      );
       final track = Track(
-        id: _idGenerator.generate(),
-        sourceId: file.mediaStoreId.toString(),
+        id: existingTrack?.id ?? _idGenerator.generate(),
+        sourceId: trackSourceId,
         filePath: file.filePath,
         title: metadata.title ?? file.title,
         artistId: artist.id,
@@ -114,7 +130,11 @@ class LibraryIndexer {
       await _dataSource.upsertTrack(track);
 
       processed++;
-      yield IndexingProgress(processed: processed, total: files.length);
+      yield IndexingProgress(
+        processed: processed,
+        total: files.length,
+        trackSourceId: trackSourceId,
+      );
     }
   }
 
@@ -129,8 +149,10 @@ class LibraryIndexer {
 
     final existing = await _dataSource.findArtistBySourceId(sourceId);
     if (existing != null) {
-      cache[sourceId] = existing;
-      return existing;
+      // This run recomputes aggregates from scratch as files are seen.
+      final reset = existing.copyWith(albumCount: 0, trackCount: 0);
+      cache[sourceId] = reset;
+      return reset;
     }
 
     final artist = Artist(
@@ -156,8 +178,16 @@ class LibraryIndexer {
 
     final existing = await _dataSource.findAlbumBySourceId(sourceId);
     if (existing != null) {
-      cache[sourceId] = existing;
-      return _AlbumResolution(existing, isNew: false);
+      // This run recomputes aggregates from scratch as files are seen.
+      // isNew here means "first time seen in this run", so the owning
+      // artist's albumCount still counts it, even though the album itself
+      // already existed in the database.
+      final reset = existing.copyWith(
+        trackCount: 0,
+        totalDuration: Duration.zero,
+      );
+      cache[sourceId] = reset;
+      return _AlbumResolution(reset, isNew: true);
     }
 
     final album = Album(

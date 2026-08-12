@@ -44,8 +44,25 @@ class LibraryLocalDataSourceImpl implements LibraryLocalDataSource {
   }
 
   @override
+  Future<Track?> findTrackBySourceId(String sourceId) async {
+    final row = await _database.trackDao.getBySourceId(sourceId);
+    return row?.toEntity();
+  }
+
+  @override
+  Future<List<Track>> findAllTracks() async {
+    final rows = await _database.trackDao.getAll();
+    return rows.map((row) => row.toEntity()).toList();
+  }
+
+  @override
   Future<void> upsertTrack(Track track) {
     return _database.trackDao.upsertOne(track.toCompanion());
+  }
+
+  @override
+  Future<void> deleteTrack(String id) {
+    return _database.trackDao.deleteById(id);
   }
 
   Artist _artistFromRow(ArtistRow row) {

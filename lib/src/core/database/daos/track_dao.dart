@@ -13,9 +13,17 @@ class TrackDao extends DatabaseAccessor<AppDatabase> with _$TrackDaoMixin {
   /// Watches all tracks.
   Stream<List<TrackRow>> watchAll() => select(trackTable).watch();
 
+  /// Reads every track.
+  Future<List<TrackRow>> getAll() => select(trackTable).get();
+
   /// Reads a single track by [id].
   Future<TrackRow?> getById(String id) =>
       (select(trackTable)..where((t) => t.id.equals(id))).getSingleOrNull();
+
+  /// Reads a single track by its [sourceId].
+  Future<TrackRow?> getBySourceId(String sourceId) => (select(
+    trackTable,
+  )..where((t) => t.sourceId.equals(sourceId))).getSingleOrNull();
 
   /// Inserts or updates [entry].
   Future<void> upsertOne(Insertable<TrackRow> entry) =>

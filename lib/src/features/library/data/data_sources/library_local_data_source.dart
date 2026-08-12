@@ -16,6 +16,15 @@ abstract interface class LibraryLocalDataSource {
   /// Inserts or updates [album].
   Future<void> upsertAlbum(Album album);
 
+  /// Reads the track previously indexed from [sourceId], if any.
+  Future<Track?> findTrackBySourceId(String sourceId);
+
+  /// Reads every indexed track.
+  Future<List<Track>> findAllTracks();
+
   /// Inserts or updates [track].
   Future<void> upsertTrack(Track track);
+
+  /// Permanently deletes the track with [id].
+  Future<void> deleteTrack(String id);
 }

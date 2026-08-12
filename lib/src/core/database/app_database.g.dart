@@ -1096,6 +1096,21 @@ class $TrackTableTable extends TrackTable
       'CHECK ("has_embedded_artwork" IN (0, 1))',
     ),
   );
+  static const VerificationMeta _isMissingMeta = const VerificationMeta(
+    'isMissing',
+  );
+  @override
+  late final GeneratedColumn<bool> isMissing = GeneratedColumn<bool>(
+    'is_missing',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_missing" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
   static const VerificationMeta _dateAddedMeta = const VerificationMeta(
     'dateAdded',
   );
@@ -1136,6 +1151,7 @@ class $TrackTableTable extends TrackTable
     format,
     fileSize,
     hasEmbeddedArtwork,
+    isMissing,
     dateAdded,
     dateModified,
   ];
@@ -1270,6 +1286,12 @@ class $TrackTableTable extends TrackTable
     } else if (isInserting) {
       context.missing(_hasEmbeddedArtworkMeta);
     }
+    if (data.containsKey('is_missing')) {
+      context.handle(
+        _isMissingMeta,
+        isMissing.isAcceptableOrUnknown(data['is_missing']!, _isMissingMeta),
+      );
+    }
     if (data.containsKey('date_added')) {
       context.handle(
         _dateAddedMeta,
@@ -1362,6 +1384,10 @@ class $TrackTableTable extends TrackTable
         DriftSqlType.bool,
         data['${effectivePrefix}has_embedded_artwork'],
       )!,
+      isMissing: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_missing'],
+      )!,
       dateAdded: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}date_added'],
@@ -1429,6 +1455,9 @@ class TrackRow extends DataClass implements Insertable<TrackRow> {
   /// Whether the file has an embedded artwork image.
   final bool hasEmbeddedArtwork;
 
+  /// Whether the file was not found by the most recent scan.
+  final bool isMissing;
+
   /// When the track was added to the library.
   final DateTime dateAdded;
 
@@ -1451,6 +1480,7 @@ class TrackRow extends DataClass implements Insertable<TrackRow> {
     required this.format,
     required this.fileSize,
     required this.hasEmbeddedArtwork,
+    required this.isMissing,
     required this.dateAdded,
     required this.dateModified,
   });
@@ -1485,6 +1515,7 @@ class TrackRow extends DataClass implements Insertable<TrackRow> {
     map['format'] = Variable<String>(format);
     map['file_size'] = Variable<int>(fileSize);
     map['has_embedded_artwork'] = Variable<bool>(hasEmbeddedArtwork);
+    map['is_missing'] = Variable<bool>(isMissing);
     map['date_added'] = Variable<DateTime>(dateAdded);
     map['date_modified'] = Variable<DateTime>(dateModified);
     return map;
@@ -1518,6 +1549,7 @@ class TrackRow extends DataClass implements Insertable<TrackRow> {
       format: Value(format),
       fileSize: Value(fileSize),
       hasEmbeddedArtwork: Value(hasEmbeddedArtwork),
+      isMissing: Value(isMissing),
       dateAdded: Value(dateAdded),
       dateModified: Value(dateModified),
     );
@@ -1545,6 +1577,7 @@ class TrackRow extends DataClass implements Insertable<TrackRow> {
       format: serializer.fromJson<String>(json['format']),
       fileSize: serializer.fromJson<int>(json['fileSize']),
       hasEmbeddedArtwork: serializer.fromJson<bool>(json['hasEmbeddedArtwork']),
+      isMissing: serializer.fromJson<bool>(json['isMissing']),
       dateAdded: serializer.fromJson<DateTime>(json['dateAdded']),
       dateModified: serializer.fromJson<DateTime>(json['dateModified']),
     );
@@ -1569,6 +1602,7 @@ class TrackRow extends DataClass implements Insertable<TrackRow> {
       'format': serializer.toJson<String>(format),
       'fileSize': serializer.toJson<int>(fileSize),
       'hasEmbeddedArtwork': serializer.toJson<bool>(hasEmbeddedArtwork),
+      'isMissing': serializer.toJson<bool>(isMissing),
       'dateAdded': serializer.toJson<DateTime>(dateAdded),
       'dateModified': serializer.toJson<DateTime>(dateModified),
     };
@@ -1591,6 +1625,7 @@ class TrackRow extends DataClass implements Insertable<TrackRow> {
     String? format,
     int? fileSize,
     bool? hasEmbeddedArtwork,
+    bool? isMissing,
     DateTime? dateAdded,
     DateTime? dateModified,
   }) => TrackRow(
@@ -1610,6 +1645,7 @@ class TrackRow extends DataClass implements Insertable<TrackRow> {
     format: format ?? this.format,
     fileSize: fileSize ?? this.fileSize,
     hasEmbeddedArtwork: hasEmbeddedArtwork ?? this.hasEmbeddedArtwork,
+    isMissing: isMissing ?? this.isMissing,
     dateAdded: dateAdded ?? this.dateAdded,
     dateModified: dateModified ?? this.dateModified,
   );
@@ -1639,6 +1675,7 @@ class TrackRow extends DataClass implements Insertable<TrackRow> {
       hasEmbeddedArtwork: data.hasEmbeddedArtwork.present
           ? data.hasEmbeddedArtwork.value
           : this.hasEmbeddedArtwork,
+      isMissing: data.isMissing.present ? data.isMissing.value : this.isMissing,
       dateAdded: data.dateAdded.present ? data.dateAdded.value : this.dateAdded,
       dateModified: data.dateModified.present
           ? data.dateModified.value
@@ -1665,6 +1702,7 @@ class TrackRow extends DataClass implements Insertable<TrackRow> {
           ..write('format: $format, ')
           ..write('fileSize: $fileSize, ')
           ..write('hasEmbeddedArtwork: $hasEmbeddedArtwork, ')
+          ..write('isMissing: $isMissing, ')
           ..write('dateAdded: $dateAdded, ')
           ..write('dateModified: $dateModified')
           ..write(')'))
@@ -1689,6 +1727,7 @@ class TrackRow extends DataClass implements Insertable<TrackRow> {
     format,
     fileSize,
     hasEmbeddedArtwork,
+    isMissing,
     dateAdded,
     dateModified,
   );
@@ -1712,6 +1751,7 @@ class TrackRow extends DataClass implements Insertable<TrackRow> {
           other.format == this.format &&
           other.fileSize == this.fileSize &&
           other.hasEmbeddedArtwork == this.hasEmbeddedArtwork &&
+          other.isMissing == this.isMissing &&
           other.dateAdded == this.dateAdded &&
           other.dateModified == this.dateModified);
 }
@@ -1733,6 +1773,7 @@ class TrackTableCompanion extends UpdateCompanion<TrackRow> {
   final Value<String> format;
   final Value<int> fileSize;
   final Value<bool> hasEmbeddedArtwork;
+  final Value<bool> isMissing;
   final Value<DateTime> dateAdded;
   final Value<DateTime> dateModified;
   final Value<int> rowid;
@@ -1753,6 +1794,7 @@ class TrackTableCompanion extends UpdateCompanion<TrackRow> {
     this.format = const Value.absent(),
     this.fileSize = const Value.absent(),
     this.hasEmbeddedArtwork = const Value.absent(),
+    this.isMissing = const Value.absent(),
     this.dateAdded = const Value.absent(),
     this.dateModified = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -1774,6 +1816,7 @@ class TrackTableCompanion extends UpdateCompanion<TrackRow> {
     required String format,
     required int fileSize,
     required bool hasEmbeddedArtwork,
+    this.isMissing = const Value.absent(),
     required DateTime dateAdded,
     required DateTime dateModified,
     this.rowid = const Value.absent(),
@@ -1806,6 +1849,7 @@ class TrackTableCompanion extends UpdateCompanion<TrackRow> {
     Expression<String>? format,
     Expression<int>? fileSize,
     Expression<bool>? hasEmbeddedArtwork,
+    Expression<bool>? isMissing,
     Expression<DateTime>? dateAdded,
     Expression<DateTime>? dateModified,
     Expression<int>? rowid,
@@ -1828,6 +1872,7 @@ class TrackTableCompanion extends UpdateCompanion<TrackRow> {
       if (fileSize != null) 'file_size': fileSize,
       if (hasEmbeddedArtwork != null)
         'has_embedded_artwork': hasEmbeddedArtwork,
+      if (isMissing != null) 'is_missing': isMissing,
       if (dateAdded != null) 'date_added': dateAdded,
       if (dateModified != null) 'date_modified': dateModified,
       if (rowid != null) 'rowid': rowid,
@@ -1851,6 +1896,7 @@ class TrackTableCompanion extends UpdateCompanion<TrackRow> {
     Value<String>? format,
     Value<int>? fileSize,
     Value<bool>? hasEmbeddedArtwork,
+    Value<bool>? isMissing,
     Value<DateTime>? dateAdded,
     Value<DateTime>? dateModified,
     Value<int>? rowid,
@@ -1872,6 +1918,7 @@ class TrackTableCompanion extends UpdateCompanion<TrackRow> {
       format: format ?? this.format,
       fileSize: fileSize ?? this.fileSize,
       hasEmbeddedArtwork: hasEmbeddedArtwork ?? this.hasEmbeddedArtwork,
+      isMissing: isMissing ?? this.isMissing,
       dateAdded: dateAdded ?? this.dateAdded,
       dateModified: dateModified ?? this.dateModified,
       rowid: rowid ?? this.rowid,
@@ -1929,6 +1976,9 @@ class TrackTableCompanion extends UpdateCompanion<TrackRow> {
     if (hasEmbeddedArtwork.present) {
       map['has_embedded_artwork'] = Variable<bool>(hasEmbeddedArtwork.value);
     }
+    if (isMissing.present) {
+      map['is_missing'] = Variable<bool>(isMissing.value);
+    }
     if (dateAdded.present) {
       map['date_added'] = Variable<DateTime>(dateAdded.value);
     }
@@ -1960,6 +2010,7 @@ class TrackTableCompanion extends UpdateCompanion<TrackRow> {
           ..write('format: $format, ')
           ..write('fileSize: $fileSize, ')
           ..write('hasEmbeddedArtwork: $hasEmbeddedArtwork, ')
+          ..write('isMissing: $isMissing, ')
           ..write('dateAdded: $dateAdded, ')
           ..write('dateModified: $dateModified, ')
           ..write('rowid: $rowid')
@@ -4241,6 +4292,7 @@ typedef $$TrackTableTableCreateCompanionBuilder =
       required String format,
       required int fileSize,
       required bool hasEmbeddedArtwork,
+      Value<bool> isMissing,
       required DateTime dateAdded,
       required DateTime dateModified,
       Value<int> rowid,
@@ -4263,6 +4315,7 @@ typedef $$TrackTableTableUpdateCompanionBuilder =
       Value<String> format,
       Value<int> fileSize,
       Value<bool> hasEmbeddedArtwork,
+      Value<bool> isMissing,
       Value<DateTime> dateAdded,
       Value<DateTime> dateModified,
       Value<int> rowid,
@@ -4450,6 +4503,11 @@ class $$TrackTableTableFilterComposer
 
   ColumnFilters<bool> get hasEmbeddedArtwork => $composableBuilder(
     column: $table.hasEmbeddedArtwork,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isMissing => $composableBuilder(
+    column: $table.isMissing,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -4664,6 +4722,11 @@ class $$TrackTableTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<bool> get isMissing => $composableBuilder(
+    column: $table.isMissing,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get dateAdded => $composableBuilder(
     column: $table.dateAdded,
     builder: (column) => ColumnOrderings(column),
@@ -4779,6 +4842,9 @@ class $$TrackTableTableAnnotationComposer
     column: $table.hasEmbeddedArtwork,
     builder: (column) => column,
   );
+
+  GeneratedColumn<bool> get isMissing =>
+      $composableBuilder(column: $table.isMissing, builder: (column) => column);
 
   GeneratedColumn<DateTime> get dateAdded =>
       $composableBuilder(column: $table.dateAdded, builder: (column) => column);
@@ -4961,6 +5027,7 @@ class $$TrackTableTableTableManager
                 Value<String> format = const Value.absent(),
                 Value<int> fileSize = const Value.absent(),
                 Value<bool> hasEmbeddedArtwork = const Value.absent(),
+                Value<bool> isMissing = const Value.absent(),
                 Value<DateTime> dateAdded = const Value.absent(),
                 Value<DateTime> dateModified = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
@@ -4981,6 +5048,7 @@ class $$TrackTableTableTableManager
                 format: format,
                 fileSize: fileSize,
                 hasEmbeddedArtwork: hasEmbeddedArtwork,
+                isMissing: isMissing,
                 dateAdded: dateAdded,
                 dateModified: dateModified,
                 rowid: rowid,
@@ -5003,6 +5071,7 @@ class $$TrackTableTableTableManager
                 required String format,
                 required int fileSize,
                 required bool hasEmbeddedArtwork,
+                Value<bool> isMissing = const Value.absent(),
                 required DateTime dateAdded,
                 required DateTime dateModified,
                 Value<int> rowid = const Value.absent(),
@@ -5023,6 +5092,7 @@ class $$TrackTableTableTableManager
                 format: format,
                 fileSize: fileSize,
                 hasEmbeddedArtwork: hasEmbeddedArtwork,
+                isMissing: isMissing,
                 dateAdded: dateAdded,
                 dateModified: dateModified,
                 rowid: rowid,

@@ -54,6 +54,9 @@ class TrackTable extends Table {
   /// Whether the file has an embedded artwork image.
   BoolColumn get hasEmbeddedArtwork => boolean()();
 
+  /// Whether the file was not found by the most recent scan.
+  BoolColumn get isMissing => boolean().withDefault(const Constant(false))();
+
   /// When the track was added to the library.
   DateTimeColumn get dateAdded => dateTime()();
 
