@@ -9,6 +9,9 @@ class AppLocalizationsEs extends AppLocalizations {
   AppLocalizationsEs([String locale = 'es']) : super(locale);
 
   @override
+  String get appName => 'Music App';
+
+  @override
   String get homeTabLabel => 'Inicio';
 
   @override

@@ -9,6 +9,9 @@ class AppLocalizationsZh extends AppLocalizations {
   AppLocalizationsZh([String locale = 'zh']) : super(locale);
 
   @override
+  String get appName => 'Music App';
+
+  @override
   String get homeTabLabel => '主页';
 
   @override

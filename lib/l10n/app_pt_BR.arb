@@ -1,5 +1,6 @@
 {
   "@@locale": "pt_BR",
+  "appName": "Music App",
   "homeTabLabel": "Início",
   "searchTabLabel": "Buscar",
   "libraryTabLabel": "Biblioteca",

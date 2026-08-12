@@ -103,6 +103,12 @@ abstract class AppLocalizations {
     Locale('zh'),
   ];
 
+  /// No description provided for @appName.
+  ///
+  /// In en, this message translates to:
+  /// **'Music App'**
+  String get appName;
+
   /// No description provided for @homeTabLabel.
   ///
   /// In en, this message translates to:
