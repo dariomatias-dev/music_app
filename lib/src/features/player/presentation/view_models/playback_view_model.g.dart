@@ -11,8 +11,8 @@ part of 'playback_view_model.dart';
 /// The single source of truth for playback state across the app.
 ///
 /// Consumers should watch narrow slices with `.select` (e.g. only
-/// [PlaybackState.playing]) rather than the whole state, since [position]
-/// updates frequently during playback.
+/// [PlaybackState.playing]) rather than the whole state, since the
+/// playback position updates frequently during playback.
 
 @ProviderFor(PlaybackViewModel)
 const playbackViewModelProvider = PlaybackViewModelProvider._();
@@ -20,15 +20,15 @@ const playbackViewModelProvider = PlaybackViewModelProvider._();
 /// The single source of truth for playback state across the app.
 ///
 /// Consumers should watch narrow slices with `.select` (e.g. only
-/// [PlaybackState.playing]) rather than the whole state, since [position]
-/// updates frequently during playback.
+/// [PlaybackState.playing]) rather than the whole state, since the
+/// playback position updates frequently during playback.
 final class PlaybackViewModelProvider
     extends $StreamNotifierProvider<PlaybackViewModel, PlaybackState> {
   /// The single source of truth for playback state across the app.
   ///
   /// Consumers should watch narrow slices with `.select` (e.g. only
-  /// [PlaybackState.playing]) rather than the whole state, since [position]
-  /// updates frequently during playback.
+  /// [PlaybackState.playing]) rather than the whole state, since the
+  /// playback position updates frequently during playback.
   const PlaybackViewModelProvider._()
     : super(
         from: null,
@@ -53,8 +53,8 @@ String _$playbackViewModelHash() => r'8ae29b82dafd84d9cb6831046056104a33ad71af';
 /// The single source of truth for playback state across the app.
 ///
 /// Consumers should watch narrow slices with `.select` (e.g. only
-/// [PlaybackState.playing]) rather than the whole state, since [position]
-/// updates frequently during playback.
+/// [PlaybackState.playing]) rather than the whole state, since the
+/// playback position updates frequently during playback.
 
 abstract class _$PlaybackViewModel extends $StreamNotifier<PlaybackState> {
   Stream<PlaybackState> build();

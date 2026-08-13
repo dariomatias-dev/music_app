@@ -38,6 +38,34 @@ class MusicAudioHandler extends audio_service.BaseAudioHandler {
     _publishCurrentMediaItem();
   }
 
+  /// Appends [item] to the end of the queue.
+  Future<void> addToQueue(QueueMediaItem item) async {
+    queue.add([...queue.value, item.toMediaItem()]);
+    await _playerService.addToQueue(item.filePath);
+  }
+
+  /// Inserts [item] right after the current item, so it plays next.
+  Future<void> insertNext(QueueMediaItem item) async {
+    final index = (_playerService.snapshot.currentIndex ?? -1) + 1;
+    queue.add([...queue.value]..insert(index, item.toMediaItem()));
+    await _playerService.insertNext(item.filePath);
+  }
+
+  /// Removes the queue item at [index].
+  Future<void> removeFromQueue(int index) async {
+    queue.add([...queue.value]..removeAt(index));
+    await _playerService.removeFromQueue(index);
+  }
+
+  /// Moves the queue item at [from] to [to].
+  Future<void> moveInQueue(int from, int to) async {
+    final updated = [...queue.value];
+    final item = updated.removeAt(from);
+    updated.insert(to, item);
+    queue.add(updated);
+    await _playerService.moveInQueue(from, to);
+  }
+
   @override
   Future<void> play() => _playerService.play();
 
