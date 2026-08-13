@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:music_app/src/core/audio/audio_player_service.dart';
+import 'package:music_app/src/core/audio/audio_session_coordinator.dart';
 import 'package:music_app/src/core/audio/music_audio_handler.dart';
 
 /// Provides the [AudioPlayerService] used across the app.
@@ -18,4 +19,17 @@ final audioPlayerServiceProvider = Provider<AudioPlayerService>((ref) {
 /// call.
 final audioHandlerProvider = Provider<MusicAudioHandler>((ref) {
   throw UnimplementedError('audioHandlerProvider was not overridden');
+});
+
+/// Provides the [AudioSessionCoordinator] handling audio focus,
+/// interruptions and device disconnects.
+///
+/// Must be overridden with an already-[AudioSessionCoordinator.initialize]d
+/// instance before the app starts.
+final audioSessionCoordinatorProvider = Provider<AudioSessionCoordinator>((
+  ref,
+) {
+  throw UnimplementedError(
+    'audioSessionCoordinatorProvider was not overridden',
+  );
 });

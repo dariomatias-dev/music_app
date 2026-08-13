@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:metadata_god/metadata_god.dart';
 import 'package:music_app/src/core/audio/audio_providers.dart';
+import 'package:music_app/src/core/audio/audio_session_coordinator.dart';
 import 'package:music_app/src/core/audio/just_audio_player_service.dart';
 import 'package:music_app/src/core/audio/music_audio_handler.dart';
 import 'package:music_app/src/core/storage/shared_preferences_storage.dart';
@@ -17,6 +18,10 @@ Future<void> main() async {
   final preferences = await SharedPreferences.getInstance();
 
   final audioPlayerService = JustAudioPlayerService();
+
+  final audioSessionCoordinator = AudioSessionCoordinator(audioPlayerService);
+  await audioSessionCoordinator.initialize();
+
   final audioHandler = await AudioService.init(
     builder: () => MusicAudioHandler(audioPlayerService),
     config: const AudioServiceConfig(
@@ -32,6 +37,9 @@ Future<void> main() async {
         ),
         audioPlayerServiceProvider.overrideWithValue(audioPlayerService),
         audioHandlerProvider.overrideWithValue(audioHandler),
+        audioSessionCoordinatorProvider.overrideWithValue(
+          audioSessionCoordinator,
+        ),
       ],
       child: const MusicApp(),
     ),
