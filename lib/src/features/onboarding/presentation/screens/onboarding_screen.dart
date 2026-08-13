@@ -2,9 +2,11 @@ import 'dart:async';
 
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:music_app/l10n/app_localizations.dart';
 import 'package:music_app/src/core/navigation/route_paths.dart';
+import 'package:music_app/src/features/onboarding/presentation/view_models/onboarding_view_model.dart';
 
 class _Page {
   const _Page(this.artworkSeed, this.title, this.body);
@@ -33,15 +35,15 @@ final _pages = <_Page>[
 ];
 
 /// First-run introduction, shown once before the permission screen.
-class OnboardingScreen extends StatefulWidget {
+class OnboardingScreen extends ConsumerStatefulWidget {
   /// Creates an [OnboardingScreen].
   const OnboardingScreen({super.key});
 
   @override
-  State<OnboardingScreen> createState() => _OnboardingScreenState();
+  ConsumerState<OnboardingScreen> createState() => _OnboardingScreenState();
 }
 
-class _OnboardingScreenState extends State<OnboardingScreen> {
+class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   final _controller = PageController();
   var _page = 0;
 
@@ -53,7 +55,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   void _next() {
     if (_page == _pages.length - 1) {
-      _finish();
+      unawaited(_finish());
       return;
     }
     unawaited(
@@ -64,7 +66,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 
-  void _finish() => context.go(RoutePaths.permissions);
+  Future<void> _finish() async {
+    await ref.read(onboardingViewModelProvider.notifier).complete();
+    if (!mounted) return;
+    context.go(RoutePaths.permissions);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -86,7 +92,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   padding: const EdgeInsets.fromLTRB(0, 4, 12, 0),
                   child: AppTextButton(
                     label: l10n.onboardingSkip,
-                    onPressed: isLastPage ? null : _finish,
+                    onPressed: isLastPage ? null : () => unawaited(_finish()),
                   ),
                 ),
               ),
