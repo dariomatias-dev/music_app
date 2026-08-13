@@ -5,4 +5,7 @@ abstract final class PreferenceKeys {
 
   /// Stores whether the user has completed onboarding.
   static const onboardingCompleted = 'onboardingCompleted';
+
+  /// Stores the last playback session (queue, current index and position).
+  static const playbackSession = 'playbackSession';
 }

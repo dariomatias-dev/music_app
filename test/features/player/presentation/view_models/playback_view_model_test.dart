@@ -36,6 +36,9 @@ void main() {
 
     await service.setQueue(['a.mp3', 'b.mp3']);
     await service.play();
+    // Let the provider's internal stream subscription process the new
+    // snapshots before reading the state again.
+    await Future<void>.delayed(Duration.zero);
 
     final state = await container.read(playbackViewModelProvider.future);
 

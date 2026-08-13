@@ -35,7 +35,7 @@ final class PlaybackViewModelProvider
         argument: null,
         retry: null,
         name: r'playbackViewModelProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -48,7 +48,7 @@ final class PlaybackViewModelProvider
   PlaybackViewModel create() => PlaybackViewModel();
 }
 
-String _$playbackViewModelHash() => r'8ae29b82dafd84d9cb6831046056104a33ad71af';
+String _$playbackViewModelHash() => r'0e15ad40ca84f358df12acabb430a68edf042925';
 
 /// The single source of truth for playback state across the app.
 ///

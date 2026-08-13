@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -5,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:music_app/l10n/app_localizations.dart';
 import 'package:music_app/src/core/database/database_providers.dart';
 import 'package:music_app/src/core/navigation/route_paths.dart';
+import 'package:music_app/src/features/queue/presentation/view_models/queue_view_model.dart';
 
 /// Splash screen shown while the app's core dependencies (preferences,
 /// database) finish initializing.
@@ -28,6 +31,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
 
   Future<void> _prepare() async {
     await ref.read(appDatabaseProvider).trackDao.getAll();
+    unawaited(ref.read(queueViewModelProvider.notifier).restoreSession());
     if (!mounted) return;
     context.go(RoutePaths.home);
   }

@@ -38,7 +38,7 @@ final class QueueViewModelProvider
         argument: null,
         retry: null,
         name: r'queueViewModelProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -59,7 +59,7 @@ final class QueueViewModelProvider
   }
 }
 
-String _$queueViewModelHash() => r'374fe2dad8828ee58c7c08bf330a9a367c9d86a1';
+String _$queueViewModelHash() => r'ff7a48477f3b806fe0efd1279d813a24256c64f3';
 
 /// The ordered list of tracks currently loaded into the playback queue.
 ///
