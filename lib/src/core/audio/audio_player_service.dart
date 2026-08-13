@@ -1,3 +1,5 @@
+import 'package:music_app/src/core/errors/app_exception.dart';
+
 /// Stage of loading/playing the current queue item.
 enum AudioProcessingState {
   /// No source loaded.
@@ -103,6 +105,13 @@ abstract interface class AudioPlayerService {
 
   /// Emits a new snapshot whenever playback state changes.
   Stream<AudioPlaybackSnapshot> get snapshotStream;
+
+  /// Emits when the currently loaded item fails to load or play (e.g. a
+  /// missing or corrupt file).
+  ///
+  /// Does not close [snapshotStream]; callers are expected to skip the
+  /// failed item and keep the queue consistent.
+  Stream<PlaybackException> get errorStream;
 
   /// Replaces the queue with [filePaths] and loads the item at
   /// [initialIndex], seeking to [initialPosition] when given.

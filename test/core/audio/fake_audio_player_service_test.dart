@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:music_app/src/core/audio/audio_player_service.dart';
+import 'package:music_app/src/core/errors/app_exception.dart';
 
 import '../../helpers/fake_audio_player_service.dart';
 
@@ -89,5 +90,18 @@ void main() {
     expect(service.snapshot.speed, 1.5);
     expect(service.snapshot.loopMode, AudioLoopMode.queue);
     expect(service.snapshot.shuffleModeEnabled, isTrue);
+  });
+
+  test('emitError surfaces on errorStream', () async {
+    final errors = <PlaybackException>[];
+    final subscription = service.errorStream.listen(errors.add);
+
+    service.emitError(const PlaybackException('Corrupt file.'));
+    await Future<void>.delayed(Duration.zero);
+
+    expect(errors, hasLength(1));
+    expect(errors.single.message, 'Corrupt file.');
+
+    await subscription.cancel();
   });
 }

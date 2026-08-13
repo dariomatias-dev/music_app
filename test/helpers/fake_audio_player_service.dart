@@ -1,11 +1,13 @@
 import 'dart:async';
 
 import 'package:music_app/src/core/audio/audio_player_service.dart';
+import 'package:music_app/src/core/errors/app_exception.dart';
 
 /// In-memory [AudioPlayerService] for tests, with no real audio engine.
 class FakeAudioPlayerService implements AudioPlayerService {
   final _queue = <String>[];
   final _controller = StreamController<AudioPlaybackSnapshot>.broadcast();
+  final _errorController = StreamController<PlaybackException>.broadcast();
   var _snapshot = const AudioPlaybackSnapshot.initial();
 
   final _snapshotHistory = <AudioPlaybackSnapshot>[];
@@ -20,6 +22,12 @@ class FakeAudioPlayerService implements AudioPlayerService {
 
   @override
   Stream<AudioPlaybackSnapshot> get snapshotStream => _controller.stream;
+
+  @override
+  Stream<PlaybackException> get errorStream => _errorController.stream;
+
+  /// Emits [error] on [errorStream], simulating a playback failure.
+  void emitError(PlaybackException error) => _errorController.add(error);
 
   void _emit(AudioPlaybackSnapshot Function(AudioPlaybackSnapshot) update) {
     _snapshot = update(_snapshot);
@@ -149,6 +157,7 @@ class FakeAudioPlayerService implements AudioPlayerService {
   @override
   Future<void> dispose() async {
     await _controller.close();
+    await _errorController.close();
   }
 
   AudioPlaybackSnapshot _copyWith(
