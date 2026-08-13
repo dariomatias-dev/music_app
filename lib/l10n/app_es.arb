@@ -13,5 +13,10 @@
   "onboarding2Title": "Hecho para una mano",
   "onboarding2Body": "El reproductor queda al alcance abajo en cada pantalla. Deslízalo a los lados para saltar, o hacia arriba para abrirlo completo.",
   "onboarding3Title": "Aprende lo que reproduces",
-  "onboarding3Body": "Las reproducidas hace poco y tus datos vienen de lo que realmente escuchas, y nada se envía a ninguna parte."
+  "onboarding3Body": "Las reproducidas hace poco y tus datos vienen de lo que realmente escuchas, y nada se envía a ninguna parte.",
+  "permissionTitle": "Accede a tu música",
+  "permissionMessage": "Music App necesita acceder a los archivos de audio de tu dispositivo para encontrar y reproducir tu biblioteca. Nada sale de tu dispositivo.",
+  "permissionGrant": "Permitir acceso",
+  "permissionOpenSettings": "Abrir configuración",
+  "permissionScanning": "Escaneando tu biblioteca…"
 }

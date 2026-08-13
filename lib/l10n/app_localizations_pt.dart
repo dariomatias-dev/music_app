@@ -52,6 +52,22 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get onboarding3Body =>
       'Recently played and your listening stats come from what you actually listen to, and nothing is sent anywhere.';
+
+  @override
+  String get permissionTitle => 'Access your music';
+
+  @override
+  String get permissionMessage =>
+      'Music App needs access to your device\'s audio files to find and play your library. Nothing ever leaves your device.';
+
+  @override
+  String get permissionGrant => 'Allow access';
+
+  @override
+  String get permissionOpenSettings => 'Open settings';
+
+  @override
+  String get permissionScanning => 'Scanning your library…';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -102,4 +118,20 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   @override
   String get onboarding3Body =>
       'As tocadas recentemente e os seus dados de escuta vêm do que você realmente ouve, e nada é enviado a lugar nenhum.';
+
+  @override
+  String get permissionTitle => 'Acesse sua música';
+
+  @override
+  String get permissionMessage =>
+      'O Music App precisa acessar os arquivos de áudio do seu aparelho para encontrar e tocar sua biblioteca. Nada sai do seu aparelho.';
+
+  @override
+  String get permissionGrant => 'Permitir acesso';
+
+  @override
+  String get permissionOpenSettings => 'Abrir configurações';
+
+  @override
+  String get permissionScanning => 'Escaneando sua biblioteca…';
 }

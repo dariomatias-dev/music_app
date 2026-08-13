@@ -13,5 +13,10 @@
   "onboarding2Title": "为单手操作而设计",
   "onboarding2Body": "播放器始终停留在屏幕底部，触手可及。左右滑动可跳过，向上滑动可全屏打开。",
   "onboarding3Title": "它会记住你听的内容",
-  "onboarding3Body": "最近播放和收听统计都来自你实际收听的内容，不会发送到任何地方。"
+  "onboarding3Body": "最近播放和收听统计都来自你实际收听的内容，不会发送到任何地方。",
+  "permissionTitle": "访问你的音乐",
+  "permissionMessage": "Music App 需要访问设备上的音频文件，才能找到并播放你的音乐库。数据不会离开你的设备。",
+  "permissionGrant": "允许访问",
+  "permissionOpenSettings": "打开设置",
+  "permissionScanning": "正在扫描你的音乐库…"
 }

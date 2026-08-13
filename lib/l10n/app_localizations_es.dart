@@ -52,4 +52,20 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get onboarding3Body =>
       'Las reproducidas hace poco y tus datos vienen de lo que realmente escuchas, y nada se envía a ninguna parte.';
+
+  @override
+  String get permissionTitle => 'Accede a tu música';
+
+  @override
+  String get permissionMessage =>
+      'Music App necesita acceder a los archivos de audio de tu dispositivo para encontrar y reproducir tu biblioteca. Nada sale de tu dispositivo.';
+
+  @override
+  String get permissionGrant => 'Permitir acceso';
+
+  @override
+  String get permissionOpenSettings => 'Abrir configuración';
+
+  @override
+  String get permissionScanning => 'Escaneando tu biblioteca…';
 }

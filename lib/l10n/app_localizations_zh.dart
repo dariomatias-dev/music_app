@@ -49,4 +49,20 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get onboarding3Body => '最近播放和收听统计都来自你实际收听的内容，不会发送到任何地方。';
+
+  @override
+  String get permissionTitle => '访问你的音乐';
+
+  @override
+  String get permissionMessage =>
+      'Music App 需要访问设备上的音频文件，才能找到并播放你的音乐库。数据不会离开你的设备。';
+
+  @override
+  String get permissionGrant => '允许访问';
+
+  @override
+  String get permissionOpenSettings => '打开设置';
+
+  @override
+  String get permissionScanning => '正在扫描你的音乐库…';
 }

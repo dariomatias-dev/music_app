@@ -186,6 +186,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Recently played and your listening stats come from what you actually listen to, and nothing is sent anywhere.'**
   String get onboarding3Body;
+
+  /// No description provided for @permissionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Access your music'**
+  String get permissionTitle;
+
+  /// No description provided for @permissionMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Music App needs access to your device\'s audio files to find and play your library. Nothing ever leaves your device.'**
+  String get permissionMessage;
+
+  /// No description provided for @permissionGrant.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow access'**
+  String get permissionGrant;
+
+  /// No description provided for @permissionOpenSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Open settings'**
+  String get permissionOpenSettings;
+
+  /// No description provided for @permissionScanning.
+  ///
+  /// In en, this message translates to:
+  /// **'Scanning your library…'**
+  String get permissionScanning;
 }
 
 class _AppLocalizationsDelegate
