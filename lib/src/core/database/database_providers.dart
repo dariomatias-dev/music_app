@@ -3,6 +3,7 @@ import 'package:music_app/src/core/database/app_database.dart';
 import 'package:music_app/src/core/database/daos/album_dao.dart';
 import 'package:music_app/src/core/database/daos/artist_dao.dart';
 import 'package:music_app/src/core/database/daos/favorite_dao.dart';
+import 'package:music_app/src/core/database/daos/lyrics_dao.dart';
 import 'package:music_app/src/core/database/daos/play_event_dao.dart';
 import 'package:music_app/src/core/database/daos/playlist_dao.dart';
 import 'package:music_app/src/core/database/daos/playlist_track_dao.dart';
@@ -48,4 +49,9 @@ final favoriteDaoProvider = Provider<FavoriteDao>(
 /// Provides [PlayEventDao].
 final playEventDaoProvider = Provider<PlayEventDao>(
   (ref) => ref.watch(appDatabaseProvider).playEventDao,
+);
+
+/// Provides [LyricsDao].
+final lyricsDaoProvider = Provider<LyricsDao>(
+  (ref) => ref.watch(appDatabaseProvider).lyricsDao,
 );

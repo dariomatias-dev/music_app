@@ -3369,6 +3369,383 @@ class PlayEventTableCompanion extends UpdateCompanion<PlayEventRow> {
   }
 }
 
+class $LyricsTableTable extends LyricsTable
+    with TableInfo<$LyricsTableTable, LyricsRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $LyricsTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _trackIdMeta = const VerificationMeta(
+    'trackId',
+  );
+  @override
+  late final GeneratedColumn<String> trackId = GeneratedColumn<String>(
+    'track_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES track_table (id)',
+    ),
+  );
+  static const VerificationMeta _contentMeta = const VerificationMeta(
+    'content',
+  );
+  @override
+  late final GeneratedColumn<String> content = GeneratedColumn<String>(
+    'content',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _sourceMeta = const VerificationMeta('source');
+  @override
+  late final GeneratedColumn<String> source = GeneratedColumn<String>(
+    'source',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _fetchedAtMeta = const VerificationMeta(
+    'fetchedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> fetchedAt = GeneratedColumn<DateTime>(
+    'fetched_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    trackId,
+    content,
+    source,
+    fetchedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'lyrics_table';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<LyricsRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('track_id')) {
+      context.handle(
+        _trackIdMeta,
+        trackId.isAcceptableOrUnknown(data['track_id']!, _trackIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_trackIdMeta);
+    }
+    if (data.containsKey('content')) {
+      context.handle(
+        _contentMeta,
+        content.isAcceptableOrUnknown(data['content']!, _contentMeta),
+      );
+    }
+    if (data.containsKey('source')) {
+      context.handle(
+        _sourceMeta,
+        source.isAcceptableOrUnknown(data['source']!, _sourceMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_sourceMeta);
+    }
+    if (data.containsKey('fetched_at')) {
+      context.handle(
+        _fetchedAtMeta,
+        fetchedAt.isAcceptableOrUnknown(data['fetched_at']!, _fetchedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_fetchedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  List<Set<GeneratedColumn>> get uniqueKeys => [
+    {trackId},
+  ];
+  @override
+  LyricsRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LyricsRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      trackId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}track_id'],
+      )!,
+      content: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}content'],
+      ),
+      source: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}source'],
+      )!,
+      fetchedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}fetched_at'],
+      )!,
+    );
+  }
+
+  @override
+  $LyricsTableTable createAlias(String alias) {
+    return $LyricsTableTable(attachedDatabase, alias);
+  }
+}
+
+class LyricsRow extends DataClass implements Insertable<LyricsRow> {
+  /// Primary key (UUID v7).
+  final String id;
+
+  /// The track this entry belongs to.
+  final String trackId;
+
+  /// Raw lyrics text, `null` when [source] is `none`.
+  final String? content;
+
+  /// Where [content] came from: `embedded`, `file` or `none`.
+  final String source;
+
+  /// When this entry was resolved.
+  final DateTime fetchedAt;
+  const LyricsRow({
+    required this.id,
+    required this.trackId,
+    this.content,
+    required this.source,
+    required this.fetchedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['track_id'] = Variable<String>(trackId);
+    if (!nullToAbsent || content != null) {
+      map['content'] = Variable<String>(content);
+    }
+    map['source'] = Variable<String>(source);
+    map['fetched_at'] = Variable<DateTime>(fetchedAt);
+    return map;
+  }
+
+  LyricsTableCompanion toCompanion(bool nullToAbsent) {
+    return LyricsTableCompanion(
+      id: Value(id),
+      trackId: Value(trackId),
+      content: content == null && nullToAbsent
+          ? const Value.absent()
+          : Value(content),
+      source: Value(source),
+      fetchedAt: Value(fetchedAt),
+    );
+  }
+
+  factory LyricsRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return LyricsRow(
+      id: serializer.fromJson<String>(json['id']),
+      trackId: serializer.fromJson<String>(json['trackId']),
+      content: serializer.fromJson<String?>(json['content']),
+      source: serializer.fromJson<String>(json['source']),
+      fetchedAt: serializer.fromJson<DateTime>(json['fetchedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'trackId': serializer.toJson<String>(trackId),
+      'content': serializer.toJson<String?>(content),
+      'source': serializer.toJson<String>(source),
+      'fetchedAt': serializer.toJson<DateTime>(fetchedAt),
+    };
+  }
+
+  LyricsRow copyWith({
+    String? id,
+    String? trackId,
+    Value<String?> content = const Value.absent(),
+    String? source,
+    DateTime? fetchedAt,
+  }) => LyricsRow(
+    id: id ?? this.id,
+    trackId: trackId ?? this.trackId,
+    content: content.present ? content.value : this.content,
+    source: source ?? this.source,
+    fetchedAt: fetchedAt ?? this.fetchedAt,
+  );
+  LyricsRow copyWithCompanion(LyricsTableCompanion data) {
+    return LyricsRow(
+      id: data.id.present ? data.id.value : this.id,
+      trackId: data.trackId.present ? data.trackId.value : this.trackId,
+      content: data.content.present ? data.content.value : this.content,
+      source: data.source.present ? data.source.value : this.source,
+      fetchedAt: data.fetchedAt.present ? data.fetchedAt.value : this.fetchedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LyricsRow(')
+          ..write('id: $id, ')
+          ..write('trackId: $trackId, ')
+          ..write('content: $content, ')
+          ..write('source: $source, ')
+          ..write('fetchedAt: $fetchedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, trackId, content, source, fetchedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is LyricsRow &&
+          other.id == this.id &&
+          other.trackId == this.trackId &&
+          other.content == this.content &&
+          other.source == this.source &&
+          other.fetchedAt == this.fetchedAt);
+}
+
+class LyricsTableCompanion extends UpdateCompanion<LyricsRow> {
+  final Value<String> id;
+  final Value<String> trackId;
+  final Value<String?> content;
+  final Value<String> source;
+  final Value<DateTime> fetchedAt;
+  final Value<int> rowid;
+  const LyricsTableCompanion({
+    this.id = const Value.absent(),
+    this.trackId = const Value.absent(),
+    this.content = const Value.absent(),
+    this.source = const Value.absent(),
+    this.fetchedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  LyricsTableCompanion.insert({
+    required String id,
+    required String trackId,
+    this.content = const Value.absent(),
+    required String source,
+    required DateTime fetchedAt,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       trackId = Value(trackId),
+       source = Value(source),
+       fetchedAt = Value(fetchedAt);
+  static Insertable<LyricsRow> custom({
+    Expression<String>? id,
+    Expression<String>? trackId,
+    Expression<String>? content,
+    Expression<String>? source,
+    Expression<DateTime>? fetchedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (trackId != null) 'track_id': trackId,
+      if (content != null) 'content': content,
+      if (source != null) 'source': source,
+      if (fetchedAt != null) 'fetched_at': fetchedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  LyricsTableCompanion copyWith({
+    Value<String>? id,
+    Value<String>? trackId,
+    Value<String?>? content,
+    Value<String>? source,
+    Value<DateTime>? fetchedAt,
+    Value<int>? rowid,
+  }) {
+    return LyricsTableCompanion(
+      id: id ?? this.id,
+      trackId: trackId ?? this.trackId,
+      content: content ?? this.content,
+      source: source ?? this.source,
+      fetchedAt: fetchedAt ?? this.fetchedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (trackId.present) {
+      map['track_id'] = Variable<String>(trackId.value);
+    }
+    if (content.present) {
+      map['content'] = Variable<String>(content.value);
+    }
+    if (source.present) {
+      map['source'] = Variable<String>(source.value);
+    }
+    if (fetchedAt.present) {
+      map['fetched_at'] = Variable<DateTime>(fetchedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LyricsTableCompanion(')
+          ..write('id: $id, ')
+          ..write('trackId: $trackId, ')
+          ..write('content: $content, ')
+          ..write('source: $source, ')
+          ..write('fetchedAt: $fetchedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -3380,6 +3757,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       $PlaylistTrackTableTable(this);
   late final $FavoriteTableTable favoriteTable = $FavoriteTableTable(this);
   late final $PlayEventTableTable playEventTable = $PlayEventTableTable(this);
+  late final $LyricsTableTable lyricsTable = $LyricsTableTable(this);
   late final ArtistDao artistDao = ArtistDao(this as AppDatabase);
   late final AlbumDao albumDao = AlbumDao(this as AppDatabase);
   late final TrackDao trackDao = TrackDao(this as AppDatabase);
@@ -3389,6 +3767,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   );
   late final FavoriteDao favoriteDao = FavoriteDao(this as AppDatabase);
   late final PlayEventDao playEventDao = PlayEventDao(this as AppDatabase);
+  late final LyricsDao lyricsDao = LyricsDao(this as AppDatabase);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -3401,6 +3780,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     playlistTrackTable,
     favoriteTable,
     playEventTable,
+    lyricsTable,
   ];
 }
 
@@ -4425,6 +4805,24 @@ final class $$TrackTableTableReferences
       manager.$state.copyWith(prefetchedData: cache),
     );
   }
+
+  static MultiTypedResultKey<$LyricsTableTable, List<LyricsRow>>
+  _lyricsTableRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.lyricsTable,
+    aliasName: $_aliasNameGenerator(db.trackTable.id, db.lyricsTable.trackId),
+  );
+
+  $$LyricsTableTableProcessedTableManager get lyricsTableRefs {
+    final manager = $$LyricsTableTableTableManager(
+      $_db,
+      $_db.lyricsTable,
+    ).filter((f) => f.trackId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_lyricsTableRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
 }
 
 class $$TrackTableTableFilterComposer
@@ -4633,6 +5031,31 @@ class $$TrackTableTableFilterComposer
           }) => $$PlayEventTableTableFilterComposer(
             $db: $db,
             $table: $db.playEventTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> lyricsTableRefs(
+    Expression<bool> Function($$LyricsTableTableFilterComposer f) f,
+  ) {
+    final $$LyricsTableTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.lyricsTable,
+      getReferencedColumn: (t) => t.trackId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$LyricsTableTableFilterComposer(
+            $db: $db,
+            $table: $db.lyricsTable,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -4975,6 +5398,31 @@ class $$TrackTableTableAnnotationComposer
     );
     return f(composer);
   }
+
+  Expression<T> lyricsTableRefs<T extends Object>(
+    Expression<T> Function($$LyricsTableTableAnnotationComposer a) f,
+  ) {
+    final $$LyricsTableTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.lyricsTable,
+      getReferencedColumn: (t) => t.trackId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$LyricsTableTableAnnotationComposer(
+            $db: $db,
+            $table: $db.lyricsTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$TrackTableTableTableManager
@@ -4996,6 +5444,7 @@ class $$TrackTableTableTableManager
             bool playlistTrackTableRefs,
             bool favoriteTableRefs,
             bool playEventTableRefs,
+            bool lyricsTableRefs,
           })
         > {
   $$TrackTableTableTableManager(_$AppDatabase db, $TrackTableTable table)
@@ -5112,6 +5561,7 @@ class $$TrackTableTableTableManager
                 playlistTrackTableRefs = false,
                 favoriteTableRefs = false,
                 playEventTableRefs = false,
+                lyricsTableRefs = false,
               }) {
                 return PrefetchHooks(
                   db: db,
@@ -5119,6 +5569,7 @@ class $$TrackTableTableTableManager
                     if (playlistTrackTableRefs) db.playlistTrackTable,
                     if (favoriteTableRefs) db.favoriteTable,
                     if (playEventTableRefs) db.playEventTable,
+                    if (lyricsTableRefs) db.lyricsTable,
                   ],
                   addJoins:
                       <
@@ -5232,6 +5683,27 @@ class $$TrackTableTableTableManager
                               ),
                           typedResults: items,
                         ),
+                      if (lyricsTableRefs)
+                        await $_getPrefetchedData<
+                          TrackRow,
+                          $TrackTableTable,
+                          LyricsRow
+                        >(
+                          currentTable: table,
+                          referencedTable: $$TrackTableTableReferences
+                              ._lyricsTableRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$TrackTableTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).lyricsTableRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.trackId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
                     ];
                   },
                 );
@@ -5258,6 +5730,7 @@ typedef $$TrackTableTableProcessedTableManager =
         bool playlistTrackTableRefs,
         bool favoriteTableRefs,
         bool playEventTableRefs,
+        bool lyricsTableRefs,
       })
     >;
 typedef $$PlaylistTableTableCreateCompanionBuilder =
@@ -6592,6 +7065,325 @@ typedef $$PlayEventTableTableProcessedTableManager =
       PlayEventRow,
       PrefetchHooks Function({bool trackId})
     >;
+typedef $$LyricsTableTableCreateCompanionBuilder =
+    LyricsTableCompanion Function({
+      required String id,
+      required String trackId,
+      Value<String?> content,
+      required String source,
+      required DateTime fetchedAt,
+      Value<int> rowid,
+    });
+typedef $$LyricsTableTableUpdateCompanionBuilder =
+    LyricsTableCompanion Function({
+      Value<String> id,
+      Value<String> trackId,
+      Value<String?> content,
+      Value<String> source,
+      Value<DateTime> fetchedAt,
+      Value<int> rowid,
+    });
+
+final class $$LyricsTableTableReferences
+    extends BaseReferences<_$AppDatabase, $LyricsTableTable, LyricsRow> {
+  $$LyricsTableTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $TrackTableTable _trackIdTable(_$AppDatabase db) =>
+      db.trackTable.createAlias(
+        $_aliasNameGenerator(db.lyricsTable.trackId, db.trackTable.id),
+      );
+
+  $$TrackTableTableProcessedTableManager get trackId {
+    final $_column = $_itemColumn<String>('track_id')!;
+
+    final manager = $$TrackTableTableTableManager(
+      $_db,
+      $_db.trackTable,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_trackIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$LyricsTableTableFilterComposer
+    extends Composer<_$AppDatabase, $LyricsTableTable> {
+  $$LyricsTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get content => $composableBuilder(
+    column: $table.content,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get source => $composableBuilder(
+    column: $table.source,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get fetchedAt => $composableBuilder(
+    column: $table.fetchedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$TrackTableTableFilterComposer get trackId {
+    final $$TrackTableTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.trackId,
+      referencedTable: $db.trackTable,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$TrackTableTableFilterComposer(
+            $db: $db,
+            $table: $db.trackTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$LyricsTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $LyricsTableTable> {
+  $$LyricsTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get content => $composableBuilder(
+    column: $table.content,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get source => $composableBuilder(
+    column: $table.source,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get fetchedAt => $composableBuilder(
+    column: $table.fetchedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$TrackTableTableOrderingComposer get trackId {
+    final $$TrackTableTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.trackId,
+      referencedTable: $db.trackTable,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$TrackTableTableOrderingComposer(
+            $db: $db,
+            $table: $db.trackTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$LyricsTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $LyricsTableTable> {
+  $$LyricsTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get content =>
+      $composableBuilder(column: $table.content, builder: (column) => column);
+
+  GeneratedColumn<String> get source =>
+      $composableBuilder(column: $table.source, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get fetchedAt =>
+      $composableBuilder(column: $table.fetchedAt, builder: (column) => column);
+
+  $$TrackTableTableAnnotationComposer get trackId {
+    final $$TrackTableTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.trackId,
+      referencedTable: $db.trackTable,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$TrackTableTableAnnotationComposer(
+            $db: $db,
+            $table: $db.trackTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$LyricsTableTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $LyricsTableTable,
+          LyricsRow,
+          $$LyricsTableTableFilterComposer,
+          $$LyricsTableTableOrderingComposer,
+          $$LyricsTableTableAnnotationComposer,
+          $$LyricsTableTableCreateCompanionBuilder,
+          $$LyricsTableTableUpdateCompanionBuilder,
+          (LyricsRow, $$LyricsTableTableReferences),
+          LyricsRow,
+          PrefetchHooks Function({bool trackId})
+        > {
+  $$LyricsTableTableTableManager(_$AppDatabase db, $LyricsTableTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$LyricsTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$LyricsTableTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$LyricsTableTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> trackId = const Value.absent(),
+                Value<String?> content = const Value.absent(),
+                Value<String> source = const Value.absent(),
+                Value<DateTime> fetchedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => LyricsTableCompanion(
+                id: id,
+                trackId: trackId,
+                content: content,
+                source: source,
+                fetchedAt: fetchedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String trackId,
+                Value<String?> content = const Value.absent(),
+                required String source,
+                required DateTime fetchedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => LyricsTableCompanion.insert(
+                id: id,
+                trackId: trackId,
+                content: content,
+                source: source,
+                fetchedAt: fetchedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$LyricsTableTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({trackId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (trackId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.trackId,
+                                referencedTable: $$LyricsTableTableReferences
+                                    ._trackIdTable(db),
+                                referencedColumn: $$LyricsTableTableReferences
+                                    ._trackIdTable(db)
+                                    .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$LyricsTableTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $LyricsTableTable,
+      LyricsRow,
+      $$LyricsTableTableFilterComposer,
+      $$LyricsTableTableOrderingComposer,
+      $$LyricsTableTableAnnotationComposer,
+      $$LyricsTableTableCreateCompanionBuilder,
+      $$LyricsTableTableUpdateCompanionBuilder,
+      (LyricsRow, $$LyricsTableTableReferences),
+      LyricsRow,
+      PrefetchHooks Function({bool trackId})
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -6610,4 +7402,6 @@ class $AppDatabaseManager {
       $$FavoriteTableTableTableManager(_db, _db.favoriteTable);
   $$PlayEventTableTableTableManager get playEventTable =>
       $$PlayEventTableTableTableManager(_db, _db.playEventTable);
+  $$LyricsTableTableTableManager get lyricsTable =>
+      $$LyricsTableTableTableManager(_db, _db.lyricsTable);
 }
