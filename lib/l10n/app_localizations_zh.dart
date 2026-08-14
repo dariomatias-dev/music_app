@@ -65,4 +65,13 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get permissionScanning => '正在扫描你的音乐库…';
+
+  @override
+  String get backButtonSemanticLabel => '返回';
+
+  @override
+  String get playbackEmptyTitle => '当前没有播放';
+
+  @override
+  String get playbackEmptyMessage => '播放音乐库中的一首曲目即可在此查看。';
 }

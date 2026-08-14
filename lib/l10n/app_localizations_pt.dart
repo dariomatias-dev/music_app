@@ -68,6 +68,16 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get permissionScanning => 'Scanning your library…';
+
+  @override
+  String get backButtonSemanticLabel => 'Back';
+
+  @override
+  String get playbackEmptyTitle => 'Nothing playing';
+
+  @override
+  String get playbackEmptyMessage =>
+      'Play a track from your library to see it here.';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -134,4 +144,14 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get permissionScanning => 'Escaneando sua biblioteca…';
+
+  @override
+  String get backButtonSemanticLabel => 'Voltar';
+
+  @override
+  String get playbackEmptyTitle => 'Nada tocando';
+
+  @override
+  String get playbackEmptyMessage =>
+      'Toque uma faixa da sua biblioteca para vê-la aqui.';
 }

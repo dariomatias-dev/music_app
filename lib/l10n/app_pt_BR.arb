@@ -18,5 +18,8 @@
   "permissionMessage": "O Music App precisa acessar os arquivos de áudio do seu aparelho para encontrar e tocar sua biblioteca. Nada sai do seu aparelho.",
   "permissionGrant": "Permitir acesso",
   "permissionOpenSettings": "Abrir configurações",
-  "permissionScanning": "Escaneando sua biblioteca…"
+  "permissionScanning": "Escaneando sua biblioteca…",
+  "backButtonSemanticLabel": "Voltar",
+  "playbackEmptyTitle": "Nada tocando",
+  "playbackEmptyMessage": "Toque uma faixa da sua biblioteca para vê-la aqui."
 }

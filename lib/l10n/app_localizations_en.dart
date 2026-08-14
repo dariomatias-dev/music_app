@@ -68,4 +68,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get permissionScanning => 'Scanning your library…';
+
+  @override
+  String get backButtonSemanticLabel => 'Back';
+
+  @override
+  String get playbackEmptyTitle => 'Nothing playing';
+
+  @override
+  String get playbackEmptyMessage =>
+      'Play a track from your library to see it here.';
 }

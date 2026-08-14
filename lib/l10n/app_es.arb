@@ -18,5 +18,8 @@
   "permissionMessage": "Music App necesita acceder a los archivos de audio de tu dispositivo para encontrar y reproducir tu biblioteca. Nada sale de tu dispositivo.",
   "permissionGrant": "Permitir acceso",
   "permissionOpenSettings": "Abrir configuración",
-  "permissionScanning": "Escaneando tu biblioteca…"
+  "permissionScanning": "Escaneando tu biblioteca…",
+  "backButtonSemanticLabel": "Atrás",
+  "playbackEmptyTitle": "Nada sonando",
+  "playbackEmptyMessage": "Reproduce una pista de tu biblioteca para verla aquí."
 }

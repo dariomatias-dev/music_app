@@ -216,6 +216,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Scanning your library…'**
   String get permissionScanning;
+
+  /// No description provided for @backButtonSemanticLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get backButtonSemanticLabel;
+
+  /// No description provided for @playbackEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing playing'**
+  String get playbackEmptyTitle;
+
+  /// No description provided for @playbackEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Play a track from your library to see it here.'**
+  String get playbackEmptyMessage;
 }
 
 class _AppLocalizationsDelegate

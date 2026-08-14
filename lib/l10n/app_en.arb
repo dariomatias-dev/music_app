@@ -18,5 +18,8 @@
   "permissionMessage": "Music App needs access to your device's audio files to find and play your library. Nothing ever leaves your device.",
   "permissionGrant": "Allow access",
   "permissionOpenSettings": "Open settings",
-  "permissionScanning": "Scanning your library…"
+  "permissionScanning": "Scanning your library…",
+  "backButtonSemanticLabel": "Back",
+  "playbackEmptyTitle": "Nothing playing",
+  "playbackEmptyMessage": "Play a track from your library to see it here."
 }

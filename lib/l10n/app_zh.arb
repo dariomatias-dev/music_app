@@ -18,5 +18,8 @@
   "permissionMessage": "Music App 需要访问设备上的音频文件，才能找到并播放你的音乐库。数据不会离开你的设备。",
   "permissionGrant": "允许访问",
   "permissionOpenSettings": "打开设置",
-  "permissionScanning": "正在扫描你的音乐库…"
+  "permissionScanning": "正在扫描你的音乐库…",
+  "backButtonSemanticLabel": "返回",
+  "playbackEmptyTitle": "当前没有播放",
+  "playbackEmptyMessage": "播放音乐库中的一首曲目即可在此查看。"
 }
