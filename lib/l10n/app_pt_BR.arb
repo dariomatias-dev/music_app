@@ -47,5 +47,8 @@
   "sleepTimerEndOfTrackLabel": "Fim da faixa",
   "sleepTimerTurnOffLabel": "Desligar temporizador",
   "sleepTimerSetMessage": "Temporizador definido",
-  "sleepTimerOffMessage": "Temporizador desligado"
+  "sleepTimerOffMessage": "Temporizador desligado",
+  "queueEmptyTitle": "Fila vazia",
+  "queueEmptyMessage": "Toque uma faixa da sua biblioteca para preencher a fila.",
+  "nowPlayingSemanticLabel": "Tocando agora"
 }

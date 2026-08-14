@@ -47,5 +47,8 @@
   "sleepTimerEndOfTrackLabel": "Fin de la pista",
   "sleepTimerTurnOffLabel": "Apagar temporizador",
   "sleepTimerSetMessage": "Temporizador definido",
-  "sleepTimerOffMessage": "Temporizador apagado"
+  "sleepTimerOffMessage": "Temporizador apagado",
+  "queueEmptyTitle": "La cola está vacía",
+  "queueEmptyMessage": "Reproduce una pista de tu biblioteca para llenar la cola.",
+  "nowPlayingSemanticLabel": "Sonando ahora"
 }

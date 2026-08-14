@@ -158,4 +158,14 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get sleepTimerOffMessage => 'Temporizador apagado';
+
+  @override
+  String get queueEmptyTitle => 'La cola está vacía';
+
+  @override
+  String get queueEmptyMessage =>
+      'Reproduce una pista de tu biblioteca para llenar la cola.';
+
+  @override
+  String get nowPlayingSemanticLabel => 'Sonando ahora';
 }

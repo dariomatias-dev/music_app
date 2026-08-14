@@ -152,4 +152,13 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get sleepTimerOffMessage => '定时器已关闭';
+
+  @override
+  String get queueEmptyTitle => '队列为空';
+
+  @override
+  String get queueEmptyMessage => '播放音乐库中的一首曲目即可填充队列。';
+
+  @override
+  String get nowPlayingSemanticLabel => '正在播放';
 }

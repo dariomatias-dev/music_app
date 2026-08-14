@@ -47,5 +47,8 @@
   "sleepTimerEndOfTrackLabel": "本曲结束后",
   "sleepTimerTurnOffLabel": "关闭定时器",
   "sleepTimerSetMessage": "定时器已设置",
-  "sleepTimerOffMessage": "定时器已关闭"
+  "sleepTimerOffMessage": "定时器已关闭",
+  "queueEmptyTitle": "队列为空",
+  "queueEmptyMessage": "播放音乐库中的一首曲目即可填充队列。",
+  "nowPlayingSemanticLabel": "正在播放"
 }

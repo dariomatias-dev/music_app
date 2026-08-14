@@ -47,5 +47,8 @@
   "sleepTimerEndOfTrackLabel": "End of track",
   "sleepTimerTurnOffLabel": "Turn off timer",
   "sleepTimerSetMessage": "Sleep timer set",
-  "sleepTimerOffMessage": "Sleep timer turned off"
+  "sleepTimerOffMessage": "Sleep timer turned off",
+  "queueEmptyTitle": "Queue is empty",
+  "queueEmptyMessage": "Play a track from your library to fill the queue.",
+  "nowPlayingSemanticLabel": "Now playing"
 }

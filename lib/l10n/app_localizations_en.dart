@@ -157,4 +157,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sleepTimerOffMessage => 'Sleep timer turned off';
+
+  @override
+  String get queueEmptyTitle => 'Queue is empty';
+
+  @override
+  String get queueEmptyMessage =>
+      'Play a track from your library to fill the queue.';
+
+  @override
+  String get nowPlayingSemanticLabel => 'Now playing';
 }

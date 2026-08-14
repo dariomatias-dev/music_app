@@ -157,6 +157,16 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get sleepTimerOffMessage => 'Sleep timer turned off';
+
+  @override
+  String get queueEmptyTitle => 'Queue is empty';
+
+  @override
+  String get queueEmptyMessage =>
+      'Play a track from your library to fill the queue.';
+
+  @override
+  String get nowPlayingSemanticLabel => 'Now playing';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -312,4 +322,14 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get sleepTimerOffMessage => 'Temporizador desligado';
+
+  @override
+  String get queueEmptyTitle => 'Fila vazia';
+
+  @override
+  String get queueEmptyMessage =>
+      'Toque uma faixa da sua biblioteca para preencher a fila.';
+
+  @override
+  String get nowPlayingSemanticLabel => 'Tocando agora';
 }

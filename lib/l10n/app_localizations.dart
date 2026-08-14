@@ -390,6 +390,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sleep timer turned off'**
   String get sleepTimerOffMessage;
+
+  /// No description provided for @queueEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Queue is empty'**
+  String get queueEmptyTitle;
+
+  /// No description provided for @queueEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Play a track from your library to fill the queue.'**
+  String get queueEmptyMessage;
+
+  /// No description provided for @nowPlayingSemanticLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Now playing'**
+  String get nowPlayingSemanticLabel;
 }
 
 class _AppLocalizationsDelegate
