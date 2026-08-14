@@ -81,6 +81,18 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get favoriteButtonSemanticLabel => 'Add to favorites';
+
+  @override
+  String get shuffleButtonSemanticLabel => 'Shuffle';
+
+  @override
+  String get previousTrackButtonSemanticLabel => 'Previous track';
+
+  @override
+  String get nextTrackButtonSemanticLabel => 'Next track';
+
+  @override
+  String get repeatButtonSemanticLabel => 'Repeat';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -160,4 +172,16 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get favoriteButtonSemanticLabel => 'Adicionar aos favoritos';
+
+  @override
+  String get shuffleButtonSemanticLabel => 'Aleatório';
+
+  @override
+  String get previousTrackButtonSemanticLabel => 'Faixa anterior';
+
+  @override
+  String get nextTrackButtonSemanticLabel => 'Próxima faixa';
+
+  @override
+  String get repeatButtonSemanticLabel => 'Repetir';
 }

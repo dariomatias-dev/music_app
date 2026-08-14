@@ -22,5 +22,9 @@
   "backButtonSemanticLabel": "返回",
   "playbackEmptyTitle": "当前没有播放",
   "playbackEmptyMessage": "播放音乐库中的一首曲目即可在此查看。",
-  "favoriteButtonSemanticLabel": "添加到收藏"
+  "favoriteButtonSemanticLabel": "添加到收藏",
+  "shuffleButtonSemanticLabel": "随机播放",
+  "previousTrackButtonSemanticLabel": "上一首",
+  "nextTrackButtonSemanticLabel": "下一首",
+  "repeatButtonSemanticLabel": "循环播放"
 }

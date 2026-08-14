@@ -22,5 +22,9 @@
   "backButtonSemanticLabel": "Voltar",
   "playbackEmptyTitle": "Nada tocando",
   "playbackEmptyMessage": "Toque uma faixa da sua biblioteca para vê-la aqui.",
-  "favoriteButtonSemanticLabel": "Adicionar aos favoritos"
+  "favoriteButtonSemanticLabel": "Adicionar aos favoritos",
+  "shuffleButtonSemanticLabel": "Aleatório",
+  "previousTrackButtonSemanticLabel": "Faixa anterior",
+  "nextTrackButtonSemanticLabel": "Próxima faixa",
+  "repeatButtonSemanticLabel": "Repetir"
 }

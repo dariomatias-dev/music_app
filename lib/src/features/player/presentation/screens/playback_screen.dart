@@ -4,8 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:music_app/l10n/app_localizations.dart';
 import 'package:music_app/src/features/player/presentation/view_models/playback_screen_view_model.dart';
 import 'package:music_app/src/features/player/presentation/view_models/playback_view_model.dart';
+import 'package:music_app/src/features/player/presentation/widgets/playback_controls.dart';
 import 'package:music_app/src/features/player/presentation/widgets/playback_cover.dart';
 import 'package:music_app/src/features/player/presentation/widgets/playback_progress_bar.dart';
+import 'package:music_app/src/features/player/presentation/widgets/playback_speed_control.dart';
 import 'package:music_app/src/features/player/presentation/widgets/playback_track_info.dart';
 
 /// The playback ("Now Playing") screen.
@@ -57,6 +59,10 @@ class PlaybackScreen extends ConsumerWidget {
                   ),
                   child: PlaybackProgressBar(item: currentItem),
                 ),
+                const SizedBox(height: AppSpacing.lgXl),
+                const PlaybackControls(),
+                const SizedBox(height: AppSpacing.sm),
+                const PlaybackSpeedControl(),
                 const Spacer(flex: 3),
               ],
             ),

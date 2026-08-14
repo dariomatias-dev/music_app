@@ -22,5 +22,9 @@
   "backButtonSemanticLabel": "Atrás",
   "playbackEmptyTitle": "Nada sonando",
   "playbackEmptyMessage": "Reproduce una pista de tu biblioteca para verla aquí.",
-  "favoriteButtonSemanticLabel": "Añadir a favoritos"
+  "favoriteButtonSemanticLabel": "Añadir a favoritos",
+  "shuffleButtonSemanticLabel": "Aleatorio",
+  "previousTrackButtonSemanticLabel": "Pista anterior",
+  "nextTrackButtonSemanticLabel": "Siguiente pista",
+  "repeatButtonSemanticLabel": "Repetir"
 }

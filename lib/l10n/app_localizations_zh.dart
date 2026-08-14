@@ -77,4 +77,16 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get favoriteButtonSemanticLabel => '添加到收藏';
+
+  @override
+  String get shuffleButtonSemanticLabel => '随机播放';
+
+  @override
+  String get previousTrackButtonSemanticLabel => '上一首';
+
+  @override
+  String get nextTrackButtonSemanticLabel => '下一首';
+
+  @override
+  String get repeatButtonSemanticLabel => '循环播放';
 }

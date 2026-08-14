@@ -81,4 +81,16 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get favoriteButtonSemanticLabel => 'Añadir a favoritos';
+
+  @override
+  String get shuffleButtonSemanticLabel => 'Aleatorio';
+
+  @override
+  String get previousTrackButtonSemanticLabel => 'Pista anterior';
+
+  @override
+  String get nextTrackButtonSemanticLabel => 'Siguiente pista';
+
+  @override
+  String get repeatButtonSemanticLabel => 'Repetir';
 }

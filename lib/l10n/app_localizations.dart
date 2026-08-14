@@ -240,6 +240,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Add to favorites'**
   String get favoriteButtonSemanticLabel;
+
+  /// No description provided for @shuffleButtonSemanticLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Shuffle'**
+  String get shuffleButtonSemanticLabel;
+
+  /// No description provided for @previousTrackButtonSemanticLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous track'**
+  String get previousTrackButtonSemanticLabel;
+
+  /// No description provided for @nextTrackButtonSemanticLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Next track'**
+  String get nextTrackButtonSemanticLabel;
+
+  /// No description provided for @repeatButtonSemanticLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Repeat'**
+  String get repeatButtonSemanticLabel;
 }
 
 class _AppLocalizationsDelegate
