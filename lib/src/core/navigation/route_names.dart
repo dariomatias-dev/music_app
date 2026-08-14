@@ -23,4 +23,10 @@ abstract final class RouteNames {
 
   /// The playback screen.
   static const player = 'player';
+
+  /// The lyrics screen.
+  static const lyrics = 'lyrics';
+
+  /// The playback queue screen.
+  static const queue = 'queue';
 }

@@ -10,7 +10,9 @@ import 'package:music_app/src/features/home/presentation/screens/home_screen.dar
 import 'package:music_app/src/features/library/presentation/screens/library_screen.dart';
 import 'package:music_app/src/features/onboarding/presentation/screens/onboarding_screen.dart';
 import 'package:music_app/src/features/onboarding/presentation/screens/permission_screen.dart';
+import 'package:music_app/src/features/player/presentation/screens/lyrics_screen.dart';
 import 'package:music_app/src/features/player/presentation/screens/playback_screen.dart';
+import 'package:music_app/src/features/queue/presentation/screens/queue_screen.dart';
 import 'package:music_app/src/features/search/presentation/screens/search_screen.dart';
 import 'package:music_app/src/features/settings/presentation/screens/settings_screen.dart';
 import 'package:music_app/src/features/splash/presentation/screens/splash_screen.dart';
@@ -43,6 +45,18 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           key: state.pageKey,
           child: const PlaybackScreen(),
         ),
+        routes: [
+          GoRoute(
+            name: RouteNames.lyrics,
+            path: 'lyrics',
+            builder: (context, state) => const LyricsScreen(),
+          ),
+          GoRoute(
+            name: RouteNames.queue,
+            path: 'queue',
+            builder: (context, state) => const QueueScreen(),
+          ),
+        ],
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) =>

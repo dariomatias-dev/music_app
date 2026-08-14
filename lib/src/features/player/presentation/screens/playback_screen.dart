@@ -6,6 +6,7 @@ import 'package:music_app/src/features/player/presentation/view_models/playback_
 import 'package:music_app/src/features/player/presentation/view_models/playback_view_model.dart';
 import 'package:music_app/src/features/player/presentation/widgets/playback_controls.dart';
 import 'package:music_app/src/features/player/presentation/widgets/playback_cover.dart';
+import 'package:music_app/src/features/player/presentation/widgets/playback_more_sheet.dart';
 import 'package:music_app/src/features/player/presentation/widgets/playback_progress_bar.dart';
 import 'package:music_app/src/features/player/presentation/widgets/playback_speed_control.dart';
 import 'package:music_app/src/features/player/presentation/widgets/playback_track_info.dart';
@@ -29,6 +30,14 @@ class PlaybackScreen extends ConsumerWidget {
     return AppScaffold(
       topBar: AppTopBar(
         backButtonSemanticLabel: l10n.backButtonSemanticLabel,
+        trailing: currentItem == null
+            ? null
+            : AppIconButton(
+                icon: Icons.more_horiz,
+                semanticLabel: l10n.moreOptionsButtonSemanticLabel,
+                onPressed: () =>
+                    showPlaybackMoreSheet(context, ref, currentItem),
+              ),
       ),
       body: currentItem == null
           ? AppEmptyState(

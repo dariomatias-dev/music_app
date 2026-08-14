@@ -1,10 +1,14 @@
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:music_app/l10n/app_localizations.dart';
 import 'package:music_app/src/core/audio/queue_media_item.dart';
+import 'package:music_app/src/features/library/data/providers/library_data_providers.dart';
 import 'package:music_app/src/features/player/presentation/widgets/playback_track_info.dart';
+
+import '../../../../helpers/fake_favorite_repository.dart';
 
 const _item = QueueMediaItem(
   id: 'track-1',
@@ -38,11 +42,16 @@ Widget _routedApp(Widget child) {
       ),
     ],
   );
-  return MaterialApp.router(
-    theme: AppTheme.light,
-    localizationsDelegates: AppLocalizations.localizationsDelegates,
-    supportedLocales: AppLocalizations.supportedLocales,
-    routerConfig: router,
+  return ProviderScope(
+    overrides: [
+      favoriteRepositoryProvider.overrideWithValue(FakeFavoriteRepository()),
+    ],
+    child: MaterialApp.router(
+      theme: AppTheme.light,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      routerConfig: router,
+    ),
   );
 }
 
@@ -70,5 +79,15 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Artist artist-1'), findsOneWidget);
+  });
+
+  testWidgets('tapping the favorite button toggles it', (tester) async {
+    await tester.pumpWidget(_routedApp(const PlaybackTrackInfo(item: _item)));
+    await tester.pump();
+
+    await tester.tap(find.byIcon(Icons.favorite_border));
+    await tester.pump();
+
+    expect(find.byIcon(Icons.favorite), findsOneWidget);
   });
 }

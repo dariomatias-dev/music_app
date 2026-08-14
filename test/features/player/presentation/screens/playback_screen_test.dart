@@ -16,6 +16,7 @@ import 'package:music_app/src/features/player/presentation/widgets/playback_cove
 import 'package:music_app/src/features/queue/presentation/view_models/queue_view_model.dart';
 
 import '../../../../helpers/fake_audio_player_service.dart';
+import '../../../../helpers/fake_favorite_repository.dart';
 
 class _FakeLibraryRepository implements LibraryRepository {
   const _FakeLibraryRepository();
@@ -86,6 +87,9 @@ void main() {
           audioHandlerProvider.overrideWithValue(handler),
           libraryRepositoryProvider.overrideWithValue(
             const _FakeLibraryRepository(),
+          ),
+          favoriteRepositoryProvider.overrideWithValue(
+            FakeFavoriteRepository(),
           ),
         ],
         child: MaterialApp(

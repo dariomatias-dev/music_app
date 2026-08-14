@@ -19,6 +19,11 @@ class FavoriteDao extends DatabaseAccessor<AppDatabase>
     favoriteTable,
   )..where((t) => t.trackId.equals(trackId))).getSingleOrNull();
 
+  /// Watches the favorite entry for [trackId], if any.
+  Stream<FavoriteRow?> watchByTrackId(String trackId) => (select(
+    favoriteTable,
+  )..where((t) => t.trackId.equals(trackId))).watchSingleOrNull();
+
   /// Inserts or updates [entry].
   Future<void> upsertOne(Insertable<FavoriteRow> entry) =>
       into(favoriteTable).insertOnConflictUpdate(entry);

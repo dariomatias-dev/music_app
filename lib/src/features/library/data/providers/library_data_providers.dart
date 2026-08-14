@@ -7,8 +7,10 @@ import 'package:music_app/src/core/services/metadata_reader/metadata_reader_prov
 import 'package:music_app/src/features/library/data/data_sources/library_local_data_source.dart';
 import 'package:music_app/src/features/library/data/data_sources/library_local_data_source_impl.dart';
 import 'package:music_app/src/features/library/data/indexing/library_indexer.dart';
+import 'package:music_app/src/features/library/data/repositories/favorite_repository_impl.dart';
 import 'package:music_app/src/features/library/data/repositories/library_repository_impl.dart';
 import 'package:music_app/src/features/library/domain/reconcile_library.dart';
+import 'package:music_app/src/features/library/domain/repositories/favorite_repository.dart';
 import 'package:music_app/src/features/library/domain/repositories/library_repository.dart';
 
 /// Provides the [LibraryLocalDataSource] used across the library feature.
@@ -40,5 +42,13 @@ final libraryRepositoryProvider = Provider<LibraryRepository>(
   (ref) => LibraryRepositoryImpl(
     dataSource: ref.watch(libraryLocalDataSourceProvider),
     reconcileLibrary: ref.watch(reconcileLibraryProvider),
+  ),
+);
+
+/// Provides the [FavoriteRepository] used across the app.
+final favoriteRepositoryProvider = Provider<FavoriteRepository>(
+  (ref) => FavoriteRepositoryImpl(
+    ref.watch(appDatabaseProvider),
+    ref.watch(idGeneratorProvider),
   ),
 );

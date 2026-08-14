@@ -241,6 +241,12 @@ abstract class AppLocalizations {
   /// **'Add to favorites'**
   String get favoriteButtonSemanticLabel;
 
+  /// No description provided for @unfavoriteButtonSemanticLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from favorites'**
+  String get unfavoriteButtonSemanticLabel;
+
   /// No description provided for @shuffleButtonSemanticLabel.
   ///
   /// In en, this message translates to:
@@ -264,6 +270,126 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Repeat'**
   String get repeatButtonSemanticLabel;
+
+  /// No description provided for @moreOptionsButtonSemanticLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'More options'**
+  String get moreOptionsButtonSemanticLabel;
+
+  /// No description provided for @viewQueueLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Queue'**
+  String get viewQueueLabel;
+
+  /// No description provided for @addToPlaylistLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to playlist'**
+  String get addToPlaylistLabel;
+
+  /// No description provided for @playlistsComingSoonMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Playlists are coming soon'**
+  String get playlistsComingSoonMessage;
+
+  /// No description provided for @openLyricsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Lyrics'**
+  String get openLyricsLabel;
+
+  /// No description provided for @sleepTimerLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Sleep timer'**
+  String get sleepTimerLabel;
+
+  /// No description provided for @fileInfoLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'File information'**
+  String get fileInfoLabel;
+
+  /// No description provided for @fileInfoDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'File information'**
+  String get fileInfoDialogTitle;
+
+  /// No description provided for @fileInfoFormatLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Format'**
+  String get fileInfoFormatLabel;
+
+  /// No description provided for @fileInfoSizeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Size'**
+  String get fileInfoSizeLabel;
+
+  /// No description provided for @fileInfoBitrateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Bitrate'**
+  String get fileInfoBitrateLabel;
+
+  /// No description provided for @fileInfoSampleRateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Sample rate'**
+  String get fileInfoSampleRateLabel;
+
+  /// No description provided for @fileInfoPathLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Path'**
+  String get fileInfoPathLabel;
+
+  /// No description provided for @dialogDismissLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get dialogDismissLabel;
+
+  /// No description provided for @sleepTimerSheetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sleep timer'**
+  String get sleepTimerSheetTitle;
+
+  /// No description provided for @sleepTimerSheetBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Pause playback automatically after a set time.'**
+  String get sleepTimerSheetBody;
+
+  /// No description provided for @sleepTimerEndOfTrackLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'End of track'**
+  String get sleepTimerEndOfTrackLabel;
+
+  /// No description provided for @sleepTimerTurnOffLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn off timer'**
+  String get sleepTimerTurnOffLabel;
+
+  /// No description provided for @sleepTimerSetMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Sleep timer set'**
+  String get sleepTimerSetMessage;
+
+  /// No description provided for @sleepTimerOffMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Sleep timer turned off'**
+  String get sleepTimerOffMessage;
 }
 
 class _AppLocalizationsDelegate

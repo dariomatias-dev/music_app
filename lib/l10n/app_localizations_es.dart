@@ -83,6 +83,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get favoriteButtonSemanticLabel => 'Añadir a favoritos';
 
   @override
+  String get unfavoriteButtonSemanticLabel => 'Quitar de favoritos';
+
+  @override
   String get shuffleButtonSemanticLabel => 'Aleatorio';
 
   @override
@@ -93,4 +96,66 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get repeatButtonSemanticLabel => 'Repetir';
+
+  @override
+  String get moreOptionsButtonSemanticLabel => 'Más opciones';
+
+  @override
+  String get viewQueueLabel => 'Cola';
+
+  @override
+  String get addToPlaylistLabel => 'Añadir a lista de reproducción';
+
+  @override
+  String get playlistsComingSoonMessage =>
+      'Las listas de reproducción llegarán pronto';
+
+  @override
+  String get openLyricsLabel => 'Letra';
+
+  @override
+  String get sleepTimerLabel => 'Temporizador';
+
+  @override
+  String get fileInfoLabel => 'Información del archivo';
+
+  @override
+  String get fileInfoDialogTitle => 'Información del archivo';
+
+  @override
+  String get fileInfoFormatLabel => 'Formato';
+
+  @override
+  String get fileInfoSizeLabel => 'Tamaño';
+
+  @override
+  String get fileInfoBitrateLabel => 'Tasa de bits';
+
+  @override
+  String get fileInfoSampleRateLabel => 'Tasa de muestreo';
+
+  @override
+  String get fileInfoPathLabel => 'Ruta';
+
+  @override
+  String get dialogDismissLabel => 'OK';
+
+  @override
+  String get sleepTimerSheetTitle => 'Temporizador de apagado';
+
+  @override
+  String get sleepTimerSheetBody =>
+      'Pausa la reproducción automáticamente tras un tiempo definido.';
+
+  @override
+  String get sleepTimerEndOfTrackLabel => 'Fin de la pista';
+
+  @override
+  String get sleepTimerTurnOffLabel => 'Apagar temporizador';
+
+  @override
+  String get sleepTimerSetMessage => 'Temporizador definido';
+
+  @override
+  String get sleepTimerOffMessage => 'Temporizador apagado';
 }

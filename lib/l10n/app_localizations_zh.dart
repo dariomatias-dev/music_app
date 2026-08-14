@@ -79,6 +79,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get favoriteButtonSemanticLabel => '添加到收藏';
 
   @override
+  String get unfavoriteButtonSemanticLabel => '取消收藏';
+
+  @override
   String get shuffleButtonSemanticLabel => '随机播放';
 
   @override
@@ -89,4 +92,64 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get repeatButtonSemanticLabel => '循环播放';
+
+  @override
+  String get moreOptionsButtonSemanticLabel => '更多选项';
+
+  @override
+  String get viewQueueLabel => '队列';
+
+  @override
+  String get addToPlaylistLabel => '添加到播放列表';
+
+  @override
+  String get playlistsComingSoonMessage => '播放列表即将推出';
+
+  @override
+  String get openLyricsLabel => '歌词';
+
+  @override
+  String get sleepTimerLabel => '睡眠定时器';
+
+  @override
+  String get fileInfoLabel => '文件信息';
+
+  @override
+  String get fileInfoDialogTitle => '文件信息';
+
+  @override
+  String get fileInfoFormatLabel => '格式';
+
+  @override
+  String get fileInfoSizeLabel => '大小';
+
+  @override
+  String get fileInfoBitrateLabel => '比特率';
+
+  @override
+  String get fileInfoSampleRateLabel => '采样率';
+
+  @override
+  String get fileInfoPathLabel => '路径';
+
+  @override
+  String get dialogDismissLabel => '好的';
+
+  @override
+  String get sleepTimerSheetTitle => '睡眠定时器';
+
+  @override
+  String get sleepTimerSheetBody => '在设定的时间后自动暂停播放。';
+
+  @override
+  String get sleepTimerEndOfTrackLabel => '本曲结束后';
+
+  @override
+  String get sleepTimerTurnOffLabel => '关闭定时器';
+
+  @override
+  String get sleepTimerSetMessage => '定时器已设置';
+
+  @override
+  String get sleepTimerOffMessage => '定时器已关闭';
 }

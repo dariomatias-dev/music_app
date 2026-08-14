@@ -24,6 +24,12 @@ abstract final class RoutePaths {
   /// The playback screen.
   static const player = '/player';
 
+  /// The lyrics screen.
+  static const lyrics = '/player/lyrics';
+
+  /// The playback queue screen.
+  static const queue = '/player/queue';
+
   /// The album detail screen for [albumId].
   ///
   /// Not registered yet (built in Fase 14); navigating here shows the

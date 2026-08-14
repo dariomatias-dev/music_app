@@ -83,6 +83,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get favoriteButtonSemanticLabel => 'Add to favorites';
 
   @override
+  String get unfavoriteButtonSemanticLabel => 'Remove from favorites';
+
+  @override
   String get shuffleButtonSemanticLabel => 'Shuffle';
 
   @override
@@ -93,4 +96,65 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get repeatButtonSemanticLabel => 'Repeat';
+
+  @override
+  String get moreOptionsButtonSemanticLabel => 'More options';
+
+  @override
+  String get viewQueueLabel => 'Queue';
+
+  @override
+  String get addToPlaylistLabel => 'Add to playlist';
+
+  @override
+  String get playlistsComingSoonMessage => 'Playlists are coming soon';
+
+  @override
+  String get openLyricsLabel => 'Lyrics';
+
+  @override
+  String get sleepTimerLabel => 'Sleep timer';
+
+  @override
+  String get fileInfoLabel => 'File information';
+
+  @override
+  String get fileInfoDialogTitle => 'File information';
+
+  @override
+  String get fileInfoFormatLabel => 'Format';
+
+  @override
+  String get fileInfoSizeLabel => 'Size';
+
+  @override
+  String get fileInfoBitrateLabel => 'Bitrate';
+
+  @override
+  String get fileInfoSampleRateLabel => 'Sample rate';
+
+  @override
+  String get fileInfoPathLabel => 'Path';
+
+  @override
+  String get dialogDismissLabel => 'OK';
+
+  @override
+  String get sleepTimerSheetTitle => 'Sleep timer';
+
+  @override
+  String get sleepTimerSheetBody =>
+      'Pause playback automatically after a set time.';
+
+  @override
+  String get sleepTimerEndOfTrackLabel => 'End of track';
+
+  @override
+  String get sleepTimerTurnOffLabel => 'Turn off timer';
+
+  @override
+  String get sleepTimerSetMessage => 'Sleep timer set';
+
+  @override
+  String get sleepTimerOffMessage => 'Sleep timer turned off';
 }

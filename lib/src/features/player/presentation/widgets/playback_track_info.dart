@@ -1,9 +1,14 @@
+import 'dart:async';
+
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:music_app/l10n/app_localizations.dart';
 import 'package:music_app/src/core/audio/queue_media_item.dart';
 import 'package:music_app/src/core/navigation/route_paths.dart';
+import 'package:music_app/src/features/library/data/providers/library_data_providers.dart';
+import 'package:music_app/src/features/library/presentation/providers/favorite_providers.dart';
 
 /// Title and artist for the current track, left-aligned opposite the
 /// favorite button, with title and artist each navigating to their album
@@ -17,19 +22,37 @@ class PlaybackTrackInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-
     return Row(
       children: [
         Expanded(child: _TrackLabel(item: item)),
         const SizedBox(width: AppSpacing.smMd),
-        AppIconButton(
-          icon: Icons.favorite_border,
-          // Wired to real persistence in a later stage.
-          onPressed: () {},
-          semanticLabel: l10n.favoriteButtonSemanticLabel,
-        ),
+        _FavoriteButton(trackId: item.id),
       ],
+    );
+  }
+}
+
+class _FavoriteButton extends ConsumerWidget {
+  const _FavoriteButton({required this.trackId});
+
+  final String trackId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final isFavorited = ref.watch(isFavoriteProvider(trackId)).value ?? false;
+
+    return AppIconButton(
+      icon: isFavorited ? Icons.favorite : Icons.favorite_border,
+      color: isFavorited ? context.colors.textPrimary : null,
+      onPressed: () => unawaited(
+        ref
+            .read(favoriteRepositoryProvider)
+            .setFavorite(trackId, isFavorite: !isFavorited),
+      ),
+      semanticLabel: isFavorited
+          ? l10n.unfavoriteButtonSemanticLabel
+          : l10n.favoriteButtonSemanticLabel,
     );
   }
 }
