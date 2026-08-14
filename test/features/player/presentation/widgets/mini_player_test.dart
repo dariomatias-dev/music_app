@@ -2,6 +2,7 @@ import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:music_app/src/core/audio/audio_providers.dart';
 import 'package:music_app/src/core/audio/music_audio_handler.dart';
 import 'package:music_app/src/features/library/data/indexing/library_indexer.dart';
@@ -60,6 +61,45 @@ Widget _scaffold(Widget child) {
   );
 }
 
+Widget _routedScaffold(Widget child) {
+  final router = GoRouter(
+    initialLocation: '/',
+    routes: [
+      GoRoute(
+        path: '/',
+        builder: (context, state) => Scaffold(
+          body: Align(alignment: Alignment.topCenter, child: child),
+        ),
+      ),
+      GoRoute(
+        path: '/player',
+        builder: (context, state) => const Scaffold(body: Text('Now Playing')),
+      ),
+    ],
+  );
+  return MaterialApp.router(theme: AppTheme.light, routerConfig: router);
+}
+
+Track _track({
+  String id = 'track-1',
+  String title = 'Night Drive',
+}) {
+  return Track(
+    id: id,
+    sourceId: id,
+    filePath: '/music/$id.mp3',
+    title: title,
+    artistId: 'artist-1',
+    albumId: 'album-1',
+    duration: const Duration(minutes: 3),
+    format: 'mp3',
+    fileSize: 1000,
+    hasEmbeddedArtwork: false,
+    dateAdded: DateTime(2026),
+    dateModified: DateTime(2026),
+  );
+}
+
 void main() {
   testWidgets('renders nothing while the queue is empty', (tester) async {
     final service = FakeAudioPlayerService();
@@ -97,24 +137,97 @@ void main() {
     final element = tester.element(find.byType(MiniPlayer));
     final container = ProviderScope.containerOf(element);
     await container.read(queueViewModelProvider.notifier).playFromSource([
-      Track(
-        id: 'track-1',
-        sourceId: 'track-1',
-        filePath: '/music/track-1.mp3',
-        title: 'Night Drive',
-        artistId: 'artist-1',
-        albumId: 'album-1',
-        duration: const Duration(minutes: 3),
-        format: 'mp3',
-        fileSize: 1000,
-        hasEmbeddedArtwork: false,
-        dateAdded: DateTime(2026),
-        dateModified: DateTime(2026),
-      ),
+      _track(),
     ], startIndex: 0);
     await tester.pump();
 
     expect(find.text('Night Drive'), findsOneWidget);
     expect(find.text('Charcoal'), findsOneWidget);
+  });
+
+  testWidgets('tapping opens the playback screen', (tester) async {
+    final service = FakeAudioPlayerService();
+    final handler = MusicAudioHandler(service);
+    addTearDown(handler.dispose);
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          audioPlayerServiceProvider.overrideWithValue(service),
+          audioHandlerProvider.overrideWithValue(handler),
+          libraryRepositoryProvider.overrideWithValue(
+            const _FakeLibraryRepository(),
+          ),
+        ],
+        child: _routedScaffold(const MiniPlayer()),
+      ),
+    );
+
+    final element = tester.element(find.byType(MiniPlayer));
+    final container = ProviderScope.containerOf(element);
+    await container.read(queueViewModelProvider.notifier).playFromSource([
+      _track(),
+    ], startIndex: 0);
+    await tester.pump();
+
+    // Simulated pointer gestures land unreliably through the nested
+    // AnimatedSwitcher/Theme/Pressable layers in the test harness; invoke
+    // the recognizer's callback directly to verify the wiring instead.
+    final gestureArea = tester.widget<GestureDetector>(
+      find.byKey(const ValueKey('miniPlayerGestureArea')),
+    );
+    gestureArea.onVerticalDragEnd!(
+      DragEndDetails(
+        velocity: const Velocity(pixelsPerSecond: Offset(0, -300)),
+        primaryVelocity: -300,
+      ),
+    );
+    // The page transition needs several frames to complete; a single long
+    // pump can skip over route-building steps that happen mid-transition.
+    for (var i = 0; i < 10; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+
+    expect(find.text('Now Playing'), findsOneWidget);
+  });
+
+  testWidgets('swiping left skips to the next track', (tester) async {
+    final service = FakeAudioPlayerService();
+    final handler = MusicAudioHandler(service);
+    addTearDown(handler.dispose);
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          audioPlayerServiceProvider.overrideWithValue(service),
+          audioHandlerProvider.overrideWithValue(handler),
+          libraryRepositoryProvider.overrideWithValue(
+            const _FakeLibraryRepository(),
+          ),
+        ],
+        child: _scaffold(const MiniPlayer()),
+      ),
+    );
+
+    final element = tester.element(find.byType(MiniPlayer));
+    final container = ProviderScope.containerOf(element);
+    await container.read(queueViewModelProvider.notifier).playFromSource([
+      _track(),
+      _track(id: 'track-2', title: 'Sunset'),
+    ], startIndex: 0);
+    await tester.pump();
+
+    final gestureArea = tester.widget<GestureDetector>(
+      find.byKey(const ValueKey('miniPlayerGestureArea')),
+    );
+    gestureArea.onHorizontalDragEnd!(
+      DragEndDetails(
+        velocity: const Velocity(pixelsPerSecond: Offset(-300, 0)),
+        primaryVelocity: -300,
+      ),
+    );
+    await tester.pump(const Duration(milliseconds: 500));
+
+    expect(service.snapshot.currentIndex, 1);
   });
 }

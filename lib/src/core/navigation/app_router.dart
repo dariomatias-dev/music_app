@@ -5,10 +5,12 @@ import 'package:music_app/src/core/navigation/not_found_screen.dart';
 import 'package:music_app/src/core/navigation/route_names.dart';
 import 'package:music_app/src/core/navigation/route_paths.dart';
 import 'package:music_app/src/core/navigation/route_redirect.dart';
+import 'package:music_app/src/core/navigation/route_transitions.dart';
 import 'package:music_app/src/features/home/presentation/screens/home_screen.dart';
 import 'package:music_app/src/features/library/presentation/screens/library_screen.dart';
 import 'package:music_app/src/features/onboarding/presentation/screens/onboarding_screen.dart';
 import 'package:music_app/src/features/onboarding/presentation/screens/permission_screen.dart';
+import 'package:music_app/src/features/player/presentation/screens/playback_screen.dart';
 import 'package:music_app/src/features/search/presentation/screens/search_screen.dart';
 import 'package:music_app/src/features/settings/presentation/screens/settings_screen.dart';
 import 'package:music_app/src/features/splash/presentation/screens/splash_screen.dart';
@@ -33,6 +35,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         name: RouteNames.permissions,
         path: RoutePaths.permissions,
         builder: (context, state) => const PermissionScreen(),
+      ),
+      GoRoute(
+        name: RouteNames.player,
+        path: RoutePaths.player,
+        pageBuilder: (context, state) => buildVerticalTransitionPage(
+          key: state.pageKey,
+          child: const PlaybackScreen(),
+        ),
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) =>

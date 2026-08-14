@@ -20,4 +20,7 @@ abstract final class RoutePaths {
 
   /// The Settings tab.
   static const settings = '/settings';
+
+  /// The playback screen.
+  static const player = '/player';
 }
