@@ -59,5 +59,7 @@
   "clearQueueConfirmTitle": "Limpar fila?",
   "clearQueueConfirmMessage": "Isso remove todas as faixas da fila e interrompe a reprodução.",
   "clearQueueConfirmAction": "Limpar",
-  "cancelLabel": "Cancelar"
+  "cancelLabel": "Cancelar",
+  "lyricsEmptyTitle": "Nenhuma letra encontrada",
+  "lyricsEmptyMessage": "Esta faixa não tem letra embutida nem arquivo .lrc correspondente."
 }

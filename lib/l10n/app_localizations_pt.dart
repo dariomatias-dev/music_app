@@ -195,6 +195,13 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get cancelLabel => 'Cancel';
+
+  @override
+  String get lyricsEmptyTitle => 'No lyrics found';
+
+  @override
+  String get lyricsEmptyMessage =>
+      'This track has no embedded lyrics or matching .lrc file.';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -388,4 +395,11 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get cancelLabel => 'Cancelar';
+
+  @override
+  String get lyricsEmptyTitle => 'Nenhuma letra encontrada';
+
+  @override
+  String get lyricsEmptyMessage =>
+      'Esta faixa não tem letra embutida nem arquivo .lrc correspondente.';
 }

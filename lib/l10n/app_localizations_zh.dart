@@ -188,4 +188,10 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get cancelLabel => '取消';
+
+  @override
+  String get lyricsEmptyTitle => '未找到歌词';
+
+  @override
+  String get lyricsEmptyMessage => '这首曲目没有内嵌歌词，也没有匹配的 .lrc 文件。';
 }

@@ -59,5 +59,7 @@
   "clearQueueConfirmTitle": "¿Vaciar la cola?",
   "clearQueueConfirmMessage": "Esto elimina todas las pistas de la cola y detiene la reproducción.",
   "clearQueueConfirmAction": "Vaciar",
-  "cancelLabel": "Cancelar"
+  "cancelLabel": "Cancelar",
+  "lyricsEmptyTitle": "No se encontró letra",
+  "lyricsEmptyMessage": "Esta pista no tiene letra incrustada ni un archivo .lrc correspondiente."
 }

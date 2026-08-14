@@ -462,6 +462,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Cancel'**
   String get cancelLabel;
+
+  /// No description provided for @lyricsEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No lyrics found'**
+  String get lyricsEmptyTitle;
+
+  /// No description provided for @lyricsEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This track has no embedded lyrics or matching .lrc file.'**
+  String get lyricsEmptyMessage;
 }
 
 class _AppLocalizationsDelegate

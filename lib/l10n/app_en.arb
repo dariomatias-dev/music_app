@@ -59,5 +59,7 @@
   "clearQueueConfirmTitle": "Clear queue?",
   "clearQueueConfirmMessage": "This removes every track from the queue and stops playback.",
   "clearQueueConfirmAction": "Clear",
-  "cancelLabel": "Cancel"
+  "cancelLabel": "Cancel",
+  "lyricsEmptyTitle": "No lyrics found",
+  "lyricsEmptyMessage": "This track has no embedded lyrics or matching .lrc file."
 }

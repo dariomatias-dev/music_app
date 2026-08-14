@@ -195,4 +195,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cancelLabel => 'Cancel';
+
+  @override
+  String get lyricsEmptyTitle => 'No lyrics found';
+
+  @override
+  String get lyricsEmptyMessage =>
+      'This track has no embedded lyrics or matching .lrc file.';
 }

@@ -196,4 +196,11 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get cancelLabel => 'Cancelar';
+
+  @override
+  String get lyricsEmptyTitle => 'No se encontró letra';
+
+  @override
+  String get lyricsEmptyMessage =>
+      'Esta pista no tiene letra incrustada ni un archivo .lrc correspondiente.';
 }
