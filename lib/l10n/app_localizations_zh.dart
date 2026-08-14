@@ -161,4 +161,31 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get nowPlayingSemanticLabel => '正在播放';
+
+  @override
+  String get queueEditLabel => '编辑';
+
+  @override
+  String get queueDoneLabel => '完成';
+
+  @override
+  String get removeFromQueueSemanticLabel => '从队列中移除';
+
+  @override
+  String get dragToReorderSemanticLabel => '拖动以重新排序';
+
+  @override
+  String get clearQueueLabel => '清空队列';
+
+  @override
+  String get clearQueueConfirmTitle => '清空队列？';
+
+  @override
+  String get clearQueueConfirmMessage => '这将从队列中移除所有曲目并停止播放。';
+
+  @override
+  String get clearQueueConfirmAction => '清空';
+
+  @override
+  String get cancelLabel => '取消';
 }

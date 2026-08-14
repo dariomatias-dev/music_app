@@ -50,5 +50,14 @@
   "sleepTimerOffMessage": "定时器已关闭",
   "queueEmptyTitle": "队列为空",
   "queueEmptyMessage": "播放音乐库中的一首曲目即可填充队列。",
-  "nowPlayingSemanticLabel": "正在播放"
+  "nowPlayingSemanticLabel": "正在播放",
+  "queueEditLabel": "编辑",
+  "queueDoneLabel": "完成",
+  "removeFromQueueSemanticLabel": "从队列中移除",
+  "dragToReorderSemanticLabel": "拖动以重新排序",
+  "clearQueueLabel": "清空队列",
+  "clearQueueConfirmTitle": "清空队列？",
+  "clearQueueConfirmMessage": "这将从队列中移除所有曲目并停止播放。",
+  "clearQueueConfirmAction": "清空",
+  "cancelLabel": "取消"
 }

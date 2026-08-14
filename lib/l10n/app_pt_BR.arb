@@ -50,5 +50,14 @@
   "sleepTimerOffMessage": "Temporizador desligado",
   "queueEmptyTitle": "Fila vazia",
   "queueEmptyMessage": "Toque uma faixa da sua biblioteca para preencher a fila.",
-  "nowPlayingSemanticLabel": "Tocando agora"
+  "nowPlayingSemanticLabel": "Tocando agora",
+  "queueEditLabel": "Editar",
+  "queueDoneLabel": "Concluir",
+  "removeFromQueueSemanticLabel": "Remover da fila",
+  "dragToReorderSemanticLabel": "Arraste para reordenar",
+  "clearQueueLabel": "Limpar fila",
+  "clearQueueConfirmTitle": "Limpar fila?",
+  "clearQueueConfirmMessage": "Isso remove todas as faixas da fila e interrompe a reprodução.",
+  "clearQueueConfirmAction": "Limpar",
+  "cancelLabel": "Cancelar"
 }

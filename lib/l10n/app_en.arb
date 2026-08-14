@@ -50,5 +50,14 @@
   "sleepTimerOffMessage": "Sleep timer turned off",
   "queueEmptyTitle": "Queue is empty",
   "queueEmptyMessage": "Play a track from your library to fill the queue.",
-  "nowPlayingSemanticLabel": "Now playing"
+  "nowPlayingSemanticLabel": "Now playing",
+  "queueEditLabel": "Edit",
+  "queueDoneLabel": "Done",
+  "removeFromQueueSemanticLabel": "Remove from queue",
+  "dragToReorderSemanticLabel": "Drag to reorder",
+  "clearQueueLabel": "Clear queue",
+  "clearQueueConfirmTitle": "Clear queue?",
+  "clearQueueConfirmMessage": "This removes every track from the queue and stops playback.",
+  "clearQueueConfirmAction": "Clear",
+  "cancelLabel": "Cancel"
 }

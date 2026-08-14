@@ -160,6 +160,49 @@ void main() {
     );
   });
 
+  test('reorder moves the item in state and the engine queue', () async {
+    await container.read(queueViewModelProvider.notifier).playFromSource([
+      _track('a'),
+      _track('b'),
+      _track('c'),
+    ], startIndex: 0);
+
+    await container.read(queueViewModelProvider.notifier).reorder(0, 2);
+
+    expect(
+      container.read(queueViewModelProvider).map((t) => t.id),
+      ['b', 'c', 'a'],
+    );
+  });
+
+  test('removeAt drops the item from state and the engine queue', () async {
+    await container.read(queueViewModelProvider.notifier).playFromSource([
+      _track('a'),
+      _track('b'),
+    ], startIndex: 0);
+
+    await container.read(queueViewModelProvider.notifier).removeAt(0);
+
+    expect(
+      container.read(queueViewModelProvider).map((t) => t.id),
+      ['b'],
+    );
+    expect(playerService.snapshot.queueLength, 1);
+  });
+
+  test('clear empties state and the engine queue', () async {
+    await container.read(queueViewModelProvider.notifier).playFromSource([
+      _track('a'),
+      _track('b'),
+    ], startIndex: 0);
+
+    await container.read(queueViewModelProvider.notifier).clear();
+
+    expect(container.read(queueViewModelProvider), isEmpty);
+    expect(playerService.snapshot.queueLength, 0);
+    expect(playerService.snapshot.currentIndex, isNull);
+  });
+
   test('setShuffleModeEnabled and setLoopMode reach the player', () async {
     await container
         .read(queueViewModelProvider.notifier)

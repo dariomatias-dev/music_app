@@ -408,6 +408,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Now playing'**
   String get nowPlayingSemanticLabel;
+
+  /// No description provided for @queueEditLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get queueEditLabel;
+
+  /// No description provided for @queueDoneLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get queueDoneLabel;
+
+  /// No description provided for @removeFromQueueSemanticLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from queue'**
+  String get removeFromQueueSemanticLabel;
+
+  /// No description provided for @dragToReorderSemanticLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Drag to reorder'**
+  String get dragToReorderSemanticLabel;
+
+  /// No description provided for @clearQueueLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear queue'**
+  String get clearQueueLabel;
+
+  /// No description provided for @clearQueueConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear queue?'**
+  String get clearQueueConfirmTitle;
+
+  /// No description provided for @clearQueueConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This removes every track from the queue and stops playback.'**
+  String get clearQueueConfirmMessage;
+
+  /// No description provided for @clearQueueConfirmAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get clearQueueConfirmAction;
+
+  /// No description provided for @cancelLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancelLabel;
 }
 
 class _AppLocalizationsDelegate

@@ -66,6 +66,28 @@ class QueueViewModel extends _$QueueViewModel {
     await ref.read(audioHandlerProvider).insertNext(item);
   }
 
+  /// Moves the item at [oldIndex] to [newIndex] (already the final
+  /// position, as reported by `ReorderableListView.onReorderItem`).
+  Future<void> reorder(int oldIndex, int newIndex) async {
+    final updated = [...state];
+    final item = updated.removeAt(oldIndex);
+    updated.insert(newIndex, item);
+    state = updated;
+    await ref.read(audioHandlerProvider).moveInQueue(oldIndex, newIndex);
+  }
+
+  /// Removes the item at [index] from the queue.
+  Future<void> removeAt(int index) async {
+    state = [...state]..removeAt(index);
+    await ref.read(audioHandlerProvider).removeFromQueue(index);
+  }
+
+  /// Removes every item from the queue and stops playback.
+  Future<void> clear() async {
+    state = const [];
+    await ref.read(audioHandlerProvider).setQueue(const []);
+  }
+
   /// Enables or disables shuffle order.
   Future<void> setShuffleModeEnabled({required bool enabled}) {
     return ref

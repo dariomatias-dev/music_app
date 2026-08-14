@@ -50,5 +50,14 @@
   "sleepTimerOffMessage": "Temporizador apagado",
   "queueEmptyTitle": "La cola está vacía",
   "queueEmptyMessage": "Reproduce una pista de tu biblioteca para llenar la cola.",
-  "nowPlayingSemanticLabel": "Sonando ahora"
+  "nowPlayingSemanticLabel": "Sonando ahora",
+  "queueEditLabel": "Editar",
+  "queueDoneLabel": "Listo",
+  "removeFromQueueSemanticLabel": "Quitar de la cola",
+  "dragToReorderSemanticLabel": "Arrastra para reordenar",
+  "clearQueueLabel": "Vaciar cola",
+  "clearQueueConfirmTitle": "¿Vaciar la cola?",
+  "clearQueueConfirmMessage": "Esto elimina todas las pistas de la cola y detiene la reproducción.",
+  "clearQueueConfirmAction": "Vaciar",
+  "cancelLabel": "Cancelar"
 }

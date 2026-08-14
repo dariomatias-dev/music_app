@@ -167,6 +167,34 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get nowPlayingSemanticLabel => 'Now playing';
+
+  @override
+  String get queueEditLabel => 'Edit';
+
+  @override
+  String get queueDoneLabel => 'Done';
+
+  @override
+  String get removeFromQueueSemanticLabel => 'Remove from queue';
+
+  @override
+  String get dragToReorderSemanticLabel => 'Drag to reorder';
+
+  @override
+  String get clearQueueLabel => 'Clear queue';
+
+  @override
+  String get clearQueueConfirmTitle => 'Clear queue?';
+
+  @override
+  String get clearQueueConfirmMessage =>
+      'This removes every track from the queue and stops playback.';
+
+  @override
+  String get clearQueueConfirmAction => 'Clear';
+
+  @override
+  String get cancelLabel => 'Cancel';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -332,4 +360,32 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get nowPlayingSemanticLabel => 'Tocando agora';
+
+  @override
+  String get queueEditLabel => 'Editar';
+
+  @override
+  String get queueDoneLabel => 'Concluir';
+
+  @override
+  String get removeFromQueueSemanticLabel => 'Remover da fila';
+
+  @override
+  String get dragToReorderSemanticLabel => 'Arraste para reordenar';
+
+  @override
+  String get clearQueueLabel => 'Limpar fila';
+
+  @override
+  String get clearQueueConfirmTitle => 'Limpar fila?';
+
+  @override
+  String get clearQueueConfirmMessage =>
+      'Isso remove todas as faixas da fila e interrompe a reprodução.';
+
+  @override
+  String get clearQueueConfirmAction => 'Limpar';
+
+  @override
+  String get cancelLabel => 'Cancelar';
 }

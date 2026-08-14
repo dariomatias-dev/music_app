@@ -168,4 +168,32 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get nowPlayingSemanticLabel => 'Sonando ahora';
+
+  @override
+  String get queueEditLabel => 'Editar';
+
+  @override
+  String get queueDoneLabel => 'Listo';
+
+  @override
+  String get removeFromQueueSemanticLabel => 'Quitar de la cola';
+
+  @override
+  String get dragToReorderSemanticLabel => 'Arrastra para reordenar';
+
+  @override
+  String get clearQueueLabel => 'Vaciar cola';
+
+  @override
+  String get clearQueueConfirmTitle => '¿Vaciar la cola?';
+
+  @override
+  String get clearQueueConfirmMessage =>
+      'Esto elimina todas las pistas de la cola y detiene la reproducción.';
+
+  @override
+  String get clearQueueConfirmAction => 'Vaciar';
+
+  @override
+  String get cancelLabel => 'Cancelar';
 }

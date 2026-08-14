@@ -158,4 +158,85 @@ void main() {
 
     expect(service.snapshot.currentIndex, 1);
   });
+
+  testWidgets('editing lets a track be removed from the queue', (
+    tester,
+  ) async {
+    final service = FakeAudioPlayerService();
+    final handler = MusicAudioHandler(service);
+    addTearDown(handler.dispose);
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          audioPlayerServiceProvider.overrideWithValue(service),
+          audioHandlerProvider.overrideWithValue(handler),
+          libraryRepositoryProvider.overrideWithValue(
+            const _FakeLibraryRepository(),
+          ),
+        ],
+        child: _app(const QueueScreen()),
+      ),
+    );
+
+    final element = tester.element(find.byType(QueueScreen));
+    final container = ProviderScope.containerOf(element);
+    await container.read(queueViewModelProvider.notifier).playFromSource([
+      _track(id: 'track-1', title: 'Night Drive'),
+      _track(id: 'track-2', title: 'Sunset'),
+    ], startIndex: 0);
+    await tester.pump();
+
+    await tester.tap(find.text('Edit'));
+    await tester.pump();
+
+    expect(find.byIcon(Icons.remove_circle_outline), findsNWidgets(2));
+
+    await tester.tap(find.byIcon(Icons.remove_circle_outline).first);
+    await tester.pump();
+
+    expect(find.text('Night Drive'), findsNothing);
+    expect(find.text('Sunset'), findsOneWidget);
+    expect(container.read(queueViewModelProvider).map((t) => t.id), [
+      'track-2',
+    ]);
+  });
+
+  testWidgets('clearing the queue empties it after confirmation', (
+    tester,
+  ) async {
+    final service = FakeAudioPlayerService();
+    final handler = MusicAudioHandler(service);
+    addTearDown(handler.dispose);
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          audioPlayerServiceProvider.overrideWithValue(service),
+          audioHandlerProvider.overrideWithValue(handler),
+          libraryRepositoryProvider.overrideWithValue(
+            const _FakeLibraryRepository(),
+          ),
+        ],
+        child: _app(const QueueScreen()),
+      ),
+    );
+
+    final element = tester.element(find.byType(QueueScreen));
+    final container = ProviderScope.containerOf(element);
+    await container.read(queueViewModelProvider.notifier).playFromSource([
+      _track(id: 'track-1', title: 'Night Drive'),
+    ], startIndex: 0);
+    await tester.pump();
+
+    await tester.tap(find.text('Edit'));
+    await tester.pump();
+    await tester.tap(find.text('Clear queue'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Clear'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Queue is empty'), findsOneWidget);
+    expect(container.read(queueViewModelProvider), isEmpty);
+  });
 }
