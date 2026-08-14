@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:music_app/l10n/app_localizations.dart';
 import 'package:music_app/src/features/player/presentation/view_models/playback_screen_view_model.dart';
+import 'package:music_app/src/features/player/presentation/view_models/playback_view_model.dart';
+import 'package:music_app/src/features/player/presentation/widgets/playback_cover.dart';
 
 /// The playback ("Now Playing") screen.
 ///
-/// Fully built across later stages: cover, track info, progress bar,
-/// controls and contextual actions.
+/// Fully built across later stages: track info, progress bar, controls and
+/// contextual actions.
 class PlaybackScreen extends ConsumerWidget {
   /// Creates a [PlaybackScreen].
   const PlaybackScreen({super.key});
@@ -16,6 +18,9 @@ class PlaybackScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final currentItem = ref.watch(playbackScreenViewModelProvider);
+    final playing = ref.watch(
+      playbackViewModelProvider.select((state) => state.value?.playing),
+    );
 
     return AppScaffold(
       topBar: AppTopBar(
@@ -27,7 +32,12 @@ class PlaybackScreen extends ConsumerWidget {
               title: l10n.playbackEmptyTitle,
               message: l10n.playbackEmptyMessage,
             )
-          : const SizedBox.shrink(),
+          : Center(
+              child: PlaybackCover(
+                item: currentItem,
+                playing: playing ?? false,
+              ),
+            ),
     );
   }
 }

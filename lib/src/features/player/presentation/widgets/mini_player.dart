@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +9,7 @@ import 'package:music_app/src/core/audio/audio_providers.dart';
 import 'package:music_app/src/core/audio/queue_media_item.dart';
 import 'package:music_app/src/core/navigation/route_paths.dart';
 import 'package:music_app/src/features/player/presentation/view_models/playback_view_model.dart';
+import 'package:music_app/src/features/player/presentation/widgets/track_artwork.dart';
 import 'package:music_app/src/features/queue/presentation/view_models/queue_view_model.dart';
 
 /// Skip to the next/previous track when a horizontal drag ends faster than
@@ -129,7 +129,7 @@ class _MiniPlayerCard extends ConsumerWidget {
             child: Row(
               children: [
                 const SizedBox(width: 10),
-                _MiniPlayerArtwork(item: item),
+                TrackArtwork(item: item, size: 52, radius: AppRadius.small),
                 const SizedBox(width: 12),
                 Expanded(child: _MiniPlayerLabel(item: item)),
                 const SizedBox(width: 10),
@@ -153,30 +153,6 @@ class _MiniPlayerCard extends ConsumerWidget {
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _MiniPlayerArtwork extends StatelessWidget {
-  const _MiniPlayerArtwork({required this.item});
-
-  final QueueMediaItem item;
-
-  @override
-  Widget build(BuildContext context) {
-    final artworkPath = item.artworkPath;
-    if (artworkPath == null) {
-      return AppArtwork(seed: item.id, size: 52, radius: AppRadius.small);
-    }
-
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(AppRadius.small),
-      child: Image.file(
-        File(artworkPath),
-        width: 52,
-        height: 52,
-        fit: BoxFit.cover,
       ),
     );
   }
