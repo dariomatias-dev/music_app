@@ -8,30 +8,33 @@ part of 'queue_view_model.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-/// The ordered list of tracks currently loaded into the playback queue.
+/// The ordered list of items currently loaded into the playback queue,
+/// resolved with display metadata (title, artist, artwork).
 ///
 /// Playback state itself (position, playing, current index, shuffle, loop
-/// mode) lives in `PlaybackViewModel`; this only tracks which [Track]s are
-/// in the queue, so the UI can show track details for the queue and for the
-/// currently playing item.
+/// mode) lives in `PlaybackViewModel`; this only tracks what's in the
+/// queue, so the UI can show track details for the mini player, the queue
+/// screen and the currently playing item.
 
 @ProviderFor(QueueViewModel)
 const queueViewModelProvider = QueueViewModelProvider._();
 
-/// The ordered list of tracks currently loaded into the playback queue.
+/// The ordered list of items currently loaded into the playback queue,
+/// resolved with display metadata (title, artist, artwork).
 ///
 /// Playback state itself (position, playing, current index, shuffle, loop
-/// mode) lives in `PlaybackViewModel`; this only tracks which [Track]s are
-/// in the queue, so the UI can show track details for the queue and for the
-/// currently playing item.
+/// mode) lives in `PlaybackViewModel`; this only tracks what's in the
+/// queue, so the UI can show track details for the mini player, the queue
+/// screen and the currently playing item.
 final class QueueViewModelProvider
-    extends $NotifierProvider<QueueViewModel, List<Track>> {
-  /// The ordered list of tracks currently loaded into the playback queue.
+    extends $NotifierProvider<QueueViewModel, List<QueueMediaItem>> {
+  /// The ordered list of items currently loaded into the playback queue,
+  /// resolved with display metadata (title, artist, artwork).
   ///
   /// Playback state itself (position, playing, current index, shuffle, loop
-  /// mode) lives in `PlaybackViewModel`; this only tracks which [Track]s are
-  /// in the queue, so the UI can show track details for the queue and for the
-  /// currently playing item.
+  /// mode) lives in `PlaybackViewModel`; this only tracks what's in the
+  /// queue, so the UI can show track details for the mini player, the queue
+  /// screen and the currently playing item.
   const QueueViewModelProvider._()
     : super(
         from: null,
@@ -51,35 +54,36 @@ final class QueueViewModelProvider
   QueueViewModel create() => QueueViewModel();
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(List<Track> value) {
+  Override overrideWithValue(List<QueueMediaItem> value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<List<Track>>(value),
+      providerOverride: $SyncValueProvider<List<QueueMediaItem>>(value),
     );
   }
 }
 
-String _$queueViewModelHash() => r'ff7a48477f3b806fe0efd1279d813a24256c64f3';
+String _$queueViewModelHash() => r'7e9a5aa7b9914ab4a7357684d1cafa00acff32b3';
 
-/// The ordered list of tracks currently loaded into the playback queue.
+/// The ordered list of items currently loaded into the playback queue,
+/// resolved with display metadata (title, artist, artwork).
 ///
 /// Playback state itself (position, playing, current index, shuffle, loop
-/// mode) lives in `PlaybackViewModel`; this only tracks which [Track]s are
-/// in the queue, so the UI can show track details for the queue and for the
-/// currently playing item.
+/// mode) lives in `PlaybackViewModel`; this only tracks what's in the
+/// queue, so the UI can show track details for the mini player, the queue
+/// screen and the currently playing item.
 
-abstract class _$QueueViewModel extends $Notifier<List<Track>> {
-  List<Track> build();
+abstract class _$QueueViewModel extends $Notifier<List<QueueMediaItem>> {
+  List<QueueMediaItem> build();
   @$mustCallSuper
   @override
   void runBuild() {
     final created = build();
-    final ref = this.ref as $Ref<List<Track>, List<Track>>;
+    final ref = this.ref as $Ref<List<QueueMediaItem>, List<QueueMediaItem>>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<List<Track>, List<Track>>,
-              List<Track>,
+              AnyNotifier<List<QueueMediaItem>, List<QueueMediaItem>>,
+              List<QueueMediaItem>,
               Object?,
               Object?
             >;

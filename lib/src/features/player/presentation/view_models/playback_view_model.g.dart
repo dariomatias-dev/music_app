@@ -48,7 +48,7 @@ final class PlaybackViewModelProvider
   PlaybackViewModel create() => PlaybackViewModel();
 }
 
-String _$playbackViewModelHash() => r'0e15ad40ca84f358df12acabb430a68edf042925';
+String _$playbackViewModelHash() => r'1d902f8b0b6d416e5258f1bdfd10b2c6d902fec6';
 
 /// The single source of truth for playback state across the app.
 ///

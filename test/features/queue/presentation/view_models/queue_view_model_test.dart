@@ -118,7 +118,10 @@ void main() {
         .read(queueViewModelProvider.notifier)
         .playFromSource(tracks, startIndex: 1);
 
-    expect(container.read(queueViewModelProvider), tracks);
+    expect(
+      container.read(queueViewModelProvider).map((item) => item.id),
+      tracks.map((track) => track.id),
+    );
     expect(playerService.snapshot.queueLength, 2);
     expect(playerService.snapshot.currentIndex, 1);
     expect(playerService.snapshot.playing, isTrue);

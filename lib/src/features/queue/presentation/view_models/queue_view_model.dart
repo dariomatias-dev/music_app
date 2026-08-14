@@ -14,16 +14,17 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'queue_view_model.g.dart';
 
-/// The ordered list of tracks currently loaded into the playback queue.
+/// The ordered list of items currently loaded into the playback queue,
+/// resolved with display metadata (title, artist, artwork).
 ///
 /// Playback state itself (position, playing, current index, shuffle, loop
-/// mode) lives in `PlaybackViewModel`; this only tracks which [Track]s are
-/// in the queue, so the UI can show track details for the queue and for the
-/// currently playing item.
+/// mode) lives in `PlaybackViewModel`; this only tracks what's in the
+/// queue, so the UI can show track details for the mini player, the queue
+/// screen and the currently playing item.
 @Riverpod(keepAlive: true)
 class QueueViewModel extends _$QueueViewModel {
   @override
-  List<Track> build() {
+  List<QueueMediaItem> build() {
     ref.listen(playbackViewModelProvider, (previous, next) {
       final current = next.value;
       if (current == null) return;
@@ -40,7 +41,7 @@ class QueueViewModel extends _$QueueViewModel {
     required int startIndex,
   }) async {
     final items = await _resolveQueueMediaItems(tracks);
-    state = tracks;
+    state = items;
     final handler = ref.read(audioHandlerProvider);
     await handler.setQueue(items, initialIndex: startIndex);
     await handler.play();
@@ -49,7 +50,7 @@ class QueueViewModel extends _$QueueViewModel {
   /// Appends [track] to the end of the queue.
   Future<void> addToEnd(Track track) async {
     final item = (await _resolveQueueMediaItems([track])).single;
-    state = [...state, track];
+    state = [...state, item];
     await ref.read(audioHandlerProvider).addToQueue(item);
   }
 
@@ -61,7 +62,7 @@ class QueueViewModel extends _$QueueViewModel {
         .snapshot
         .currentIndex;
     final insertAt = (currentIndex ?? -1) + 1;
-    state = [...state]..insert(insertAt, track);
+    state = [...state]..insert(insertAt, item);
     await ref.read(audioHandlerProvider).insertNext(item);
   }
 
@@ -87,7 +88,7 @@ class QueueViewModel extends _$QueueViewModel {
         .read(playbackSessionStorageProvider)
         .save(
           PlaybackSession(
-            trackIds: state.map((track) => track.id).toList(),
+            trackIds: state.map((item) => item.id).toList(),
             currentIndex: snapshot.currentIndex ?? 0,
             position: snapshot.position,
           ),
@@ -128,7 +129,7 @@ class QueueViewModel extends _$QueueViewModel {
     final startIndex = restoredIndex >= 0 ? restoredIndex : 0;
 
     final items = await _resolveQueueMediaItems(restoredTracks);
-    state = restoredTracks;
+    state = items;
     await ref
         .read(audioHandlerProvider)
         .setQueue(
