@@ -9,7 +9,9 @@ class QueueMediaItem {
     required this.filePath,
     required this.title,
     this.artist,
+    this.artistId,
     this.album,
+    this.albumId,
     this.duration,
     this.artworkPath,
   });
@@ -26,8 +28,14 @@ class QueueMediaItem {
   /// Artist name.
   final String? artist;
 
+  /// Id of the artist, for navigating to their detail screen.
+  final String? artistId;
+
   /// Album title.
   final String? album;
+
+  /// Id of the album, for navigating to its detail screen.
+  final String? albumId;
 
   /// Track duration, when known ahead of loading.
   final Duration? duration;

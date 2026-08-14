@@ -21,5 +21,6 @@
   "permissionScanning": "Escaneando tu biblioteca…",
   "backButtonSemanticLabel": "Atrás",
   "playbackEmptyTitle": "Nada sonando",
-  "playbackEmptyMessage": "Reproduce una pista de tu biblioteca para verla aquí."
+  "playbackEmptyMessage": "Reproduce una pista de tu biblioteca para verla aquí.",
+  "favoriteButtonSemanticLabel": "Añadir a favoritos"
 }

@@ -21,5 +21,6 @@
   "permissionScanning": "Scanning your library…",
   "backButtonSemanticLabel": "Back",
   "playbackEmptyTitle": "Nothing playing",
-  "playbackEmptyMessage": "Play a track from your library to see it here."
+  "playbackEmptyMessage": "Play a track from your library to see it here.",
+  "favoriteButtonSemanticLabel": "Add to favorites"
 }

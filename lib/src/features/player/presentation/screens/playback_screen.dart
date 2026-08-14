@@ -5,6 +5,7 @@ import 'package:music_app/l10n/app_localizations.dart';
 import 'package:music_app/src/features/player/presentation/view_models/playback_screen_view_model.dart';
 import 'package:music_app/src/features/player/presentation/view_models/playback_view_model.dart';
 import 'package:music_app/src/features/player/presentation/widgets/playback_cover.dart';
+import 'package:music_app/src/features/player/presentation/widgets/playback_track_info.dart';
 
 /// The playback ("Now Playing") screen.
 ///
@@ -32,11 +33,24 @@ class PlaybackScreen extends ConsumerWidget {
               title: l10n.playbackEmptyTitle,
               message: l10n.playbackEmptyMessage,
             )
-          : Center(
-              child: PlaybackCover(
-                item: currentItem,
-                playing: playing ?? false,
-              ),
+          : Column(
+              children: [
+                const Spacer(flex: 2),
+                Center(
+                  child: PlaybackCover(
+                    item: currentItem,
+                    playing: playing ?? false,
+                  ),
+                ),
+                const Spacer(flex: 2),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.xl,
+                  ),
+                  child: PlaybackTrackInfo(item: currentItem),
+                ),
+                const Spacer(flex: 3),
+              ],
             ),
     );
   }

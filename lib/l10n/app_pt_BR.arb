@@ -21,5 +21,6 @@
   "permissionScanning": "Escaneando sua biblioteca…",
   "backButtonSemanticLabel": "Voltar",
   "playbackEmptyTitle": "Nada tocando",
-  "playbackEmptyMessage": "Toque uma faixa da sua biblioteca para vê-la aqui."
+  "playbackEmptyMessage": "Toque uma faixa da sua biblioteca para vê-la aqui.",
+  "favoriteButtonSemanticLabel": "Adicionar aos favoritos"
 }

@@ -159,7 +159,9 @@ class QueueViewModel extends _$QueueViewModel {
         filePath: track.filePath,
         title: track.title,
         artist: artist?.name,
+        artistId: track.artistId,
         album: album?.title,
+        albumId: track.albumId,
         duration: track.duration,
         artworkPath: album?.artworkPath,
       );

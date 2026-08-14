@@ -21,5 +21,6 @@
   "permissionScanning": "正在扫描你的音乐库…",
   "backButtonSemanticLabel": "返回",
   "playbackEmptyTitle": "当前没有播放",
-  "playbackEmptyMessage": "播放音乐库中的一首曲目即可在此查看。"
+  "playbackEmptyMessage": "播放音乐库中的一首曲目即可在此查看。",
+  "favoriteButtonSemanticLabel": "添加到收藏"
 }

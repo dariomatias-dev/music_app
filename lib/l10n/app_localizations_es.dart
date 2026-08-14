@@ -78,4 +78,7 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get playbackEmptyMessage =>
       'Reproduce una pista de tu biblioteca para verla aquí.';
+
+  @override
+  String get favoriteButtonSemanticLabel => 'Añadir a favoritos';
 }

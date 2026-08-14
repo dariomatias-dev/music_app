@@ -234,6 +234,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Play a track from your library to see it here.'**
   String get playbackEmptyMessage;
+
+  /// No description provided for @favoriteButtonSemanticLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to favorites'**
+  String get favoriteButtonSemanticLabel;
 }
 
 class _AppLocalizationsDelegate

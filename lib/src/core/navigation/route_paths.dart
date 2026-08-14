@@ -23,4 +23,16 @@ abstract final class RoutePaths {
 
   /// The playback screen.
   static const player = '/player';
+
+  /// The album detail screen for [albumId].
+  ///
+  /// Not registered yet (built in Fase 14); navigating here shows the
+  /// not-found screen until then.
+  static String album(String albumId) => '/albums/$albumId';
+
+  /// The artist detail screen for [artistId].
+  ///
+  /// Not registered yet (built in Fase 14); navigating here shows the
+  /// not-found screen until then.
+  static String artist(String artistId) => '/artists/$artistId';
 }

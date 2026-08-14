@@ -74,4 +74,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get playbackEmptyMessage => '播放音乐库中的一首曲目即可在此查看。';
+
+  @override
+  String get favoriteButtonSemanticLabel => '添加到收藏';
 }

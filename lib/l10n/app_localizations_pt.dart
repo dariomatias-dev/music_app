@@ -78,6 +78,9 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get playbackEmptyMessage =>
       'Play a track from your library to see it here.';
+
+  @override
+  String get favoriteButtonSemanticLabel => 'Add to favorites';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -154,4 +157,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   @override
   String get playbackEmptyMessage =>
       'Toque uma faixa da sua biblioteca para vê-la aqui.';
+
+  @override
+  String get favoriteButtonSemanticLabel => 'Adicionar aos favoritos';
 }
