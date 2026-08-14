@@ -160,11 +160,18 @@ class FakeAudioPlayerService implements AudioPlayerService {
     await _errorController.close();
   }
 
+  /// Sets the current item's duration, for tests that exercise seeking or
+  /// progress. Production implementations only learn this from the engine.
+  void setDurationForTesting(Duration duration) {
+    _emit((s) => _copyWith(s, duration: duration));
+  }
+
   AudioPlaybackSnapshot _copyWith(
     AudioPlaybackSnapshot snapshot, {
     AudioProcessingState? processingState,
     bool? playing,
     Duration? position,
+    Duration? duration,
     Duration? bufferedPosition,
     double? speed,
     int? currentIndex,
@@ -177,7 +184,7 @@ class FakeAudioPlayerService implements AudioPlayerService {
       processingState: processingState ?? snapshot.processingState,
       playing: playing ?? snapshot.playing,
       position: position ?? snapshot.position,
-      duration: snapshot.duration,
+      duration: duration ?? snapshot.duration,
       bufferedPosition: bufferedPosition ?? snapshot.bufferedPosition,
       speed: speed ?? snapshot.speed,
       currentIndex: clearCurrentIndex
