@@ -792,6 +792,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Recently played'**
   String get recentlyPlayedLabel;
+
+  /// No description provided for @libraryTotalDurationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Total time'**
+  String get libraryTotalDurationLabel;
+
+  /// No description provided for @storageLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Storage'**
+  String get storageLabel;
 }
 
 class _AppLocalizationsDelegate

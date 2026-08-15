@@ -129,5 +129,7 @@
   "goodEveningLabel": "Buenas noches",
   "homeWelcomeLabel": "Hola de nuevo",
   "searchTriggerHintLabel": "Buscar en tu biblioteca",
-  "recentlyPlayedLabel": "Reproducidas recientemente"
+  "recentlyPlayedLabel": "Reproducidas recientemente",
+  "libraryTotalDurationLabel": "Tiempo total",
+  "storageLabel": "Almacenamiento"
 }

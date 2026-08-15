@@ -388,6 +388,12 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get recentlyPlayedLabel => 'Recently played';
+
+  @override
+  String get libraryTotalDurationLabel => 'Total time';
+
+  @override
+  String get storageLabel => 'Storage';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -776,4 +782,10 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get recentlyPlayedLabel => 'Tocadas recentemente';
+
+  @override
+  String get libraryTotalDurationLabel => 'Tempo total';
+
+  @override
+  String get storageLabel => 'Armazenamento';
 }

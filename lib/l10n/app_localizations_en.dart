@@ -388,4 +388,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get recentlyPlayedLabel => 'Recently played';
+
+  @override
+  String get libraryTotalDurationLabel => 'Total time';
+
+  @override
+  String get storageLabel => 'Storage';
 }

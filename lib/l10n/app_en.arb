@@ -129,5 +129,7 @@
   "goodEveningLabel": "Good evening",
   "homeWelcomeLabel": "Welcome back",
   "searchTriggerHintLabel": "Search your library",
-  "recentlyPlayedLabel": "Recently played"
+  "recentlyPlayedLabel": "Recently played",
+  "libraryTotalDurationLabel": "Total time",
+  "storageLabel": "Storage"
 }

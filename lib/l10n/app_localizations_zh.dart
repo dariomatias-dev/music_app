@@ -369,4 +369,10 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get recentlyPlayedLabel => '最近播放';
+
+  @override
+  String get libraryTotalDurationLabel => '总时长';
+
+  @override
+  String get storageLabel => '存储空间';
 }

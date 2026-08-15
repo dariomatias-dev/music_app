@@ -4,13 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:music_app/l10n/app_localizations.dart';
 import 'package:music_app/src/features/home/presentation/view_models/home_view_model.dart';
 import 'package:music_app/src/features/home/presentation/widgets/home_header.dart';
+import 'package:music_app/src/features/home/presentation/widgets/home_library_summary.dart';
 import 'package:music_app/src/features/home/presentation/widgets/home_playlists_and_albums.dart';
 import 'package:music_app/src/features/home/presentation/widgets/home_recently_played.dart';
 
 /// The Home tab.
-///
-/// Its remaining section (library summary) is built in Etapa 80; this
-/// wires up the screen's states.
 class HomeScreen extends ConsumerWidget {
   /// Creates a [HomeScreen].
   const HomeScreen({super.key});
@@ -33,7 +31,11 @@ class HomeScreen extends ConsumerWidget {
               message: l10n.homeEmptyMessage,
             ),
             HomeState.ready => const Column(
-              children: [HomeRecentlyPlayed(), HomePlaylistsAndAlbums()],
+              children: [
+                HomeRecentlyPlayed(),
+                HomePlaylistsAndAlbums(),
+                HomeLibrarySummary(),
+              ],
             ),
           },
         ],

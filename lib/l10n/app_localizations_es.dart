@@ -389,4 +389,10 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get recentlyPlayedLabel => 'Reproducidas recientemente';
+
+  @override
+  String get libraryTotalDurationLabel => 'Tiempo total';
+
+  @override
+  String get storageLabel => 'Almacenamiento';
 }

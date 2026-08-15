@@ -7,4 +7,17 @@ void main() {
     expect(formatDuration(const Duration(minutes: 12, seconds: 30)), '12:30');
     expect(formatDuration(Duration.zero), '0:00');
   });
+
+  test('formatLongDuration omits hours under an hour', () {
+    expect(formatLongDuration(const Duration(minutes: 45)), '45m');
+    expect(formatLongDuration(Duration.zero), '0m');
+  });
+
+  test('formatLongDuration includes hours and minutes above an hour', () {
+    expect(
+      formatLongDuration(const Duration(hours: 4, minutes: 12)),
+      '4h 12m',
+    );
+    expect(formatLongDuration(const Duration(hours: 2)), '2h 0m');
+  });
 }

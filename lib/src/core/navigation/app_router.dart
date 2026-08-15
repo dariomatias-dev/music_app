@@ -19,6 +19,7 @@ import 'package:music_app/src/features/queue/presentation/screens/queue_screen.d
 import 'package:music_app/src/features/search/presentation/screens/search_screen.dart';
 import 'package:music_app/src/features/settings/presentation/screens/settings_screen.dart';
 import 'package:music_app/src/features/splash/presentation/screens/splash_screen.dart';
+import 'package:music_app/src/features/storage/presentation/screens/storage_screen.dart';
 
 /// Provides the app's [GoRouter].
 final appRouterProvider = Provider<GoRouter>((ref) {
@@ -61,6 +62,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => PlaylistScreen(
           playlistId: state.pathParameters['playlistId']!,
         ),
+      ),
+      GoRoute(
+        name: RouteNames.storage,
+        path: RoutePaths.storage,
+        builder: (context, state) => const StorageScreen(),
       ),
       GoRoute(
         name: RouteNames.player,

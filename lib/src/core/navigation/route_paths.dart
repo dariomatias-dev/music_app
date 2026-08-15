@@ -52,4 +52,9 @@ abstract final class RoutePaths {
 
   /// The playlist detail screen for [playlistId].
   static String playlist(String playlistId) => '/playlists/$playlistId';
+
+  /// The storage screen.
+  ///
+  /// A stub until Fase 19.
+  static const storage = '/storage';
 }

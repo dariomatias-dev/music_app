@@ -38,4 +38,7 @@ abstract final class RouteNames {
 
   /// The playlist detail screen.
   static const playlist = 'playlist';
+
+  /// The storage screen.
+  static const storage = 'storage';
 }
