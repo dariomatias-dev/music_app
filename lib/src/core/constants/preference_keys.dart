@@ -11,4 +11,7 @@ abstract final class PreferenceKeys {
 
   /// Stores the user's display name, shown in the Home greeting.
   static const userDisplayName = 'userDisplayName';
+
+  /// Stores the user's selected theme mode.
+  static const themeMode = 'themeMode';
 }

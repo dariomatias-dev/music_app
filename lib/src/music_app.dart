@@ -5,6 +5,7 @@ import 'package:music_app/l10n/app_localizations.dart';
 import 'package:music_app/src/core/navigation/app_router.dart';
 import 'package:music_app/src/core/navigation/route_transitions.dart';
 import 'package:music_app/src/features/settings/presentation/view_models/locale_view_model.dart';
+import 'package:music_app/src/features/settings/presentation/view_models/theme_mode_view_model.dart';
 
 /// Root widget of the application.
 class MusicApp extends ConsumerWidget {
@@ -14,7 +15,14 @@ class MusicApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final locale = ref.watch(localeViewModelProvider).value;
-    final brightness = MediaQuery.platformBrightnessOf(context);
+    final themeMode =
+        ref.watch(themeModeViewModelProvider).value ?? ThemeMode.system;
+    final platformBrightness = MediaQuery.platformBrightnessOf(context);
+    final brightness = switch (themeMode) {
+      ThemeMode.system => platformBrightness,
+      ThemeMode.light => Brightness.light,
+      ThemeMode.dark => Brightness.dark,
+    };
     final baseTheme = brightness == Brightness.dark
         ? AppTheme.dark
         : AppTheme.light;

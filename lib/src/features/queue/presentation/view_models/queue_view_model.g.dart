@@ -62,7 +62,7 @@ final class QueueViewModelProvider
   }
 }
 
-String _$queueViewModelHash() => r'06898d6944676606bae839e5577b8c38ab9e18b6';
+String _$queueViewModelHash() => r'53cf7208fb3e5d9cd20ae9d15e743f70866a68fb';
 
 /// The ordered list of items currently loaded into the playback queue,
 /// resolved with display metadata (title, artist, artwork).

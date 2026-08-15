@@ -586,6 +586,18 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get settingsNameHint => 'Enter your name';
+
+  @override
+  String get settingsThemeLabel => 'Theme';
+
+  @override
+  String get themeSystemLabel => 'System';
+
+  @override
+  String get themeLightLabel => 'Light';
+
+  @override
+  String get themeDarkLabel => 'Dark';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -1173,4 +1185,16 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get settingsNameHint => 'Digite seu nome';
+
+  @override
+  String get settingsThemeLabel => 'Tema';
+
+  @override
+  String get themeSystemLabel => 'Sistema';
+
+  @override
+  String get themeLightLabel => 'Claro';
+
+  @override
+  String get themeDarkLabel => 'Escuro';
 }

@@ -1146,6 +1146,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Enter your name'**
   String get settingsNameHint;
+
+  /// No description provided for @settingsThemeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme'**
+  String get settingsThemeLabel;
+
+  /// No description provided for @themeSystemLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get themeSystemLabel;
+
+  /// No description provided for @themeLightLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get themeLightLabel;
+
+  /// No description provided for @themeDarkLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get themeDarkLabel;
 }
 
 class _AppLocalizationsDelegate

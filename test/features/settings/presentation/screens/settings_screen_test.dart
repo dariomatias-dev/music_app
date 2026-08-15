@@ -80,6 +80,7 @@ void main() {
 
     expect(find.text('Not set'), findsOneWidget);
     expect(find.text('System default'), findsOneWidget);
+    expect(find.text('System'), findsOneWidget);
   });
 
   testWidgets('shows the stored display name', (tester) async {
@@ -127,6 +128,22 @@ void main() {
 
     expect(find.text('Not set'), findsOneWidget);
     expect(await storage.getString('userDisplayName'), isNull);
+  });
+
+  testWidgets('selecting a theme from the sheet persists it', (tester) async {
+    final storage = FakeKeyValueStorage();
+    await tester.pumpWidget(_app(storage: storage));
+    await tester.pump();
+
+    await tester.tap(find.text('System'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Dark'), findsOneWidget);
+    await tester.tap(find.text('Dark'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Dark'), findsOneWidget);
+    expect(await storage.getString('themeMode'), 'dark');
   });
 
   testWidgets('tapping Language opens the language settings route', (

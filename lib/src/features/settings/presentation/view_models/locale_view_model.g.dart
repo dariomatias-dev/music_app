@@ -45,7 +45,7 @@ final class LocaleViewModelProvider
   LocaleViewModel create() => LocaleViewModel();
 }
 
-String _$localeViewModelHash() => r'd4e30d73ef557836d988838e7b7070693a779e23';
+String _$localeViewModelHash() => r'20ec6e69fd5dd1619c0eb73a7427d38aa3446312';
 
 /// Manages the user's selected locale, persisting the choice.
 ///

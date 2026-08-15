@@ -588,4 +588,16 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get settingsNameHint => 'Escribe tu nombre';
+
+  @override
+  String get settingsThemeLabel => 'Tema';
+
+  @override
+  String get themeSystemLabel => 'Sistema';
+
+  @override
+  String get themeLightLabel => 'Claro';
+
+  @override
+  String get themeDarkLabel => 'Oscuro';
 }

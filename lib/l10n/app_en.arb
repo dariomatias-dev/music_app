@@ -198,5 +198,9 @@
   "settingsAboutLabel": "About",
   "settingsAboutRowLabel": "App info & version",
   "settingsEditNameSheetTitle": "Your name",
-  "settingsNameHint": "Enter your name"
+  "settingsNameHint": "Enter your name",
+  "settingsThemeLabel": "Theme",
+  "themeSystemLabel": "System",
+  "themeLightLabel": "Light",
+  "themeDarkLabel": "Dark"
 }

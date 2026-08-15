@@ -29,6 +29,12 @@ class LocaleViewModel extends _$LocaleViewModel {
     state = AsyncData(locale);
   }
 
+  /// Clears the explicit choice, reverting to the system locale.
+  Future<void> resetToSystemLocale() async {
+    await ref.read(keyValueStorageProvider).remove(PreferenceKeys.locale);
+    state = const AsyncData(null);
+  }
+
   String _encodeLocale(Locale locale) {
     return locale.countryCode == null
         ? locale.languageCode

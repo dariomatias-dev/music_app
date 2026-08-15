@@ -6,16 +6,19 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:music_app/l10n/app_localizations.dart';
 import 'package:music_app/src/core/navigation/route_paths.dart';
+import 'package:music_app/src/core/utils/language_names.dart';
 import 'package:music_app/src/features/settings/presentation/view_models/locale_view_model.dart';
+import 'package:music_app/src/features/settings/presentation/view_models/theme_mode_view_model.dart';
 import 'package:music_app/src/features/settings/presentation/view_models/user_profile_view_model.dart';
 import 'package:music_app/src/features/settings/presentation/widgets/edit_name_sheet.dart';
+import 'package:music_app/src/features/settings/presentation/widgets/theme_mode_sheet.dart';
 
 /// The Settings tab: preferences organized into sections, each a group of
 /// standardized rows.
 ///
-/// Most rows are still stubs, filled in etapa by etapa (Etapa 92-94); this
+/// Most rows are still stubs, filled in etapa by etapa (Etapa 93-94); this
 /// lays out the full structure and wires up what already has real data
-/// behind it: the display name and the selected language.
+/// behind it: the display name, theme and selected language.
 class SettingsScreen extends ConsumerWidget {
   /// Creates a [SettingsScreen].
   const SettingsScreen({super.key});
@@ -25,6 +28,7 @@ class SettingsScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final displayName = ref.watch(userProfileViewModelProvider).value;
     final locale = ref.watch(localeViewModelProvider).value;
+    final themeMode = ref.watch(themeModeViewModelProvider).value;
 
     return AppScaffold(
       topBar: AppTopBar(title: l10n.settingsTabLabel, showBack: false),
@@ -49,11 +53,17 @@ class SettingsScreen extends ConsumerWidget {
             title: l10n.settingsSectionAppearanceLabel,
             children: [
               AppSettingsRow(
+                icon: Icons.dark_mode_outlined,
+                label: l10n.settingsThemeLabel,
+                value: _themeModeDisplayName(l10n, themeMode),
+                onTap: () => unawaited(showThemeModeSheet(context, ref)),
+              ),
+              AppSettingsRow(
                 icon: Icons.language_rounded,
                 label: l10n.settingsLanguageLabel,
                 value: locale == null
                     ? l10n.settingsLanguageSystemValue
-                    : _languageDisplayName(locale),
+                    : languageDisplayName(locale),
                 onTap: () => context.push(RoutePaths.settingsLanguage),
               ),
             ],
@@ -111,12 +121,11 @@ class SettingsScreen extends ConsumerWidget {
     await ref.read(userProfileViewModelProvider.notifier).setDisplayName(name);
   }
 
-  String _languageDisplayName(Locale locale) {
-    return switch (locale.languageCode) {
-      'es' => 'Español',
-      'pt' => 'Português',
-      'zh' => '中文',
-      _ => 'English',
+  String _themeModeDisplayName(AppLocalizations l10n, ThemeMode? mode) {
+    return switch (mode) {
+      ThemeMode.light => l10n.themeLightLabel,
+      ThemeMode.dark => l10n.themeDarkLabel,
+      ThemeMode.system || null => l10n.themeSystemLabel,
     };
   }
 }

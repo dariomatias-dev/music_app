@@ -561,4 +561,16 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get settingsNameHint => '输入你的姓名';
+
+  @override
+  String get settingsThemeLabel => '主题';
+
+  @override
+  String get themeSystemLabel => '跟随系统';
+
+  @override
+  String get themeLightLabel => '浅色';
+
+  @override
+  String get themeDarkLabel => '深色';
 }

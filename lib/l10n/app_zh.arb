@@ -198,5 +198,9 @@
   "settingsAboutLabel": "关于",
   "settingsAboutRowLabel": "应用信息与版本",
   "settingsEditNameSheetTitle": "你的姓名",
-  "settingsNameHint": "输入你的姓名"
+  "settingsNameHint": "输入你的姓名",
+  "settingsThemeLabel": "主题",
+  "themeSystemLabel": "跟随系统",
+  "themeLightLabel": "浅色",
+  "themeDarkLabel": "深色"
 }
