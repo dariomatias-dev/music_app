@@ -10,10 +10,15 @@ import 'package:music_app/src/features/library/presentation/providers/library_pr
 import 'package:music_app/src/features/library/presentation/view_models/track_sort_view_model.dart';
 
 class _FakeLibraryRepository implements LibraryRepository {
-  const _FakeLibraryRepository(this.tracks, this.artists);
+  const _FakeLibraryRepository(
+    this.tracks,
+    this.artists, [
+    this.albums = const [],
+  ]);
 
   final List<Track> tracks;
   final List<Artist> artists;
+  final List<Album> albums;
 
   @override
   Stream<List<Track>> watchTracks() => Stream.value(tracks);
@@ -22,7 +27,7 @@ class _FakeLibraryRepository implements LibraryRepository {
   Stream<List<Artist>> watchArtists() => Stream.value(artists);
 
   @override
-  Stream<List<Album>> watchAlbums() => const Stream.empty();
+  Stream<List<Album>> watchAlbums() => Stream.value(albums);
 
   @override
   Stream<IndexingProgress> reindex() => const Stream.empty();
@@ -35,8 +40,11 @@ Track _track({
   required String id,
   required String title,
   required String artistId,
+  String albumId = 'album-1',
   Duration duration = const Duration(minutes: 3),
   DateTime? dateAdded,
+  int? discNumber,
+  int? trackNumber,
   bool isMissing = false,
 }) {
   return Track(
@@ -45,13 +53,15 @@ Track _track({
     filePath: '/music/$id.mp3',
     title: title,
     artistId: artistId,
-    albumId: 'album-1',
+    albumId: albumId,
     duration: duration,
     format: 'mp3',
     fileSize: 1000,
     hasEmbeddedArtwork: false,
     dateAdded: dateAdded ?? DateTime(2026),
     dateModified: DateTime(2026),
+    discNumber: discNumber,
+    trackNumber: trackNumber,
     isMissing: isMissing,
   );
 }
@@ -96,22 +106,45 @@ void main() {
     ),
   ];
 
-  Future<ProviderContainer> buildContainer() async {
+  const albums = [
+    Album(
+      id: 'album-z',
+      sourceId: 'album-z',
+      title: 'Zeta',
+      artistId: 'artist-a',
+      trackCount: 1,
+      totalDuration: Duration(minutes: 3),
+    ),
+    Album(
+      id: 'album-a',
+      sourceId: 'album-a',
+      title: 'Alpha',
+      artistId: 'artist-b',
+      trackCount: 1,
+      totalDuration: Duration(minutes: 3),
+    ),
+  ];
+
+  Future<ProviderContainer> buildContainer({
+    List<Album> albums = const [],
+  }) async {
     // Without an external listener, a bare ProviderContainer disposes an
     // autoDispose StreamProvider before its stream gets a chance to emit.
     final container =
         ProviderContainer(
             overrides: [
               libraryRepositoryProvider.overrideWithValue(
-                _FakeLibraryRepository(tracks, artists),
+                _FakeLibraryRepository(tracks, artists, albums),
               ),
             ],
           )
           ..listen(tracksStreamProvider, (_, _) {})
-          ..listen(artistsStreamProvider, (_, _) {});
+          ..listen(artistsStreamProvider, (_, _) {})
+          ..listen(albumsStreamProvider, (_, _) {});
     await Future.wait([
       container.read(tracksStreamProvider.future),
       container.read(artistsStreamProvider.future),
+      container.read(albumsStreamProvider.future),
     ]);
     return container;
   }
@@ -171,4 +204,80 @@ void main() {
       'track-1',
     ]);
   });
+
+  test('sortedAlbumsProvider orders albums alphabetically', () async {
+    final container = await buildContainer(albums: albums);
+    addTearDown(container.dispose);
+
+    expect(container.read(sortedAlbumsProvider).map((a) => a.title), [
+      'Alpha',
+      'Zeta',
+    ]);
+  });
+
+  test('albumByIdProvider finds an indexed album', () async {
+    final container = await buildContainer(albums: albums);
+    addTearDown(container.dispose);
+
+    expect(container.read(albumByIdProvider('album-z'))?.title, 'Zeta');
+  });
+
+  test('albumByIdProvider returns null for an unknown id', () async {
+    final container = await buildContainer(albums: albums);
+    addTearDown(container.dispose);
+
+    expect(container.read(albumByIdProvider('missing')), isNull);
+  });
+
+  test(
+    'albumTracksProvider orders by disc then track number and excludes '
+    'other albums and missing tracks',
+    () async {
+      final albumTracks = [
+        _track(
+          id: 'a-2',
+          title: 'Second',
+          artistId: 'artist-a',
+          albumId: 'album-z',
+          discNumber: 1,
+          trackNumber: 2,
+        ),
+        _track(
+          id: 'a-1',
+          title: 'First',
+          artistId: 'artist-a',
+          albumId: 'album-z',
+          discNumber: 1,
+          trackNumber: 1,
+        ),
+        _track(
+          id: 'a-missing',
+          title: 'Gone',
+          artistId: 'artist-a',
+          albumId: 'album-z',
+          isMissing: true,
+        ),
+        _track(
+          id: 'other-album',
+          title: 'Elsewhere',
+          artistId: 'artist-a',
+          albumId: 'album-a',
+        ),
+      ];
+      final container = ProviderContainer(
+        overrides: [
+          libraryRepositoryProvider.overrideWithValue(
+            _FakeLibraryRepository(albumTracks, artists, albums),
+          ),
+        ],
+      )..listen(tracksStreamProvider, (_, _) {});
+      addTearDown(container.dispose);
+      await container.read(tracksStreamProvider.future);
+
+      expect(
+        container.read(albumTracksProvider('album-z')).map((t) => t.id),
+        ['a-1', 'a-2'],
+      );
+    },
+  );
 }

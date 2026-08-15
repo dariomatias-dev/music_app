@@ -73,5 +73,16 @@
   "sortByDurationLabel": "Duração",
   "sortSheetTitle": "Ordenar por",
   "tracksEmptyTitle": "Nenhuma faixa ainda",
-  "tracksEmptyMessage": "As faixas encontradas no seu dispositivo vão aparecer aqui."
+  "tracksEmptyMessage": "As faixas encontradas no seu dispositivo vão aparecer aqui.",
+  "playLabel": "Reproduzir",
+  "trackCountLabel": "{count, plural, one{{count} faixa} other{{count} faixas}}",
+  "@trackCountLabel": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "albumsEmptyTitle": "Nenhum álbum ainda",
+  "albumsEmptyMessage": "Os álbuns encontrados no seu dispositivo vão aparecer aqui.",
+  "albumNotFoundTitle": "Álbum não encontrado",
+  "albumNotFoundMessage": "Este álbum pode ter sido removido da sua biblioteca."
 }

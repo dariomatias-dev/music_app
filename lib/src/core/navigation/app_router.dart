@@ -7,6 +7,7 @@ import 'package:music_app/src/core/navigation/route_paths.dart';
 import 'package:music_app/src/core/navigation/route_redirect.dart';
 import 'package:music_app/src/core/navigation/route_transitions.dart';
 import 'package:music_app/src/features/home/presentation/screens/home_screen.dart';
+import 'package:music_app/src/features/library/presentation/screens/album_screen.dart';
 import 'package:music_app/src/features/library/presentation/screens/library_screen.dart';
 import 'package:music_app/src/features/onboarding/presentation/screens/onboarding_screen.dart';
 import 'package:music_app/src/features/onboarding/presentation/screens/permission_screen.dart';
@@ -37,6 +38,13 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         name: RouteNames.permissions,
         path: RoutePaths.permissions,
         builder: (context, state) => const PermissionScreen(),
+      ),
+      GoRoute(
+        name: RouteNames.album,
+        path: RoutePaths.albumPattern,
+        builder: (context, state) => AlbumScreen(
+          albumId: state.pathParameters['albumId']!,
+        ),
       ),
       GoRoute(
         name: RouteNames.player,

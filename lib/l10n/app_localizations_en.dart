@@ -239,4 +239,32 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get tracksEmptyMessage =>
       'Tracks found on your device will show up here.';
+
+  @override
+  String get playLabel => 'Play';
+
+  @override
+  String trackCountLabel(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count tracks',
+      one: '$count track',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get albumsEmptyTitle => 'No albums yet';
+
+  @override
+  String get albumsEmptyMessage =>
+      'Albums found on your device will show up here.';
+
+  @override
+  String get albumNotFoundTitle => 'Album not found';
+
+  @override
+  String get albumNotFoundMessage =>
+      'This album may have been removed from your library.';
 }

@@ -240,4 +240,32 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get tracksEmptyMessage =>
       'Las pistas encontradas en tu dispositivo aparecerán aquí.';
+
+  @override
+  String get playLabel => 'Reproducir';
+
+  @override
+  String trackCountLabel(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count pistas',
+      one: '$count pista',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get albumsEmptyTitle => 'Aún no hay álbumes';
+
+  @override
+  String get albumsEmptyMessage =>
+      'Los álbumes encontrados en tu dispositivo aparecerán aquí.';
+
+  @override
+  String get albumNotFoundTitle => 'Álbum no encontrado';
+
+  @override
+  String get albumNotFoundMessage =>
+      'Este álbum puede haber sido eliminado de tu biblioteca.';
 }

@@ -30,10 +30,11 @@ abstract final class RoutePaths {
   /// The playback queue screen.
   static const queue = '/player/queue';
 
+  /// Route pattern for the album detail screen, for registration; use
+  /// [album] to build a concrete path for navigation.
+  static const albumPattern = '/albums/:albumId';
+
   /// The album detail screen for [albumId].
-  ///
-  /// Not registered yet (built in Fase 14); navigating here shows the
-  /// not-found screen until then.
   static String album(String albumId) => '/albums/$albumId';
 
   /// The artist detail screen for [artistId].

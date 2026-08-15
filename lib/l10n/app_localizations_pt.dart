@@ -239,6 +239,34 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get tracksEmptyMessage =>
       'Tracks found on your device will show up here.';
+
+  @override
+  String get playLabel => 'Play';
+
+  @override
+  String trackCountLabel(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count tracks',
+      one: '$count track',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get albumsEmptyTitle => 'No albums yet';
+
+  @override
+  String get albumsEmptyMessage =>
+      'Albums found on your device will show up here.';
+
+  @override
+  String get albumNotFoundTitle => 'Album not found';
+
+  @override
+  String get albumNotFoundMessage =>
+      'This album may have been removed from your library.';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -476,4 +504,32 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   @override
   String get tracksEmptyMessage =>
       'As faixas encontradas no seu dispositivo vão aparecer aqui.';
+
+  @override
+  String get playLabel => 'Reproduzir';
+
+  @override
+  String trackCountLabel(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count faixas',
+      one: '$count faixa',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get albumsEmptyTitle => 'Nenhum álbum ainda';
+
+  @override
+  String get albumsEmptyMessage =>
+      'Os álbuns encontrados no seu dispositivo vão aparecer aqui.';
+
+  @override
+  String get albumNotFoundTitle => 'Álbum não encontrado';
+
+  @override
+  String get albumNotFoundMessage =>
+      'Este álbum pode ter sido removido da sua biblioteca.';
 }

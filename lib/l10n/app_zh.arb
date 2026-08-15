@@ -73,5 +73,16 @@
   "sortByDurationLabel": "时长",
   "sortSheetTitle": "排序方式",
   "tracksEmptyTitle": "暂无曲目",
-  "tracksEmptyMessage": "在你设备上找到的曲目会显示在这里。"
+  "tracksEmptyMessage": "在你设备上找到的曲目会显示在这里。",
+  "playLabel": "播放",
+  "trackCountLabel": "{count, plural, other{{count} 首曲目}}",
+  "@trackCountLabel": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "albumsEmptyTitle": "暂无专辑",
+  "albumsEmptyMessage": "在你设备上找到的专辑会显示在这里。",
+  "albumNotFoundTitle": "未找到专辑",
+  "albumNotFoundMessage": "这张专辑可能已从你的音乐库中移除。"
 }

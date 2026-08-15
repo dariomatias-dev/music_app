@@ -29,4 +29,7 @@ abstract final class RouteNames {
 
   /// The playback queue screen.
   static const queue = 'queue';
+
+  /// The album detail screen.
+  static const album = 'album';
 }

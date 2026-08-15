@@ -546,6 +546,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Tracks found on your device will show up here.'**
   String get tracksEmptyMessage;
+
+  /// No description provided for @playLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Play'**
+  String get playLabel;
+
+  /// No description provided for @trackCountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} track} other{{count} tracks}}'**
+  String trackCountLabel(int count);
+
+  /// No description provided for @albumsEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No albums yet'**
+  String get albumsEmptyTitle;
+
+  /// No description provided for @albumsEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Albums found on your device will show up here.'**
+  String get albumsEmptyMessage;
+
+  /// No description provided for @albumNotFoundTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Album not found'**
+  String get albumNotFoundTitle;
+
+  /// No description provided for @albumNotFoundMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This album may have been removed from your library.'**
+  String get albumNotFoundMessage;
 }
 
 class _AppLocalizationsDelegate

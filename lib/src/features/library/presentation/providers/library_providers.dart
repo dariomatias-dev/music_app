@@ -35,6 +35,37 @@ final albumArtworkProvider = Provider<Map<String, String?>>((ref) {
   return {for (final album in albums) album.id: album.artworkPath};
 });
 
+/// Every indexed album, ordered alphabetically by title.
+final sortedAlbumsProvider = Provider<List<Album>>((ref) {
+  return [...ref.watch(albumsStreamProvider).value ?? const []]
+    ..sort((a, b) => a.title.toLowerCase().compareTo(b.title.toLowerCase()));
+});
+
+/// The album with the given id, or `null` if it isn't indexed.
+@riverpod
+Album? albumById(Ref ref, String albumId) {
+  final albums = ref.watch(albumsStreamProvider).value ?? const [];
+  for (final album in albums) {
+    if (album.id == albumId) return album;
+  }
+  return null;
+}
+
+/// Every non-missing track on the album with the given id, ordered by disc
+/// and track number.
+@riverpod
+List<Track> albumTracks(Ref ref, String albumId) {
+  final tracks = ref.watch(tracksStreamProvider).value ?? const [];
+  return tracks
+      .where((track) => track.albumId == albumId && !track.isMissing)
+      .toList()
+    ..sort((a, b) {
+      final discCompare = (a.discNumber ?? 0).compareTo(b.discNumber ?? 0);
+      if (discCompare != 0) return discCompare;
+      return (a.trackNumber ?? 0).compareTo(b.trackNumber ?? 0);
+    });
+}
+
 /// Every indexed, non-missing track, ordered by the Tracks tab's current
 /// sort. Recomputed only when the tracks, artists or sort order change.
 @riverpod

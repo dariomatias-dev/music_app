@@ -230,4 +230,29 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get tracksEmptyMessage => '在你设备上找到的曲目会显示在这里。';
+
+  @override
+  String get playLabel => '播放';
+
+  @override
+  String trackCountLabel(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count 首曲目',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get albumsEmptyTitle => '暂无专辑';
+
+  @override
+  String get albumsEmptyMessage => '在你设备上找到的专辑会显示在这里。';
+
+  @override
+  String get albumNotFoundTitle => '未找到专辑';
+
+  @override
+  String get albumNotFoundMessage => '这张专辑可能已从你的音乐库中移除。';
 }

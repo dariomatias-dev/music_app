@@ -73,5 +73,16 @@
   "sortByDurationLabel": "Duration",
   "sortSheetTitle": "Sort by",
   "tracksEmptyTitle": "No tracks yet",
-  "tracksEmptyMessage": "Tracks found on your device will show up here."
+  "tracksEmptyMessage": "Tracks found on your device will show up here.",
+  "playLabel": "Play",
+  "trackCountLabel": "{count, plural, one{{count} track} other{{count} tracks}}",
+  "@trackCountLabel": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "albumsEmptyTitle": "No albums yet",
+  "albumsEmptyMessage": "Albums found on your device will show up here.",
+  "albumNotFoundTitle": "Album not found",
+  "albumNotFoundMessage": "This album may have been removed from your library."
 }
