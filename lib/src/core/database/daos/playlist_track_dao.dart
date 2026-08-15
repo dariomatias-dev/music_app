@@ -31,4 +31,9 @@ class PlaylistTrackDao extends DatabaseAccessor<AppDatabase>
       await batch((batch) => batch.insertAll(playlistTrackTable, entries));
     });
   }
+
+  /// Removes [trackId] from every playlist it appears in.
+  Future<void> deleteTrackFromAllPlaylists(String trackId) => (delete(
+    playlistTrackTable,
+  )..where((t) => t.trackId.equals(trackId))).go();
 }

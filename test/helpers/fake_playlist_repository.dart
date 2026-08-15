@@ -95,4 +95,16 @@ class FakePlaylistRepository implements PlaylistRepository {
     }
     _trackControllerFor(playlistId).add(trackIds);
   }
+
+  @override
+  Future<void> removeTrackFromAllPlaylists(String trackId) async {
+    for (final playlistId in _tracks.keys.toList()) {
+      final trackIds = _tracks[playlistId]!;
+      if (!trackIds.contains(trackId)) continue;
+      await setPlaylistTracks(
+        playlistId,
+        trackIds.where((id) => id != trackId).toList(),
+      );
+    }
+  }
 }

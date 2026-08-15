@@ -59,4 +59,9 @@ abstract interface class MediaScanner {
     List<String> excludedFolders,
     Duration minimumDuration,
   });
+
+  /// Notifies the platform's media store that the file at [path] changed
+  /// (or no longer exists), so it's dropped from or refreshed in future
+  /// scans.
+  Future<void> notifyFileRemoved(String path);
 }

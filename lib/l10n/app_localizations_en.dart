@@ -525,4 +525,23 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get artworkCacheClearedMessage => 'Artwork cache cleared';
+
+  @override
+  String get deleteFileSemanticLabel => 'Delete file';
+
+  @override
+  String get deleteFileConfirmTitle => 'Delete this file?';
+
+  @override
+  String get deleteFileConfirmMessage =>
+      'This permanently removes it from your device, along with any playlist entries and favorite. It can\'t be undone.';
+
+  @override
+  String get deleteFileConfirmAction => 'Delete';
+
+  @override
+  String get fileDeletedMessage => 'File deleted';
+
+  @override
+  String get fileDeleteFailedMessage => 'Couldn\'t delete this file';
 }

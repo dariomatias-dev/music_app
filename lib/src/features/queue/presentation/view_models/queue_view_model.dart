@@ -82,6 +82,18 @@ class QueueViewModel extends _$QueueViewModel {
     await ref.read(audioHandlerProvider).removeFromQueue(index);
   }
 
+  /// Removes every queue item for [trackId] (it may appear more than
+  /// once, e.g. added both directly and via "play next").
+  Future<void> removeTrackFromQueue(String trackId) async {
+    final indices = [
+      for (var i = 0; i < state.length; i++)
+        if (state[i].id == trackId) i,
+    ];
+    for (final index in indices.reversed) {
+      await removeAt(index);
+    }
+  }
+
   /// Removes every item from the queue and stops playback.
   Future<void> clear() async {
     state = const [];

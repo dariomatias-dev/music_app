@@ -178,5 +178,11 @@
   "clearArtworkCacheConfirmTitle": "¿Borrar la caché de carátulas?",
   "clearArtworkCacheConfirmMessage": "Esto elimina las carátulas guardadas en caché. Se volverán a extraer la próxima vez que escanees tu biblioteca.",
   "clearArtworkCacheConfirmAction": "Borrar",
-  "artworkCacheClearedMessage": "Caché de carátulas borrada"
+  "artworkCacheClearedMessage": "Caché de carátulas borrada",
+  "deleteFileSemanticLabel": "Eliminar archivo",
+  "deleteFileConfirmTitle": "¿Eliminar este archivo?",
+  "deleteFileConfirmMessage": "Esto lo elimina permanentemente de tu dispositivo, junto con cualquier entrada en listas de reproducción y favoritos. No se puede deshacer.",
+  "deleteFileConfirmAction": "Eliminar",
+  "fileDeletedMessage": "Archivo eliminado",
+  "fileDeleteFailedMessage": "No se pudo eliminar este archivo"
 }

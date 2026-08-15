@@ -25,4 +25,7 @@ abstract interface class PlaylistRepository {
   /// the given order. Used for adding, removing and reordering tracks
   /// alike: callers build the new full order and pass it here.
   Future<void> setPlaylistTracks(String playlistId, List<String> trackIds);
+
+  /// Removes [trackId] from every playlist it appears in.
+  Future<void> removeTrackFromAllPlaylists(String trackId);
 }

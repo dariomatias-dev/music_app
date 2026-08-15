@@ -7,6 +7,7 @@ import 'package:music_app/l10n/app_localizations.dart';
 import 'package:music_app/src/core/utils/file_size_formatter.dart';
 import 'package:music_app/src/features/library/data/providers/library_data_providers.dart';
 import 'package:music_app/src/features/library/domain/entities/track.dart';
+import 'package:music_app/src/features/queue/presentation/view_models/queue_view_model.dart';
 import 'package:music_app/src/features/storage/data/providers/storage_data_providers.dart';
 import 'package:music_app/src/features/storage/domain/entities/folder_usage.dart';
 import 'package:music_app/src/features/storage/presentation/providers/storage_providers.dart';
@@ -103,6 +104,8 @@ class _StorageScreenState extends ConsumerState<StorageScreen> {
                           onToggle: (included) => unawaited(
                             _toggleFolder(folder.path, included),
                           ),
+                          onDeleteTrack: (track) =>
+                              unawaited(_confirmDeleteTrack(track)),
                         ),
                       Padding(
                         padding: const EdgeInsets.all(AppSpacing.lg),
@@ -147,6 +150,37 @@ class _StorageScreenState extends ConsumerState<StorageScreen> {
     if (!mounted) return;
     AppToast.show(context, message: l10n.artworkCacheClearedMessage);
   }
+
+  Future<void> _confirmDeleteTrack(Track track) async {
+    final l10n = AppLocalizations.of(context)!;
+    final confirmed = await AppDestructiveDialog.show(
+      context,
+      title: l10n.deleteFileConfirmTitle,
+      message: l10n.deleteFileConfirmMessage,
+      confirmLabel: l10n.deleteFileConfirmAction,
+      cancelLabel: l10n.cancelLabel,
+    );
+    if (!confirmed) return;
+
+    setState(() => _busy = true);
+    try {
+      await ref.read(deleteTrackFileProvider)(track);
+      await ref
+          .read(queueViewModelProvider.notifier)
+          .removeTrackFromQueue(track.id);
+      if (!mounted) return;
+      AppToast.show(context, message: l10n.fileDeletedMessage);
+    } on Exception {
+      if (!mounted) return;
+      AppToast.show(
+        context,
+        message: l10n.fileDeleteFailedMessage,
+        variant: AppToastVariant.error,
+      );
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
 }
 
 class _FolderTile extends StatelessWidget {
@@ -155,12 +189,14 @@ class _FolderTile extends StatelessWidget {
     required this.tracks,
     required this.enabled,
     required this.onToggle,
+    required this.onDeleteTrack,
   });
 
   final FolderUsage folder;
   final List<Track> tracks;
   final bool enabled;
   final ValueChanged<bool> onToggle;
+  final ValueChanged<Track> onDeleteTrack;
 
   @override
   Widget build(BuildContext context) {
@@ -217,6 +253,13 @@ class _FolderTile extends StatelessWidget {
                   style: AppTypography.meta.copyWith(
                     color: colors.textTertiary,
                   ),
+                ),
+                AppIconButton(
+                  icon: Icons.delete_outline_rounded,
+                  semanticLabel: l10n.deleteFileSemanticLabel,
+                  size: 36,
+                  iconSize: AppSizes.iconSmall,
+                  onPressed: enabled ? () => onDeleteTrack(track) : null,
                 ),
               ],
             ),

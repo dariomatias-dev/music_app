@@ -139,4 +139,35 @@ void main() {
     final after = await repository.watchPlaylist(id).first;
     expect(after!.updatedAt.isAfter(before!.updatedAt), isTrue);
   });
+
+  test(
+    'removeTrackFromAllPlaylists removes the track from every playlist',
+    () async {
+      final roadTrip = await repository.createPlaylist('Road Trip');
+      final focus = await repository.createPlaylist('Focus');
+      await repository.setPlaylistTracks(roadTrip, [
+        'track-1',
+        'track-2',
+        'track-3',
+      ]);
+      await repository.setPlaylistTracks(focus, ['track-2']);
+
+      await repository.removeTrackFromAllPlaylists('track-2');
+
+      expect(await repository.watchPlaylistTrackIds(roadTrip).first, [
+        'track-1',
+        'track-3',
+      ]);
+      expect(await repository.watchPlaylistTrackIds(focus).first, isEmpty);
+    },
+  );
+
+  test('removeTrackFromAllPlaylists is a no-op for an unknown track', () async {
+    final id = await repository.createPlaylist('Road Trip');
+    await repository.setPlaylistTracks(id, ['track-1']);
+
+    await repository.removeTrackFromAllPlaylists('missing');
+
+    expect(await repository.watchPlaylistTrackIds(id).first, ['track-1']);
+  });
 }

@@ -178,5 +178,11 @@
   "clearArtworkCacheConfirmTitle": "Limpar cache de capas?",
   "clearArtworkCacheConfirmMessage": "Isso apaga as capas em cache. Elas serão extraídas novamente na próxima varredura da sua biblioteca.",
   "clearArtworkCacheConfirmAction": "Limpar",
-  "artworkCacheClearedMessage": "Cache de capas limpo"
+  "artworkCacheClearedMessage": "Cache de capas limpo",
+  "deleteFileSemanticLabel": "Excluir arquivo",
+  "deleteFileConfirmTitle": "Excluir este arquivo?",
+  "deleteFileConfirmMessage": "Isso o remove permanentemente do seu dispositivo, junto com entradas em playlists e favoritos. Não pode ser desfeito.",
+  "deleteFileConfirmAction": "Excluir",
+  "fileDeletedMessage": "Arquivo excluído",
+  "fileDeleteFailedMessage": "Não foi possível excluir este arquivo"
 }

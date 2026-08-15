@@ -525,6 +525,25 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get artworkCacheClearedMessage => 'Artwork cache cleared';
+
+  @override
+  String get deleteFileSemanticLabel => 'Delete file';
+
+  @override
+  String get deleteFileConfirmTitle => 'Delete this file?';
+
+  @override
+  String get deleteFileConfirmMessage =>
+      'This permanently removes it from your device, along with any playlist entries and favorite. It can\'t be undone.';
+
+  @override
+  String get deleteFileConfirmAction => 'Delete';
+
+  @override
+  String get fileDeletedMessage => 'File deleted';
+
+  @override
+  String get fileDeleteFailedMessage => 'Couldn\'t delete this file';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -1050,4 +1069,23 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get artworkCacheClearedMessage => 'Cache de capas limpo';
+
+  @override
+  String get deleteFileSemanticLabel => 'Excluir arquivo';
+
+  @override
+  String get deleteFileConfirmTitle => 'Excluir este arquivo?';
+
+  @override
+  String get deleteFileConfirmMessage =>
+      'Isso o remove permanentemente do seu dispositivo, junto com entradas em playlists e favoritos. Não pode ser desfeito.';
+
+  @override
+  String get deleteFileConfirmAction => 'Excluir';
+
+  @override
+  String get fileDeletedMessage => 'Arquivo excluído';
+
+  @override
+  String get fileDeleteFailedMessage => 'Não foi possível excluir este arquivo';
 }

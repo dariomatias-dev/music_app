@@ -500,4 +500,23 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get artworkCacheClearedMessage => '封面缓存已清除';
+
+  @override
+  String get deleteFileSemanticLabel => '删除文件';
+
+  @override
+  String get deleteFileConfirmTitle => '删除此文件？';
+
+  @override
+  String get deleteFileConfirmMessage =>
+      '这会将其从设备中永久删除，同时移除播放列表和收藏中的相关条目。此操作无法撤销。';
+
+  @override
+  String get deleteFileConfirmAction => '删除';
+
+  @override
+  String get fileDeletedMessage => '文件已删除';
+
+  @override
+  String get fileDeleteFailedMessage => '无法删除此文件';
 }

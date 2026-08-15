@@ -193,6 +193,42 @@ void main() {
     expect(playerService.snapshot.queueLength, 1);
   });
 
+  test('removeTrackFromQueue drops every occurrence of the track', () async {
+    await container.read(queueViewModelProvider.notifier).playFromSource([
+      _track('a'),
+      _track('b'),
+      _track('a'),
+    ], startIndex: 0);
+
+    await container
+        .read(queueViewModelProvider.notifier)
+        .removeTrackFromQueue('a');
+
+    expect(
+      container.read(queueViewModelProvider).map((t) => t.id),
+      ['b'],
+    );
+    expect(playerService.snapshot.queueLength, 1);
+  });
+
+  test(
+    'removeTrackFromQueue is a no-op when the track is not queued',
+    () async {
+      await container.read(queueViewModelProvider.notifier).playFromSource([
+        _track('a'),
+      ], startIndex: 0);
+
+      await container
+          .read(queueViewModelProvider.notifier)
+          .removeTrackFromQueue('missing');
+
+      expect(
+        container.read(queueViewModelProvider).map((t) => t.id),
+        ['a'],
+      );
+    },
+  );
+
   test('clear empties state and the engine queue', () async {
     await container.read(queueViewModelProvider.notifier).playFromSource([
       _track('a'),

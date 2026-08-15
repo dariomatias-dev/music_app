@@ -527,4 +527,23 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get artworkCacheClearedMessage => 'Caché de carátulas borrada';
+
+  @override
+  String get deleteFileSemanticLabel => 'Eliminar archivo';
+
+  @override
+  String get deleteFileConfirmTitle => '¿Eliminar este archivo?';
+
+  @override
+  String get deleteFileConfirmMessage =>
+      'Esto lo elimina permanentemente de tu dispositivo, junto con cualquier entrada en listas de reproducción y favoritos. No se puede deshacer.';
+
+  @override
+  String get deleteFileConfirmAction => 'Eliminar';
+
+  @override
+  String get fileDeletedMessage => 'Archivo eliminado';
+
+  @override
+  String get fileDeleteFailedMessage => 'No se pudo eliminar este archivo';
 }

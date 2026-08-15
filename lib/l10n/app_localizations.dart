@@ -1026,6 +1026,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Artwork cache cleared'**
   String get artworkCacheClearedMessage;
+
+  /// No description provided for @deleteFileSemanticLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete file'**
+  String get deleteFileSemanticLabel;
+
+  /// No description provided for @deleteFileConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this file?'**
+  String get deleteFileConfirmTitle;
+
+  /// No description provided for @deleteFileConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This permanently removes it from your device, along with any playlist entries and favorite. It can\'t be undone.'**
+  String get deleteFileConfirmMessage;
+
+  /// No description provided for @deleteFileConfirmAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get deleteFileConfirmAction;
+
+  /// No description provided for @fileDeletedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'File deleted'**
+  String get fileDeletedMessage;
+
+  /// No description provided for @fileDeleteFailedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t delete this file'**
+  String get fileDeleteFailedMessage;
 }
 
 class _AppLocalizationsDelegate

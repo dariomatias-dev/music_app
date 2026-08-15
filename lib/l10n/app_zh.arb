@@ -178,5 +178,11 @@
   "clearArtworkCacheConfirmTitle": "清除封面缓存？",
   "clearArtworkCacheConfirmMessage": "这会删除已缓存的专辑封面。下次扫描音乐库时会重新提取。",
   "clearArtworkCacheConfirmAction": "清除",
-  "artworkCacheClearedMessage": "封面缓存已清除"
+  "artworkCacheClearedMessage": "封面缓存已清除",
+  "deleteFileSemanticLabel": "删除文件",
+  "deleteFileConfirmTitle": "删除此文件？",
+  "deleteFileConfirmMessage": "这会将其从设备中永久删除，同时移除播放列表和收藏中的相关条目。此操作无法撤销。",
+  "deleteFileConfirmAction": "删除",
+  "fileDeletedMessage": "文件已删除",
+  "fileDeleteFailedMessage": "无法删除此文件"
 }

@@ -36,6 +36,11 @@ class OnAudioQueryMediaScanner implements MediaScanner {
       minimumDuration: minimumDuration,
     );
   }
+
+  @override
+  Future<void> notifyFileRemoved(String path) async {
+    await _query.scanMedia(path);
+  }
 }
 
 /// Filters [songs] by supported format, minimum duration and folder

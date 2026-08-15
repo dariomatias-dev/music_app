@@ -22,6 +22,9 @@ class _FakeMediaScanner implements MediaScanner {
     List<String> excludedFolders = const [],
     Duration minimumDuration = Duration.zero,
   }) async => files;
+
+  @override
+  Future<void> notifyFileRemoved(String path) async {}
 }
 
 class _FakeMetadataReader implements MetadataReader {

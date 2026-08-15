@@ -83,6 +83,10 @@ class PlaylistRepositoryImpl implements PlaylistRepository {
     );
   }
 
+  @override
+  Future<void> removeTrackFromAllPlaylists(String trackId) =>
+      _database.playlistTrackDao.deleteTrackFromAllPlaylists(trackId);
+
   Playlist _toEntity(PlaylistRow row) => Playlist(
     id: row.id,
     name: row.name,

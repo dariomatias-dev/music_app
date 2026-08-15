@@ -27,6 +27,9 @@ class _FakeMediaScanner implements MediaScanner {
     lastExcludedFolders = excludedFolders;
     return const [];
   }
+
+  @override
+  Future<void> notifyFileRemoved(String path) async {}
 }
 
 class _FakeMetadataReader implements MetadataReader {
