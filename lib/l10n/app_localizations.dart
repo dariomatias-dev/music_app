@@ -978,6 +978,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Clear'**
   String get clearHistoryConfirmAction;
+
+  /// No description provided for @storageTotalUsedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Space used'**
+  String get storageTotalUsedLabel;
+
+  /// No description provided for @storageFoldersLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Folders'**
+  String get storageFoldersLabel;
+
+  /// No description provided for @includeInScanSemanticLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Include in scan'**
+  String get includeInScanSemanticLabel;
+
+  /// No description provided for @clearArtworkCacheLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear artwork cache'**
+  String get clearArtworkCacheLabel;
+
+  /// No description provided for @clearArtworkCacheConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear artwork cache?'**
+  String get clearArtworkCacheConfirmTitle;
+
+  /// No description provided for @clearArtworkCacheConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This deletes cached album art. It\'s re-extracted the next time you scan your library.'**
+  String get clearArtworkCacheConfirmMessage;
+
+  /// No description provided for @clearArtworkCacheConfirmAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get clearArtworkCacheConfirmAction;
+
+  /// No description provided for @artworkCacheClearedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Artwork cache cleared'**
+  String get artworkCacheClearedMessage;
 }
 
 class _AppLocalizationsDelegate

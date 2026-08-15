@@ -16,13 +16,17 @@ class _FakeMediaScanner implements MediaScanner {
   _FakeMediaScanner(this.files);
 
   List<ScannedAudioFile> files;
+  List<String>? lastExcludedFolders;
 
   @override
   Future<List<ScannedAudioFile>> scan({
     List<String> includedFolders = const [],
     List<String> excludedFolders = const [],
     Duration minimumDuration = Duration.zero,
-  }) async => files;
+  }) async {
+    lastExcludedFolders = excludedFolders;
+    return files;
+  }
 }
 
 class _FakeMetadataReader implements MetadataReader {
@@ -99,6 +103,13 @@ class _FakeLibraryLocalDataSource implements LibraryLocalDataSource {
 
   @override
   Stream<List<Artist>> watchArtists() => Stream.value(artists.values.toList());
+
+  @override
+  Future<void> clearAlbumArtworkPaths() async {
+    for (final entry in albums.entries.toList()) {
+      albums[entry.key] = entry.value.copyWith(artworkPath: null);
+    }
+  }
 }
 
 class _FakeIdGenerator implements IdGenerator {
@@ -234,5 +245,25 @@ void main() {
     await reconcile.purgeMissingTracks();
 
     expect(dataSource.tracks.values.single.sourceId, '1');
+  });
+
+  test('passes excludedFolders through to the scanner', () async {
+    final scanner = _FakeMediaScanner([_file(1, '/music/a.mp3')]);
+    final dataSource = _FakeLibraryLocalDataSource();
+    final indexer = LibraryIndexer(
+      mediaScanner: scanner,
+      metadataReader: _FakeMetadataReader(),
+      artworkCache: _FakeArtworkCache(),
+      dataSource: dataSource,
+      idGenerator: _FakeIdGenerator(),
+    );
+    final reconcile = ReconcileLibrary(
+      indexer: indexer,
+      dataSource: dataSource,
+    );
+
+    await reconcile(excludedFolders: ['/music/skip']).toList();
+
+    expect(scanner.lastExcludedFolders, ['/music/skip']);
   });
 }

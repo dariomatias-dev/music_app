@@ -500,6 +500,31 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get clearHistoryConfirmAction => 'Clear';
+
+  @override
+  String get storageTotalUsedLabel => 'Space used';
+
+  @override
+  String get storageFoldersLabel => 'Folders';
+
+  @override
+  String get includeInScanSemanticLabel => 'Include in scan';
+
+  @override
+  String get clearArtworkCacheLabel => 'Clear artwork cache';
+
+  @override
+  String get clearArtworkCacheConfirmTitle => 'Clear artwork cache?';
+
+  @override
+  String get clearArtworkCacheConfirmMessage =>
+      'This deletes cached album art. It\'s re-extracted the next time you scan your library.';
+
+  @override
+  String get clearArtworkCacheConfirmAction => 'Clear';
+
+  @override
+  String get artworkCacheClearedMessage => 'Artwork cache cleared';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -1000,4 +1025,29 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get clearHistoryConfirmAction => 'Limpar';
+
+  @override
+  String get storageTotalUsedLabel => 'Espaço usado';
+
+  @override
+  String get storageFoldersLabel => 'Pastas';
+
+  @override
+  String get includeInScanSemanticLabel => 'Incluir na varredura';
+
+  @override
+  String get clearArtworkCacheLabel => 'Limpar cache de capas';
+
+  @override
+  String get clearArtworkCacheConfirmTitle => 'Limpar cache de capas?';
+
+  @override
+  String get clearArtworkCacheConfirmMessage =>
+      'Isso apaga as capas em cache. Elas serão extraídas novamente na próxima varredura da sua biblioteca.';
+
+  @override
+  String get clearArtworkCacheConfirmAction => 'Limpar';
+
+  @override
+  String get artworkCacheClearedMessage => 'Cache de capas limpo';
 }

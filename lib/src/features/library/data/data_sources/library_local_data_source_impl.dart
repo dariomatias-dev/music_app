@@ -86,6 +86,11 @@ class LibraryLocalDataSourceImpl implements LibraryLocalDataSource {
     );
   }
 
+  @override
+  Future<void> clearAlbumArtworkPaths() {
+    return _database.albumDao.clearArtworkPaths();
+  }
+
   Artist _artistFromRow(ArtistRow row) {
     return Artist(
       id: row.id,

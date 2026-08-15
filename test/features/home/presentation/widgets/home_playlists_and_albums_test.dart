@@ -36,6 +36,9 @@ class _FakeLibraryRepository implements LibraryRepository {
 
   @override
   Future<void> purgeMissingTracks() async {}
+
+  @override
+  Future<void> clearArtworkCache() async {}
 }
 
 Album _album({required String id, required String title}) {

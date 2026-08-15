@@ -170,5 +170,13 @@
   "clearHistoryLabel": "Limpar histórico",
   "clearHistoryConfirmTitle": "Limpar histórico de reprodução?",
   "clearHistoryConfirmMessage": "Isso reinicia as tocadas recentemente e todas as estatísticas derivadas dele. Sua biblioteca não é afetada.",
-  "clearHistoryConfirmAction": "Limpar"
+  "clearHistoryConfirmAction": "Limpar",
+  "storageTotalUsedLabel": "Espaço usado",
+  "storageFoldersLabel": "Pastas",
+  "includeInScanSemanticLabel": "Incluir na varredura",
+  "clearArtworkCacheLabel": "Limpar cache de capas",
+  "clearArtworkCacheConfirmTitle": "Limpar cache de capas?",
+  "clearArtworkCacheConfirmMessage": "Isso apaga as capas em cache. Elas serão extraídas novamente na próxima varredura da sua biblioteca.",
+  "clearArtworkCacheConfirmAction": "Limpar",
+  "artworkCacheClearedMessage": "Cache de capas limpo"
 }

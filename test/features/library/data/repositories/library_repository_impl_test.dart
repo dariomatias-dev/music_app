@@ -13,13 +13,20 @@ import 'package:music_app/src/features/library/domain/entities/artist.dart';
 import 'package:music_app/src/features/library/domain/entities/track.dart';
 import 'package:music_app/src/features/library/domain/reconcile_library.dart';
 
+import '../../../../helpers/fake_excluded_folder_repository.dart';
+
 class _FakeMediaScanner implements MediaScanner {
+  List<String>? lastExcludedFolders;
+
   @override
   Future<List<ScannedAudioFile>> scan({
     List<String> includedFolders = const [],
     List<String> excludedFolders = const [],
     Duration minimumDuration = Duration.zero,
-  }) async => const [];
+  }) async {
+    lastExcludedFolders = excludedFolders;
+    return const [];
+  }
 }
 
 class _FakeMetadataReader implements MetadataReader {
@@ -28,6 +35,8 @@ class _FakeMetadataReader implements MetadataReader {
 }
 
 class _FakeArtworkCache implements ArtworkCache {
+  bool cleared = false;
+
   @override
   Future<String> save({
     required String id,
@@ -42,7 +51,9 @@ class _FakeArtworkCache implements ArtworkCache {
   Future<void> delete(String id) async {}
 
   @override
-  Future<void> clear() async {}
+  Future<void> clear() async {
+    cleared = true;
+  }
 }
 
 class _FakeIdGenerator implements IdGenerator {
@@ -105,18 +116,31 @@ class _FakeLibraryLocalDataSource implements LibraryLocalDataSource {
 
   @override
   Stream<List<Artist>> watchArtists() => Stream.value(artists.values.toList());
+
+  @override
+  Future<void> clearAlbumArtworkPaths() async {
+    for (final entry in albums.entries.toList()) {
+      albums[entry.key] = entry.value.copyWith(artworkPath: null);
+    }
+  }
 }
 
 void main() {
   late _FakeLibraryLocalDataSource dataSource;
+  late _FakeMediaScanner mediaScanner;
+  late _FakeArtworkCache artworkCache;
+  late FakeExcludedFolderRepository excludedFolderRepository;
   late LibraryRepositoryImpl repository;
 
   setUp(() {
     dataSource = _FakeLibraryLocalDataSource();
+    mediaScanner = _FakeMediaScanner();
+    artworkCache = _FakeArtworkCache();
+    excludedFolderRepository = FakeExcludedFolderRepository();
     final indexer = LibraryIndexer(
-      mediaScanner: _FakeMediaScanner(),
+      mediaScanner: mediaScanner,
       metadataReader: _FakeMetadataReader(),
-      artworkCache: _FakeArtworkCache(),
+      artworkCache: artworkCache,
       dataSource: dataSource,
       idGenerator: _FakeIdGenerator(),
     );
@@ -127,6 +151,8 @@ void main() {
     repository = LibraryRepositoryImpl(
       dataSource: dataSource,
       reconcileLibrary: reconcile,
+      artworkCache: artworkCache,
+      excludedFolderRepository: excludedFolderRepository,
     );
   });
 
@@ -180,6 +206,35 @@ void main() {
   test('reindex runs without producing progress for an empty scan', () async {
     final progress = await repository.reindex().toList();
     expect(progress, isEmpty);
+  });
+
+  test(
+    'reindex passes the currently excluded folders to the scanner',
+    () async {
+      await excludedFolderRepository.exclude('/music/skip');
+
+      await repository.reindex().toList();
+
+      expect(mediaScanner.lastExcludedFolders, ['/music/skip']);
+    },
+  );
+
+  test('clearArtworkCache clears the cache and every stored path', () async {
+    const album = Album(
+      id: 'album-1',
+      sourceId: 'charcoal::chill vibes',
+      title: 'Chill Vibes',
+      artistId: 'artist-1',
+      trackCount: 1,
+      totalDuration: Duration(minutes: 3),
+      artworkPath: '/cache/album-1.jpg',
+    );
+    dataSource.albums[album.sourceId] = album;
+
+    await repository.clearArtworkCache();
+
+    expect(artworkCache.cleared, isTrue);
+    expect(dataSource.albums[album.sourceId]?.artworkPath, isNull);
   });
 
   test('purgeMissingTracks delegates to the reconciliation use case', () async {

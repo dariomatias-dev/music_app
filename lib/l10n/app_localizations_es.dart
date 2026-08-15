@@ -502,4 +502,29 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get clearHistoryConfirmAction => 'Borrar';
+
+  @override
+  String get storageTotalUsedLabel => 'Espacio usado';
+
+  @override
+  String get storageFoldersLabel => 'Carpetas';
+
+  @override
+  String get includeInScanSemanticLabel => 'Incluir en el escaneo';
+
+  @override
+  String get clearArtworkCacheLabel => 'Borrar caché de carátulas';
+
+  @override
+  String get clearArtworkCacheConfirmTitle => '¿Borrar la caché de carátulas?';
+
+  @override
+  String get clearArtworkCacheConfirmMessage =>
+      'Esto elimina las carátulas guardadas en caché. Se volverán a extraer la próxima vez que escanees tu biblioteca.';
+
+  @override
+  String get clearArtworkCacheConfirmAction => 'Borrar';
+
+  @override
+  String get artworkCacheClearedMessage => 'Caché de carátulas borrada';
 }

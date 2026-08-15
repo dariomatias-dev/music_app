@@ -109,6 +109,13 @@ class _FakeLibraryLocalDataSource implements LibraryLocalDataSource {
 
   @override
   Stream<List<Artist>> watchArtists() => Stream.value(artists.values.toList());
+
+  @override
+  Future<void> clearAlbumArtworkPaths() async {
+    for (final entry in albums.entries.toList()) {
+      albums[entry.key] = entry.value.copyWith(artworkPath: null);
+    }
+  }
 }
 
 class _FakeIdGenerator implements IdGenerator {

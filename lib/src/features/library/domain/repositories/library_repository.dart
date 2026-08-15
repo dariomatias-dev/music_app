@@ -20,4 +20,8 @@ abstract interface class LibraryRepository {
 
   /// Permanently deletes every track currently marked missing.
   Future<void> purgeMissingTracks();
+
+  /// Clears every cached album artwork file and its stored path, so the
+  /// next scan re-extracts it.
+  Future<void> clearArtworkCache();
 }

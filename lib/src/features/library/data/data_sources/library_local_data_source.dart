@@ -36,4 +36,8 @@ abstract interface class LibraryLocalDataSource {
 
   /// Watches every indexed artist.
   Stream<List<Artist>> watchArtists();
+
+  /// Clears every album's cached artwork path, so a future scan re-extracts
+  /// it.
+  Future<void> clearAlbumArtworkPaths();
 }

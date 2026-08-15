@@ -4,6 +4,7 @@ import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:music_app/src/core/database/daos/album_dao.dart';
 import 'package:music_app/src/core/database/daos/artist_dao.dart';
+import 'package:music_app/src/core/database/daos/excluded_folder_dao.dart';
 import 'package:music_app/src/core/database/daos/favorite_dao.dart';
 import 'package:music_app/src/core/database/daos/lyrics_dao.dart';
 import 'package:music_app/src/core/database/daos/play_event_dao.dart';
@@ -13,6 +14,7 @@ import 'package:music_app/src/core/database/daos/search_history_dao.dart';
 import 'package:music_app/src/core/database/daos/track_dao.dart';
 import 'package:music_app/src/core/database/tables/album_table.dart';
 import 'package:music_app/src/core/database/tables/artist_table.dart';
+import 'package:music_app/src/core/database/tables/excluded_folder_table.dart';
 import 'package:music_app/src/core/database/tables/favorite_table.dart';
 import 'package:music_app/src/core/database/tables/lyrics_table.dart';
 import 'package:music_app/src/core/database/tables/play_event_table.dart';
@@ -38,6 +40,7 @@ part 'app_database.g.dart';
     PlayEventTable,
     LyricsTable,
     SearchHistoryTable,
+    ExcludedFolderTable,
   ],
   daos: [
     ArtistDao,
@@ -49,6 +52,7 @@ part 'app_database.g.dart';
     PlayEventDao,
     LyricsDao,
     SearchHistoryDao,
+    ExcludedFolderDao,
   ],
 )
 class AppDatabase extends _$AppDatabase {

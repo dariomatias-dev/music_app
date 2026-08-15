@@ -170,5 +170,13 @@
   "clearHistoryLabel": "Borrar historial",
   "clearHistoryConfirmTitle": "¿Borrar el historial de escucha?",
   "clearHistoryConfirmMessage": "Esto reinicia lo reproducido recientemente y todas las estadísticas derivadas de ello. Tu biblioteca no se ve afectada.",
-  "clearHistoryConfirmAction": "Borrar"
+  "clearHistoryConfirmAction": "Borrar",
+  "storageTotalUsedLabel": "Espacio usado",
+  "storageFoldersLabel": "Carpetas",
+  "includeInScanSemanticLabel": "Incluir en el escaneo",
+  "clearArtworkCacheLabel": "Borrar caché de carátulas",
+  "clearArtworkCacheConfirmTitle": "¿Borrar la caché de carátulas?",
+  "clearArtworkCacheConfirmMessage": "Esto elimina las carátulas guardadas en caché. Se volverán a extraer la próxima vez que escanees tu biblioteca.",
+  "clearArtworkCacheConfirmAction": "Borrar",
+  "artworkCacheClearedMessage": "Caché de carátulas borrada"
 }

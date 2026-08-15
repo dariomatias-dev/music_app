@@ -22,11 +22,16 @@ class ReconcileLibrary {
   ///
   /// Once every file has been processed, tracks whose `sourceId` was not
   /// seen in this run are marked missing, and tracks that reappeared are
-  /// marked present again.
-  Stream<IndexingProgress> call() async* {
+  /// marked present again. Files under any of [excludedFolders] are
+  /// skipped, so their tracks end up marked missing too.
+  Stream<IndexingProgress> call({
+    List<String> excludedFolders = const [],
+  }) async* {
     final seenSourceIds = <String>{};
 
-    await for (final progress in _indexer.indexLibrary()) {
+    await for (final progress in _indexer.indexLibrary(
+      excludedFolders: excludedFolders,
+    )) {
       seenSourceIds.add(progress.trackSourceId);
       yield progress;
     }

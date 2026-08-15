@@ -476,4 +476,28 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get clearHistoryConfirmAction => '清除';
+
+  @override
+  String get storageTotalUsedLabel => '已用空间';
+
+  @override
+  String get storageFoldersLabel => '文件夹';
+
+  @override
+  String get includeInScanSemanticLabel => '包含在扫描中';
+
+  @override
+  String get clearArtworkCacheLabel => '清除封面缓存';
+
+  @override
+  String get clearArtworkCacheConfirmTitle => '清除封面缓存？';
+
+  @override
+  String get clearArtworkCacheConfirmMessage => '这会删除已缓存的专辑封面。下次扫描音乐库时会重新提取。';
+
+  @override
+  String get clearArtworkCacheConfirmAction => '清除';
+
+  @override
+  String get artworkCacheClearedMessage => '封面缓存已清除';
 }

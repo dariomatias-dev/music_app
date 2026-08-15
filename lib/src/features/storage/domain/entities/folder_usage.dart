@@ -10,5 +10,6 @@ abstract class FolderUsage with _$FolderUsage {
     required String path,
     required int sizeBytes,
     required int trackCount,
+    required bool isIncluded,
   }) = _FolderUsage;
 }

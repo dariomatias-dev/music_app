@@ -170,5 +170,13 @@
   "clearHistoryLabel": "清除历史记录",
   "clearHistoryConfirmTitle": "清除收听历史记录？",
   "clearHistoryConfirmMessage": "这会重置最近播放记录以及由此得出的所有统计数据。你的音乐库不受影响。",
-  "clearHistoryConfirmAction": "清除"
+  "clearHistoryConfirmAction": "清除",
+  "storageTotalUsedLabel": "已用空间",
+  "storageFoldersLabel": "文件夹",
+  "includeInScanSemanticLabel": "包含在扫描中",
+  "clearArtworkCacheLabel": "清除封面缓存",
+  "clearArtworkCacheConfirmTitle": "清除封面缓存？",
+  "clearArtworkCacheConfirmMessage": "这会删除已缓存的专辑封面。下次扫描音乐库时会重新提取。",
+  "clearArtworkCacheConfirmAction": "清除",
+  "artworkCacheClearedMessage": "封面缓存已清除"
 }

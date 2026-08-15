@@ -7,7 +7,10 @@ import 'package:music_app/src/features/library/domain/entities/artist.dart';
 import 'package:music_app/src/features/library/domain/entities/track.dart';
 import 'package:music_app/src/features/library/domain/repositories/library_repository.dart';
 import 'package:music_app/src/features/library/presentation/providers/library_providers.dart';
+import 'package:music_app/src/features/storage/data/providers/storage_data_providers.dart';
 import 'package:music_app/src/features/storage/presentation/providers/storage_providers.dart';
+
+import '../../../../helpers/fake_excluded_folder_repository.dart';
 
 class _FakeLibraryRepository implements LibraryRepository {
   const _FakeLibraryRepository({this.tracks = const []});
@@ -28,6 +31,9 @@ class _FakeLibraryRepository implements LibraryRepository {
 
   @override
   Future<void> purgeMissingTracks() async {}
+
+  @override
+  Future<void> clearArtworkCache() async {}
 }
 
 Track _track(
@@ -53,29 +59,43 @@ Track _track(
   );
 }
 
+ProviderContainer _container({
+  List<Track> tracks = const [],
+  List<String> excludedFolders = const [],
+}) {
+  final container =
+      ProviderContainer(
+          overrides: [
+            libraryRepositoryProvider.overrideWithValue(
+              _FakeLibraryRepository(tracks: tracks),
+            ),
+            excludedFolderRepositoryProvider.overrideWithValue(
+              FakeExcludedFolderRepository(excludedFolders),
+            ),
+          ],
+        )
+        ..listen(tracksStreamProvider, (_, _) {})
+        ..listen(excludedFoldersProvider, (_, _) {});
+  return container;
+}
+
 void main() {
   test('totalStorageUsageProvider sums non-missing track sizes', () async {
-    final container = ProviderContainer(
-      overrides: [
-        libraryRepositoryProvider.overrideWithValue(
-          _FakeLibraryRepository(
-            tracks: [
-              _track('a', filePath: '/music/rock/a.mp3', fileSize: 1000),
-              _track('b', filePath: '/music/rock/b.mp3', fileSize: 2000),
-              _track(
-                'c',
-                filePath: '/music/pop/c.mp3',
-                fileSize: 5000,
-                isMissing: true,
-              ),
-            ],
-          ),
+    final container = _container(
+      tracks: [
+        _track('a', filePath: '/music/rock/a.mp3', fileSize: 1000),
+        _track('b', filePath: '/music/rock/b.mp3', fileSize: 2000),
+        _track(
+          'c',
+          filePath: '/music/pop/c.mp3',
+          fileSize: 5000,
+          isMissing: true,
         ),
       ],
     );
     addTearDown(container.dispose);
-    container.listen(tracksStreamProvider, (_, _) {});
     await container.read(tracksStreamProvider.future);
+    await container.read(excludedFoldersProvider.future);
 
     expect(container.read(totalStorageUsageProvider), 3000);
   });
@@ -83,48 +103,57 @@ void main() {
   test(
     'folderUsageProvider groups tracks by directory, largest first',
     () async {
-      final container = ProviderContainer(
-        overrides: [
-          libraryRepositoryProvider.overrideWithValue(
-            _FakeLibraryRepository(
-              tracks: [
-                _track('a', filePath: '/music/rock/a.mp3', fileSize: 1000),
-                _track('b', filePath: '/music/rock/b.mp3', fileSize: 2000),
-                _track('c', filePath: '/music/pop/c.mp3', fileSize: 500),
-                _track(
-                  'd',
-                  filePath: '/music/pop/d.mp3',
-                  fileSize: 9999,
-                  isMissing: true,
-                ),
-              ],
-            ),
+      final container = _container(
+        tracks: [
+          _track('a', filePath: '/music/rock/a.mp3', fileSize: 1000),
+          _track('b', filePath: '/music/rock/b.mp3', fileSize: 2000),
+          _track('c', filePath: '/music/pop/c.mp3', fileSize: 500),
+          _track(
+            'd',
+            filePath: '/music/pop/d.mp3',
+            fileSize: 9999,
+            isMissing: true,
           ),
         ],
       );
       addTearDown(container.dispose);
-      container.listen(tracksStreamProvider, (_, _) {});
       await container.read(tracksStreamProvider.future);
+      await container.read(excludedFoldersProvider.future);
 
       final usage = container.read(folderUsageProvider);
 
       expect(usage.map((u) => u.path), ['/music/rock', '/music/pop']);
       expect(usage.map((u) => u.sizeBytes), [3000, 500]);
       expect(usage.map((u) => u.trackCount), [2, 1]);
+      expect(usage.every((u) => u.isIncluded), isTrue);
     },
   );
 
-  test('is empty when the library has no tracks', () async {
-    final container = ProviderContainer(
-      overrides: [
-        libraryRepositoryProvider.overrideWithValue(
-          const _FakeLibraryRepository(),
-        ),
+  test('folderUsageProvider reflects excluded folders', () async {
+    final container = _container(
+      tracks: [
+        _track('a', filePath: '/music/rock/a.mp3', fileSize: 1000),
+        _track('b', filePath: '/music/pop/b.mp3', fileSize: 2000),
       ],
+      excludedFolders: ['/music/pop'],
     );
     addTearDown(container.dispose);
-    container.listen(tracksStreamProvider, (_, _) {});
     await container.read(tracksStreamProvider.future);
+    await container.read(excludedFoldersProvider.future);
+
+    final usage = container.read(folderUsageProvider);
+
+    final rock = usage.firstWhere((u) => u.path == '/music/rock');
+    final pop = usage.firstWhere((u) => u.path == '/music/pop');
+    expect(rock.isIncluded, isTrue);
+    expect(pop.isIncluded, isFalse);
+  });
+
+  test('is empty when the library has no tracks', () async {
+    final container = _container();
+    addTearDown(container.dispose);
+    await container.read(tracksStreamProvider.future);
+    await container.read(excludedFoldersProvider.future);
 
     expect(container.read(totalStorageUsageProvider), 0);
     expect(container.read(folderUsageProvider), isEmpty);

@@ -37,6 +37,9 @@ class _FakeLibraryRepository implements LibraryRepository {
 
   @override
   Future<void> purgeMissingTracks() async {}
+
+  @override
+  Future<void> clearArtworkCache() async {}
 }
 
 Track _track({required String id, Duration? duration, bool isMissing = false}) {

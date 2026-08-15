@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$FolderUsage {
 
- String get path; int get sizeBytes; int get trackCount;
+ String get path; int get sizeBytes; int get trackCount; bool get isIncluded;
 /// Create a copy of FolderUsage
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $FolderUsageCopyWith<FolderUsage> get copyWith => _$FolderUsageCopyWithImpl<Fold
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is FolderUsage&&(identical(other.path, path) || other.path == path)&&(identical(other.sizeBytes, sizeBytes) || other.sizeBytes == sizeBytes)&&(identical(other.trackCount, trackCount) || other.trackCount == trackCount));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is FolderUsage&&(identical(other.path, path) || other.path == path)&&(identical(other.sizeBytes, sizeBytes) || other.sizeBytes == sizeBytes)&&(identical(other.trackCount, trackCount) || other.trackCount == trackCount)&&(identical(other.isIncluded, isIncluded) || other.isIncluded == isIncluded));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,path,sizeBytes,trackCount);
+int get hashCode => Object.hash(runtimeType,path,sizeBytes,trackCount,isIncluded);
 
 @override
 String toString() {
-  return 'FolderUsage(path: $path, sizeBytes: $sizeBytes, trackCount: $trackCount)';
+  return 'FolderUsage(path: $path, sizeBytes: $sizeBytes, trackCount: $trackCount, isIncluded: $isIncluded)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $FolderUsageCopyWith<$Res>  {
   factory $FolderUsageCopyWith(FolderUsage value, $Res Function(FolderUsage) _then) = _$FolderUsageCopyWithImpl;
 @useResult
 $Res call({
- String path, int sizeBytes, int trackCount
+ String path, int sizeBytes, int trackCount, bool isIncluded
 });
 
 
@@ -62,12 +62,13 @@ class _$FolderUsageCopyWithImpl<$Res>
 
 /// Create a copy of FolderUsage
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? path = null,Object? sizeBytes = null,Object? trackCount = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? path = null,Object? sizeBytes = null,Object? trackCount = null,Object? isIncluded = null,}) {
   return _then(_self.copyWith(
 path: null == path ? _self.path : path // ignore: cast_nullable_to_non_nullable
 as String,sizeBytes: null == sizeBytes ? _self.sizeBytes : sizeBytes // ignore: cast_nullable_to_non_nullable
 as int,trackCount: null == trackCount ? _self.trackCount : trackCount // ignore: cast_nullable_to_non_nullable
-as int,
+as int,isIncluded: null == isIncluded ? _self.isIncluded : isIncluded // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 
@@ -152,10 +153,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String path,  int sizeBytes,  int trackCount)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String path,  int sizeBytes,  int trackCount,  bool isIncluded)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _FolderUsage() when $default != null:
-return $default(_that.path,_that.sizeBytes,_that.trackCount);case _:
+return $default(_that.path,_that.sizeBytes,_that.trackCount,_that.isIncluded);case _:
   return orElse();
 
 }
@@ -173,10 +174,10 @@ return $default(_that.path,_that.sizeBytes,_that.trackCount);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String path,  int sizeBytes,  int trackCount)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String path,  int sizeBytes,  int trackCount,  bool isIncluded)  $default,) {final _that = this;
 switch (_that) {
 case _FolderUsage():
-return $default(_that.path,_that.sizeBytes,_that.trackCount);case _:
+return $default(_that.path,_that.sizeBytes,_that.trackCount,_that.isIncluded);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -193,10 +194,10 @@ return $default(_that.path,_that.sizeBytes,_that.trackCount);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String path,  int sizeBytes,  int trackCount)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String path,  int sizeBytes,  int trackCount,  bool isIncluded)?  $default,) {final _that = this;
 switch (_that) {
 case _FolderUsage() when $default != null:
-return $default(_that.path,_that.sizeBytes,_that.trackCount);case _:
+return $default(_that.path,_that.sizeBytes,_that.trackCount,_that.isIncluded);case _:
   return null;
 
 }
@@ -208,12 +209,13 @@ return $default(_that.path,_that.sizeBytes,_that.trackCount);case _:
 
 
 class _FolderUsage implements FolderUsage {
-  const _FolderUsage({required this.path, required this.sizeBytes, required this.trackCount});
+  const _FolderUsage({required this.path, required this.sizeBytes, required this.trackCount, required this.isIncluded});
   
 
 @override final  String path;
 @override final  int sizeBytes;
 @override final  int trackCount;
+@override final  bool isIncluded;
 
 /// Create a copy of FolderUsage
 /// with the given fields replaced by the non-null parameter values.
@@ -225,16 +227,16 @@ _$FolderUsageCopyWith<_FolderUsage> get copyWith => __$FolderUsageCopyWithImpl<_
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _FolderUsage&&(identical(other.path, path) || other.path == path)&&(identical(other.sizeBytes, sizeBytes) || other.sizeBytes == sizeBytes)&&(identical(other.trackCount, trackCount) || other.trackCount == trackCount));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _FolderUsage&&(identical(other.path, path) || other.path == path)&&(identical(other.sizeBytes, sizeBytes) || other.sizeBytes == sizeBytes)&&(identical(other.trackCount, trackCount) || other.trackCount == trackCount)&&(identical(other.isIncluded, isIncluded) || other.isIncluded == isIncluded));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,path,sizeBytes,trackCount);
+int get hashCode => Object.hash(runtimeType,path,sizeBytes,trackCount,isIncluded);
 
 @override
 String toString() {
-  return 'FolderUsage(path: $path, sizeBytes: $sizeBytes, trackCount: $trackCount)';
+  return 'FolderUsage(path: $path, sizeBytes: $sizeBytes, trackCount: $trackCount, isIncluded: $isIncluded)';
 }
 
 
@@ -245,7 +247,7 @@ abstract mixin class _$FolderUsageCopyWith<$Res> implements $FolderUsageCopyWith
   factory _$FolderUsageCopyWith(_FolderUsage value, $Res Function(_FolderUsage) _then) = __$FolderUsageCopyWithImpl;
 @override @useResult
 $Res call({
- String path, int sizeBytes, int trackCount
+ String path, int sizeBytes, int trackCount, bool isIncluded
 });
 
 
@@ -262,12 +264,13 @@ class __$FolderUsageCopyWithImpl<$Res>
 
 /// Create a copy of FolderUsage
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? path = null,Object? sizeBytes = null,Object? trackCount = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? path = null,Object? sizeBytes = null,Object? trackCount = null,Object? isIncluded = null,}) {
   return _then(_FolderUsage(
 path: null == path ? _self.path : path // ignore: cast_nullable_to_non_nullable
 as String,sizeBytes: null == sizeBytes ? _self.sizeBytes : sizeBytes // ignore: cast_nullable_to_non_nullable
 as int,trackCount: null == trackCount ? _self.trackCount : trackCount // ignore: cast_nullable_to_non_nullable
-as int,
+as int,isIncluded: null == isIncluded ? _self.isIncluded : isIncluded // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 

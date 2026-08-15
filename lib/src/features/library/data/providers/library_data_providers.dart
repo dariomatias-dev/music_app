@@ -12,6 +12,7 @@ import 'package:music_app/src/features/library/data/repositories/library_reposit
 import 'package:music_app/src/features/library/domain/reconcile_library.dart';
 import 'package:music_app/src/features/library/domain/repositories/favorite_repository.dart';
 import 'package:music_app/src/features/library/domain/repositories/library_repository.dart';
+import 'package:music_app/src/features/storage/data/providers/storage_data_providers.dart';
 
 /// Provides the [LibraryLocalDataSource] used across the library feature.
 final libraryLocalDataSourceProvider = Provider<LibraryLocalDataSource>(
@@ -42,6 +43,8 @@ final libraryRepositoryProvider = Provider<LibraryRepository>(
   (ref) => LibraryRepositoryImpl(
     dataSource: ref.watch(libraryLocalDataSourceProvider),
     reconcileLibrary: ref.watch(reconcileLibraryProvider),
+    artworkCache: ref.watch(artworkCacheProvider),
+    excludedFolderRepository: ref.watch(excludedFolderRepositoryProvider),
   ),
 );
 

@@ -170,5 +170,13 @@
   "clearHistoryLabel": "Clear history",
   "clearHistoryConfirmTitle": "Clear listening history?",
   "clearHistoryConfirmMessage": "This resets recently played and every statistic derived from it. Your library isn't affected.",
-  "clearHistoryConfirmAction": "Clear"
+  "clearHistoryConfirmAction": "Clear",
+  "storageTotalUsedLabel": "Space used",
+  "storageFoldersLabel": "Folders",
+  "includeInScanSemanticLabel": "Include in scan",
+  "clearArtworkCacheLabel": "Clear artwork cache",
+  "clearArtworkCacheConfirmTitle": "Clear artwork cache?",
+  "clearArtworkCacheConfirmMessage": "This deletes cached album art. It's re-extracted the next time you scan your library.",
+  "clearArtworkCacheConfirmAction": "Clear",
+  "artworkCacheClearedMessage": "Artwork cache cleared"
 }

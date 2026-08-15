@@ -29,4 +29,10 @@ class AlbumDao extends DatabaseAccessor<AppDatabase> with _$AlbumDaoMixin {
   /// Deletes the album with [id].
   Future<void> deleteById(String id) =>
       (delete(albumTable)..where((t) => t.id.equals(id))).go();
+
+  /// Clears every album's cached artwork path, so a future scan re-extracts
+  /// it.
+  Future<void> clearArtworkPaths() => update(
+    albumTable,
+  ).write(const AlbumTableCompanion(artworkPath: Value(null)));
 }

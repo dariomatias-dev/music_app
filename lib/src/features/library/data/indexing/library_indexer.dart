@@ -59,8 +59,12 @@ class LibraryIndexer {
 
   /// Scans the device and indexes every supported audio file found,
   /// yielding progress as files are processed.
-  Stream<IndexingProgress> indexLibrary() async* {
-    final files = await _mediaScanner.scan();
+  ///
+  /// Files under any of [excludedFolders] are skipped.
+  Stream<IndexingProgress> indexLibrary({
+    List<String> excludedFolders = const [],
+  }) async* {
+    final files = await _mediaScanner.scan(excludedFolders: excludedFolders);
     final artistsBySourceId = <String, Artist>{};
     final albumsBySourceId = <String, Album>{};
 
