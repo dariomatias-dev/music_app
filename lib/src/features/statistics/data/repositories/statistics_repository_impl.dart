@@ -17,11 +17,16 @@ class StatisticsRepositoryImpl implements StatisticsRepository {
   @visibleForTesting
   DateTime Function() clock = DateTime.now;
 
-  Stream<List<PlayEventRow>> get _events => _database.playEventDao.watchAll();
+  Stream<List<PlayEventRow>> _events({DateTime? from}) {
+    return _database.playEventDao.watchAll().map((events) {
+      if (from == null) return events;
+      return events.where((event) => !event.startedAt.isBefore(from)).toList();
+    });
+  }
 
   @override
-  Stream<List<TrackPlayCount>> watchTrackPlayCounts() {
-    return _events.map((events) {
+  Stream<List<TrackPlayCount>> watchTrackPlayCounts({DateTime? from}) {
+    return _events(from: from).map((events) {
       final counts = <String, int>{};
       for (final event in events) {
         counts[event.trackId] = (counts[event.trackId] ?? 0) + 1;
@@ -37,8 +42,8 @@ class StatisticsRepositoryImpl implements StatisticsRepository {
   }
 
   @override
-  Stream<Duration> watchTotalListenedDuration() {
-    return _events.map((events) {
+  Stream<Duration> watchTotalListenedDuration({DateTime? from}) {
+    return _events(from: from).map((events) {
       var totalMilliseconds = 0;
       for (final event in events) {
         totalMilliseconds += event.playedDuration;
@@ -48,8 +53,8 @@ class StatisticsRepositoryImpl implements StatisticsRepository {
   }
 
   @override
-  Stream<List<int>> watchHourlyDistribution() {
-    return _events.map((events) {
+  Stream<List<int>> watchHourlyDistribution({DateTime? from}) {
+    return _events(from: from).map((events) {
       final buckets = List.filled(24, 0);
       for (final event in events) {
         buckets[event.startedAt.hour]++;
@@ -59,8 +64,8 @@ class StatisticsRepositoryImpl implements StatisticsRepository {
   }
 
   @override
-  Stream<List<DailyPlayCount>> watchDailyPlayCounts() {
-    return _events.map((events) {
+  Stream<List<DailyPlayCount>> watchDailyPlayCounts({DateTime? from}) {
+    return _events(from: from).map((events) {
       final counts = <DateTime, int>{};
       for (final event in events) {
         final date = _dateOnly(event.startedAt);
@@ -77,7 +82,7 @@ class StatisticsRepositoryImpl implements StatisticsRepository {
 
   @override
   Stream<ListeningStreak> watchListeningStreak() {
-    return _events.map((events) {
+    return _events().map((events) {
       final dates = events.map((event) => _dateOnly(event.startedAt)).toSet();
       if (dates.isEmpty) {
         return const ListeningStreak(currentDays: 0, longestDays: 0);

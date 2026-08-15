@@ -27,19 +27,19 @@ class FakeStatisticsRepository implements StatisticsRepository {
   final ListeningStreak _listeningStreak;
 
   @override
-  Stream<List<TrackPlayCount>> watchTrackPlayCounts() =>
+  Stream<List<TrackPlayCount>> watchTrackPlayCounts({DateTime? from}) =>
       Stream.value(_trackPlayCounts);
 
   @override
-  Stream<Duration> watchTotalListenedDuration() =>
+  Stream<Duration> watchTotalListenedDuration({DateTime? from}) =>
       Stream.value(_totalListenedDuration);
 
   @override
-  Stream<List<int>> watchHourlyDistribution() =>
+  Stream<List<int>> watchHourlyDistribution({DateTime? from}) =>
       Stream.value(_hourlyDistribution);
 
   @override
-  Stream<List<DailyPlayCount>> watchDailyPlayCounts() =>
+  Stream<List<DailyPlayCount>> watchDailyPlayCounts({DateTime? from}) =>
       Stream.value(_dailyPlayCounts);
 
   @override

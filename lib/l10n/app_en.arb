@@ -140,5 +140,35 @@
   "clearSearchHistoryConfirmTitle": "Clear search history?",
   "clearSearchHistoryConfirmMessage": "This removes all of your recent searches.",
   "clearSearchHistoryConfirmAction": "Clear",
-  "removeSearchTermSemanticLabel": "Remove from history"
+  "removeSearchTermSemanticLabel": "Remove from history",
+  "statisticsLabel": "Statistics",
+  "periodWeekLabel": "Week",
+  "periodMonthLabel": "Month",
+  "periodYearLabel": "Year",
+  "periodAllTimeLabel": "All time",
+  "totalListenedLabel": "Time listened",
+  "currentStreakLabel": "Current streak",
+  "longestStreakLabel": "Longest streak",
+  "dayCountLabel": "{count, plural, one{{count} day} other{{count} days}}",
+  "@dayCountLabel": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "playCountLabel": "{count, plural, one{{count} play} other{{count} plays}}",
+  "@playCountLabel": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "dailyActivityLabel": "Daily activity",
+  "hourlyActivityLabel": "Activity by hour",
+  "mostPlayedTracksLabel": "Most played tracks",
+  "mostPlayedArtistsLabel": "Most played artists",
+  "statisticsEmptyTitle": "Nothing to show yet",
+  "statisticsEmptyMessage": "Play some music and your stats will show up here.",
+  "clearHistoryLabel": "Clear history",
+  "clearHistoryConfirmTitle": "Clear listening history?",
+  "clearHistoryConfirmMessage": "This resets recently played and every statistic derived from it. Your library isn't affected.",
+  "clearHistoryConfirmAction": "Clear"
 }

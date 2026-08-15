@@ -57,4 +57,7 @@ abstract final class RoutePaths {
   ///
   /// A stub until Fase 19.
   static const storage = '/storage';
+
+  /// The statistics screen.
+  static const statistics = '/statistics';
 }

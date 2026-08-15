@@ -11,4 +11,8 @@ abstract interface class PlayHistoryRepository {
     required Duration playedDuration,
     required bool completed,
   });
+
+  /// Clears the entire play history, resetting recently-played and every
+  /// statistic derived from it.
+  Future<void> clearHistory();
 }

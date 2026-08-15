@@ -402,4 +402,78 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get removeSearchTermSemanticLabel => '从历史记录中移除';
+
+  @override
+  String get statisticsLabel => '统计';
+
+  @override
+  String get periodWeekLabel => '周';
+
+  @override
+  String get periodMonthLabel => '月';
+
+  @override
+  String get periodYearLabel => '年';
+
+  @override
+  String get periodAllTimeLabel => '全部';
+
+  @override
+  String get totalListenedLabel => '收听时长';
+
+  @override
+  String get currentStreakLabel => '当前连续天数';
+
+  @override
+  String get longestStreakLabel => '最长连续天数';
+
+  @override
+  String dayCountLabel(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count 天',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String playCountLabel(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '播放 $count 次',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get dailyActivityLabel => '每日活动';
+
+  @override
+  String get hourlyActivityLabel => '按小时活动';
+
+  @override
+  String get mostPlayedTracksLabel => '最常播放的曲目';
+
+  @override
+  String get mostPlayedArtistsLabel => '最常播放的艺人';
+
+  @override
+  String get statisticsEmptyTitle => '暂无内容';
+
+  @override
+  String get statisticsEmptyMessage => '听一些音乐，你的统计数据就会显示在这里。';
+
+  @override
+  String get clearHistoryLabel => '清除历史记录';
+
+  @override
+  String get clearHistoryConfirmTitle => '清除收听历史记录？';
+
+  @override
+  String get clearHistoryConfirmMessage => '这会重置最近播放记录以及由此得出的所有统计数据。你的音乐库不受影响。';
+
+  @override
+  String get clearHistoryConfirmAction => '清除';
 }

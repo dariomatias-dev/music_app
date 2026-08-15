@@ -44,6 +44,30 @@ void main() {
       expect(counts.map((c) => c.trackId), ['a', 'b']);
       expect(counts.map((c) => c.playCount), [2, 1]);
     });
+
+    test('excludes plays before the given from cutoff', () async {
+      await seedPlay(id: '1', trackId: 'a', startedAt: DateTime(2026));
+      await seedPlay(id: '2', trackId: 'a', startedAt: DateTime(2026, 1, 5));
+      await seedPlay(id: '3', trackId: 'b', startedAt: DateTime(2026, 1, 10));
+
+      final counts = await repository
+          .watchTrackPlayCounts(from: DateTime(2026, 1, 4))
+          .first;
+
+      // The Jan 1 play of 'a' is excluded, leaving one play each.
+      expect(counts.map((c) => c.trackId).toSet(), {'a', 'b'});
+      expect(counts.map((c) => c.playCount), [1, 1]);
+    });
+
+    test('includes a play exactly at the from cutoff', () async {
+      await seedPlay(id: '1', trackId: 'a', startedAt: DateTime(2026, 1, 4));
+
+      final counts = await repository
+          .watchTrackPlayCounts(from: DateTime(2026, 1, 4))
+          .first;
+
+      expect(counts.map((c) => c.trackId), ['a']);
+    });
   });
 
   group('watchTotalListenedDuration', () {
@@ -71,6 +95,27 @@ void main() {
         await repository.watchTotalListenedDuration().first,
         Duration.zero,
       );
+    });
+
+    test('only sums plays at or after the given from cutoff', () async {
+      await seedPlay(
+        id: '1',
+        trackId: 'a',
+        startedAt: DateTime(2026),
+        playedDurationMs: 30000,
+      );
+      await seedPlay(
+        id: '2',
+        trackId: 'b',
+        startedAt: DateTime(2026, 1, 10),
+        playedDurationMs: 45000,
+      );
+
+      final total = await repository
+          .watchTotalListenedDuration(from: DateTime(2026, 1, 4))
+          .first;
+
+      expect(total, const Duration(seconds: 45));
     });
   });
 

@@ -21,4 +21,11 @@ class FakePlayHistoryRepository implements PlayHistoryRepository {
   }) async {
     recordedPlays.add(trackId);
   }
+
+  bool historyCleared = false;
+
+  @override
+  Future<void> clearHistory() async {
+    historyCleared = true;
+  }
 }

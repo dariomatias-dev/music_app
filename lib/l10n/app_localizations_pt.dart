@@ -422,6 +422,84 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get removeSearchTermSemanticLabel => 'Remove from history';
+
+  @override
+  String get statisticsLabel => 'Statistics';
+
+  @override
+  String get periodWeekLabel => 'Week';
+
+  @override
+  String get periodMonthLabel => 'Month';
+
+  @override
+  String get periodYearLabel => 'Year';
+
+  @override
+  String get periodAllTimeLabel => 'All time';
+
+  @override
+  String get totalListenedLabel => 'Time listened';
+
+  @override
+  String get currentStreakLabel => 'Current streak';
+
+  @override
+  String get longestStreakLabel => 'Longest streak';
+
+  @override
+  String dayCountLabel(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days',
+      one: '$count day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String playCountLabel(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count plays',
+      one: '$count play',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get dailyActivityLabel => 'Daily activity';
+
+  @override
+  String get hourlyActivityLabel => 'Activity by hour';
+
+  @override
+  String get mostPlayedTracksLabel => 'Most played tracks';
+
+  @override
+  String get mostPlayedArtistsLabel => 'Most played artists';
+
+  @override
+  String get statisticsEmptyTitle => 'Nothing to show yet';
+
+  @override
+  String get statisticsEmptyMessage =>
+      'Play some music and your stats will show up here.';
+
+  @override
+  String get clearHistoryLabel => 'Clear history';
+
+  @override
+  String get clearHistoryConfirmTitle => 'Clear listening history?';
+
+  @override
+  String get clearHistoryConfirmMessage =>
+      'This resets recently played and every statistic derived from it. Your library isn\'t affected.';
+
+  @override
+  String get clearHistoryConfirmAction => 'Clear';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -844,4 +922,82 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get removeSearchTermSemanticLabel => 'Remover do histórico';
+
+  @override
+  String get statisticsLabel => 'Estatísticas';
+
+  @override
+  String get periodWeekLabel => 'Semana';
+
+  @override
+  String get periodMonthLabel => 'Mês';
+
+  @override
+  String get periodYearLabel => 'Ano';
+
+  @override
+  String get periodAllTimeLabel => 'Sempre';
+
+  @override
+  String get totalListenedLabel => 'Tempo ouvido';
+
+  @override
+  String get currentStreakLabel => 'Sequência atual';
+
+  @override
+  String get longestStreakLabel => 'Maior sequência';
+
+  @override
+  String dayCountLabel(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count dias',
+      one: '$count dia',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String playCountLabel(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count reproduções',
+      one: '$count reprodução',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get dailyActivityLabel => 'Atividade diária';
+
+  @override
+  String get hourlyActivityLabel => 'Atividade por hora';
+
+  @override
+  String get mostPlayedTracksLabel => 'Faixas mais tocadas';
+
+  @override
+  String get mostPlayedArtistsLabel => 'Artistas mais tocados';
+
+  @override
+  String get statisticsEmptyTitle => 'Nada para mostrar ainda';
+
+  @override
+  String get statisticsEmptyMessage =>
+      'Ouça música e suas estatísticas vão aparecer aqui.';
+
+  @override
+  String get clearHistoryLabel => 'Limpar histórico';
+
+  @override
+  String get clearHistoryConfirmTitle => 'Limpar histórico de reprodução?';
+
+  @override
+  String get clearHistoryConfirmMessage =>
+      'Isso reinicia as tocadas recentemente e todas as estatísticas derivadas dele. Sua biblioteca não é afetada.';
+
+  @override
+  String get clearHistoryConfirmAction => 'Limpar';
 }

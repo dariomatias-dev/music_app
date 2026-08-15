@@ -32,4 +32,7 @@ class PlayHistoryRepositoryImpl implements PlayHistoryRepository {
       ),
     );
   }
+
+  @override
+  Future<void> clearHistory() => _database.playEventDao.clear();
 }

@@ -424,4 +424,82 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get removeSearchTermSemanticLabel => 'Eliminar del historial';
+
+  @override
+  String get statisticsLabel => 'Estadísticas';
+
+  @override
+  String get periodWeekLabel => 'Semana';
+
+  @override
+  String get periodMonthLabel => 'Mes';
+
+  @override
+  String get periodYearLabel => 'Año';
+
+  @override
+  String get periodAllTimeLabel => 'Siempre';
+
+  @override
+  String get totalListenedLabel => 'Tiempo escuchado';
+
+  @override
+  String get currentStreakLabel => 'Racha actual';
+
+  @override
+  String get longestStreakLabel => 'Racha más larga';
+
+  @override
+  String dayCountLabel(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count días',
+      one: '$count día',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String playCountLabel(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count reproducciones',
+      one: '$count reproducción',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get dailyActivityLabel => 'Actividad diaria';
+
+  @override
+  String get hourlyActivityLabel => 'Actividad por hora';
+
+  @override
+  String get mostPlayedTracksLabel => 'Pistas más reproducidas';
+
+  @override
+  String get mostPlayedArtistsLabel => 'Artistas más reproducidos';
+
+  @override
+  String get statisticsEmptyTitle => 'Nada que mostrar todavía';
+
+  @override
+  String get statisticsEmptyMessage =>
+      'Escucha música y tus estadísticas aparecerán aquí.';
+
+  @override
+  String get clearHistoryLabel => 'Borrar historial';
+
+  @override
+  String get clearHistoryConfirmTitle => '¿Borrar el historial de escucha?';
+
+  @override
+  String get clearHistoryConfirmMessage =>
+      'Esto reinicia lo reproducido recientemente y todas las estadísticas derivadas de ello. Tu biblioteca no se ve afectada.';
+
+  @override
+  String get clearHistoryConfirmAction => 'Borrar';
 }

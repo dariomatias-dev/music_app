@@ -422,4 +422,82 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get removeSearchTermSemanticLabel => 'Remove from history';
+
+  @override
+  String get statisticsLabel => 'Statistics';
+
+  @override
+  String get periodWeekLabel => 'Week';
+
+  @override
+  String get periodMonthLabel => 'Month';
+
+  @override
+  String get periodYearLabel => 'Year';
+
+  @override
+  String get periodAllTimeLabel => 'All time';
+
+  @override
+  String get totalListenedLabel => 'Time listened';
+
+  @override
+  String get currentStreakLabel => 'Current streak';
+
+  @override
+  String get longestStreakLabel => 'Longest streak';
+
+  @override
+  String dayCountLabel(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days',
+      one: '$count day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String playCountLabel(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count plays',
+      one: '$count play',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get dailyActivityLabel => 'Daily activity';
+
+  @override
+  String get hourlyActivityLabel => 'Activity by hour';
+
+  @override
+  String get mostPlayedTracksLabel => 'Most played tracks';
+
+  @override
+  String get mostPlayedArtistsLabel => 'Most played artists';
+
+  @override
+  String get statisticsEmptyTitle => 'Nothing to show yet';
+
+  @override
+  String get statisticsEmptyMessage =>
+      'Play some music and your stats will show up here.';
+
+  @override
+  String get clearHistoryLabel => 'Clear history';
+
+  @override
+  String get clearHistoryConfirmTitle => 'Clear listening history?';
+
+  @override
+  String get clearHistoryConfirmMessage =>
+      'This resets recently played and every statistic derived from it. Your library isn\'t affected.';
+
+  @override
+  String get clearHistoryConfirmAction => 'Clear';
 }

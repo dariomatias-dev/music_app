@@ -140,5 +140,35 @@
   "clearSearchHistoryConfirmTitle": "Limpar histórico de busca?",
   "clearSearchHistoryConfirmMessage": "Isso remove todas as suas buscas recentes.",
   "clearSearchHistoryConfirmAction": "Limpar",
-  "removeSearchTermSemanticLabel": "Remover do histórico"
+  "removeSearchTermSemanticLabel": "Remover do histórico",
+  "statisticsLabel": "Estatísticas",
+  "periodWeekLabel": "Semana",
+  "periodMonthLabel": "Mês",
+  "periodYearLabel": "Ano",
+  "periodAllTimeLabel": "Sempre",
+  "totalListenedLabel": "Tempo ouvido",
+  "currentStreakLabel": "Sequência atual",
+  "longestStreakLabel": "Maior sequência",
+  "dayCountLabel": "{count, plural, one{{count} dia} other{{count} dias}}",
+  "@dayCountLabel": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "playCountLabel": "{count, plural, one{{count} reprodução} other{{count} reproduções}}",
+  "@playCountLabel": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "dailyActivityLabel": "Atividade diária",
+  "hourlyActivityLabel": "Atividade por hora",
+  "mostPlayedTracksLabel": "Faixas mais tocadas",
+  "mostPlayedArtistsLabel": "Artistas mais tocados",
+  "statisticsEmptyTitle": "Nada para mostrar ainda",
+  "statisticsEmptyMessage": "Ouça música e suas estatísticas vão aparecer aqui.",
+  "clearHistoryLabel": "Limpar histórico",
+  "clearHistoryConfirmTitle": "Limpar histórico de reprodução?",
+  "clearHistoryConfirmMessage": "Isso reinicia as tocadas recentemente e todas as estatísticas derivadas dele. Sua biblioteca não é afetada.",
+  "clearHistoryConfirmAction": "Limpar"
 }

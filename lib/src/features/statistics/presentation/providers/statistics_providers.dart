@@ -6,25 +6,52 @@ import 'package:music_app/src/features/statistics/data/providers/statistics_data
 import 'package:music_app/src/features/statistics/domain/entities/daily_play_count.dart';
 import 'package:music_app/src/features/statistics/domain/entities/listening_streak.dart';
 import 'package:music_app/src/features/statistics/domain/entities/track_play_count.dart';
+import 'package:music_app/src/features/statistics/presentation/view_models/statistics_period_view_model.dart';
 
-/// Every played track's play count, most played first.
+/// The selected period's cutoff, relative to now; `null` for all time.
+DateTime? _periodCutoff(Ref ref) {
+  final period = ref.watch(statisticsPeriodViewModelProvider);
+  return period.cutoff(DateTime.now());
+}
+
+/// Every played track's play count within the selected period, most played
+/// first.
 final trackPlayCountsProvider = StreamProvider<List<TrackPlayCount>>(
-  (ref) => ref.watch(statisticsRepositoryProvider).watchTrackPlayCounts(),
+  (ref) => ref
+      .watch(statisticsRepositoryProvider)
+      .watchTrackPlayCounts(from: _periodCutoff(ref)),
 );
 
-/// The total time actually played across every recorded play.
+/// The total time actually played within the selected period.
 final totalListenedDurationProvider = StreamProvider<Duration>(
-  (ref) => ref.watch(statisticsRepositoryProvider).watchTotalListenedDuration(),
+  (ref) => ref
+      .watch(statisticsRepositoryProvider)
+      .watchTotalListenedDuration(from: _periodCutoff(ref)),
 );
 
-/// Play counts by hour of day (index 0-23, local time).
+/// Play counts by hour of day (index 0-23, local time) within the selected
+/// period.
 final hourlyDistributionProvider = StreamProvider<List<int>>(
-  (ref) => ref.watch(statisticsRepositoryProvider).watchHourlyDistribution(),
+  (ref) => ref
+      .watch(statisticsRepositoryProvider)
+      .watchHourlyDistribution(from: _periodCutoff(ref)),
 );
 
-/// Play counts by calendar day that had at least one play, oldest first.
+/// Play counts by calendar day that had at least one play within the
+/// selected period, oldest first.
 final dailyPlayCountsProvider = StreamProvider<List<DailyPlayCount>>(
-  (ref) => ref.watch(statisticsRepositoryProvider).watchDailyPlayCounts(),
+  (ref) => ref
+      .watch(statisticsRepositoryProvider)
+      .watchDailyPlayCounts(from: _periodCutoff(ref)),
+);
+
+/// Whether any play has ever been recorded, regardless of the selected
+/// period; drives the screen's empty state.
+final hasPlayHistoryProvider = StreamProvider<bool>(
+  (ref) => ref
+      .watch(statisticsRepositoryProvider)
+      .watchTrackPlayCounts()
+      .map((counts) => counts.isNotEmpty),
 );
 
 /// The user's current and longest streaks of consecutive days with at least

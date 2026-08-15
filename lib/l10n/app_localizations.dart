@@ -858,6 +858,126 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Remove from history'**
   String get removeSearchTermSemanticLabel;
+
+  /// No description provided for @statisticsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Statistics'**
+  String get statisticsLabel;
+
+  /// No description provided for @periodWeekLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Week'**
+  String get periodWeekLabel;
+
+  /// No description provided for @periodMonthLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Month'**
+  String get periodMonthLabel;
+
+  /// No description provided for @periodYearLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Year'**
+  String get periodYearLabel;
+
+  /// No description provided for @periodAllTimeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'All time'**
+  String get periodAllTimeLabel;
+
+  /// No description provided for @totalListenedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Time listened'**
+  String get totalListenedLabel;
+
+  /// No description provided for @currentStreakLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Current streak'**
+  String get currentStreakLabel;
+
+  /// No description provided for @longestStreakLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Longest streak'**
+  String get longestStreakLabel;
+
+  /// No description provided for @dayCountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} day} other{{count} days}}'**
+  String dayCountLabel(int count);
+
+  /// No description provided for @playCountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} play} other{{count} plays}}'**
+  String playCountLabel(int count);
+
+  /// No description provided for @dailyActivityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily activity'**
+  String get dailyActivityLabel;
+
+  /// No description provided for @hourlyActivityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Activity by hour'**
+  String get hourlyActivityLabel;
+
+  /// No description provided for @mostPlayedTracksLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Most played tracks'**
+  String get mostPlayedTracksLabel;
+
+  /// No description provided for @mostPlayedArtistsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Most played artists'**
+  String get mostPlayedArtistsLabel;
+
+  /// No description provided for @statisticsEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing to show yet'**
+  String get statisticsEmptyTitle;
+
+  /// No description provided for @statisticsEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Play some music and your stats will show up here.'**
+  String get statisticsEmptyMessage;
+
+  /// No description provided for @clearHistoryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear history'**
+  String get clearHistoryLabel;
+
+  /// No description provided for @clearHistoryConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear listening history?'**
+  String get clearHistoryConfirmTitle;
+
+  /// No description provided for @clearHistoryConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This resets recently played and every statistic derived from it. Your library isn\'t affected.'**
+  String get clearHistoryConfirmMessage;
+
+  /// No description provided for @clearHistoryConfirmAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get clearHistoryConfirmAction;
 }
 
 class _AppLocalizationsDelegate

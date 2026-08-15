@@ -41,4 +41,7 @@ abstract final class RouteNames {
 
   /// The storage screen.
   static const storage = 'storage';
+
+  /// The statistics screen.
+  static const statistics = 'statistics';
 }

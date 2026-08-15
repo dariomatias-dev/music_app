@@ -140,5 +140,35 @@
   "clearSearchHistoryConfirmTitle": "清除搜索历史？",
   "clearSearchHistoryConfirmMessage": "这会移除你所有的最近搜索。",
   "clearSearchHistoryConfirmAction": "清除",
-  "removeSearchTermSemanticLabel": "从历史记录中移除"
+  "removeSearchTermSemanticLabel": "从历史记录中移除",
+  "statisticsLabel": "统计",
+  "periodWeekLabel": "周",
+  "periodMonthLabel": "月",
+  "periodYearLabel": "年",
+  "periodAllTimeLabel": "全部",
+  "totalListenedLabel": "收听时长",
+  "currentStreakLabel": "当前连续天数",
+  "longestStreakLabel": "最长连续天数",
+  "dayCountLabel": "{count, plural, other{{count} 天}}",
+  "@dayCountLabel": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "playCountLabel": "{count, plural, other{播放 {count} 次}}",
+  "@playCountLabel": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "dailyActivityLabel": "每日活动",
+  "hourlyActivityLabel": "按小时活动",
+  "mostPlayedTracksLabel": "最常播放的曲目",
+  "mostPlayedArtistsLabel": "最常播放的艺人",
+  "statisticsEmptyTitle": "暂无内容",
+  "statisticsEmptyMessage": "听一些音乐，你的统计数据就会显示在这里。",
+  "clearHistoryLabel": "清除历史记录",
+  "clearHistoryConfirmTitle": "清除收听历史记录？",
+  "clearHistoryConfirmMessage": "这会重置最近播放记录以及由此得出的所有统计数据。你的音乐库不受影响。",
+  "clearHistoryConfirmAction": "清除"
 }

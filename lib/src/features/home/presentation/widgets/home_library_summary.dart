@@ -72,7 +72,17 @@ class HomeLibrarySummary extends ConsumerWidget {
             ],
           ),
           const SizedBox(height: AppSpacing.smMd),
-          _StorageRow(onTap: () => context.push(RoutePaths.storage)),
+          _LinkRow(
+            icon: Icons.bar_chart_rounded,
+            label: l10n.statisticsLabel,
+            onTap: () => context.push(RoutePaths.statistics),
+          ),
+          const SizedBox(height: AppSpacing.smMd),
+          _LinkRow(
+            icon: Icons.sd_storage_outlined,
+            label: l10n.storageLabel,
+            onTap: () => context.push(RoutePaths.storage),
+          ),
         ],
       ),
     );
@@ -121,14 +131,19 @@ class _StatTile extends StatelessWidget {
   }
 }
 
-class _StorageRow extends StatelessWidget {
-  const _StorageRow({required this.onTap});
+class _LinkRow extends StatelessWidget {
+  const _LinkRow({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
 
+  final IconData icon;
+  final String label;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
     final colors = context.colors;
 
     return Pressable(
@@ -145,15 +160,11 @@ class _StorageRow extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Icon(
-              Icons.sd_storage_outlined,
-              size: 20,
-              color: colors.textSecondary,
-            ),
+            Icon(icon, size: 20, color: colors.textSecondary),
             const SizedBox(width: AppSpacing.sm),
             Expanded(
               child: Text(
-                l10n.storageLabel,
+                label,
                 style: AppTypography.rowTitle.copyWith(
                   color: colors.textPrimary,
                 ),

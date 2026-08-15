@@ -152,4 +152,46 @@ void main() {
 
     expect(find.text('Storage screen reached'), findsOneWidget);
   });
+
+  testWidgets('tapping statistics opens the statistics route', (
+    tester,
+  ) async {
+    final router = GoRouter(
+      initialLocation: '/',
+      routes: [
+        GoRoute(
+          path: '/',
+          builder: (context, state) =>
+              const Scaffold(body: HomeLibrarySummary()),
+        ),
+        GoRoute(
+          path: '/statistics',
+          builder: (context, state) =>
+              const Scaffold(body: Text('Statistics screen reached')),
+        ),
+      ],
+    );
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          libraryRepositoryProvider.overrideWithValue(
+            const _FakeLibraryRepository(tracks: [], albums: [], artists: []),
+          ),
+        ],
+        child: MaterialApp.router(
+          theme: AppTheme.light,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          routerConfig: router,
+        ),
+      ),
+    );
+    await tester.pump();
+
+    await tester.tap(find.text('Statistics'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Statistics screen reached'), findsOneWidget);
+  });
 }
