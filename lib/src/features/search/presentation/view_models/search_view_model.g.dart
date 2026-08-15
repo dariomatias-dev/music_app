@@ -47,7 +47,7 @@ final class SearchViewModelProvider
   }
 }
 
-String _$searchViewModelHash() => r'b45f8c5467151f346029e009adf0185c839d1bcd';
+String _$searchViewModelHash() => r'8952680146db623cd72f4841a8c5dd0c2855a488';
 
 /// The search screen's current term, debounced so results (built in
 /// Etapa 82) aren't recomputed on every keystroke.

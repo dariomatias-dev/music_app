@@ -9,4 +9,16 @@ class FakePlayHistoryRepository implements PlayHistoryRepository {
   @override
   Stream<List<String>> watchRecentTrackIds({int limit = 20}) =>
       Stream.value(recentTrackIds.take(limit).toList());
+
+  final recordedPlays = <String>[];
+
+  @override
+  Future<void> recordPlay({
+    required String trackId,
+    required DateTime startedAt,
+    required Duration playedDuration,
+    required bool completed,
+  }) async {
+    recordedPlays.add(trackId);
+  }
 }

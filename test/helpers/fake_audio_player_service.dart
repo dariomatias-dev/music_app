@@ -166,6 +166,15 @@ class FakeAudioPlayerService implements AudioPlayerService {
     _emit((s) => _copyWith(s, duration: duration));
   }
 
+  /// Reports the current item as finished, for tests that exercise
+  /// completion handling. Production implementations only learn this from
+  /// the engine.
+  void completeCurrentItemForTesting() {
+    _emit(
+      (s) => _copyWith(s, processingState: AudioProcessingState.completed),
+    );
+  }
+
   AudioPlaybackSnapshot _copyWith(
     AudioPlaybackSnapshot snapshot, {
     AudioProcessingState? processingState,

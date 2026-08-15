@@ -1,11 +1,19 @@
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:music_app/src/core/database/app_database.dart';
+import 'package:music_app/src/core/services/id_generator/id_generator.dart';
 import 'package:music_app/src/features/history/data/repositories/play_history_repository_impl.dart';
 import 'package:music_app/src/features/library/data/data_sources/library_local_data_source_impl.dart';
 import 'package:music_app/src/features/library/domain/entities/album.dart';
 import 'package:music_app/src/features/library/domain/entities/artist.dart';
 import 'package:music_app/src/features/library/domain/entities/track.dart';
+
+class _SequentialIdGenerator implements IdGenerator {
+  int _next = 0;
+
+  @override
+  String generate() => 'id-${_next++}';
+}
 
 void main() {
   late AppDatabase database;
@@ -46,7 +54,7 @@ void main() {
 
   setUp(() async {
     database = AppDatabase(NativeDatabase.memory());
-    repository = PlayHistoryRepositoryImpl(database);
+    repository = PlayHistoryRepositoryImpl(database, _SequentialIdGenerator());
 
     final dataSource = LibraryLocalDataSourceImpl(database);
     await dataSource.upsertArtist(
@@ -111,5 +119,31 @@ void main() {
       'track-3',
       'track-2',
     ]);
+  });
+
+  test('recordPlay persists a play event', () async {
+    await repository.recordPlay(
+      trackId: 'track-1',
+      startedAt: DateTime(2026),
+      playedDuration: const Duration(seconds: 45),
+      completed: false,
+    );
+
+    final rows = await database.select(database.playEventTable).get();
+    expect(rows, hasLength(1));
+    expect(rows.single.trackId, 'track-1');
+    expect(rows.single.playedDuration, 45000);
+    expect(rows.single.completed, isFalse);
+  });
+
+  test('recordPlay makes the track show up as recently played', () async {
+    await repository.recordPlay(
+      trackId: 'track-1',
+      startedAt: DateTime(2026),
+      playedDuration: const Duration(seconds: 45),
+      completed: true,
+    );
+
+    expect(await repository.watchRecentTrackIds().first, ['track-1']);
   });
 }
