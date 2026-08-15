@@ -398,4 +398,11 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get clearSearchSemanticLabel => 'Borrar búsqueda';
+
+  @override
+  String get searchResultsEmptyTitle => 'No se encontraron resultados';
+
+  @override
+  String get searchResultsEmptyMessage =>
+      'Prueba con otro término de búsqueda.';
 }

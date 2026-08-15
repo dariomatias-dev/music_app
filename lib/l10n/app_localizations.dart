@@ -810,6 +810,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Clear search'**
   String get clearSearchSemanticLabel;
+
+  /// No description provided for @searchResultsEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No results found'**
+  String get searchResultsEmptyTitle;
+
+  /// No description provided for @searchResultsEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Try a different search term.'**
+  String get searchResultsEmptyMessage;
 }
 
 class _AppLocalizationsDelegate

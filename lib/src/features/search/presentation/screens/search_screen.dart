@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:music_app/l10n/app_localizations.dart';
 import 'package:music_app/src/features/search/presentation/view_models/search_view_model.dart';
+import 'package:music_app/src/features/search/presentation/widgets/search_results_list.dart';
 
 /// The Search tab.
 ///
-/// Its results (built in Etapa 82) and search history (Etapa 83) come
-/// later; this wires up the search field itself.
+/// Its search history (Etapa 83) comes later; this wires up the field and
+/// its results.
 class SearchScreen extends ConsumerStatefulWidget {
   /// Creates a [SearchScreen].
   const SearchScreen({super.key});
@@ -31,22 +32,27 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
 
     return AppScaffold(
       topBar: AppTopBar(title: l10n.searchTabLabel, showBack: false),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.lg,
-          vertical: AppSpacing.sm,
-        ),
-        child: AppSearchField(
-          controller: _controller,
-          hintText: l10n.searchTriggerHintLabel,
-          clearButtonSemanticLabel: l10n.clearSearchSemanticLabel,
-          onChanged: (value) =>
-              ref.read(searchViewModelProvider.notifier).updateTerm(value),
-          onClear: () {
-            _controller.clear();
-            ref.read(searchViewModelProvider.notifier).clear();
-          },
-        ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.lg,
+              vertical: AppSpacing.sm,
+            ),
+            child: AppSearchField(
+              controller: _controller,
+              hintText: l10n.searchTriggerHintLabel,
+              clearButtonSemanticLabel: l10n.clearSearchSemanticLabel,
+              onChanged: (value) =>
+                  ref.read(searchViewModelProvider.notifier).updateTerm(value),
+              onClear: () {
+                _controller.clear();
+                ref.read(searchViewModelProvider.notifier).clear();
+              },
+            ),
+          ),
+          const Expanded(child: SearchResultsList()),
+        ],
       ),
     );
   }

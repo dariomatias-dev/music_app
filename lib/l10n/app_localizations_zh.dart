@@ -378,4 +378,10 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get clearSearchSemanticLabel => '清除搜索';
+
+  @override
+  String get searchResultsEmptyTitle => '未找到结果';
+
+  @override
+  String get searchResultsEmptyMessage => '换个搜索词试试。';
 }

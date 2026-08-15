@@ -397,6 +397,12 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get clearSearchSemanticLabel => 'Clear search';
+
+  @override
+  String get searchResultsEmptyTitle => 'No results found';
+
+  @override
+  String get searchResultsEmptyMessage => 'Try a different search term.';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -794,4 +800,10 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get clearSearchSemanticLabel => 'Limpar busca';
+
+  @override
+  String get searchResultsEmptyTitle => 'Nenhum resultado encontrado';
+
+  @override
+  String get searchResultsEmptyMessage => 'Tente outro termo de busca.';
 }

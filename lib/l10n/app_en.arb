@@ -132,5 +132,7 @@
   "recentlyPlayedLabel": "Recently played",
   "libraryTotalDurationLabel": "Total time",
   "storageLabel": "Storage",
-  "clearSearchSemanticLabel": "Clear search"
+  "clearSearchSemanticLabel": "Clear search",
+  "searchResultsEmptyTitle": "No results found",
+  "searchResultsEmptyMessage": "Try a different search term."
 }

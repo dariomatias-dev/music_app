@@ -132,5 +132,7 @@
   "recentlyPlayedLabel": "最近播放",
   "libraryTotalDurationLabel": "总时长",
   "storageLabel": "存储空间",
-  "clearSearchSemanticLabel": "清除搜索"
+  "clearSearchSemanticLabel": "清除搜索",
+  "searchResultsEmptyTitle": "未找到结果",
+  "searchResultsEmptyMessage": "换个搜索词试试。"
 }

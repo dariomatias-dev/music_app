@@ -397,4 +397,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get clearSearchSemanticLabel => 'Clear search';
+
+  @override
+  String get searchResultsEmptyTitle => 'No results found';
+
+  @override
+  String get searchResultsEmptyMessage => 'Try a different search term.';
 }
