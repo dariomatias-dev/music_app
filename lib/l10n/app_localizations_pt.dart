@@ -202,6 +202,21 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get lyricsEmptyMessage =>
       'This track has no embedded lyrics or matching .lrc file.';
+
+  @override
+  String get libraryTracksTab => 'Tracks';
+
+  @override
+  String get libraryAlbumsTab => 'Albums';
+
+  @override
+  String get libraryArtistsTab => 'Artists';
+
+  @override
+  String get libraryPlaylistsTab => 'Playlists';
+
+  @override
+  String get libraryFavoritesTab => 'Favorites';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -402,4 +417,19 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   @override
   String get lyricsEmptyMessage =>
       'Esta faixa não tem letra embutida nem arquivo .lrc correspondente.';
+
+  @override
+  String get libraryTracksTab => 'Faixas';
+
+  @override
+  String get libraryAlbumsTab => 'Álbuns';
+
+  @override
+  String get libraryArtistsTab => 'Artistas';
+
+  @override
+  String get libraryPlaylistsTab => 'Playlists';
+
+  @override
+  String get libraryFavoritesTab => 'Favoritos';
 }

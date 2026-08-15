@@ -61,5 +61,10 @@
   "clearQueueConfirmAction": "Limpar",
   "cancelLabel": "Cancelar",
   "lyricsEmptyTitle": "Nenhuma letra encontrada",
-  "lyricsEmptyMessage": "Esta faixa não tem letra embutida nem arquivo .lrc correspondente."
+  "lyricsEmptyMessage": "Esta faixa não tem letra embutida nem arquivo .lrc correspondente.",
+  "libraryTracksTab": "Faixas",
+  "libraryAlbumsTab": "Álbuns",
+  "libraryArtistsTab": "Artistas",
+  "libraryPlaylistsTab": "Playlists",
+  "libraryFavoritesTab": "Favoritos"
 }

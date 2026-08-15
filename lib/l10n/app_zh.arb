@@ -61,5 +61,10 @@
   "clearQueueConfirmAction": "清空",
   "cancelLabel": "取消",
   "lyricsEmptyTitle": "未找到歌词",
-  "lyricsEmptyMessage": "这首曲目没有内嵌歌词，也没有匹配的 .lrc 文件。"
+  "lyricsEmptyMessage": "这首曲目没有内嵌歌词，也没有匹配的 .lrc 文件。",
+  "libraryTracksTab": "曲目",
+  "libraryAlbumsTab": "专辑",
+  "libraryArtistsTab": "艺人",
+  "libraryPlaylistsTab": "播放列表",
+  "libraryFavoritesTab": "收藏"
 }

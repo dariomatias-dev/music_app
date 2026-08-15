@@ -61,5 +61,10 @@
   "clearQueueConfirmAction": "Vaciar",
   "cancelLabel": "Cancelar",
   "lyricsEmptyTitle": "No se encontró letra",
-  "lyricsEmptyMessage": "Esta pista no tiene letra incrustada ni un archivo .lrc correspondiente."
+  "lyricsEmptyMessage": "Esta pista no tiene letra incrustada ni un archivo .lrc correspondiente.",
+  "libraryTracksTab": "Pistas",
+  "libraryAlbumsTab": "Álbumes",
+  "libraryArtistsTab": "Artistas",
+  "libraryPlaylistsTab": "Listas",
+  "libraryFavoritesTab": "Favoritos"
 }

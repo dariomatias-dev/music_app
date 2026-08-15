@@ -202,4 +202,19 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get lyricsEmptyMessage =>
       'This track has no embedded lyrics or matching .lrc file.';
+
+  @override
+  String get libraryTracksTab => 'Tracks';
+
+  @override
+  String get libraryAlbumsTab => 'Albums';
+
+  @override
+  String get libraryArtistsTab => 'Artists';
+
+  @override
+  String get libraryPlaylistsTab => 'Playlists';
+
+  @override
+  String get libraryFavoritesTab => 'Favorites';
 }

@@ -474,6 +474,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This track has no embedded lyrics or matching .lrc file.'**
   String get lyricsEmptyMessage;
+
+  /// No description provided for @libraryTracksTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Tracks'**
+  String get libraryTracksTab;
+
+  /// No description provided for @libraryAlbumsTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Albums'**
+  String get libraryAlbumsTab;
+
+  /// No description provided for @libraryArtistsTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Artists'**
+  String get libraryArtistsTab;
+
+  /// No description provided for @libraryPlaylistsTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Playlists'**
+  String get libraryPlaylistsTab;
+
+  /// No description provided for @libraryFavoritesTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorites'**
+  String get libraryFavoritesTab;
 }
 
 class _AppLocalizationsDelegate

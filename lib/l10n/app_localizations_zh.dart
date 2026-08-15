@@ -194,4 +194,19 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get lyricsEmptyMessage => '这首曲目没有内嵌歌词，也没有匹配的 .lrc 文件。';
+
+  @override
+  String get libraryTracksTab => '曲目';
+
+  @override
+  String get libraryAlbumsTab => '专辑';
+
+  @override
+  String get libraryArtistsTab => '艺人';
+
+  @override
+  String get libraryPlaylistsTab => '播放列表';
+
+  @override
+  String get libraryFavoritesTab => '收藏';
 }

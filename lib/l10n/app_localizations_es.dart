@@ -203,4 +203,19 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get lyricsEmptyMessage =>
       'Esta pista no tiene letra incrustada ni un archivo .lrc correspondiente.';
+
+  @override
+  String get libraryTracksTab => 'Pistas';
+
+  @override
+  String get libraryAlbumsTab => 'Álbumes';
+
+  @override
+  String get libraryArtistsTab => 'Artistas';
+
+  @override
+  String get libraryPlaylistsTab => 'Listas';
+
+  @override
+  String get libraryFavoritesTab => 'Favoritos';
 }

@@ -61,5 +61,10 @@
   "clearQueueConfirmAction": "Clear",
   "cancelLabel": "Cancel",
   "lyricsEmptyTitle": "No lyrics found",
-  "lyricsEmptyMessage": "This track has no embedded lyrics or matching .lrc file."
+  "lyricsEmptyMessage": "This track has no embedded lyrics or matching .lrc file.",
+  "libraryTracksTab": "Tracks",
+  "libraryAlbumsTab": "Albums",
+  "libraryArtistsTab": "Artists",
+  "libraryPlaylistsTab": "Playlists",
+  "libraryFavoritesTab": "Favorites"
 }
