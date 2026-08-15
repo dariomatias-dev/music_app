@@ -582,4 +582,10 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get settingsAboutRowLabel => 'Información y versión de la app';
+
+  @override
+  String get settingsEditNameSheetTitle => 'Tu nombre';
+
+  @override
+  String get settingsNameHint => 'Escribe tu nombre';
 }

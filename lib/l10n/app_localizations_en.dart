@@ -580,4 +580,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsAboutRowLabel => 'App info & version';
+
+  @override
+  String get settingsEditNameSheetTitle => 'Your name';
+
+  @override
+  String get settingsNameHint => 'Enter your name';
 }

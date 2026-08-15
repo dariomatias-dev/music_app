@@ -196,5 +196,7 @@
   "settingsLanguageSystemValue": "Predeterminado del sistema",
   "settingsPlaybackRowLabel": "Sin intervalo, crossfade y velocidad",
   "settingsAboutLabel": "Acerca de",
-  "settingsAboutRowLabel": "Información y versión de la app"
+  "settingsAboutRowLabel": "Información y versión de la app",
+  "settingsEditNameSheetTitle": "Tu nombre",
+  "settingsNameHint": "Escribe tu nombre"
 }

@@ -196,5 +196,7 @@
   "settingsLanguageSystemValue": "跟随系统",
   "settingsPlaybackRowLabel": "无间隔播放、淡入淡出与速度",
   "settingsAboutLabel": "关于",
-  "settingsAboutRowLabel": "应用信息与版本"
+  "settingsAboutRowLabel": "应用信息与版本",
+  "settingsEditNameSheetTitle": "你的姓名",
+  "settingsNameHint": "输入你的姓名"
 }

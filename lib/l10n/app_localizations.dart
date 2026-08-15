@@ -1134,6 +1134,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'App info & version'**
   String get settingsAboutRowLabel;
+
+  /// No description provided for @settingsEditNameSheetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your name'**
+  String get settingsEditNameSheetTitle;
+
+  /// No description provided for @settingsNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your name'**
+  String get settingsNameHint;
 }
 
 class _AppLocalizationsDelegate

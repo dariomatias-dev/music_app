@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -6,11 +8,12 @@ import 'package:music_app/l10n/app_localizations.dart';
 import 'package:music_app/src/core/navigation/route_paths.dart';
 import 'package:music_app/src/features/settings/presentation/view_models/locale_view_model.dart';
 import 'package:music_app/src/features/settings/presentation/view_models/user_profile_view_model.dart';
+import 'package:music_app/src/features/settings/presentation/widgets/edit_name_sheet.dart';
 
 /// The Settings tab: preferences organized into sections, each a group of
 /// standardized rows.
 ///
-/// Most rows are still stubs, filled in etapa by etapa (Etapa 91-94); this
+/// Most rows are still stubs, filled in etapa by etapa (Etapa 92-94); this
 /// lays out the full structure and wires up what already has real data
 /// behind it: the display name and the selected language.
 class SettingsScreen extends ConsumerWidget {
@@ -37,6 +40,7 @@ class SettingsScreen extends ConsumerWidget {
                 value: (displayName == null || displayName.isEmpty)
                     ? l10n.settingsNameNotSetValue
                     : displayName,
+                onTap: () => unawaited(_editName(context, ref, displayName)),
               ),
             ],
           ),
@@ -95,6 +99,16 @@ class SettingsScreen extends ConsumerWidget {
         ],
       ),
     );
+  }
+
+  Future<void> _editName(
+    BuildContext context,
+    WidgetRef ref,
+    String? currentName,
+  ) async {
+    final name = await showEditNameSheet(context, initialName: currentName);
+    if (name == null) return;
+    await ref.read(userProfileViewModelProvider.notifier).setDisplayName(name);
   }
 
   String _languageDisplayName(Locale locale) {

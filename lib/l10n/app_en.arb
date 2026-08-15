@@ -196,5 +196,7 @@
   "settingsLanguageSystemValue": "System default",
   "settingsPlaybackRowLabel": "Gapless, crossfade & speed",
   "settingsAboutLabel": "About",
-  "settingsAboutRowLabel": "App info & version"
+  "settingsAboutRowLabel": "App info & version",
+  "settingsEditNameSheetTitle": "Your name",
+  "settingsNameHint": "Enter your name"
 }

@@ -92,6 +92,43 @@ void main() {
     expect(find.text('Dário'), findsOneWidget);
   });
 
+  testWidgets('editing the name saves it and updates the row', (
+    tester,
+  ) async {
+    final storage = FakeKeyValueStorage();
+    await tester.pumpWidget(_app(storage: storage));
+    await tester.pump();
+
+    await tester.tap(find.text('Not set'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Your name'), findsOneWidget);
+
+    await tester.enterText(find.byType(TextField), 'Dário');
+    await tester.tap(find.text('Save'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Dário'), findsOneWidget);
+    expect(await storage.getString('userDisplayName'), 'Dário');
+  });
+
+  testWidgets('clearing the name in the sheet removes it', (tester) async {
+    final storage = FakeKeyValueStorage();
+    await storage.setString('userDisplayName', 'Dário');
+    await tester.pumpWidget(_app(storage: storage));
+    await tester.pump();
+
+    await tester.tap(find.text('Dário'));
+    await tester.pumpAndSettle();
+
+    await tester.enterText(find.byType(TextField), '');
+    await tester.tap(find.text('Save'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Not set'), findsOneWidget);
+    expect(await storage.getString('userDisplayName'), isNull);
+  });
+
   testWidgets('tapping Language opens the language settings route', (
     tester,
   ) async {

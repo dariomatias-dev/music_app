@@ -580,6 +580,12 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get settingsAboutRowLabel => 'App info & version';
+
+  @override
+  String get settingsEditNameSheetTitle => 'Your name';
+
+  @override
+  String get settingsNameHint => 'Enter your name';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -1161,4 +1167,10 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get settingsAboutRowLabel => 'Informações e versão do app';
+
+  @override
+  String get settingsEditNameSheetTitle => 'Seu nome';
+
+  @override
+  String get settingsNameHint => 'Digite seu nome';
 }

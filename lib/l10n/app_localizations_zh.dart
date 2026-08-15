@@ -555,4 +555,10 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get settingsAboutRowLabel => '应用信息与版本';
+
+  @override
+  String get settingsEditNameSheetTitle => '你的姓名';
+
+  @override
+  String get settingsNameHint => '输入你的姓名';
 }
