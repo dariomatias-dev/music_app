@@ -804,6 +804,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Storage'**
   String get storageLabel;
+
+  /// No description provided for @clearSearchSemanticLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear search'**
+  String get clearSearchSemanticLabel;
 }
 
 class _AppLocalizationsDelegate

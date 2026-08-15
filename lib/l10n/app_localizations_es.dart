@@ -395,4 +395,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get storageLabel => 'Almacenamiento';
+
+  @override
+  String get clearSearchSemanticLabel => 'Borrar búsqueda';
 }

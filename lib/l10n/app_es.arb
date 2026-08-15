@@ -131,5 +131,6 @@
   "searchTriggerHintLabel": "Buscar en tu biblioteca",
   "recentlyPlayedLabel": "Reproducidas recientemente",
   "libraryTotalDurationLabel": "Tiempo total",
-  "storageLabel": "Almacenamiento"
+  "storageLabel": "Almacenamiento",
+  "clearSearchSemanticLabel": "Borrar búsqueda"
 }

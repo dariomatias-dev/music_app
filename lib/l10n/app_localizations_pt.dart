@@ -394,6 +394,9 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get storageLabel => 'Storage';
+
+  @override
+  String get clearSearchSemanticLabel => 'Clear search';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -788,4 +791,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get storageLabel => 'Armazenamento';
+
+  @override
+  String get clearSearchSemanticLabel => 'Limpar busca';
 }

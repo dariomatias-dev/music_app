@@ -375,4 +375,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get storageLabel => '存储空间';
+
+  @override
+  String get clearSearchSemanticLabel => '清除搜索';
 }

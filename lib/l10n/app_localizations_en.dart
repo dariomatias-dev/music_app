@@ -394,4 +394,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get storageLabel => 'Storage';
+
+  @override
+  String get clearSearchSemanticLabel => 'Clear search';
 }
