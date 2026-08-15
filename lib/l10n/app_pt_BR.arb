@@ -31,7 +31,6 @@
   "moreOptionsButtonSemanticLabel": "Mais opções",
   "viewQueueLabel": "Fila",
   "addToPlaylistLabel": "Adicionar à playlist",
-  "playlistsComingSoonMessage": "Playlists em breve",
   "openLyricsLabel": "Letra",
   "sleepTimerLabel": "Temporizador",
   "fileInfoLabel": "Informações do arquivo",
@@ -115,5 +114,12 @@
     "placeholders": {
       "name": {"type": "String"}
     }
-  }
+  },
+  "addedToPlaylistMessage": "Adicionada à playlist",
+  "trackAlreadyInPlaylistMessage": "Já está nessa playlist",
+  "removeFromPlaylistSemanticLabel": "Remover da playlist",
+  "removeTrackConfirmTitle": "Remover faixa?",
+  "removeTrackConfirmMessage": "Isso remove a faixa da playlist. Ela continua na sua biblioteca.",
+  "playlistEmptyTitle": "Esta playlist está vazia",
+  "playlistEmptyMessage": "Adicione faixas pelo menu \"mais\" de uma faixa."
 }

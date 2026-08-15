@@ -289,12 +289,6 @@ abstract class AppLocalizations {
   /// **'Add to playlist'**
   String get addToPlaylistLabel;
 
-  /// No description provided for @playlistsComingSoonMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'Playlists are coming soon'**
-  String get playlistsComingSoonMessage;
-
   /// No description provided for @openLyricsLabel.
   ///
   /// In en, this message translates to:
@@ -708,6 +702,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{name} copy'**
   String playlistCopyName(String name);
+
+  /// No description provided for @addedToPlaylistMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Added to playlist'**
+  String get addedToPlaylistMessage;
+
+  /// No description provided for @trackAlreadyInPlaylistMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Already in this playlist'**
+  String get trackAlreadyInPlaylistMessage;
+
+  /// No description provided for @removeFromPlaylistSemanticLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from playlist'**
+  String get removeFromPlaylistSemanticLabel;
+
+  /// No description provided for @removeTrackConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove track?'**
+  String get removeTrackConfirmTitle;
+
+  /// No description provided for @removeTrackConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This removes it from the playlist. It stays in your library.'**
+  String get removeTrackConfirmMessage;
+
+  /// No description provided for @playlistEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'This playlist is empty'**
+  String get playlistEmptyTitle;
+
+  /// No description provided for @playlistEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Add tracks from a track\'s more menu.'**
+  String get playlistEmptyMessage;
 }
 
 class _AppLocalizationsDelegate

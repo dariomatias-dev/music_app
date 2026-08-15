@@ -31,7 +31,6 @@
   "moreOptionsButtonSemanticLabel": "More options",
   "viewQueueLabel": "Queue",
   "addToPlaylistLabel": "Add to playlist",
-  "playlistsComingSoonMessage": "Playlists are coming soon",
   "openLyricsLabel": "Lyrics",
   "sleepTimerLabel": "Sleep timer",
   "fileInfoLabel": "File information",
@@ -115,5 +114,12 @@
     "placeholders": {
       "name": {"type": "String"}
     }
-  }
+  },
+  "addedToPlaylistMessage": "Added to playlist",
+  "trackAlreadyInPlaylistMessage": "Already in this playlist",
+  "removeFromPlaylistSemanticLabel": "Remove from playlist",
+  "removeTrackConfirmTitle": "Remove track?",
+  "removeTrackConfirmMessage": "This removes it from the playlist. It stays in your library.",
+  "playlistEmptyTitle": "This playlist is empty",
+  "playlistEmptyMessage": "Add tracks from a track's more menu."
 }

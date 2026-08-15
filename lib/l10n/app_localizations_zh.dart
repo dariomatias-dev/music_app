@@ -103,9 +103,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get addToPlaylistLabel => '添加到播放列表';
 
   @override
-  String get playlistsComingSoonMessage => '播放列表即将推出';
-
-  @override
   String get openLyricsLabel => '歌词';
 
   @override
@@ -327,4 +324,25 @@ class AppLocalizationsZh extends AppLocalizations {
   String playlistCopyName(String name) {
     return '$name 副本';
   }
+
+  @override
+  String get addedToPlaylistMessage => '已添加到播放列表';
+
+  @override
+  String get trackAlreadyInPlaylistMessage => '已在该播放列表中';
+
+  @override
+  String get removeFromPlaylistSemanticLabel => '从播放列表中移除';
+
+  @override
+  String get removeTrackConfirmTitle => '移除曲目？';
+
+  @override
+  String get removeTrackConfirmMessage => '这会将曲目从播放列表中移除。它仍会保留在你的音乐库中。';
+
+  @override
+  String get playlistEmptyTitle => '此播放列表为空';
+
+  @override
+  String get playlistEmptyMessage => '从曲目的更多菜单中添加曲目。';
 }

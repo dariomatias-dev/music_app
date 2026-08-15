@@ -31,7 +31,6 @@
   "moreOptionsButtonSemanticLabel": "Más opciones",
   "viewQueueLabel": "Cola",
   "addToPlaylistLabel": "Añadir a lista de reproducción",
-  "playlistsComingSoonMessage": "Las listas de reproducción llegarán pronto",
   "openLyricsLabel": "Letra",
   "sleepTimerLabel": "Temporizador",
   "fileInfoLabel": "Información del archivo",
@@ -115,5 +114,12 @@
     "placeholders": {
       "name": {"type": "String"}
     }
-  }
+  },
+  "addedToPlaylistMessage": "Añadida a la lista",
+  "trackAlreadyInPlaylistMessage": "Ya está en esta lista",
+  "removeFromPlaylistSemanticLabel": "Quitar de la lista",
+  "removeTrackConfirmTitle": "¿Quitar pista?",
+  "removeTrackConfirmMessage": "Esto la quita de la lista. Sigue en tu biblioteca.",
+  "playlistEmptyTitle": "Esta lista está vacía",
+  "playlistEmptyMessage": "Agrega pistas desde el menú \"más\" de una pista."
 }

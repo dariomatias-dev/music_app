@@ -107,10 +107,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get addToPlaylistLabel => 'Añadir a lista de reproducción';
 
   @override
-  String get playlistsComingSoonMessage =>
-      'Las listas de reproducción llegarán pronto';
-
-  @override
   String get openLyricsLabel => 'Letra';
 
   @override
@@ -345,4 +341,27 @@ class AppLocalizationsEs extends AppLocalizations {
   String playlistCopyName(String name) {
     return '$name copia';
   }
+
+  @override
+  String get addedToPlaylistMessage => 'Añadida a la lista';
+
+  @override
+  String get trackAlreadyInPlaylistMessage => 'Ya está en esta lista';
+
+  @override
+  String get removeFromPlaylistSemanticLabel => 'Quitar de la lista';
+
+  @override
+  String get removeTrackConfirmTitle => '¿Quitar pista?';
+
+  @override
+  String get removeTrackConfirmMessage =>
+      'Esto la quita de la lista. Sigue en tu biblioteca.';
+
+  @override
+  String get playlistEmptyTitle => 'Esta lista está vacía';
+
+  @override
+  String get playlistEmptyMessage =>
+      'Agrega pistas desde el menú \"más\" de una pista.';
 }

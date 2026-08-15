@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,6 +9,7 @@ import 'package:music_app/src/core/audio/queue_media_item.dart';
 import 'package:music_app/src/core/navigation/route_paths.dart';
 import 'package:music_app/src/features/player/presentation/widgets/file_info_dialog.dart';
 import 'package:music_app/src/features/player/presentation/widgets/sleep_timer_sheet.dart';
+import 'package:music_app/src/features/playlist/presentation/widgets/add_to_playlist_sheet.dart';
 
 /// Shows the current track's contextual actions sheet.
 Future<void> showPlaybackMoreSheet(
@@ -41,10 +44,7 @@ Future<void> showPlaybackMoreSheet(
           icon: Icons.playlist_add,
           label: l10n.addToPlaylistLabel,
           onTap: () => close(
-            () => AppToast.show(
-              context,
-              message: l10n.playlistsComingSoonMessage,
-            ),
+            () => unawaited(showAddToPlaylistSheet(context, ref, item.id)),
           ),
         ),
         AppSheetAction(

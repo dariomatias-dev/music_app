@@ -170,3 +170,94 @@ final class PlaylistByIdFamily extends $Family
   @override
   String toString() => r'playlistByIdProvider';
 }
+
+/// The playlist with the given id's tracks, resolved and in order. Missing
+/// tracks (deleted from the library since being added) are skipped.
+
+@ProviderFor(playlistTracks)
+const playlistTracksProvider = PlaylistTracksFamily._();
+
+/// The playlist with the given id's tracks, resolved and in order. Missing
+/// tracks (deleted from the library since being added) are skipped.
+
+final class PlaylistTracksProvider
+    extends $FunctionalProvider<List<Track>, List<Track>, List<Track>>
+    with $Provider<List<Track>> {
+  /// The playlist with the given id's tracks, resolved and in order. Missing
+  /// tracks (deleted from the library since being added) are skipped.
+  const PlaylistTracksProvider._({
+    required PlaylistTracksFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'playlistTracksProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$playlistTracksHash();
+
+  @override
+  String toString() {
+    return r'playlistTracksProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $ProviderElement<List<Track>> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  List<Track> create(Ref ref) {
+    final argument = this.argument as String;
+    return playlistTracks(ref, argument);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(List<Track> value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<List<Track>>(value),
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is PlaylistTracksProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$playlistTracksHash() => r'55d21a4a6f726de76188f80122acec27fbf653bf';
+
+/// The playlist with the given id's tracks, resolved and in order. Missing
+/// tracks (deleted from the library since being added) are skipped.
+
+final class PlaylistTracksFamily extends $Family
+    with $FunctionalFamilyOverride<List<Track>, String> {
+  const PlaylistTracksFamily._()
+    : super(
+        retry: null,
+        name: r'playlistTracksProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  /// The playlist with the given id's tracks, resolved and in order. Missing
+  /// tracks (deleted from the library since being added) are skipped.
+
+  PlaylistTracksProvider call(String playlistId) =>
+      PlaylistTracksProvider._(argument: playlistId, from: this);
+
+  @override
+  String toString() => r'playlistTracksProvider';
+}

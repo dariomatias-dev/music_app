@@ -107,9 +107,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addToPlaylistLabel => 'Add to playlist';
 
   @override
-  String get playlistsComingSoonMessage => 'Playlists are coming soon';
-
-  @override
   String get openLyricsLabel => 'Lyrics';
 
   @override
@@ -344,4 +341,26 @@ class AppLocalizationsEn extends AppLocalizations {
   String playlistCopyName(String name) {
     return '$name copy';
   }
+
+  @override
+  String get addedToPlaylistMessage => 'Added to playlist';
+
+  @override
+  String get trackAlreadyInPlaylistMessage => 'Already in this playlist';
+
+  @override
+  String get removeFromPlaylistSemanticLabel => 'Remove from playlist';
+
+  @override
+  String get removeTrackConfirmTitle => 'Remove track?';
+
+  @override
+  String get removeTrackConfirmMessage =>
+      'This removes it from the playlist. It stays in your library.';
+
+  @override
+  String get playlistEmptyTitle => 'This playlist is empty';
+
+  @override
+  String get playlistEmptyMessage => 'Add tracks from a track\'s more menu.';
 }
