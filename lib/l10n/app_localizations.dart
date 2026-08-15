@@ -822,6 +822,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Try a different search term.'**
   String get searchResultsEmptyMessage;
+
+  /// No description provided for @recentSearchesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent searches'**
+  String get recentSearchesLabel;
+
+  /// No description provided for @clearSearchHistoryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get clearSearchHistoryLabel;
+
+  /// No description provided for @clearSearchHistoryConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear search history?'**
+  String get clearSearchHistoryConfirmTitle;
+
+  /// No description provided for @clearSearchHistoryConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This removes all of your recent searches.'**
+  String get clearSearchHistoryConfirmMessage;
+
+  /// No description provided for @clearSearchHistoryConfirmAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get clearSearchHistoryConfirmAction;
+
+  /// No description provided for @removeSearchTermSemanticLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from history'**
+  String get removeSearchTermSemanticLabel;
 }
 
 class _AppLocalizationsDelegate

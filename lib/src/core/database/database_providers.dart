@@ -7,6 +7,7 @@ import 'package:music_app/src/core/database/daos/lyrics_dao.dart';
 import 'package:music_app/src/core/database/daos/play_event_dao.dart';
 import 'package:music_app/src/core/database/daos/playlist_dao.dart';
 import 'package:music_app/src/core/database/daos/playlist_track_dao.dart';
+import 'package:music_app/src/core/database/daos/search_history_dao.dart';
 import 'package:music_app/src/core/database/daos/track_dao.dart';
 
 /// Provides the app's [AppDatabase] instance.
@@ -54,4 +55,9 @@ final playEventDaoProvider = Provider<PlayEventDao>(
 /// Provides [LyricsDao].
 final lyricsDaoProvider = Provider<LyricsDao>(
   (ref) => ref.watch(appDatabaseProvider).lyricsDao,
+);
+
+/// Provides [SearchHistoryDao].
+final searchHistoryDaoProvider = Provider<SearchHistoryDao>(
+  (ref) => ref.watch(appDatabaseProvider).searchHistoryDao,
 );

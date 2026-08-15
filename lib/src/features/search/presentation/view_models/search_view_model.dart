@@ -25,6 +25,15 @@ class SearchViewModel extends _$SearchViewModel {
     _debounce = Timer(_debounceDuration, () => state = term.trim());
   }
 
+  /// Sets the term immediately, without waiting on the debounce.
+  ///
+  /// Used for a submitted search (keyboard action) or picking a term from
+  /// history, where the result should show right away.
+  void submit(String term) {
+    _debounce?.cancel();
+    state = term.trim();
+  }
+
   /// Clears the term immediately, without waiting on the debounce.
   void clear() {
     _debounce?.cancel();

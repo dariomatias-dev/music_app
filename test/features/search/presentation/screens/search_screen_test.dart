@@ -10,10 +10,12 @@ import 'package:music_app/src/features/library/domain/entities/artist.dart';
 import 'package:music_app/src/features/library/domain/entities/track.dart';
 import 'package:music_app/src/features/library/domain/repositories/library_repository.dart';
 import 'package:music_app/src/features/playlist/data/providers/playlist_data_providers.dart';
+import 'package:music_app/src/features/search/data/providers/search_data_providers.dart';
 import 'package:music_app/src/features/search/presentation/screens/search_screen.dart';
 import 'package:music_app/src/features/search/presentation/view_models/search_view_model.dart';
 
 import '../../../../helpers/fake_playlist_repository.dart';
+import '../../../../helpers/fake_search_history_repository.dart';
 
 class _FakeLibraryRepository implements LibraryRepository {
   const _FakeLibraryRepository(this.tracks);
@@ -61,13 +63,19 @@ Track _track({required String id, required String title}) {
   );
 }
 
-Widget _app({List<Track> tracks = const []}) {
+Widget _app({
+  List<Track> tracks = const [],
+  List<String> recentSearches = const [],
+}) {
   return ProviderScope(
     overrides: [
       libraryRepositoryProvider.overrideWithValue(
         _FakeLibraryRepository(tracks),
       ),
       playlistRepositoryProvider.overrideWithValue(FakePlaylistRepository()),
+      searchHistoryRepositoryProvider.overrideWithValue(
+        FakeSearchHistoryRepository(recentSearches),
+      ),
     ],
     child: MaterialApp(
       theme: AppTheme.light,
@@ -144,5 +152,66 @@ void main() {
     await tester.pump();
 
     expect(find.text('No results found'), findsOneWidget);
+  });
+
+  testWidgets('shows recent searches while the field is empty', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _app(recentSearches: ['chill', 'night drive']),
+    );
+    await tester.pump();
+
+    expect(find.text('Recent searches'), findsOneWidget);
+    expect(find.text('chill'), findsOneWidget);
+    expect(find.text('night drive'), findsOneWidget);
+  });
+
+  testWidgets('tapping a recent search fills the field and its results', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _app(
+        tracks: [_track(id: 'track-1', title: 'Night Drive')],
+        recentSearches: ['night'],
+      ),
+    );
+    await tester.pump();
+
+    await tester.tap(find.text('night'));
+    await tester.pump();
+    await tester.pump();
+
+    expect(find.text('Night Drive'), findsOneWidget);
+  });
+
+  testWidgets('removing a recent search drops it from the list', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _app(recentSearches: ['chill', 'night drive']),
+    );
+    await tester.pump();
+
+    await tester.tap(find.byIcon(Icons.close_rounded).first);
+    await tester.pump();
+
+    expect(find.text('chill'), findsNothing);
+    expect(find.text('night drive'), findsOneWidget);
+  });
+
+  testWidgets('submitting the field records the term to history', (
+    tester,
+  ) async {
+    await tester.pumpWidget(_app());
+
+    await tester.enterText(find.byType(TextField), 'Chill');
+    await tester.testTextInput.receiveAction(TextInputAction.done);
+    await tester.pump();
+
+    await tester.tap(find.byIcon(Icons.close_rounded));
+    await tester.pump();
+
+    expect(find.text('Chill'), findsOneWidget);
   });
 }

@@ -9,6 +9,7 @@ import 'package:music_app/src/core/database/daos/lyrics_dao.dart';
 import 'package:music_app/src/core/database/daos/play_event_dao.dart';
 import 'package:music_app/src/core/database/daos/playlist_dao.dart';
 import 'package:music_app/src/core/database/daos/playlist_track_dao.dart';
+import 'package:music_app/src/core/database/daos/search_history_dao.dart';
 import 'package:music_app/src/core/database/daos/track_dao.dart';
 import 'package:music_app/src/core/database/tables/album_table.dart';
 import 'package:music_app/src/core/database/tables/artist_table.dart';
@@ -17,6 +18,7 @@ import 'package:music_app/src/core/database/tables/lyrics_table.dart';
 import 'package:music_app/src/core/database/tables/play_event_table.dart';
 import 'package:music_app/src/core/database/tables/playlist_table.dart';
 import 'package:music_app/src/core/database/tables/playlist_track_table.dart';
+import 'package:music_app/src/core/database/tables/search_history_table.dart';
 import 'package:music_app/src/core/database/tables/track_table.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
@@ -35,6 +37,7 @@ part 'app_database.g.dart';
     FavoriteTable,
     PlayEventTable,
     LyricsTable,
+    SearchHistoryTable,
   ],
   daos: [
     ArtistDao,
@@ -45,6 +48,7 @@ part 'app_database.g.dart';
     FavoriteDao,
     PlayEventDao,
     LyricsDao,
+    SearchHistoryDao,
   ],
 )
 class AppDatabase extends _$AppDatabase {

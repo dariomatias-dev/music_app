@@ -403,6 +403,25 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get searchResultsEmptyMessage => 'Try a different search term.';
+
+  @override
+  String get recentSearchesLabel => 'Recent searches';
+
+  @override
+  String get clearSearchHistoryLabel => 'Clear';
+
+  @override
+  String get clearSearchHistoryConfirmTitle => 'Clear search history?';
+
+  @override
+  String get clearSearchHistoryConfirmMessage =>
+      'This removes all of your recent searches.';
+
+  @override
+  String get clearSearchHistoryConfirmAction => 'Clear';
+
+  @override
+  String get removeSearchTermSemanticLabel => 'Remove from history';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -806,4 +825,23 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get searchResultsEmptyMessage => 'Tente outro termo de busca.';
+
+  @override
+  String get recentSearchesLabel => 'Buscas recentes';
+
+  @override
+  String get clearSearchHistoryLabel => 'Limpar';
+
+  @override
+  String get clearSearchHistoryConfirmTitle => 'Limpar histórico de busca?';
+
+  @override
+  String get clearSearchHistoryConfirmMessage =>
+      'Isso remove todas as suas buscas recentes.';
+
+  @override
+  String get clearSearchHistoryConfirmAction => 'Limpar';
+
+  @override
+  String get removeSearchTermSemanticLabel => 'Remover do histórico';
 }

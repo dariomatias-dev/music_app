@@ -134,5 +134,11 @@
   "storageLabel": "Armazenamento",
   "clearSearchSemanticLabel": "Limpar busca",
   "searchResultsEmptyTitle": "Nenhum resultado encontrado",
-  "searchResultsEmptyMessage": "Tente outro termo de busca."
+  "searchResultsEmptyMessage": "Tente outro termo de busca.",
+  "recentSearchesLabel": "Buscas recentes",
+  "clearSearchHistoryLabel": "Limpar",
+  "clearSearchHistoryConfirmTitle": "Limpar histórico de busca?",
+  "clearSearchHistoryConfirmMessage": "Isso remove todas as suas buscas recentes.",
+  "clearSearchHistoryConfirmAction": "Limpar",
+  "removeSearchTermSemanticLabel": "Remover do histórico"
 }

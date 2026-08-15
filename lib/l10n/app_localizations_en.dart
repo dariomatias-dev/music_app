@@ -403,4 +403,23 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get searchResultsEmptyMessage => 'Try a different search term.';
+
+  @override
+  String get recentSearchesLabel => 'Recent searches';
+
+  @override
+  String get clearSearchHistoryLabel => 'Clear';
+
+  @override
+  String get clearSearchHistoryConfirmTitle => 'Clear search history?';
+
+  @override
+  String get clearSearchHistoryConfirmMessage =>
+      'This removes all of your recent searches.';
+
+  @override
+  String get clearSearchHistoryConfirmAction => 'Clear';
+
+  @override
+  String get removeSearchTermSemanticLabel => 'Remove from history';
 }

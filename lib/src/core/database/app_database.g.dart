@@ -3746,6 +3746,273 @@ class LyricsTableCompanion extends UpdateCompanion<LyricsRow> {
   }
 }
 
+class $SearchHistoryTableTable extends SearchHistoryTable
+    with TableInfo<$SearchHistoryTableTable, SearchHistoryRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $SearchHistoryTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _termMeta = const VerificationMeta('term');
+  @override
+  late final GeneratedColumn<String> term = GeneratedColumn<String>(
+    'term',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _searchedAtMeta = const VerificationMeta(
+    'searchedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> searchedAt = GeneratedColumn<DateTime>(
+    'searched_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, term, searchedAt];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'search_history_table';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<SearchHistoryRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('term')) {
+      context.handle(
+        _termMeta,
+        term.isAcceptableOrUnknown(data['term']!, _termMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_termMeta);
+    }
+    if (data.containsKey('searched_at')) {
+      context.handle(
+        _searchedAtMeta,
+        searchedAt.isAcceptableOrUnknown(data['searched_at']!, _searchedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_searchedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  SearchHistoryRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return SearchHistoryRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      term: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}term'],
+      )!,
+      searchedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}searched_at'],
+      )!,
+    );
+  }
+
+  @override
+  $SearchHistoryTableTable createAlias(String alias) {
+    return $SearchHistoryTableTable(attachedDatabase, alias);
+  }
+}
+
+class SearchHistoryRow extends DataClass
+    implements Insertable<SearchHistoryRow> {
+  /// Primary key (UUID v7).
+  final String id;
+
+  /// The searched term, trimmed.
+  final String term;
+
+  /// When this term was last searched.
+  final DateTime searchedAt;
+  const SearchHistoryRow({
+    required this.id,
+    required this.term,
+    required this.searchedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['term'] = Variable<String>(term);
+    map['searched_at'] = Variable<DateTime>(searchedAt);
+    return map;
+  }
+
+  SearchHistoryTableCompanion toCompanion(bool nullToAbsent) {
+    return SearchHistoryTableCompanion(
+      id: Value(id),
+      term: Value(term),
+      searchedAt: Value(searchedAt),
+    );
+  }
+
+  factory SearchHistoryRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return SearchHistoryRow(
+      id: serializer.fromJson<String>(json['id']),
+      term: serializer.fromJson<String>(json['term']),
+      searchedAt: serializer.fromJson<DateTime>(json['searchedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'term': serializer.toJson<String>(term),
+      'searchedAt': serializer.toJson<DateTime>(searchedAt),
+    };
+  }
+
+  SearchHistoryRow copyWith({String? id, String? term, DateTime? searchedAt}) =>
+      SearchHistoryRow(
+        id: id ?? this.id,
+        term: term ?? this.term,
+        searchedAt: searchedAt ?? this.searchedAt,
+      );
+  SearchHistoryRow copyWithCompanion(SearchHistoryTableCompanion data) {
+    return SearchHistoryRow(
+      id: data.id.present ? data.id.value : this.id,
+      term: data.term.present ? data.term.value : this.term,
+      searchedAt: data.searchedAt.present
+          ? data.searchedAt.value
+          : this.searchedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SearchHistoryRow(')
+          ..write('id: $id, ')
+          ..write('term: $term, ')
+          ..write('searchedAt: $searchedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, term, searchedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is SearchHistoryRow &&
+          other.id == this.id &&
+          other.term == this.term &&
+          other.searchedAt == this.searchedAt);
+}
+
+class SearchHistoryTableCompanion extends UpdateCompanion<SearchHistoryRow> {
+  final Value<String> id;
+  final Value<String> term;
+  final Value<DateTime> searchedAt;
+  final Value<int> rowid;
+  const SearchHistoryTableCompanion({
+    this.id = const Value.absent(),
+    this.term = const Value.absent(),
+    this.searchedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  SearchHistoryTableCompanion.insert({
+    required String id,
+    required String term,
+    required DateTime searchedAt,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       term = Value(term),
+       searchedAt = Value(searchedAt);
+  static Insertable<SearchHistoryRow> custom({
+    Expression<String>? id,
+    Expression<String>? term,
+    Expression<DateTime>? searchedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (term != null) 'term': term,
+      if (searchedAt != null) 'searched_at': searchedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  SearchHistoryTableCompanion copyWith({
+    Value<String>? id,
+    Value<String>? term,
+    Value<DateTime>? searchedAt,
+    Value<int>? rowid,
+  }) {
+    return SearchHistoryTableCompanion(
+      id: id ?? this.id,
+      term: term ?? this.term,
+      searchedAt: searchedAt ?? this.searchedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (term.present) {
+      map['term'] = Variable<String>(term.value);
+    }
+    if (searchedAt.present) {
+      map['searched_at'] = Variable<DateTime>(searchedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SearchHistoryTableCompanion(')
+          ..write('id: $id, ')
+          ..write('term: $term, ')
+          ..write('searchedAt: $searchedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -3758,6 +4025,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $FavoriteTableTable favoriteTable = $FavoriteTableTable(this);
   late final $PlayEventTableTable playEventTable = $PlayEventTableTable(this);
   late final $LyricsTableTable lyricsTable = $LyricsTableTable(this);
+  late final $SearchHistoryTableTable searchHistoryTable =
+      $SearchHistoryTableTable(this);
   late final ArtistDao artistDao = ArtistDao(this as AppDatabase);
   late final AlbumDao albumDao = AlbumDao(this as AppDatabase);
   late final TrackDao trackDao = TrackDao(this as AppDatabase);
@@ -3768,6 +4037,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final FavoriteDao favoriteDao = FavoriteDao(this as AppDatabase);
   late final PlayEventDao playEventDao = PlayEventDao(this as AppDatabase);
   late final LyricsDao lyricsDao = LyricsDao(this as AppDatabase);
+  late final SearchHistoryDao searchHistoryDao = SearchHistoryDao(
+    this as AppDatabase,
+  );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -3781,6 +4053,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     favoriteTable,
     playEventTable,
     lyricsTable,
+    searchHistoryTable,
   ];
 }
 
@@ -7384,6 +7657,183 @@ typedef $$LyricsTableTableProcessedTableManager =
       LyricsRow,
       PrefetchHooks Function({bool trackId})
     >;
+typedef $$SearchHistoryTableTableCreateCompanionBuilder =
+    SearchHistoryTableCompanion Function({
+      required String id,
+      required String term,
+      required DateTime searchedAt,
+      Value<int> rowid,
+    });
+typedef $$SearchHistoryTableTableUpdateCompanionBuilder =
+    SearchHistoryTableCompanion Function({
+      Value<String> id,
+      Value<String> term,
+      Value<DateTime> searchedAt,
+      Value<int> rowid,
+    });
+
+class $$SearchHistoryTableTableFilterComposer
+    extends Composer<_$AppDatabase, $SearchHistoryTableTable> {
+  $$SearchHistoryTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get term => $composableBuilder(
+    column: $table.term,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get searchedAt => $composableBuilder(
+    column: $table.searchedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$SearchHistoryTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $SearchHistoryTableTable> {
+  $$SearchHistoryTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get term => $composableBuilder(
+    column: $table.term,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get searchedAt => $composableBuilder(
+    column: $table.searchedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$SearchHistoryTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $SearchHistoryTableTable> {
+  $$SearchHistoryTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get term =>
+      $composableBuilder(column: $table.term, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get searchedAt => $composableBuilder(
+    column: $table.searchedAt,
+    builder: (column) => column,
+  );
+}
+
+class $$SearchHistoryTableTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $SearchHistoryTableTable,
+          SearchHistoryRow,
+          $$SearchHistoryTableTableFilterComposer,
+          $$SearchHistoryTableTableOrderingComposer,
+          $$SearchHistoryTableTableAnnotationComposer,
+          $$SearchHistoryTableTableCreateCompanionBuilder,
+          $$SearchHistoryTableTableUpdateCompanionBuilder,
+          (
+            SearchHistoryRow,
+            BaseReferences<
+              _$AppDatabase,
+              $SearchHistoryTableTable,
+              SearchHistoryRow
+            >,
+          ),
+          SearchHistoryRow,
+          PrefetchHooks Function()
+        > {
+  $$SearchHistoryTableTableTableManager(
+    _$AppDatabase db,
+    $SearchHistoryTableTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$SearchHistoryTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$SearchHistoryTableTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$SearchHistoryTableTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> term = const Value.absent(),
+                Value<DateTime> searchedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => SearchHistoryTableCompanion(
+                id: id,
+                term: term,
+                searchedAt: searchedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String term,
+                required DateTime searchedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => SearchHistoryTableCompanion.insert(
+                id: id,
+                term: term,
+                searchedAt: searchedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$SearchHistoryTableTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $SearchHistoryTableTable,
+      SearchHistoryRow,
+      $$SearchHistoryTableTableFilterComposer,
+      $$SearchHistoryTableTableOrderingComposer,
+      $$SearchHistoryTableTableAnnotationComposer,
+      $$SearchHistoryTableTableCreateCompanionBuilder,
+      $$SearchHistoryTableTableUpdateCompanionBuilder,
+      (
+        SearchHistoryRow,
+        BaseReferences<
+          _$AppDatabase,
+          $SearchHistoryTableTable,
+          SearchHistoryRow
+        >,
+      ),
+      SearchHistoryRow,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -7404,4 +7854,6 @@ class $AppDatabaseManager {
       $$PlayEventTableTableTableManager(_db, _db.playEventTable);
   $$LyricsTableTableTableManager get lyricsTable =>
       $$LyricsTableTableTableManager(_db, _db.lyricsTable);
+  $$SearchHistoryTableTableTableManager get searchHistoryTable =>
+      $$SearchHistoryTableTableTableManager(_db, _db.searchHistoryTable);
 }

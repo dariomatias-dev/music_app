@@ -384,4 +384,22 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get searchResultsEmptyMessage => '换个搜索词试试。';
+
+  @override
+  String get recentSearchesLabel => '最近搜索';
+
+  @override
+  String get clearSearchHistoryLabel => '清除';
+
+  @override
+  String get clearSearchHistoryConfirmTitle => '清除搜索历史？';
+
+  @override
+  String get clearSearchHistoryConfirmMessage => '这会移除你所有的最近搜索。';
+
+  @override
+  String get clearSearchHistoryConfirmAction => '清除';
+
+  @override
+  String get removeSearchTermSemanticLabel => '从历史记录中移除';
 }

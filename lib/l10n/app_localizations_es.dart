@@ -405,4 +405,23 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get searchResultsEmptyMessage =>
       'Prueba con otro término de búsqueda.';
+
+  @override
+  String get recentSearchesLabel => 'Búsquedas recientes';
+
+  @override
+  String get clearSearchHistoryLabel => 'Borrar';
+
+  @override
+  String get clearSearchHistoryConfirmTitle => '¿Borrar historial de búsqueda?';
+
+  @override
+  String get clearSearchHistoryConfirmMessage =>
+      'Esto elimina todas tus búsquedas recientes.';
+
+  @override
+  String get clearSearchHistoryConfirmAction => 'Borrar';
+
+  @override
+  String get removeSearchTermSemanticLabel => 'Eliminar del historial';
 }
