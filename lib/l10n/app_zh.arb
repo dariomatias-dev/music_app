@@ -121,5 +121,7 @@
   "removeTrackConfirmTitle": "移除曲目？",
   "removeTrackConfirmMessage": "这会将曲目从播放列表中移除。它仍会保留在你的音乐库中。",
   "playlistEmptyTitle": "此播放列表为空",
-  "playlistEmptyMessage": "从曲目的更多菜单中添加曲目。"
+  "playlistEmptyMessage": "从曲目的更多菜单中添加曲目。",
+  "homeEmptyTitle": "音乐库为空",
+  "homeEmptyMessage": "在你设备上找到的曲目会显示在这里。"
 }

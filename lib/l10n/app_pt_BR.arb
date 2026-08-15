@@ -121,5 +121,7 @@
   "removeTrackConfirmTitle": "Remover faixa?",
   "removeTrackConfirmMessage": "Isso remove a faixa da playlist. Ela continua na sua biblioteca.",
   "playlistEmptyTitle": "Esta playlist está vazia",
-  "playlistEmptyMessage": "Adicione faixas pelo menu \"mais\" de uma faixa."
+  "playlistEmptyMessage": "Adicione faixas pelo menu \"mais\" de uma faixa.",
+  "homeEmptyTitle": "Sua biblioteca está vazia",
+  "homeEmptyMessage": "As faixas encontradas no seu dispositivo vão aparecer aqui."
 }

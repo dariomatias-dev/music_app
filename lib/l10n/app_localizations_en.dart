@@ -363,4 +363,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get playlistEmptyMessage => 'Add tracks from a track\'s more menu.';
+
+  @override
+  String get homeEmptyTitle => 'Your library is empty';
+
+  @override
+  String get homeEmptyMessage =>
+      'Tracks found on your device will show up here.';
 }

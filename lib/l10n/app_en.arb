@@ -121,5 +121,7 @@
   "removeTrackConfirmTitle": "Remove track?",
   "removeTrackConfirmMessage": "This removes it from the playlist. It stays in your library.",
   "playlistEmptyTitle": "This playlist is empty",
-  "playlistEmptyMessage": "Add tracks from a track's more menu."
+  "playlistEmptyMessage": "Add tracks from a track's more menu.",
+  "homeEmptyTitle": "Your library is empty",
+  "homeEmptyMessage": "Tracks found on your device will show up here."
 }

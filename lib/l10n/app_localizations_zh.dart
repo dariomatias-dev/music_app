@@ -345,4 +345,10 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get playlistEmptyMessage => '从曲目的更多菜单中添加曲目。';
+
+  @override
+  String get homeEmptyTitle => '音乐库为空';
+
+  @override
+  String get homeEmptyMessage => '在你设备上找到的曲目会显示在这里。';
 }

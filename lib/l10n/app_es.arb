@@ -121,5 +121,7 @@
   "removeTrackConfirmTitle": "¿Quitar pista?",
   "removeTrackConfirmMessage": "Esto la quita de la lista. Sigue en tu biblioteca.",
   "playlistEmptyTitle": "Esta lista está vacía",
-  "playlistEmptyMessage": "Agrega pistas desde el menú \"más\" de una pista."
+  "playlistEmptyMessage": "Agrega pistas desde el menú \"más\" de una pista.",
+  "homeEmptyTitle": "Tu biblioteca está vacía",
+  "homeEmptyMessage": "Las pistas encontradas en tu dispositivo aparecerán aquí."
 }

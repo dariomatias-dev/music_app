@@ -744,6 +744,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Add tracks from a track\'s more menu.'**
   String get playlistEmptyMessage;
+
+  /// No description provided for @homeEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your library is empty'**
+  String get homeEmptyTitle;
+
+  /// No description provided for @homeEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Tracks found on your device will show up here.'**
+  String get homeEmptyMessage;
 }
 
 class _AppLocalizationsDelegate

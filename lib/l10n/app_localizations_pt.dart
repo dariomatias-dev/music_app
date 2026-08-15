@@ -363,6 +363,13 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get playlistEmptyMessage => 'Add tracks from a track\'s more menu.';
+
+  @override
+  String get homeEmptyTitle => 'Your library is empty';
+
+  @override
+  String get homeEmptyMessage =>
+      'Tracks found on your device will show up here.';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -726,4 +733,11 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   @override
   String get playlistEmptyMessage =>
       'Adicione faixas pelo menu \"mais\" de uma faixa.';
+
+  @override
+  String get homeEmptyTitle => 'Sua biblioteca está vazia';
+
+  @override
+  String get homeEmptyMessage =>
+      'As faixas encontradas no seu dispositivo vão aparecer aqui.';
 }

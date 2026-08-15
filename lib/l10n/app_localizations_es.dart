@@ -364,4 +364,11 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get playlistEmptyMessage =>
       'Agrega pistas desde el menú \"más\" de una pista.';
+
+  @override
+  String get homeEmptyTitle => 'Tu biblioteca está vacía';
+
+  @override
+  String get homeEmptyMessage =>
+      'Las pistas encontradas en tu dispositivo aparecerán aquí.';
 }
