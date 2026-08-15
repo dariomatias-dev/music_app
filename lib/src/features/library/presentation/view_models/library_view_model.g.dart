@@ -44,7 +44,7 @@ final class LibraryViewModelProvider
   }
 }
 
-String _$libraryViewModelHash() => r'a7ee85a3bd98a142a84e2128ddba5840a6b3a469';
+String _$libraryViewModelHash() => r'9483a787d1599e7737fa33835926166c828dd6c7';
 
 /// Which [LibrarySection] the library screen is currently showing.
 

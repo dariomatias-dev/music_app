@@ -218,4 +218,26 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get libraryFavoritesTab => 'Favoritos';
+
+  @override
+  String get sortByTitleLabel => 'Título';
+
+  @override
+  String get sortByArtistLabel => 'Artista';
+
+  @override
+  String get sortByDateAddedLabel => 'Fecha de adición';
+
+  @override
+  String get sortByDurationLabel => 'Duración';
+
+  @override
+  String get sortSheetTitle => 'Ordenar por';
+
+  @override
+  String get tracksEmptyTitle => 'Aún no hay pistas';
+
+  @override
+  String get tracksEmptyMessage =>
+      'Las pistas encontradas en tu dispositivo aparecerán aquí.';
 }

@@ -217,4 +217,26 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get libraryFavoritesTab => 'Favorites';
+
+  @override
+  String get sortByTitleLabel => 'Title';
+
+  @override
+  String get sortByArtistLabel => 'Artist';
+
+  @override
+  String get sortByDateAddedLabel => 'Date added';
+
+  @override
+  String get sortByDurationLabel => 'Duration';
+
+  @override
+  String get sortSheetTitle => 'Sort by';
+
+  @override
+  String get tracksEmptyTitle => 'No tracks yet';
+
+  @override
+  String get tracksEmptyMessage =>
+      'Tracks found on your device will show up here.';
 }

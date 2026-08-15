@@ -3,11 +3,41 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:music_app/l10n/app_localizations.dart';
+import 'package:music_app/src/features/library/data/indexing/library_indexer.dart';
+import 'package:music_app/src/features/library/data/providers/library_data_providers.dart';
+import 'package:music_app/src/features/library/domain/entities/album.dart';
+import 'package:music_app/src/features/library/domain/entities/artist.dart';
+import 'package:music_app/src/features/library/domain/entities/track.dart';
+import 'package:music_app/src/features/library/domain/repositories/library_repository.dart';
 import 'package:music_app/src/features/library/presentation/screens/library_screen.dart';
 import 'package:music_app/src/features/library/presentation/view_models/library_view_model.dart';
 
+class _FakeLibraryRepository implements LibraryRepository {
+  const _FakeLibraryRepository();
+
+  @override
+  Stream<List<Track>> watchTracks() => const Stream.empty();
+
+  @override
+  Stream<List<Artist>> watchArtists() => const Stream.empty();
+
+  @override
+  Stream<List<Album>> watchAlbums() => const Stream.empty();
+
+  @override
+  Stream<IndexingProgress> reindex() => const Stream.empty();
+
+  @override
+  Future<void> purgeMissingTracks() async {}
+}
+
 Widget _app() {
   return ProviderScope(
+    overrides: [
+      libraryRepositoryProvider.overrideWithValue(
+        const _FakeLibraryRepository(),
+      ),
+    ],
     child: MaterialApp(
       theme: AppTheme.light,
       localizationsDelegates: AppLocalizations.localizationsDelegates,

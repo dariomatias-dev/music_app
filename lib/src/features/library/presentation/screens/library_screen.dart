@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:music_app/l10n/app_localizations.dart';
 import 'package:music_app/src/features/library/presentation/view_models/library_view_model.dart';
+import 'package:music_app/src/features/library/presentation/widgets/tracks_tab.dart';
 
 /// The Library tab: tracks, albums, artists, playlists and favorites,
 /// switched between with a segmented control.
@@ -46,7 +47,7 @@ class LibraryScreen extends ConsumerWidget {
               duration: AppDurations.base,
               switchInCurve: AppCurves.emphasized,
               child: switch (section) {
-                LibrarySection.tracks => const SizedBox.shrink(
+                LibrarySection.tracks => const TracksTab(
                   key: ValueKey(LibrarySection.tracks),
                 ),
                 LibrarySection.albums => const SizedBox.shrink(

@@ -209,4 +209,25 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get libraryFavoritesTab => '收藏';
+
+  @override
+  String get sortByTitleLabel => '标题';
+
+  @override
+  String get sortByArtistLabel => '艺人';
+
+  @override
+  String get sortByDateAddedLabel => '添加日期';
+
+  @override
+  String get sortByDurationLabel => '时长';
+
+  @override
+  String get sortSheetTitle => '排序方式';
+
+  @override
+  String get tracksEmptyTitle => '暂无曲目';
+
+  @override
+  String get tracksEmptyMessage => '在你设备上找到的曲目会显示在这里。';
 }

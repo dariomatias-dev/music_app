@@ -504,6 +504,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Favorites'**
   String get libraryFavoritesTab;
+
+  /// No description provided for @sortByTitleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get sortByTitleLabel;
+
+  /// No description provided for @sortByArtistLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Artist'**
+  String get sortByArtistLabel;
+
+  /// No description provided for @sortByDateAddedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Date added'**
+  String get sortByDateAddedLabel;
+
+  /// No description provided for @sortByDurationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Duration'**
+  String get sortByDurationLabel;
+
+  /// No description provided for @sortSheetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort by'**
+  String get sortSheetTitle;
+
+  /// No description provided for @tracksEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No tracks yet'**
+  String get tracksEmptyTitle;
+
+  /// No description provided for @tracksEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Tracks found on your device will show up here.'**
+  String get tracksEmptyMessage;
 }
 
 class _AppLocalizationsDelegate

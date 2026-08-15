@@ -66,5 +66,12 @@
   "libraryAlbumsTab": "专辑",
   "libraryArtistsTab": "艺人",
   "libraryPlaylistsTab": "播放列表",
-  "libraryFavoritesTab": "收藏"
+  "libraryFavoritesTab": "收藏",
+  "sortByTitleLabel": "标题",
+  "sortByArtistLabel": "艺人",
+  "sortByDateAddedLabel": "添加日期",
+  "sortByDurationLabel": "时长",
+  "sortSheetTitle": "排序方式",
+  "tracksEmptyTitle": "暂无曲目",
+  "tracksEmptyMessage": "在你设备上找到的曲目会显示在这里。"
 }

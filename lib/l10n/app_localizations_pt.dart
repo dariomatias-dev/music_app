@@ -217,6 +217,28 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get libraryFavoritesTab => 'Favorites';
+
+  @override
+  String get sortByTitleLabel => 'Title';
+
+  @override
+  String get sortByArtistLabel => 'Artist';
+
+  @override
+  String get sortByDateAddedLabel => 'Date added';
+
+  @override
+  String get sortByDurationLabel => 'Duration';
+
+  @override
+  String get sortSheetTitle => 'Sort by';
+
+  @override
+  String get tracksEmptyTitle => 'No tracks yet';
+
+  @override
+  String get tracksEmptyMessage =>
+      'Tracks found on your device will show up here.';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -432,4 +454,26 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get libraryFavoritesTab => 'Favoritos';
+
+  @override
+  String get sortByTitleLabel => 'Título';
+
+  @override
+  String get sortByArtistLabel => 'Artista';
+
+  @override
+  String get sortByDateAddedLabel => 'Data de adição';
+
+  @override
+  String get sortByDurationLabel => 'Duração';
+
+  @override
+  String get sortSheetTitle => 'Ordenar por';
+
+  @override
+  String get tracksEmptyTitle => 'Nenhuma faixa ainda';
+
+  @override
+  String get tracksEmptyMessage =>
+      'As faixas encontradas no seu dispositivo vão aparecer aqui.';
 }

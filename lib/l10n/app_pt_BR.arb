@@ -66,5 +66,12 @@
   "libraryAlbumsTab": "Álbuns",
   "libraryArtistsTab": "Artistas",
   "libraryPlaylistsTab": "Playlists",
-  "libraryFavoritesTab": "Favoritos"
+  "libraryFavoritesTab": "Favoritos",
+  "sortByTitleLabel": "Título",
+  "sortByArtistLabel": "Artista",
+  "sortByDateAddedLabel": "Data de adição",
+  "sortByDurationLabel": "Duração",
+  "sortSheetTitle": "Ordenar por",
+  "tracksEmptyTitle": "Nenhuma faixa ainda",
+  "tracksEmptyMessage": "As faixas encontradas no seu dispositivo vão aparecer aqui."
 }
