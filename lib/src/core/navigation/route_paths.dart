@@ -43,4 +43,13 @@ abstract final class RoutePaths {
 
   /// The artist detail screen for [artistId].
   static String artist(String artistId) => '/artists/$artistId';
+
+  /// Route pattern for the playlist detail screen, for registration; use
+  /// [playlist] to build a concrete path for navigation.
+  ///
+  /// The screen itself is a stub until Etapa 75.
+  static const playlistPattern = '/playlists/:playlistId';
+
+  /// The playlist detail screen for [playlistId].
+  static String playlist(String playlistId) => '/playlists/$playlistId';
 }

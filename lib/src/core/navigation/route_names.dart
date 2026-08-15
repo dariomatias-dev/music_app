@@ -35,4 +35,7 @@ abstract final class RouteNames {
 
   /// The artist detail screen.
   static const artist = 'artist';
+
+  /// The playlist detail screen.
+  static const playlist = 'playlist';
 }

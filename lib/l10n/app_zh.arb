@@ -96,5 +96,24 @@
     }
   },
   "favoritesEmptyTitle": "暂无收藏",
-  "favoritesEmptyMessage": "你收藏的曲目会显示在这里。"
+  "favoritesEmptyMessage": "你收藏的曲目会显示在这里。",
+  "newPlaylistLabel": "新建播放列表",
+  "playlistNameHint": "播放列表名称",
+  "createLabel": "创建",
+  "saveLabel": "保存",
+  "renamePlaylistSheetTitle": "重命名播放列表",
+  "renamePlaylistLabel": "重命名",
+  "duplicatePlaylistLabel": "复制",
+  "deletePlaylistLabel": "删除",
+  "deletePlaylistConfirmTitle": "删除播放列表？",
+  "deletePlaylistConfirmMessage": "这会移除该播放列表。其中的曲目仍保留在你的音乐库中。",
+  "playlistOptionsSemanticLabel": "播放列表选项",
+  "playlistsEmptyTitle": "暂无播放列表",
+  "playlistsEmptyMessage": "点击“新建播放列表”创建第一个。",
+  "playlistCopyName": "{name} 副本",
+  "@playlistCopyName": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  }
 }

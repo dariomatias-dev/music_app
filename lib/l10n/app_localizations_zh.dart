@@ -283,4 +283,48 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get favoritesEmptyMessage => '你收藏的曲目会显示在这里。';
+
+  @override
+  String get newPlaylistLabel => '新建播放列表';
+
+  @override
+  String get playlistNameHint => '播放列表名称';
+
+  @override
+  String get createLabel => '创建';
+
+  @override
+  String get saveLabel => '保存';
+
+  @override
+  String get renamePlaylistSheetTitle => '重命名播放列表';
+
+  @override
+  String get renamePlaylistLabel => '重命名';
+
+  @override
+  String get duplicatePlaylistLabel => '复制';
+
+  @override
+  String get deletePlaylistLabel => '删除';
+
+  @override
+  String get deletePlaylistConfirmTitle => '删除播放列表？';
+
+  @override
+  String get deletePlaylistConfirmMessage => '这会移除该播放列表。其中的曲目仍保留在你的音乐库中。';
+
+  @override
+  String get playlistOptionsSemanticLabel => '播放列表选项';
+
+  @override
+  String get playlistsEmptyTitle => '暂无播放列表';
+
+  @override
+  String get playlistsEmptyMessage => '点击“新建播放列表”创建第一个。';
+
+  @override
+  String playlistCopyName(String name) {
+    return '$name 副本';
+  }
 }

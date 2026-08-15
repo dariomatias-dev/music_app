@@ -96,5 +96,24 @@
     }
   },
   "favoritesEmptyTitle": "Aún no hay favoritos",
-  "favoritesEmptyMessage": "Las pistas que marques como favoritas aparecerán aquí."
+  "favoritesEmptyMessage": "Las pistas que marques como favoritas aparecerán aquí.",
+  "newPlaylistLabel": "Nueva lista",
+  "playlistNameHint": "Nombre de la lista",
+  "createLabel": "Crear",
+  "saveLabel": "Guardar",
+  "renamePlaylistSheetTitle": "Renombrar lista",
+  "renamePlaylistLabel": "Renombrar",
+  "duplicatePlaylistLabel": "Duplicar",
+  "deletePlaylistLabel": "Eliminar",
+  "deletePlaylistConfirmTitle": "¿Eliminar lista?",
+  "deletePlaylistConfirmMessage": "Esto elimina la lista. Sus pistas permanecen en tu biblioteca.",
+  "playlistOptionsSemanticLabel": "Opciones de la lista",
+  "playlistsEmptyTitle": "Aún no hay listas",
+  "playlistsEmptyMessage": "Toca Nueva lista para crear la primera.",
+  "playlistCopyName": "{name} copia",
+  "@playlistCopyName": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  }
 }

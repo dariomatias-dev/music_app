@@ -300,4 +300,49 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get favoritesEmptyMessage =>
       'Las pistas que marques como favoritas aparecerán aquí.';
+
+  @override
+  String get newPlaylistLabel => 'Nueva lista';
+
+  @override
+  String get playlistNameHint => 'Nombre de la lista';
+
+  @override
+  String get createLabel => 'Crear';
+
+  @override
+  String get saveLabel => 'Guardar';
+
+  @override
+  String get renamePlaylistSheetTitle => 'Renombrar lista';
+
+  @override
+  String get renamePlaylistLabel => 'Renombrar';
+
+  @override
+  String get duplicatePlaylistLabel => 'Duplicar';
+
+  @override
+  String get deletePlaylistLabel => 'Eliminar';
+
+  @override
+  String get deletePlaylistConfirmTitle => '¿Eliminar lista?';
+
+  @override
+  String get deletePlaylistConfirmMessage =>
+      'Esto elimina la lista. Sus pistas permanecen en tu biblioteca.';
+
+  @override
+  String get playlistOptionsSemanticLabel => 'Opciones de la lista';
+
+  @override
+  String get playlistsEmptyTitle => 'Aún no hay listas';
+
+  @override
+  String get playlistsEmptyMessage => 'Toca Nueva lista para crear la primera.';
+
+  @override
+  String playlistCopyName(String name) {
+    return '$name copia';
+  }
 }

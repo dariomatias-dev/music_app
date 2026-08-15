@@ -96,5 +96,24 @@
     }
   },
   "favoritesEmptyTitle": "Nenhum favorito ainda",
-  "favoritesEmptyMessage": "As faixas que você favoritar vão aparecer aqui."
+  "favoritesEmptyMessage": "As faixas que você favoritar vão aparecer aqui.",
+  "newPlaylistLabel": "Nova playlist",
+  "playlistNameHint": "Nome da playlist",
+  "createLabel": "Criar",
+  "saveLabel": "Salvar",
+  "renamePlaylistSheetTitle": "Renomear playlist",
+  "renamePlaylistLabel": "Renomear",
+  "duplicatePlaylistLabel": "Duplicar",
+  "deletePlaylistLabel": "Excluir",
+  "deletePlaylistConfirmTitle": "Excluir playlist?",
+  "deletePlaylistConfirmMessage": "Isso remove a playlist. As faixas continuam na sua biblioteca.",
+  "playlistOptionsSemanticLabel": "Opções da playlist",
+  "playlistsEmptyTitle": "Nenhuma playlist ainda",
+  "playlistsEmptyMessage": "Toque em Nova playlist para criar a primeira.",
+  "playlistCopyName": "{name} cópia",
+  "@playlistCopyName": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  }
 }

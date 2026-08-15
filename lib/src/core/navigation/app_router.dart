@@ -14,6 +14,7 @@ import 'package:music_app/src/features/onboarding/presentation/screens/onboardin
 import 'package:music_app/src/features/onboarding/presentation/screens/permission_screen.dart';
 import 'package:music_app/src/features/player/presentation/screens/lyrics_screen.dart';
 import 'package:music_app/src/features/player/presentation/screens/playback_screen.dart';
+import 'package:music_app/src/features/playlist/presentation/screens/playlist_screen.dart';
 import 'package:music_app/src/features/queue/presentation/screens/queue_screen.dart';
 import 'package:music_app/src/features/search/presentation/screens/search_screen.dart';
 import 'package:music_app/src/features/settings/presentation/screens/settings_screen.dart';
@@ -52,6 +53,13 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: RoutePaths.artistPattern,
         builder: (context, state) => ArtistScreen(
           artistId: state.pathParameters['artistId']!,
+        ),
+      ),
+      GoRoute(
+        name: RouteNames.playlist,
+        path: RoutePaths.playlistPattern,
+        builder: (context, state) => PlaylistScreen(
+          playlistId: state.pathParameters['playlistId']!,
         ),
       ),
       GoRoute(

@@ -624,6 +624,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Tracks you favorite will show up here.'**
   String get favoritesEmptyMessage;
+
+  /// No description provided for @newPlaylistLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'New playlist'**
+  String get newPlaylistLabel;
+
+  /// No description provided for @playlistNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Playlist name'**
+  String get playlistNameHint;
+
+  /// No description provided for @createLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Create'**
+  String get createLabel;
+
+  /// No description provided for @saveLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get saveLabel;
+
+  /// No description provided for @renamePlaylistSheetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename playlist'**
+  String get renamePlaylistSheetTitle;
+
+  /// No description provided for @renamePlaylistLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename'**
+  String get renamePlaylistLabel;
+
+  /// No description provided for @duplicatePlaylistLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Duplicate'**
+  String get duplicatePlaylistLabel;
+
+  /// No description provided for @deletePlaylistLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get deletePlaylistLabel;
+
+  /// No description provided for @deletePlaylistConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete playlist?'**
+  String get deletePlaylistConfirmTitle;
+
+  /// No description provided for @deletePlaylistConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This removes the playlist. Its tracks stay in your library.'**
+  String get deletePlaylistConfirmMessage;
+
+  /// No description provided for @playlistOptionsSemanticLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Playlist options'**
+  String get playlistOptionsSemanticLabel;
+
+  /// No description provided for @playlistsEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No playlists yet'**
+  String get playlistsEmptyTitle;
+
+  /// No description provided for @playlistsEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap New playlist to create your first one.'**
+  String get playlistsEmptyMessage;
+
+  /// No description provided for @playlistCopyName.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} copy'**
+  String playlistCopyName(String name);
 }
 
 class _AppLocalizationsDelegate

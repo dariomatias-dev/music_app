@@ -6,6 +6,7 @@ import 'package:music_app/src/features/library/presentation/view_models/library_
 import 'package:music_app/src/features/library/presentation/widgets/albums_tab.dart';
 import 'package:music_app/src/features/library/presentation/widgets/artists_tab.dart';
 import 'package:music_app/src/features/library/presentation/widgets/favorites_tab.dart';
+import 'package:music_app/src/features/library/presentation/widgets/playlists_tab.dart';
 import 'package:music_app/src/features/library/presentation/widgets/tracks_tab.dart';
 
 /// The Library tab: tracks, albums, artists, playlists and favorites,
@@ -59,7 +60,7 @@ class LibraryScreen extends ConsumerWidget {
                 LibrarySection.artists => const ArtistsTab(
                   key: ValueKey(LibrarySection.artists),
                 ),
-                LibrarySection.playlists => const SizedBox.shrink(
+                LibrarySection.playlists => const PlaylistsTab(
                   key: ValueKey(LibrarySection.playlists),
                 ),
                 LibrarySection.favorites => const FavoritesTab(

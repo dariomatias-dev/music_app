@@ -298,6 +298,52 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get favoritesEmptyMessage => 'Tracks you favorite will show up here.';
+
+  @override
+  String get newPlaylistLabel => 'New playlist';
+
+  @override
+  String get playlistNameHint => 'Playlist name';
+
+  @override
+  String get createLabel => 'Create';
+
+  @override
+  String get saveLabel => 'Save';
+
+  @override
+  String get renamePlaylistSheetTitle => 'Rename playlist';
+
+  @override
+  String get renamePlaylistLabel => 'Rename';
+
+  @override
+  String get duplicatePlaylistLabel => 'Duplicate';
+
+  @override
+  String get deletePlaylistLabel => 'Delete';
+
+  @override
+  String get deletePlaylistConfirmTitle => 'Delete playlist?';
+
+  @override
+  String get deletePlaylistConfirmMessage =>
+      'This removes the playlist. Its tracks stay in your library.';
+
+  @override
+  String get playlistOptionsSemanticLabel => 'Playlist options';
+
+  @override
+  String get playlistsEmptyTitle => 'No playlists yet';
+
+  @override
+  String get playlistsEmptyMessage =>
+      'Tap New playlist to create your first one.';
+
+  @override
+  String playlistCopyName(String name) {
+    return '$name copy';
+  }
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -595,4 +641,50 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   @override
   String get favoritesEmptyMessage =>
       'As faixas que você favoritar vão aparecer aqui.';
+
+  @override
+  String get newPlaylistLabel => 'Nova playlist';
+
+  @override
+  String get playlistNameHint => 'Nome da playlist';
+
+  @override
+  String get createLabel => 'Criar';
+
+  @override
+  String get saveLabel => 'Salvar';
+
+  @override
+  String get renamePlaylistSheetTitle => 'Renomear playlist';
+
+  @override
+  String get renamePlaylistLabel => 'Renomear';
+
+  @override
+  String get duplicatePlaylistLabel => 'Duplicar';
+
+  @override
+  String get deletePlaylistLabel => 'Excluir';
+
+  @override
+  String get deletePlaylistConfirmTitle => 'Excluir playlist?';
+
+  @override
+  String get deletePlaylistConfirmMessage =>
+      'Isso remove a playlist. As faixas continuam na sua biblioteca.';
+
+  @override
+  String get playlistOptionsSemanticLabel => 'Opções da playlist';
+
+  @override
+  String get playlistsEmptyTitle => 'Nenhuma playlist ainda';
+
+  @override
+  String get playlistsEmptyMessage =>
+      'Toque em Nova playlist para criar a primeira.';
+
+  @override
+  String playlistCopyName(String name) {
+    return '$name cópia';
+  }
 }
