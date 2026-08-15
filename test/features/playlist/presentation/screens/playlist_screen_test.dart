@@ -13,6 +13,7 @@ import 'package:music_app/src/features/library/domain/entities/track.dart';
 import 'package:music_app/src/features/library/domain/repositories/library_repository.dart';
 import 'package:music_app/src/features/playlist/data/providers/playlist_data_providers.dart';
 import 'package:music_app/src/features/playlist/presentation/screens/playlist_screen.dart';
+import 'package:music_app/src/features/playlist/presentation/widgets/playlist_cover_art.dart';
 
 import '../../../../helpers/fake_audio_player_service.dart';
 import '../../../../helpers/fake_playlist_repository.dart';
@@ -187,5 +188,73 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(await repository.watchPlaylistTrackIds(id).first, ['track-2']);
+  });
+
+  testWidgets('tapping Play plays the whole playlist from the start', (
+    tester,
+  ) async {
+    final repository = FakePlaylistRepository();
+    final id = await repository.createPlaylist('Road Trip');
+    await repository.setPlaylistTracks(id, ['track-1', 'track-2']);
+
+    final container = await _pumpPlaylistScreen(
+      tester,
+      playlistRepository: repository,
+      tracks: [
+        _track(id: 'track-1', title: 'Night Drive'),
+        _track(id: 'track-2', title: 'Sunset'),
+      ],
+      playlistId: id,
+    );
+
+    await tester.tap(find.text('Play'));
+    await tester.pump(const Duration(milliseconds: 50));
+
+    final service = container.read(audioPlayerServiceProvider);
+    expect(service.snapshot.currentIndex, 0);
+    expect(service.snapshot.queueLength, 2);
+  });
+
+  testWidgets('tapping Shuffle plays the playlist in some order', (
+    tester,
+  ) async {
+    final repository = FakePlaylistRepository();
+    final id = await repository.createPlaylist('Road Trip');
+    await repository.setPlaylistTracks(id, ['track-1', 'track-2']);
+
+    final container = await _pumpPlaylistScreen(
+      tester,
+      playlistRepository: repository,
+      tracks: [
+        _track(id: 'track-1', title: 'Night Drive'),
+        _track(id: 'track-2', title: 'Sunset'),
+      ],
+      playlistId: id,
+    );
+
+    await tester.tap(find.text('Shuffle'));
+    await tester.pump(const Duration(milliseconds: 50));
+
+    final service = container.read(audioPlayerServiceProvider);
+    expect(service.snapshot.currentIndex, 0);
+    expect(service.snapshot.queueLength, 2);
+  });
+
+  testWidgets('shows a composed cover for the playlist', (tester) async {
+    final repository = FakePlaylistRepository();
+    final id = await repository.createPlaylist('Road Trip');
+    await repository.setPlaylistTracks(id, ['track-1', 'track-2']);
+
+    await _pumpPlaylistScreen(
+      tester,
+      playlistRepository: repository,
+      tracks: [
+        _track(id: 'track-1', title: 'Night Drive'),
+        _track(id: 'track-2', title: 'Sunset'),
+      ],
+      playlistId: id,
+    );
+
+    expect(find.byType(PlaylistCoverArt), findsOneWidget);
   });
 }
