@@ -544,6 +544,42 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get fileDeleteFailedMessage => 'Couldn\'t delete this file';
+
+  @override
+  String get settingsSectionProfileLabel => 'Profile';
+
+  @override
+  String get settingsSectionAppearanceLabel => 'Appearance';
+
+  @override
+  String get settingsSectionPlaybackLabel => 'Playback';
+
+  @override
+  String get settingsSectionLibraryLabel => 'Library';
+
+  @override
+  String get settingsSectionAboutLabel => 'About';
+
+  @override
+  String get settingsNameLabel => 'Name';
+
+  @override
+  String get settingsNameNotSetValue => 'Not set';
+
+  @override
+  String get settingsLanguageLabel => 'Language';
+
+  @override
+  String get settingsLanguageSystemValue => 'System default';
+
+  @override
+  String get settingsPlaybackRowLabel => 'Gapless, crossfade & speed';
+
+  @override
+  String get settingsAboutLabel => 'About';
+
+  @override
+  String get settingsAboutRowLabel => 'App info & version';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -1088,4 +1124,41 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get fileDeleteFailedMessage => 'Não foi possível excluir este arquivo';
+
+  @override
+  String get settingsSectionProfileLabel => 'Perfil';
+
+  @override
+  String get settingsSectionAppearanceLabel => 'Aparência';
+
+  @override
+  String get settingsSectionPlaybackLabel => 'Reprodução';
+
+  @override
+  String get settingsSectionLibraryLabel => 'Biblioteca';
+
+  @override
+  String get settingsSectionAboutLabel => 'Sobre';
+
+  @override
+  String get settingsNameLabel => 'Nome';
+
+  @override
+  String get settingsNameNotSetValue => 'Não definido';
+
+  @override
+  String get settingsLanguageLabel => 'Idioma';
+
+  @override
+  String get settingsLanguageSystemValue => 'Padrão do sistema';
+
+  @override
+  String get settingsPlaybackRowLabel =>
+      'Sem intervalo, crossfade e velocidade';
+
+  @override
+  String get settingsAboutLabel => 'Sobre';
+
+  @override
+  String get settingsAboutRowLabel => 'Informações e versão do app';
 }

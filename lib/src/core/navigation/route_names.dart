@@ -44,4 +44,13 @@ abstract final class RouteNames {
 
   /// The statistics screen.
   static const statistics = 'statistics';
+
+  /// The language settings screen.
+  static const settingsLanguage = 'settingsLanguage';
+
+  /// The playback settings screen.
+  static const settingsPlayback = 'settingsPlayback';
+
+  /// The about screen.
+  static const about = 'about';
 }

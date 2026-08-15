@@ -1062,6 +1062,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Couldn\'t delete this file'**
   String get fileDeleteFailedMessage;
+
+  /// No description provided for @settingsSectionProfileLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get settingsSectionProfileLabel;
+
+  /// No description provided for @settingsSectionAppearanceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get settingsSectionAppearanceLabel;
+
+  /// No description provided for @settingsSectionPlaybackLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Playback'**
+  String get settingsSectionPlaybackLabel;
+
+  /// No description provided for @settingsSectionLibraryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Library'**
+  String get settingsSectionLibraryLabel;
+
+  /// No description provided for @settingsSectionAboutLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get settingsSectionAboutLabel;
+
+  /// No description provided for @settingsNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get settingsNameLabel;
+
+  /// No description provided for @settingsNameNotSetValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Not set'**
+  String get settingsNameNotSetValue;
+
+  /// No description provided for @settingsLanguageLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get settingsLanguageLabel;
+
+  /// No description provided for @settingsLanguageSystemValue.
+  ///
+  /// In en, this message translates to:
+  /// **'System default'**
+  String get settingsLanguageSystemValue;
+
+  /// No description provided for @settingsPlaybackRowLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Gapless, crossfade & speed'**
+  String get settingsPlaybackRowLabel;
+
+  /// No description provided for @settingsAboutLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get settingsAboutLabel;
+
+  /// No description provided for @settingsAboutRowLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'App info & version'**
+  String get settingsAboutRowLabel;
 }
 
 class _AppLocalizationsDelegate

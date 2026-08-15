@@ -184,5 +184,17 @@
   "deleteFileConfirmMessage": "Esto lo elimina permanentemente de tu dispositivo, junto con cualquier entrada en listas de reproducción y favoritos. No se puede deshacer.",
   "deleteFileConfirmAction": "Eliminar",
   "fileDeletedMessage": "Archivo eliminado",
-  "fileDeleteFailedMessage": "No se pudo eliminar este archivo"
+  "fileDeleteFailedMessage": "No se pudo eliminar este archivo",
+  "settingsSectionProfileLabel": "Perfil",
+  "settingsSectionAppearanceLabel": "Apariencia",
+  "settingsSectionPlaybackLabel": "Reproducción",
+  "settingsSectionLibraryLabel": "Biblioteca",
+  "settingsSectionAboutLabel": "Acerca de",
+  "settingsNameLabel": "Nombre",
+  "settingsNameNotSetValue": "Sin definir",
+  "settingsLanguageLabel": "Idioma",
+  "settingsLanguageSystemValue": "Predeterminado del sistema",
+  "settingsPlaybackRowLabel": "Sin intervalo, crossfade y velocidad",
+  "settingsAboutLabel": "Acerca de",
+  "settingsAboutRowLabel": "Información y versión de la app"
 }

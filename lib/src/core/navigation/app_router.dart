@@ -17,6 +17,9 @@ import 'package:music_app/src/features/player/presentation/screens/playback_scre
 import 'package:music_app/src/features/playlist/presentation/screens/playlist_screen.dart';
 import 'package:music_app/src/features/queue/presentation/screens/queue_screen.dart';
 import 'package:music_app/src/features/search/presentation/screens/search_screen.dart';
+import 'package:music_app/src/features/settings/presentation/screens/about_screen.dart';
+import 'package:music_app/src/features/settings/presentation/screens/language_settings_screen.dart';
+import 'package:music_app/src/features/settings/presentation/screens/playback_settings_screen.dart';
 import 'package:music_app/src/features/settings/presentation/screens/settings_screen.dart';
 import 'package:music_app/src/features/splash/presentation/screens/splash_screen.dart';
 import 'package:music_app/src/features/statistics/presentation/screens/statistics_screen.dart';
@@ -73,6 +76,21 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         name: RouteNames.statistics,
         path: RoutePaths.statistics,
         builder: (context, state) => const StatisticsScreen(),
+      ),
+      GoRoute(
+        name: RouteNames.settingsLanguage,
+        path: RoutePaths.settingsLanguage,
+        builder: (context, state) => const LanguageSettingsScreen(),
+      ),
+      GoRoute(
+        name: RouteNames.settingsPlayback,
+        path: RoutePaths.settingsPlayback,
+        builder: (context, state) => const PlaybackSettingsScreen(),
+      ),
+      GoRoute(
+        name: RouteNames.about,
+        path: RoutePaths.about,
+        builder: (context, state) => const AboutScreen(),
       ),
       GoRoute(
         name: RouteNames.player,

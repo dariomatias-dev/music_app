@@ -1,19 +1,151 @@
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:music_app/l10n/app_localizations.dart';
+import 'package:music_app/src/core/navigation/route_paths.dart';
+import 'package:music_app/src/features/settings/presentation/view_models/locale_view_model.dart';
+import 'package:music_app/src/features/settings/presentation/view_models/user_profile_view_model.dart';
 
-/// The Settings tab.
-class SettingsScreen extends StatelessWidget {
+/// The Settings tab: preferences organized into sections, each a group of
+/// standardized rows.
+///
+/// Most rows are still stubs, filled in etapa by etapa (Etapa 91-94); this
+/// lays out the full structure and wires up what already has real data
+/// behind it: the display name and the selected language.
+class SettingsScreen extends ConsumerWidget {
   /// Creates a [SettingsScreen].
   const SettingsScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
+    final displayName = ref.watch(userProfileViewModelProvider).value;
+    final locale = ref.watch(localeViewModelProvider).value;
 
     return AppScaffold(
       topBar: AppTopBar(title: l10n.settingsTabLabel, showBack: false),
-      body: const SizedBox.shrink(),
+      body: ListView(
+        padding: const EdgeInsets.all(AppSpacing.lg),
+        children: [
+          _Section(
+            title: l10n.settingsSectionProfileLabel,
+            children: [
+              AppSettingsRow(
+                icon: Icons.person_outline_rounded,
+                label: l10n.settingsNameLabel,
+                value: (displayName == null || displayName.isEmpty)
+                    ? l10n.settingsNameNotSetValue
+                    : displayName,
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          _Section(
+            title: l10n.settingsSectionAppearanceLabel,
+            children: [
+              AppSettingsRow(
+                icon: Icons.language_rounded,
+                label: l10n.settingsLanguageLabel,
+                value: locale == null
+                    ? l10n.settingsLanguageSystemValue
+                    : _languageDisplayName(locale),
+                onTap: () => context.push(RoutePaths.settingsLanguage),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          _Section(
+            title: l10n.settingsSectionPlaybackLabel,
+            children: [
+              AppSettingsRow(
+                icon: Icons.tune_rounded,
+                label: l10n.settingsPlaybackRowLabel,
+                onTap: () => context.push(RoutePaths.settingsPlayback),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          _Section(
+            title: l10n.settingsSectionLibraryLabel,
+            children: [
+              AppSettingsRow(
+                icon: Icons.sd_storage_outlined,
+                label: l10n.storageLabel,
+                onTap: () => context.push(RoutePaths.storage),
+              ),
+              AppSettingsRow(
+                icon: Icons.bar_chart_rounded,
+                label: l10n.statisticsLabel,
+                onTap: () => context.push(RoutePaths.statistics),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          _Section(
+            title: l10n.settingsSectionAboutLabel,
+            children: [
+              AppSettingsRow(
+                icon: Icons.info_outline_rounded,
+                label: l10n.settingsAboutRowLabel,
+                onTap: () => context.push(RoutePaths.about),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _languageDisplayName(Locale locale) {
+    return switch (locale.languageCode) {
+      'es' => 'Español',
+      'pt' => 'Português',
+      'zh' => '中文',
+      _ => 'English',
+    };
+  }
+}
+
+class _Section extends StatelessWidget {
+  const _Section({required this.title, required this.children});
+
+  final String title;
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(
+            left: AppSpacing.sm,
+            bottom: AppSpacing.xs,
+          ),
+          child: Text(
+            title,
+            style: AppTypography.section.copyWith(
+              color: context.colors.textSecondary,
+            ),
+          ),
+        ),
+        AppSectionContainer(
+          child: Column(
+            children: [
+              for (var i = 0; i < children.length; i++) ...[
+                if (i > 0)
+                  Divider(
+                    height: 1,
+                    indent: AppSpacing.md,
+                    color: context.colors.divider,
+                  ),
+                children[i],
+              ],
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

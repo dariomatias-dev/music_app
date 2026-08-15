@@ -546,4 +546,40 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get fileDeleteFailedMessage => 'No se pudo eliminar este archivo';
+
+  @override
+  String get settingsSectionProfileLabel => 'Perfil';
+
+  @override
+  String get settingsSectionAppearanceLabel => 'Apariencia';
+
+  @override
+  String get settingsSectionPlaybackLabel => 'Reproducción';
+
+  @override
+  String get settingsSectionLibraryLabel => 'Biblioteca';
+
+  @override
+  String get settingsSectionAboutLabel => 'Acerca de';
+
+  @override
+  String get settingsNameLabel => 'Nombre';
+
+  @override
+  String get settingsNameNotSetValue => 'Sin definir';
+
+  @override
+  String get settingsLanguageLabel => 'Idioma';
+
+  @override
+  String get settingsLanguageSystemValue => 'Predeterminado del sistema';
+
+  @override
+  String get settingsPlaybackRowLabel => 'Sin intervalo, crossfade y velocidad';
+
+  @override
+  String get settingsAboutLabel => 'Acerca de';
+
+  @override
+  String get settingsAboutRowLabel => 'Información y versión de la app';
 }

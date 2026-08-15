@@ -519,4 +519,40 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get fileDeleteFailedMessage => '无法删除此文件';
+
+  @override
+  String get settingsSectionProfileLabel => '个人资料';
+
+  @override
+  String get settingsSectionAppearanceLabel => '外观';
+
+  @override
+  String get settingsSectionPlaybackLabel => '播放';
+
+  @override
+  String get settingsSectionLibraryLabel => '音乐库';
+
+  @override
+  String get settingsSectionAboutLabel => '关于';
+
+  @override
+  String get settingsNameLabel => '姓名';
+
+  @override
+  String get settingsNameNotSetValue => '未设置';
+
+  @override
+  String get settingsLanguageLabel => '语言';
+
+  @override
+  String get settingsLanguageSystemValue => '跟随系统';
+
+  @override
+  String get settingsPlaybackRowLabel => '无间隔播放、淡入淡出与速度';
+
+  @override
+  String get settingsAboutLabel => '关于';
+
+  @override
+  String get settingsAboutRowLabel => '应用信息与版本';
 }

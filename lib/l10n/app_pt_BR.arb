@@ -184,5 +184,17 @@
   "deleteFileConfirmMessage": "Isso o remove permanentemente do seu dispositivo, junto com entradas em playlists e favoritos. Não pode ser desfeito.",
   "deleteFileConfirmAction": "Excluir",
   "fileDeletedMessage": "Arquivo excluído",
-  "fileDeleteFailedMessage": "Não foi possível excluir este arquivo"
+  "fileDeleteFailedMessage": "Não foi possível excluir este arquivo",
+  "settingsSectionProfileLabel": "Perfil",
+  "settingsSectionAppearanceLabel": "Aparência",
+  "settingsSectionPlaybackLabel": "Reprodução",
+  "settingsSectionLibraryLabel": "Biblioteca",
+  "settingsSectionAboutLabel": "Sobre",
+  "settingsNameLabel": "Nome",
+  "settingsNameNotSetValue": "Não definido",
+  "settingsLanguageLabel": "Idioma",
+  "settingsLanguageSystemValue": "Padrão do sistema",
+  "settingsPlaybackRowLabel": "Sem intervalo, crossfade e velocidade",
+  "settingsAboutLabel": "Sobre",
+  "settingsAboutRowLabel": "Informações e versão do app"
 }

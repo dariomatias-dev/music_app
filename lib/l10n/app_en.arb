@@ -184,5 +184,17 @@
   "deleteFileConfirmMessage": "This permanently removes it from your device, along with any playlist entries and favorite. It can't be undone.",
   "deleteFileConfirmAction": "Delete",
   "fileDeletedMessage": "File deleted",
-  "fileDeleteFailedMessage": "Couldn't delete this file"
+  "fileDeleteFailedMessage": "Couldn't delete this file",
+  "settingsSectionProfileLabel": "Profile",
+  "settingsSectionAppearanceLabel": "Appearance",
+  "settingsSectionPlaybackLabel": "Playback",
+  "settingsSectionLibraryLabel": "Library",
+  "settingsSectionAboutLabel": "About",
+  "settingsNameLabel": "Name",
+  "settingsNameNotSetValue": "Not set",
+  "settingsLanguageLabel": "Language",
+  "settingsLanguageSystemValue": "System default",
+  "settingsPlaybackRowLabel": "Gapless, crossfade & speed",
+  "settingsAboutLabel": "About",
+  "settingsAboutRowLabel": "App info & version"
 }
