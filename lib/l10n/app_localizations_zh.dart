@@ -277,4 +277,10 @@ class AppLocalizationsZh extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get favoritesEmptyTitle => '暂无收藏';
+
+  @override
+  String get favoritesEmptyMessage => '你收藏的曲目会显示在这里。';
 }

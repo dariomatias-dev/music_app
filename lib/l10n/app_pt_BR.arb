@@ -94,5 +94,7 @@
     "placeholders": {
       "count": {"type": "int"}
     }
-  }
+  },
+  "favoritesEmptyTitle": "Nenhum favorito ainda",
+  "favoritesEmptyMessage": "As faixas que você favoritar vão aparecer aqui."
 }

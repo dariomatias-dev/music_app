@@ -113,6 +113,25 @@ List<Track> albumTracks(Ref ref, String albumId) {
     });
 }
 
+/// Ids of every favorited track, most recently favorited first.
+final favoriteTrackIdsProvider = StreamProvider<List<String>>(
+  (ref) => ref.watch(favoriteRepositoryProvider).watchFavoriteTrackIds(),
+);
+
+/// Every favorited, non-missing track, most recently favorited first.
+final favoriteTracksProvider = Provider<List<Track>>((ref) {
+  final ids = ref.watch(favoriteTrackIdsProvider).value ?? const [];
+  final tracks = ref.watch(tracksStreamProvider).value ?? const [];
+  final tracksById = {for (final track in tracks) track.id: track};
+
+  final favorites = <Track>[];
+  for (final id in ids) {
+    final track = tracksById[id];
+    if (track != null && !track.isMissing) favorites.add(track);
+  }
+  return favorites;
+});
+
 /// Every indexed, non-missing track, ordered by the Tracks tab's current
 /// sort. Recomputed only when the tracks, artists or sort order change.
 @riverpod

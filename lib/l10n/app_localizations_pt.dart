@@ -292,6 +292,12 @@ class AppLocalizationsPt extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get favoritesEmptyTitle => 'No favorites yet';
+
+  @override
+  String get favoritesEmptyMessage => 'Tracks you favorite will show up here.';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -582,4 +588,11 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
     );
     return '$_temp0';
   }
+
+  @override
+  String get favoritesEmptyTitle => 'Nenhum favorito ainda';
+
+  @override
+  String get favoritesEmptyMessage =>
+      'As faixas que você favoritar vão aparecer aqui.';
 }

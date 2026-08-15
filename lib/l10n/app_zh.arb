@@ -94,5 +94,7 @@
     "placeholders": {
       "count": {"type": "int"}
     }
-  }
+  },
+  "favoritesEmptyTitle": "暂无收藏",
+  "favoritesEmptyMessage": "你收藏的曲目会显示在这里。"
 }

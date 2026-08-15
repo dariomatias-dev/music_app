@@ -292,4 +292,10 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get favoritesEmptyTitle => 'No favorites yet';
+
+  @override
+  String get favoritesEmptyMessage => 'Tracks you favorite will show up here.';
 }

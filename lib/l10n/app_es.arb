@@ -94,5 +94,7 @@
     "placeholders": {
       "count": {"type": "int"}
     }
-  }
+  },
+  "favoritesEmptyTitle": "Aún no hay favoritos",
+  "favoritesEmptyMessage": "Las pistas que marques como favoritas aparecerán aquí."
 }

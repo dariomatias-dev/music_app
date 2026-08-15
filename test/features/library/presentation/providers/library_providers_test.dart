@@ -9,6 +9,8 @@ import 'package:music_app/src/features/library/domain/repositories/library_repos
 import 'package:music_app/src/features/library/presentation/providers/library_providers.dart';
 import 'package:music_app/src/features/library/presentation/view_models/track_sort_view_model.dart';
 
+import '../../../../helpers/fake_favorite_repository.dart';
+
 class _FakeLibraryRepository implements LibraryRepository {
   const _FakeLibraryRepository(
     this.tracks,
@@ -387,6 +389,43 @@ void main() {
       expect(
         container.read(artistTracksProvider('artist-a')).map((t) => t.id),
         ['beta-track', 'zeta-track'],
+      );
+    },
+  );
+
+  test(
+    'favoriteTracksProvider resolves favorited ids to tracks in order, '
+    'excluding missing tracks',
+    () async {
+      final favoriteRepository = FakeFavoriteRepository();
+      final container =
+          ProviderContainer(
+              overrides: [
+                libraryRepositoryProvider.overrideWithValue(
+                  _FakeLibraryRepository(tracks, artists),
+                ),
+                favoriteRepositoryProvider.overrideWithValue(
+                  favoriteRepository,
+                ),
+              ],
+            )
+            ..listen(tracksStreamProvider, (_, _) {})
+            ..listen(favoriteTrackIdsProvider, (_, _) {});
+      addTearDown(container.dispose);
+      await Future.wait([
+        container.read(tracksStreamProvider.future),
+        container.read(favoriteTrackIdsProvider.future),
+      ]);
+
+      await favoriteRepository.setFavorite('track-2', isFavorite: true);
+      await favoriteRepository.setFavorite('track-3', isFavorite: true);
+      await favoriteRepository.setFavorite('track-1', isFavorite: true);
+      // Let the broadcast stream's async delivery reach the provider.
+      await Future<void>.delayed(Duration.zero);
+
+      expect(
+        container.read(favoriteTracksProvider).map((t) => t.id),
+        ['track-1', 'track-2'],
       );
     },
   );

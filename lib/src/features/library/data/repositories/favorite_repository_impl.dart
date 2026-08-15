@@ -18,6 +18,13 @@ class FavoriteRepositoryImpl implements FavoriteRepository {
   }
 
   @override
+  Stream<List<String>> watchFavoriteTrackIds() {
+    return _database.favoriteDao.watchAll().map(
+      (rows) => rows.map((row) => row.trackId).toList(),
+    );
+  }
+
+  @override
   Future<void> setFavorite(String trackId, {required bool isFavorite}) async {
     if (!isFavorite) {
       await _database.favoriteDao.deleteByTrackId(trackId);

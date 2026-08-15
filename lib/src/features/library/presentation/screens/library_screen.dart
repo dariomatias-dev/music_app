@@ -5,6 +5,7 @@ import 'package:music_app/l10n/app_localizations.dart';
 import 'package:music_app/src/features/library/presentation/view_models/library_view_model.dart';
 import 'package:music_app/src/features/library/presentation/widgets/albums_tab.dart';
 import 'package:music_app/src/features/library/presentation/widgets/artists_tab.dart';
+import 'package:music_app/src/features/library/presentation/widgets/favorites_tab.dart';
 import 'package:music_app/src/features/library/presentation/widgets/tracks_tab.dart';
 
 /// The Library tab: tracks, albums, artists, playlists and favorites,
@@ -61,7 +62,7 @@ class LibraryScreen extends ConsumerWidget {
                 LibrarySection.playlists => const SizedBox.shrink(
                   key: ValueKey(LibrarySection.playlists),
                 ),
-                LibrarySection.favorites => const SizedBox.shrink(
+                LibrarySection.favorites => const FavoritesTab(
                   key: ValueKey(LibrarySection.favorites),
                 ),
               },

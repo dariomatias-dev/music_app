@@ -11,8 +11,16 @@ class FavoriteDao extends DatabaseAccessor<AppDatabase>
   /// Creates a [FavoriteDao] bound to [attachedDatabase].
   FavoriteDao(super.attachedDatabase);
 
-  /// Watches all favorites.
-  Stream<List<FavoriteRow>> watchAll() => select(favoriteTable).watch();
+  /// Watches all favorites, most recently favorited first.
+  ///
+  /// Ties on [FavoriteTable.createdAt] (same-millisecond favorites) break
+  /// on id, which is time-ordered (UUIDv7) and so preserves recency too.
+  Stream<List<FavoriteRow>> watchAll() =>
+      (select(favoriteTable)..orderBy([
+            (t) => OrderingTerm.desc(t.createdAt),
+            (t) => OrderingTerm.desc(t.id),
+          ]))
+          .watch();
 
   /// Reads the favorite entry for [trackId], if any.
   Future<FavoriteRow?> getByTrackId(String trackId) => (select(

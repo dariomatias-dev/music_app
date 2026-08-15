@@ -612,6 +612,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count, plural, one{{count} album} other{{count} albums}}'**
   String albumCountLabel(int count);
+
+  /// No description provided for @favoritesEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No favorites yet'**
+  String get favoritesEmptyTitle;
+
+  /// No description provided for @favoritesEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Tracks you favorite will show up here.'**
+  String get favoritesEmptyMessage;
 }
 
 class _AppLocalizationsDelegate

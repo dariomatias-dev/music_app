@@ -293,4 +293,11 @@ class AppLocalizationsEs extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get favoritesEmptyTitle => 'Aún no hay favoritos';
+
+  @override
+  String get favoritesEmptyMessage =>
+      'Las pistas que marques como favoritas aparecerán aquí.';
 }
