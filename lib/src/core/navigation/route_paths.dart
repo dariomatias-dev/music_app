@@ -37,9 +37,10 @@ abstract final class RoutePaths {
   /// The album detail screen for [albumId].
   static String album(String albumId) => '/albums/$albumId';
 
+  /// Route pattern for the artist detail screen, for registration; use
+  /// [artist] to build a concrete path for navigation.
+  static const artistPattern = '/artists/:artistId';
+
   /// The artist detail screen for [artistId].
-  ///
-  /// Not registered yet (built in Fase 14); navigating here shows the
-  /// not-found screen until then.
   static String artist(String artistId) => '/artists/$artistId';
 }

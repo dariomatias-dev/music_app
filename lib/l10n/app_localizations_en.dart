@@ -267,4 +267,29 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get albumNotFoundMessage =>
       'This album may have been removed from your library.';
+
+  @override
+  String get artistsEmptyTitle => 'No artists yet';
+
+  @override
+  String get artistsEmptyMessage =>
+      'Artists found on your device will show up here.';
+
+  @override
+  String get artistNotFoundTitle => 'Artist not found';
+
+  @override
+  String get artistNotFoundMessage =>
+      'This artist may have been removed from your library.';
+
+  @override
+  String albumCountLabel(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count albums',
+      one: '$count album',
+    );
+    return '$_temp0';
+  }
 }

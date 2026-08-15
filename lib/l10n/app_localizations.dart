@@ -582,6 +582,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This album may have been removed from your library.'**
   String get albumNotFoundMessage;
+
+  /// No description provided for @artistsEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No artists yet'**
+  String get artistsEmptyTitle;
+
+  /// No description provided for @artistsEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Artists found on your device will show up here.'**
+  String get artistsEmptyMessage;
+
+  /// No description provided for @artistNotFoundTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Artist not found'**
+  String get artistNotFoundTitle;
+
+  /// No description provided for @artistNotFoundMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This artist may have been removed from your library.'**
+  String get artistNotFoundMessage;
+
+  /// No description provided for @albumCountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} album} other{{count} albums}}'**
+  String albumCountLabel(int count);
 }
 
 class _AppLocalizationsDelegate

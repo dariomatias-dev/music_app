@@ -84,5 +84,15 @@
   "albumsEmptyTitle": "Nenhum álbum ainda",
   "albumsEmptyMessage": "Os álbuns encontrados no seu dispositivo vão aparecer aqui.",
   "albumNotFoundTitle": "Álbum não encontrado",
-  "albumNotFoundMessage": "Este álbum pode ter sido removido da sua biblioteca."
+  "albumNotFoundMessage": "Este álbum pode ter sido removido da sua biblioteca.",
+  "artistsEmptyTitle": "Nenhum artista ainda",
+  "artistsEmptyMessage": "Os artistas encontrados no seu dispositivo vão aparecer aqui.",
+  "artistNotFoundTitle": "Artista não encontrado",
+  "artistNotFoundMessage": "Este artista pode ter sido removido da sua biblioteca.",
+  "albumCountLabel": "{count, plural, one{{count} álbum} other{{count} álbuns}}",
+  "@albumCountLabel": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  }
 }

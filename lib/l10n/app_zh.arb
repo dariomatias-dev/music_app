@@ -84,5 +84,15 @@
   "albumsEmptyTitle": "暂无专辑",
   "albumsEmptyMessage": "在你设备上找到的专辑会显示在这里。",
   "albumNotFoundTitle": "未找到专辑",
-  "albumNotFoundMessage": "这张专辑可能已从你的音乐库中移除。"
+  "albumNotFoundMessage": "这张专辑可能已从你的音乐库中移除。",
+  "artistsEmptyTitle": "暂无艺人",
+  "artistsEmptyMessage": "在你设备上找到的艺人会显示在这里。",
+  "artistNotFoundTitle": "未找到艺人",
+  "artistNotFoundMessage": "这位艺人可能已从你的音乐库中移除。",
+  "albumCountLabel": "{count, plural, other{{count} 张专辑}}",
+  "@albumCountLabel": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  }
 }

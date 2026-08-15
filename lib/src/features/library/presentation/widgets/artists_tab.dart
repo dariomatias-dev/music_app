@@ -1,0 +1,89 @@
+import 'package:app_ui/app_ui.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:music_app/l10n/app_localizations.dart';
+import 'package:music_app/src/core/navigation/route_paths.dart';
+import 'package:music_app/src/features/library/domain/entities/artist.dart';
+import 'package:music_app/src/features/library/presentation/providers/library_providers.dart';
+
+/// Every indexed artist, tapping through to their detail screen.
+class ArtistsTab extends ConsumerWidget {
+  /// Creates an [ArtistsTab].
+  const ArtistsTab({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final artists = ref.watch(sortedArtistsProvider);
+
+    if (artists.isEmpty) {
+      return AppEmptyState(
+        icon: Icons.person_outline,
+        title: l10n.artistsEmptyTitle,
+        message: l10n.artistsEmptyMessage,
+      );
+    }
+
+    return ListView.builder(
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.smMd),
+      itemCount: artists.length,
+      itemBuilder: (context, index) => _ArtistRow(artist: artists[index]),
+    );
+  }
+}
+
+class _ArtistRow extends StatelessWidget {
+  const _ArtistRow({required this.artist});
+
+  final Artist artist;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final colors = context.colors;
+
+    return Pressable(
+      scale: 0.99,
+      onTap: () => context.push(RoutePaths.artist(artist.id)),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.smMd,
+          vertical: AppSpacing.sm,
+        ),
+        child: Row(
+          children: [
+            AppArtwork(seed: artist.id, size: 48, circle: true),
+            const SizedBox(width: AppSpacing.smMd),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    artist.name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTypography.rowTitle.copyWith(
+                      color: colors.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    l10n.trackCountLabel(artist.trackCount),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTypography.rowSubtitle.copyWith(
+                      color: colors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(Icons.chevron_right_rounded, color: colors.textTertiary),
+          ],
+        ),
+      ),
+    );
+  }
+}

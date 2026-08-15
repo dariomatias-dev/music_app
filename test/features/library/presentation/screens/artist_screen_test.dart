@@ -1,0 +1,181 @@
+import 'package:app_ui/app_ui.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:music_app/l10n/app_localizations.dart';
+import 'package:music_app/src/core/audio/audio_providers.dart';
+import 'package:music_app/src/core/audio/music_audio_handler.dart';
+import 'package:music_app/src/features/library/data/indexing/library_indexer.dart';
+import 'package:music_app/src/features/library/data/providers/library_data_providers.dart';
+import 'package:music_app/src/features/library/domain/entities/album.dart';
+import 'package:music_app/src/features/library/domain/entities/artist.dart';
+import 'package:music_app/src/features/library/domain/entities/track.dart';
+import 'package:music_app/src/features/library/domain/repositories/library_repository.dart';
+import 'package:music_app/src/features/library/presentation/screens/artist_screen.dart';
+
+import '../../../../helpers/fake_audio_player_service.dart';
+
+class _FakeLibraryRepository implements LibraryRepository {
+  const _FakeLibraryRepository(this.artists, this.albums, this.tracks);
+
+  final List<Artist> artists;
+  final List<Album> albums;
+  final List<Track> tracks;
+
+  @override
+  Stream<List<Track>> watchTracks() => Stream.value(tracks);
+
+  @override
+  Stream<List<Artist>> watchArtists() => Stream.value(artists);
+
+  @override
+  Stream<List<Album>> watchAlbums() => Stream.value(albums);
+
+  @override
+  Stream<IndexingProgress> reindex() => const Stream.empty();
+
+  @override
+  Future<void> purgeMissingTracks() async {}
+}
+
+Track _track({required String id, required String title, String? albumId}) {
+  return Track(
+    id: id,
+    sourceId: id,
+    filePath: '/music/$id.mp3',
+    title: title,
+    artistId: 'artist-1',
+    albumId: albumId ?? 'album-1',
+    duration: const Duration(minutes: 3),
+    format: 'mp3',
+    fileSize: 1000,
+    hasEmbeddedArtwork: false,
+    dateAdded: DateTime(2026),
+    dateModified: DateTime(2026),
+  );
+}
+
+Future<ProviderContainer> _pumpArtistScreen(
+  WidgetTester tester, {
+  required List<Artist> artists,
+  required List<Album> albums,
+  required List<Track> tracks,
+  required String artistId,
+}) async {
+  final service = FakeAudioPlayerService();
+  final handler = MusicAudioHandler(service);
+  addTearDown(handler.dispose);
+
+  await tester.pumpWidget(
+    ProviderScope(
+      overrides: [
+        audioPlayerServiceProvider.overrideWithValue(service),
+        audioHandlerProvider.overrideWithValue(handler),
+        libraryRepositoryProvider.overrideWithValue(
+          _FakeLibraryRepository(artists, albums, tracks),
+        ),
+      ],
+      child: MaterialApp(
+        theme: AppTheme.light,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: ArtistScreen(artistId: artistId),
+      ),
+    ),
+  );
+  await tester.pump();
+  await tester.pump();
+  await tester.pump();
+
+  final element = tester.element(find.byType(ArtistScreen));
+  return ProviderScope.containerOf(element);
+}
+
+void main() {
+  const artist = Artist(
+    id: 'artist-1',
+    sourceId: 'artist-1',
+    name: 'Charcoal',
+    albumCount: 1,
+    trackCount: 2,
+  );
+  const album = Album(
+    id: 'album-1',
+    sourceId: 'album-1',
+    title: 'Chill Vibes',
+    artistId: 'artist-1',
+    trackCount: 2,
+    totalDuration: Duration(minutes: 6),
+  );
+
+  testWidgets('shows the not-found state for an unknown artist', (
+    tester,
+  ) async {
+    await _pumpArtistScreen(
+      tester,
+      artists: const [],
+      albums: const [],
+      tracks: const [],
+      artistId: 'missing',
+    );
+
+    expect(find.text('Artist not found'), findsOneWidget);
+  });
+
+  testWidgets('shows the artist name, albums and tracks', (tester) async {
+    await _pumpArtistScreen(
+      tester,
+      artists: const [artist],
+      albums: const [album],
+      tracks: [
+        _track(id: 'track-1', title: 'Night Drive'),
+        _track(id: 'track-2', title: 'Sunset'),
+      ],
+      artistId: 'artist-1',
+    );
+
+    expect(find.text('Charcoal'), findsWidgets);
+    expect(find.text('Chill Vibes'), findsOneWidget);
+    expect(find.text('Night Drive'), findsOneWidget);
+    expect(find.text('Sunset'), findsOneWidget);
+  });
+
+  testWidgets('tapping Play plays the whole discography', (tester) async {
+    final container = await _pumpArtistScreen(
+      tester,
+      artists: const [artist],
+      albums: const [album],
+      tracks: [
+        _track(id: 'track-1', title: 'Night Drive'),
+        _track(id: 'track-2', title: 'Sunset'),
+      ],
+      artistId: 'artist-1',
+    );
+
+    await tester.tap(find.text('Play'));
+    await tester.pump(const Duration(milliseconds: 50));
+
+    final service = container.read(audioPlayerServiceProvider);
+    expect(service.snapshot.currentIndex, 0);
+    expect(service.snapshot.queueLength, 2);
+  });
+
+  testWidgets('tapping a track plays from that position', (tester) async {
+    final container = await _pumpArtistScreen(
+      tester,
+      artists: const [artist],
+      albums: const [album],
+      tracks: [
+        _track(id: 'track-1', title: 'Night Drive'),
+        _track(id: 'track-2', title: 'Sunset'),
+      ],
+      artistId: 'artist-1',
+    );
+
+    await tester.tap(find.text('Sunset'));
+    await tester.pump(const Duration(milliseconds: 50));
+
+    final service = container.read(audioPlayerServiceProvider);
+    expect(service.snapshot.currentIndex, 1);
+  });
+}

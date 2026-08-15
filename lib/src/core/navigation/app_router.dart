@@ -8,6 +8,7 @@ import 'package:music_app/src/core/navigation/route_redirect.dart';
 import 'package:music_app/src/core/navigation/route_transitions.dart';
 import 'package:music_app/src/features/home/presentation/screens/home_screen.dart';
 import 'package:music_app/src/features/library/presentation/screens/album_screen.dart';
+import 'package:music_app/src/features/library/presentation/screens/artist_screen.dart';
 import 'package:music_app/src/features/library/presentation/screens/library_screen.dart';
 import 'package:music_app/src/features/onboarding/presentation/screens/onboarding_screen.dart';
 import 'package:music_app/src/features/onboarding/presentation/screens/permission_screen.dart';
@@ -44,6 +45,13 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: RoutePaths.albumPattern,
         builder: (context, state) => AlbumScreen(
           albumId: state.pathParameters['albumId']!,
+        ),
+      ),
+      GoRoute(
+        name: RouteNames.artist,
+        path: RoutePaths.artistPattern,
+        builder: (context, state) => ArtistScreen(
+          artistId: state.pathParameters['artistId']!,
         ),
       ),
       GoRoute(

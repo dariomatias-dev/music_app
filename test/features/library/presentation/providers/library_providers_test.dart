@@ -280,4 +280,114 @@ void main() {
       );
     },
   );
+
+  test('sortedArtistsProvider orders artists alphabetically', () async {
+    final container = await buildContainer();
+    addTearDown(container.dispose);
+
+    expect(container.read(sortedArtistsProvider).map((a) => a.name), [
+      'Ambient Fog',
+      'Brambles',
+    ]);
+  });
+
+  test('artistByIdProvider finds an indexed artist', () async {
+    final container = await buildContainer();
+    addTearDown(container.dispose);
+
+    expect(container.read(artistByIdProvider('artist-a'))?.name, 'Ambient Fog');
+  });
+
+  test('artistByIdProvider returns null for an unknown id', () async {
+    final container = await buildContainer();
+    addTearDown(container.dispose);
+
+    expect(container.read(artistByIdProvider('missing')), isNull);
+  });
+
+  test("artistAlbumsProvider only returns that artist's albums", () async {
+    final container = await buildContainer(albums: albums);
+    addTearDown(container.dispose);
+
+    expect(
+      container.read(artistAlbumsProvider('artist-a')).map((a) => a.title),
+      ['Zeta'],
+    );
+  });
+
+  test(
+    'artistTracksProvider orders by album title then track number, and '
+    'excludes other artists and missing tracks',
+    () async {
+      const artistAlbums = [
+        Album(
+          id: 'album-beta',
+          sourceId: 'album-beta',
+          title: 'Beta',
+          artistId: 'artist-a',
+          trackCount: 1,
+          totalDuration: Duration(minutes: 3),
+        ),
+        Album(
+          id: 'album-zeta',
+          sourceId: 'album-zeta',
+          title: 'Zeta',
+          artistId: 'artist-a',
+          trackCount: 1,
+          totalDuration: Duration(minutes: 3),
+        ),
+      ];
+      final artistTracksFixture = [
+        _track(
+          id: 'zeta-track',
+          title: 'From Zeta',
+          artistId: 'artist-a',
+          albumId: 'album-zeta',
+        ),
+        _track(
+          id: 'beta-track',
+          title: 'From Beta',
+          artistId: 'artist-a',
+          albumId: 'album-beta',
+        ),
+        _track(
+          id: 'missing-track',
+          title: 'Gone',
+          artistId: 'artist-a',
+          albumId: 'album-beta',
+          isMissing: true,
+        ),
+        _track(
+          id: 'other-artist-track',
+          title: 'Not mine',
+          artistId: 'artist-b',
+          albumId: 'album-beta',
+        ),
+      ];
+      final container =
+          ProviderContainer(
+              overrides: [
+                libraryRepositoryProvider.overrideWithValue(
+                  _FakeLibraryRepository(
+                    artistTracksFixture,
+                    artists,
+                    artistAlbums,
+                  ),
+                ),
+              ],
+            )
+            ..listen(tracksStreamProvider, (_, _) {})
+            ..listen(albumsStreamProvider, (_, _) {});
+      addTearDown(container.dispose);
+      await Future.wait([
+        container.read(tracksStreamProvider.future),
+        container.read(albumsStreamProvider.future),
+      ]);
+
+      expect(
+        container.read(artistTracksProvider('artist-a')).map((t) => t.id),
+        ['beta-track', 'zeta-track'],
+      );
+    },
+  );
 }

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:music_app/l10n/app_localizations.dart';
 import 'package:music_app/src/features/library/presentation/view_models/library_view_model.dart';
 import 'package:music_app/src/features/library/presentation/widgets/albums_tab.dart';
+import 'package:music_app/src/features/library/presentation/widgets/artists_tab.dart';
 import 'package:music_app/src/features/library/presentation/widgets/tracks_tab.dart';
 
 /// The Library tab: tracks, albums, artists, playlists and favorites,
@@ -54,7 +55,7 @@ class LibraryScreen extends ConsumerWidget {
                 LibrarySection.albums => const AlbumsTab(
                   key: ValueKey(LibrarySection.albums),
                 ),
-                LibrarySection.artists => const SizedBox.shrink(
+                LibrarySection.artists => const ArtistsTab(
                   key: ValueKey(LibrarySection.artists),
                 ),
                 LibrarySection.playlists => const SizedBox.shrink(

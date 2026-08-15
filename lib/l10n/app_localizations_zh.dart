@@ -255,4 +255,26 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get albumNotFoundMessage => '这张专辑可能已从你的音乐库中移除。';
+
+  @override
+  String get artistsEmptyTitle => '暂无艺人';
+
+  @override
+  String get artistsEmptyMessage => '在你设备上找到的艺人会显示在这里。';
+
+  @override
+  String get artistNotFoundTitle => '未找到艺人';
+
+  @override
+  String get artistNotFoundMessage => '这位艺人可能已从你的音乐库中移除。';
+
+  @override
+  String albumCountLabel(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count 张专辑',
+    );
+    return '$_temp0';
+  }
 }

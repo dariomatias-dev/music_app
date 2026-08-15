@@ -41,6 +41,53 @@ final sortedAlbumsProvider = Provider<List<Album>>((ref) {
     ..sort((a, b) => a.title.toLowerCase().compareTo(b.title.toLowerCase()));
 });
 
+/// Every indexed artist, ordered alphabetically by name.
+final sortedArtistsProvider = Provider<List<Artist>>((ref) {
+  return [...ref.watch(artistsStreamProvider).value ?? const []]
+    ..sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+});
+
+/// The artist with the given id, or `null` if it isn't indexed.
+@riverpod
+Artist? artistById(Ref ref, String artistId) {
+  final artists = ref.watch(artistsStreamProvider).value ?? const [];
+  for (final artist in artists) {
+    if (artist.id == artistId) return artist;
+  }
+  return null;
+}
+
+/// Every album by the artist with the given id, ordered alphabetically.
+@riverpod
+List<Album> artistAlbums(Ref ref, String artistId) {
+  return ref
+      .watch(sortedAlbumsProvider)
+      .where((album) => album.artistId == artistId)
+      .toList();
+}
+
+/// Every non-missing track by the artist with the given id (their whole
+/// discography), ordered by album title, then disc and track number.
+@riverpod
+List<Track> artistTracks(Ref ref, String artistId) {
+  final tracks = ref.watch(tracksStreamProvider).value ?? const [];
+  final albums = ref.watch(albumsStreamProvider).value ?? const [];
+  final albumTitles = {for (final album in albums) album.id: album.title};
+
+  return tracks
+      .where((track) => track.artistId == artistId && !track.isMissing)
+      .toList()
+    ..sort((a, b) {
+      final albumCompare = (albumTitles[a.albumId] ?? '')
+          .toLowerCase()
+          .compareTo((albumTitles[b.albumId] ?? '').toLowerCase());
+      if (albumCompare != 0) return albumCompare;
+      final discCompare = (a.discNumber ?? 0).compareTo(b.discNumber ?? 0);
+      if (discCompare != 0) return discCompare;
+      return (a.trackNumber ?? 0).compareTo(b.trackNumber ?? 0);
+    });
+}
+
 /// The album with the given id, or `null` if it isn't indexed.
 @riverpod
 Album? albumById(Ref ref, String albumId) {
