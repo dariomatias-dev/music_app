@@ -385,4 +385,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get searchTriggerHintLabel => 'Search your library';
+
+  @override
+  String get recentlyPlayedLabel => 'Recently played';
 }

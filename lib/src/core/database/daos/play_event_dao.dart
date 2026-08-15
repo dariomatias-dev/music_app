@@ -14,6 +14,24 @@ class PlayEventDao extends DatabaseAccessor<AppDatabase>
   /// Watches all play events.
   Stream<List<PlayEventRow>> watchAll() => select(playEventTable).watch();
 
+  /// Watches up to [limit] distinct track ids, most recently played first.
+  Stream<List<String>> watchRecentTrackIds({int limit = 20}) {
+    final query = select(playEventTable)
+      ..orderBy([(t) => OrderingTerm.desc(t.startedAt)])
+      // Fetches a generous window before deduping by track, since the same
+      // track can appear many times in a row of raw events.
+      ..limit(limit * 4);
+    return query.watch().map((rows) {
+      final seen = <String>{};
+      final ids = <String>[];
+      for (final row in rows) {
+        if (ids.length == limit) break;
+        if (seen.add(row.trackId)) ids.add(row.trackId);
+      }
+      return ids;
+    });
+  }
+
   /// Inserts or updates [entry].
   Future<void> upsertOne(Insertable<PlayEventRow> entry) =>
       into(playEventTable).insertOnConflictUpdate(entry);

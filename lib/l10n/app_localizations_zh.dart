@@ -366,4 +366,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get searchTriggerHintLabel => '搜索你的音乐库';
+
+  @override
+  String get recentlyPlayedLabel => '最近播放';
 }

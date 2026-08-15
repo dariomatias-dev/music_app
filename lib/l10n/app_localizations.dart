@@ -786,6 +786,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Search your library'**
   String get searchTriggerHintLabel;
+
+  /// No description provided for @recentlyPlayedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Recently played'**
+  String get recentlyPlayedLabel;
 }
 
 class _AppLocalizationsDelegate

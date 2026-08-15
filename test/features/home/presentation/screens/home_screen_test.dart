@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:music_app/l10n/app_localizations.dart';
 import 'package:music_app/src/core/storage/storage_providers.dart';
+import 'package:music_app/src/features/history/data/providers/history_data_providers.dart';
 import 'package:music_app/src/features/home/presentation/screens/home_screen.dart';
 import 'package:music_app/src/features/library/data/indexing/library_indexer.dart';
 import 'package:music_app/src/features/library/data/providers/library_data_providers.dart';
@@ -13,6 +14,7 @@ import 'package:music_app/src/features/library/domain/entities/track.dart';
 import 'package:music_app/src/features/library/domain/repositories/library_repository.dart';
 
 import '../../../../helpers/fake_key_value_storage.dart';
+import '../../../../helpers/fake_play_history_repository.dart';
 
 class _FakeLibraryRepository implements LibraryRepository {
   const _FakeLibraryRepository(this.tracks);
@@ -60,6 +62,9 @@ Widget _app(List<Track> tracks, {FakeKeyValueStorage? storage}) {
       ),
       keyValueStorageProvider.overrideWithValue(
         storage ?? FakeKeyValueStorage(),
+      ),
+      playHistoryRepositoryProvider.overrideWithValue(
+        FakePlayHistoryRepository(),
       ),
     ],
     child: MaterialApp(

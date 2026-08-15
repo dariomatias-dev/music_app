@@ -385,6 +385,9 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get searchTriggerHintLabel => 'Search your library';
+
+  @override
+  String get recentlyPlayedLabel => 'Recently played';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -770,4 +773,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get searchTriggerHintLabel => 'Buscar na sua biblioteca';
+
+  @override
+  String get recentlyPlayedLabel => 'Tocadas recentemente';
 }

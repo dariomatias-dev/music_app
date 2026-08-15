@@ -128,5 +128,6 @@
   "goodAfternoonLabel": "下午好",
   "goodEveningLabel": "晚上好",
   "homeWelcomeLabel": "欢迎回来",
-  "searchTriggerHintLabel": "搜索你的音乐库"
+  "searchTriggerHintLabel": "搜索你的音乐库",
+  "recentlyPlayedLabel": "最近播放"
 }

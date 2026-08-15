@@ -128,5 +128,6 @@
   "goodAfternoonLabel": "Good afternoon",
   "goodEveningLabel": "Good evening",
   "homeWelcomeLabel": "Welcome back",
-  "searchTriggerHintLabel": "Search your library"
+  "searchTriggerHintLabel": "Search your library",
+  "recentlyPlayedLabel": "Recently played"
 }

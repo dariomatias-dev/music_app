@@ -386,4 +386,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get searchTriggerHintLabel => 'Buscar en tu biblioteca';
+
+  @override
+  String get recentlyPlayedLabel => 'Reproducidas recientemente';
 }
