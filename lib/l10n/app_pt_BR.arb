@@ -123,5 +123,10 @@
   "playlistEmptyTitle": "Esta playlist está vazia",
   "playlistEmptyMessage": "Adicione faixas pelo menu \"mais\" de uma faixa.",
   "homeEmptyTitle": "Sua biblioteca está vazia",
-  "homeEmptyMessage": "As faixas encontradas no seu dispositivo vão aparecer aqui."
+  "homeEmptyMessage": "As faixas encontradas no seu dispositivo vão aparecer aqui.",
+  "goodMorningLabel": "Bom dia",
+  "goodAfternoonLabel": "Boa tarde",
+  "goodEveningLabel": "Boa noite",
+  "homeWelcomeLabel": "Bem-vindo de volta",
+  "searchTriggerHintLabel": "Buscar na sua biblioteca"
 }

@@ -123,5 +123,10 @@
   "playlistEmptyTitle": "This playlist is empty",
   "playlistEmptyMessage": "Add tracks from a track's more menu.",
   "homeEmptyTitle": "Your library is empty",
-  "homeEmptyMessage": "Tracks found on your device will show up here."
+  "homeEmptyMessage": "Tracks found on your device will show up here.",
+  "goodMorningLabel": "Good morning",
+  "goodAfternoonLabel": "Good afternoon",
+  "goodEveningLabel": "Good evening",
+  "homeWelcomeLabel": "Welcome back",
+  "searchTriggerHintLabel": "Search your library"
 }

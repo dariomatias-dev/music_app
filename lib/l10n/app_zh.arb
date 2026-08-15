@@ -123,5 +123,10 @@
   "playlistEmptyTitle": "此播放列表为空",
   "playlistEmptyMessage": "从曲目的更多菜单中添加曲目。",
   "homeEmptyTitle": "音乐库为空",
-  "homeEmptyMessage": "在你设备上找到的曲目会显示在这里。"
+  "homeEmptyMessage": "在你设备上找到的曲目会显示在这里。",
+  "goodMorningLabel": "早上好",
+  "goodAfternoonLabel": "下午好",
+  "goodEveningLabel": "晚上好",
+  "homeWelcomeLabel": "欢迎回来",
+  "searchTriggerHintLabel": "搜索你的音乐库"
 }

@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:music_app/l10n/app_localizations.dart';
 import 'package:music_app/src/features/home/presentation/view_models/home_view_model.dart';
+import 'package:music_app/src/features/home/presentation/widgets/home_header.dart';
 
 /// The Home tab.
 ///
-/// Its sections (greeting, recently played, playlists and albums, library
-/// summary) are built in Etapas 77-80; this wires up the screen's states.
+/// Its remaining sections (recently played, playlists and albums, library
+/// summary) are built in Etapas 78-80; this wires up the screen's states.
 class HomeScreen extends ConsumerWidget {
   /// Creates a [HomeScreen].
   const HomeScreen({super.key});
@@ -19,15 +20,20 @@ class HomeScreen extends ConsumerWidget {
 
     return AppScaffold(
       topBar: AppTopBar(title: l10n.homeTabLabel, showBack: false),
-      body: switch (state) {
-        HomeState.loading => const AppLoadingIndicator(),
-        HomeState.empty => AppEmptyState(
-          icon: Icons.library_music_outlined,
-          title: l10n.homeEmptyTitle,
-          message: l10n.homeEmptyMessage,
-        ),
-        HomeState.ready => const SizedBox.shrink(),
-      },
+      body: ListView(
+        children: [
+          const HomeHeader(),
+          switch (state) {
+            HomeState.loading => const AppLoadingIndicator(),
+            HomeState.empty => AppEmptyState(
+              icon: Icons.library_music_outlined,
+              title: l10n.homeEmptyTitle,
+              message: l10n.homeEmptyMessage,
+            ),
+            HomeState.ready => const SizedBox.shrink(),
+          },
+        ],
+      ),
     );
   }
 }

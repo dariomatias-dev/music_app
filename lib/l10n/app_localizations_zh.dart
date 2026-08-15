@@ -351,4 +351,19 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get homeEmptyMessage => '在你设备上找到的曲目会显示在这里。';
+
+  @override
+  String get goodMorningLabel => '早上好';
+
+  @override
+  String get goodAfternoonLabel => '下午好';
+
+  @override
+  String get goodEveningLabel => '晚上好';
+
+  @override
+  String get homeWelcomeLabel => '欢迎回来';
+
+  @override
+  String get searchTriggerHintLabel => '搜索你的音乐库';
 }

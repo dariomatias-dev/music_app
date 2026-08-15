@@ -370,6 +370,21 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get homeEmptyMessage =>
       'Tracks found on your device will show up here.';
+
+  @override
+  String get goodMorningLabel => 'Good morning';
+
+  @override
+  String get goodAfternoonLabel => 'Good afternoon';
+
+  @override
+  String get goodEveningLabel => 'Good evening';
+
+  @override
+  String get homeWelcomeLabel => 'Welcome back';
+
+  @override
+  String get searchTriggerHintLabel => 'Search your library';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -740,4 +755,19 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   @override
   String get homeEmptyMessage =>
       'As faixas encontradas no seu dispositivo vão aparecer aqui.';
+
+  @override
+  String get goodMorningLabel => 'Bom dia';
+
+  @override
+  String get goodAfternoonLabel => 'Boa tarde';
+
+  @override
+  String get goodEveningLabel => 'Boa noite';
+
+  @override
+  String get homeWelcomeLabel => 'Bem-vindo de volta';
+
+  @override
+  String get searchTriggerHintLabel => 'Buscar na sua biblioteca';
 }

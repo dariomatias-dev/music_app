@@ -370,4 +370,19 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get homeEmptyMessage =>
       'Tracks found on your device will show up here.';
+
+  @override
+  String get goodMorningLabel => 'Good morning';
+
+  @override
+  String get goodAfternoonLabel => 'Good afternoon';
+
+  @override
+  String get goodEveningLabel => 'Good evening';
+
+  @override
+  String get homeWelcomeLabel => 'Welcome back';
+
+  @override
+  String get searchTriggerHintLabel => 'Search your library';
 }

@@ -756,6 +756,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Tracks found on your device will show up here.'**
   String get homeEmptyMessage;
+
+  /// No description provided for @goodMorningLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Good morning'**
+  String get goodMorningLabel;
+
+  /// No description provided for @goodAfternoonLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Good afternoon'**
+  String get goodAfternoonLabel;
+
+  /// No description provided for @goodEveningLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Good evening'**
+  String get goodEveningLabel;
+
+  /// No description provided for @homeWelcomeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome back'**
+  String get homeWelcomeLabel;
+
+  /// No description provided for @searchTriggerHintLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Search your library'**
+  String get searchTriggerHintLabel;
 }
 
 class _AppLocalizationsDelegate

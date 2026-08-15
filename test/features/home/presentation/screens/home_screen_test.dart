@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:music_app/l10n/app_localizations.dart';
+import 'package:music_app/src/core/storage/storage_providers.dart';
 import 'package:music_app/src/features/home/presentation/screens/home_screen.dart';
 import 'package:music_app/src/features/library/data/indexing/library_indexer.dart';
 import 'package:music_app/src/features/library/data/providers/library_data_providers.dart';
@@ -10,6 +11,8 @@ import 'package:music_app/src/features/library/domain/entities/album.dart';
 import 'package:music_app/src/features/library/domain/entities/artist.dart';
 import 'package:music_app/src/features/library/domain/entities/track.dart';
 import 'package:music_app/src/features/library/domain/repositories/library_repository.dart';
+
+import '../../../../helpers/fake_key_value_storage.dart';
 
 class _FakeLibraryRepository implements LibraryRepository {
   const _FakeLibraryRepository(this.tracks);
@@ -49,11 +52,14 @@ Track _track(String id) {
   );
 }
 
-Widget _app(List<Track> tracks) {
+Widget _app(List<Track> tracks, {FakeKeyValueStorage? storage}) {
   return ProviderScope(
     overrides: [
       libraryRepositoryProvider.overrideWithValue(
         _FakeLibraryRepository(tracks),
+      ),
+      keyValueStorageProvider.overrideWithValue(
+        storage ?? FakeKeyValueStorage(),
       ),
     ],
     child: MaterialApp(
@@ -91,5 +97,34 @@ void main() {
 
     expect(find.text('Your library is empty'), findsNothing);
     expect(find.byType(CircularProgressIndicator), findsNothing);
+  });
+
+  testWidgets('shows a name-less welcome when no display name is set', (
+    tester,
+  ) async {
+    await tester.pumpWidget(_app(const []));
+    await tester.pump();
+
+    expect(find.text('Welcome back'), findsOneWidget);
+  });
+
+  testWidgets('shows a time-of-day greeting with the display name', (
+    tester,
+  ) async {
+    final storage = FakeKeyValueStorage();
+    await storage.setString('userDisplayName', 'Dário');
+
+    await tester.pumpWidget(_app(const [], storage: storage));
+    await tester.pump();
+
+    expect(find.text('Dário'), findsOneWidget);
+    expect(find.text('Welcome back'), findsNothing);
+  });
+
+  testWidgets('shows the search trigger', (tester) async {
+    await tester.pumpWidget(_app(const []));
+    await tester.pump();
+
+    expect(find.text('Search your library'), findsOneWidget);
   });
 }

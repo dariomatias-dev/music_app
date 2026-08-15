@@ -8,4 +8,7 @@ abstract final class PreferenceKeys {
 
   /// Stores the last playback session (queue, current index and position).
   static const playbackSession = 'playbackSession';
+
+  /// Stores the user's display name, shown in the Home greeting.
+  static const userDisplayName = 'userDisplayName';
 }
