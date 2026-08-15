@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +11,7 @@ import 'package:music_app/src/features/library/domain/entities/album.dart';
 import 'package:music_app/src/features/library/domain/entities/artist.dart';
 import 'package:music_app/src/features/library/domain/entities/track.dart';
 import 'package:music_app/src/features/library/presentation/providers/library_providers.dart';
+import 'package:music_app/src/features/library/presentation/widgets/media_card.dart';
 import 'package:music_app/src/features/queue/presentation/view_models/queue_view_model.dart';
 
 /// An artist's details: albums and their full discography, with a
@@ -163,45 +163,11 @@ class _ArtistAlbumCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
-
-    return Pressable(
-      scale: 0.98,
+    return MediaCard(
+      seed: album.id,
+      title: album.title,
+      artworkPath: album.artworkPath,
       onTap: () => context.push(RoutePaths.album(album.id)),
-      child: SizedBox(
-        width: 128,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _artwork(),
-            const SizedBox(height: AppSpacing.xs),
-            Text(
-              album.title,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: AppTypography.rowTitle.copyWith(
-                color: colors.textPrimary,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _artwork() {
-    final artworkPath = album.artworkPath;
-    if (artworkPath == null) {
-      return AppArtwork(seed: album.id, size: 128);
-    }
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(AppRadius.medium),
-      child: Image.file(
-        File(artworkPath),
-        width: 128,
-        height: 128,
-        fit: BoxFit.cover,
-      ),
     );
   }
 }

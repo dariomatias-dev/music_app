@@ -12,9 +12,11 @@ import 'package:music_app/src/features/library/domain/entities/album.dart';
 import 'package:music_app/src/features/library/domain/entities/artist.dart';
 import 'package:music_app/src/features/library/domain/entities/track.dart';
 import 'package:music_app/src/features/library/domain/repositories/library_repository.dart';
+import 'package:music_app/src/features/playlist/data/providers/playlist_data_providers.dart';
 
 import '../../../../helpers/fake_key_value_storage.dart';
 import '../../../../helpers/fake_play_history_repository.dart';
+import '../../../../helpers/fake_playlist_repository.dart';
 
 class _FakeLibraryRepository implements LibraryRepository {
   const _FakeLibraryRepository(this.tracks);
@@ -65,6 +67,9 @@ Widget _app(List<Track> tracks, {FakeKeyValueStorage? storage}) {
       ),
       playHistoryRepositoryProvider.overrideWithValue(
         FakePlayHistoryRepository(),
+      ),
+      playlistRepositoryProvider.overrideWithValue(
+        FakePlaylistRepository(),
       ),
     ],
     child: MaterialApp(
