@@ -18,9 +18,19 @@ class PlaylistDao extends DatabaseAccessor<AppDatabase>
   Future<PlaylistRow?> getById(String id) =>
       (select(playlistTable)..where((t) => t.id.equals(id))).getSingleOrNull();
 
-  /// Inserts or updates [entry].
-  Future<void> upsertOne(Insertable<PlaylistRow> entry) =>
-      into(playlistTable).insertOnConflictUpdate(entry);
+  /// Watches a single playlist by [id].
+  Stream<PlaylistRow?> watchById(String id) => (select(
+    playlistTable,
+  )..where((t) => t.id.equals(id))).watchSingleOrNull();
+
+  /// Inserts [entry]. Callers are expected to generate a fresh id, since
+  /// this never updates an existing row.
+  Future<void> insertOne(Insertable<PlaylistRow> entry) =>
+      into(playlistTable).insert(entry);
+
+  /// Applies [companion] to the playlist with [id].
+  Future<void> updateOne(String id, PlaylistTableCompanion companion) =>
+      (update(playlistTable)..where((t) => t.id.equals(id))).write(companion);
 
   /// Deletes the playlist with [id].
   Future<void> deleteById(String id) =>
