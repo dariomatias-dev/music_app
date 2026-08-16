@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:music_app/src/core/audio/audio_providers.dart';
 import 'package:music_app/src/core/audio/queue_media_item.dart';
 import 'package:music_app/src/core/navigation/route_paths.dart';
+import 'package:music_app/src/core/navigation/route_transitions.dart';
 import 'package:music_app/src/features/player/presentation/view_models/playback_view_model.dart';
 import 'package:music_app/src/features/player/presentation/widgets/track_artwork.dart';
 import 'package:music_app/src/features/queue/presentation/view_models/queue_view_model.dart';
@@ -133,7 +134,14 @@ class _MiniPlayerCard extends ConsumerWidget {
             child: Row(
               children: [
                 const SizedBox(width: 10),
-                TrackArtwork(item: item, size: 52, radius: AppRadius.small),
+                Hero(
+                  tag: heroTagFor(origin: 'player', id: item.id),
+                  child: TrackArtwork(
+                    item: item,
+                    size: 52,
+                    radius: AppRadius.small,
+                  ),
+                ),
                 const SizedBox(width: 12),
                 Expanded(child: _MiniPlayerLabel(item: item)),
                 const SizedBox(width: 10),

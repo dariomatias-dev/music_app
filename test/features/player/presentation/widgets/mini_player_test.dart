@@ -3,18 +3,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:music_app/l10n/app_localizations.dart';
 import 'package:music_app/src/core/audio/audio_providers.dart';
 import 'package:music_app/src/core/audio/music_audio_handler.dart';
+import 'package:music_app/src/core/navigation/route_paths.dart';
+import 'package:music_app/src/core/navigation/route_transitions.dart';
 import 'package:music_app/src/features/library/data/indexing/library_indexer.dart';
 import 'package:music_app/src/features/library/data/providers/library_data_providers.dart';
 import 'package:music_app/src/features/library/domain/entities/album.dart';
 import 'package:music_app/src/features/library/domain/entities/artist.dart';
 import 'package:music_app/src/features/library/domain/entities/track.dart';
 import 'package:music_app/src/features/library/domain/repositories/library_repository.dart';
+import 'package:music_app/src/features/player/presentation/screens/playback_screen.dart';
 import 'package:music_app/src/features/player/presentation/widgets/mini_player.dart';
+import 'package:music_app/src/features/player/presentation/widgets/playback_cover.dart';
 import 'package:music_app/src/features/queue/presentation/view_models/queue_view_model.dart';
 
 import '../../../../helpers/fake_audio_player_service.dart';
+import '../../../../helpers/fake_favorite_repository.dart';
 
 class _FakeLibraryRepository implements LibraryRepository {
   const _FakeLibraryRepository();
@@ -233,4 +239,100 @@ void main() {
 
     expect(service.snapshot.currentIndex, 1);
   });
+
+  testWidgets(
+    'opening the playback screen shares a matching Hero tag with the artwork',
+    (tester) async {
+      final service = FakeAudioPlayerService();
+      final handler = MusicAudioHandler(service);
+      addTearDown(handler.dispose);
+
+      final router = GoRouter(
+        initialLocation: '/',
+        routes: [
+          GoRoute(
+            path: '/',
+            builder: (context, state) => const Scaffold(
+              body: Align(
+                alignment: Alignment.topCenter,
+                child: MiniPlayer(),
+              ),
+            ),
+          ),
+          GoRoute(
+            path: RoutePaths.player,
+            pageBuilder: (context, state) => buildVerticalTransitionPage(
+              key: state.pageKey,
+              child: const PlaybackScreen(),
+            ),
+          ),
+        ],
+      );
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            audioPlayerServiceProvider.overrideWithValue(service),
+            audioHandlerProvider.overrideWithValue(handler),
+            libraryRepositoryProvider.overrideWithValue(
+              const _FakeLibraryRepository(),
+            ),
+            favoriteRepositoryProvider.overrideWithValue(
+              FakeFavoriteRepository(),
+            ),
+          ],
+          child: MaterialApp.router(
+            theme: AppTheme.light,
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            routerConfig: router,
+          ),
+        ),
+      );
+
+      final element = tester.element(find.byType(MiniPlayer));
+      final container = ProviderScope.containerOf(element);
+      await container.read(queueViewModelProvider.notifier).playFromSource([
+        _track(),
+      ], startIndex: 0);
+      await tester.pump();
+
+      final gestureArea = tester.widget<GestureDetector>(
+        find.byKey(const ValueKey('miniPlayerGestureArea')),
+      );
+      gestureArea.onVerticalDragEnd!(
+        DragEndDetails(
+          velocity: const Velocity(pixelsPerSecond: Offset(0, -300)),
+          primaryVelocity: -300,
+        ),
+      );
+      // PlaybackCover's breathing animation repeats forever, so
+      // pumpAndSettle would never settle; step through frames manually
+      // instead, matching "tapping opens the playback screen" above.
+      for (var i = 0; i < 10; i++) {
+        await tester.pump(const Duration(milliseconds: 100));
+      }
+
+      final expectedTag = heroTagFor(origin: 'player', id: 'track-1');
+      // Once the player route is on top, the mini player's route is
+      // covered (opaque) and the default finders skip it; look it up with
+      // skipOffstage: false to reach its still-mounted Hero.
+      final miniPlayerHero = tester.widget<Hero>(
+        find.descendant(
+          of: find.byType(MiniPlayer, skipOffstage: false),
+          matching: find.byType(Hero, skipOffstage: false),
+          skipOffstage: false,
+        ),
+      );
+      final coverHero = tester.widget<Hero>(
+        find.descendant(
+          of: find.byType(PlaybackCover),
+          matching: find.byType(Hero),
+        ),
+      );
+
+      expect(miniPlayerHero.tag, expectedTag);
+      expect(coverHero.tag, expectedTag);
+    },
+  );
 }

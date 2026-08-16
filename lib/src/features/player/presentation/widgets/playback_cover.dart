@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:music_app/src/core/audio/queue_media_item.dart';
+import 'package:music_app/src/core/navigation/route_transitions.dart';
 import 'package:music_app/src/features/player/presentation/widgets/track_artwork.dart';
 
 /// The playback screen's large cover.
@@ -86,11 +87,14 @@ class _PlaybackCoverState extends State<PlaybackCover>
                 child: child,
               ),
             ),
-            child: TrackArtwork(
+            child: Hero(
               key: ValueKey(widget.item.id),
-              item: widget.item,
-              size: artSize,
-              radius: AppRadius.extraLarge,
+              tag: heroTagFor(origin: 'player', id: widget.item.id),
+              child: TrackArtwork(
+                item: widget.item,
+                size: artSize,
+                radius: AppRadius.extraLarge,
+              ),
             ),
           ),
         ),
