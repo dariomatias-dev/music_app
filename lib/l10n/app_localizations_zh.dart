@@ -588,4 +588,21 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get settingsHapticsLabel => '触感反馈';
+
+  @override
+  String get settingsRescanLabel => '重新扫描音乐库';
+
+  @override
+  String get rescanCompleteMessage => '音乐库已更新';
+
+  @override
+  String get settingsReplayOnboardingLabel => '再次显示引导';
+
+  @override
+  String settingsVersionValue(String version, String buildNumber) {
+    return '版本 $version ($buildNumber)';
+  }
+
+  @override
+  String get settingsLicenseLabel => '许可证 (MIT)';
 }

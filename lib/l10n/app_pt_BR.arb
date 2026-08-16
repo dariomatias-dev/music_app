@@ -207,5 +207,16 @@
   "settingsCrossfadeLabel": "Crossfade",
   "crossfadeOffValue": "Desativado",
   "settingsDefaultSpeedLabel": "Velocidade padrão",
-  "settingsHapticsLabel": "Feedback háptico"
+  "settingsHapticsLabel": "Feedback háptico",
+  "settingsRescanLabel": "Refazer varredura da biblioteca",
+  "rescanCompleteMessage": "Biblioteca atualizada",
+  "settingsReplayOnboardingLabel": "Mostrar introdução novamente",
+  "settingsVersionValue": "Versão {version} ({buildNumber})",
+  "@settingsVersionValue": {
+    "placeholders": {
+      "version": {"type": "String"},
+      "buildNumber": {"type": "String"}
+    }
+  },
+  "settingsLicenseLabel": "Licença (MIT)"
 }

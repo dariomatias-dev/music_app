@@ -207,5 +207,16 @@
   "settingsCrossfadeLabel": "Crossfade",
   "crossfadeOffValue": "Off",
   "settingsDefaultSpeedLabel": "Default speed",
-  "settingsHapticsLabel": "Haptic feedback"
+  "settingsHapticsLabel": "Haptic feedback",
+  "settingsRescanLabel": "Rescan library",
+  "rescanCompleteMessage": "Library rescanned",
+  "settingsReplayOnboardingLabel": "Show onboarding again",
+  "settingsVersionValue": "Version {version} ({buildNumber})",
+  "@settingsVersionValue": {
+    "placeholders": {
+      "version": {"type": "String"},
+      "buildNumber": {"type": "String"}
+    }
+  },
+  "settingsLicenseLabel": "License (MIT)"
 }

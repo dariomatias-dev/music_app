@@ -207,5 +207,16 @@
   "settingsCrossfadeLabel": "淡入淡出",
   "crossfadeOffValue": "关闭",
   "settingsDefaultSpeedLabel": "默认速度",
-  "settingsHapticsLabel": "触感反馈"
+  "settingsHapticsLabel": "触感反馈",
+  "settingsRescanLabel": "重新扫描音乐库",
+  "rescanCompleteMessage": "音乐库已更新",
+  "settingsReplayOnboardingLabel": "再次显示引导",
+  "settingsVersionValue": "版本 {version} ({buildNumber})",
+  "@settingsVersionValue": {
+    "placeholders": {
+      "version": {"type": "String"},
+      "buildNumber": {"type": "String"}
+    }
+  },
+  "settingsLicenseLabel": "许可证 (MIT)"
 }

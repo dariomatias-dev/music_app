@@ -5,11 +5,45 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:music_app/l10n/app_localizations.dart';
 import 'package:music_app/src/core/storage/storage_providers.dart';
+import 'package:music_app/src/features/library/data/indexing/library_indexer.dart';
+import 'package:music_app/src/features/library/data/providers/library_data_providers.dart';
+import 'package:music_app/src/features/library/domain/entities/album.dart';
+import 'package:music_app/src/features/library/domain/entities/artist.dart';
+import 'package:music_app/src/features/library/domain/entities/track.dart';
+import 'package:music_app/src/features/library/domain/repositories/library_repository.dart';
 import 'package:music_app/src/features/settings/presentation/screens/settings_screen.dart';
 
 import '../../../../helpers/fake_key_value_storage.dart';
 
-Widget _app({FakeKeyValueStorage? storage}) {
+class _FakeLibraryRepository implements LibraryRepository {
+  int reindexCalls = 0;
+
+  @override
+  Stream<List<Track>> watchTracks() => Stream.value(const []);
+
+  @override
+  Stream<List<Artist>> watchArtists() => Stream.value(const []);
+
+  @override
+  Stream<List<Album>> watchAlbums() => Stream.value(const []);
+
+  @override
+  Stream<IndexingProgress> reindex() {
+    reindexCalls++;
+    return const Stream.empty();
+  }
+
+  @override
+  Future<void> purgeMissingTracks() async {}
+
+  @override
+  Future<void> clearArtworkCache() async {}
+}
+
+Widget _app({
+  FakeKeyValueStorage? storage,
+  LibraryRepository? libraryRepository,
+}) {
   final router = GoRouter(
     initialLocation: '/',
     routes: [
@@ -49,6 +83,9 @@ Widget _app({FakeKeyValueStorage? storage}) {
     overrides: [
       keyValueStorageProvider.overrideWithValue(
         storage ?? FakeKeyValueStorage(),
+      ),
+      libraryRepositoryProvider.overrideWithValue(
+        libraryRepository ?? _FakeLibraryRepository(),
       ),
     ],
     child: MaterialApp.router(
@@ -200,5 +237,17 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('About screen reached'), findsOneWidget);
+  });
+
+  testWidgets('tapping Rescan library triggers a reindex', (tester) async {
+    final libraryRepository = _FakeLibraryRepository();
+    await tester.pumpWidget(_app(libraryRepository: libraryRepository));
+    await tester.pump();
+
+    await tester.tap(find.text('Rescan library'));
+    await tester.pumpAndSettle();
+
+    expect(libraryRepository.reindexCalls, 1);
+    expect(find.text('Library rescanned'), findsOneWidget);
   });
 }

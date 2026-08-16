@@ -57,6 +57,7 @@ dependencies:
 
   # Immutable models (used only where it meaningfully reduces manual code)
   freezed_annotation: ^3.1.0
+  package_info_plus: ^9.0.1
 
 dev_dependencies:
   flutter_test:

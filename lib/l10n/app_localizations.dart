@@ -1200,6 +1200,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Haptic feedback'**
   String get settingsHapticsLabel;
+
+  /// No description provided for @settingsRescanLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Rescan library'**
+  String get settingsRescanLabel;
+
+  /// No description provided for @rescanCompleteMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Library rescanned'**
+  String get rescanCompleteMessage;
+
+  /// No description provided for @settingsReplayOnboardingLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Show onboarding again'**
+  String get settingsReplayOnboardingLabel;
+
+  /// No description provided for @settingsVersionValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Version {version} ({buildNumber})'**
+  String settingsVersionValue(String version, String buildNumber);
+
+  /// No description provided for @settingsLicenseLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'License (MIT)'**
+  String get settingsLicenseLabel;
 }
 
 class _AppLocalizationsDelegate

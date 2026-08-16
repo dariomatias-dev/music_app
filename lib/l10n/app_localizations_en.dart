@@ -613,4 +613,21 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsHapticsLabel => 'Haptic feedback';
+
+  @override
+  String get settingsRescanLabel => 'Rescan library';
+
+  @override
+  String get rescanCompleteMessage => 'Library rescanned';
+
+  @override
+  String get settingsReplayOnboardingLabel => 'Show onboarding again';
+
+  @override
+  String settingsVersionValue(String version, String buildNumber) {
+    return 'Version $version ($buildNumber)';
+  }
+
+  @override
+  String get settingsLicenseLabel => 'License (MIT)';
 }

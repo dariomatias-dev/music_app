@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:music_app/l10n/app_localizations.dart';
 import 'package:music_app/src/core/navigation/route_paths.dart';
 import 'package:music_app/src/core/utils/language_names.dart';
+import 'package:music_app/src/features/library/data/providers/library_data_providers.dart';
 import 'package:music_app/src/features/settings/presentation/view_models/locale_view_model.dart';
 import 'package:music_app/src/features/settings/presentation/view_models/theme_mode_view_model.dart';
 import 'package:music_app/src/features/settings/presentation/view_models/user_profile_view_model.dart';
@@ -15,16 +16,28 @@ import 'package:music_app/src/features/settings/presentation/widgets/theme_mode_
 
 /// The Settings tab: preferences organized into sections, each a group of
 /// standardized rows.
-///
-/// Most rows are still stubs, filled in etapa by etapa (Etapa 93-94); this
-/// lays out the full structure and wires up what already has real data
-/// behind it: the display name, theme and selected language.
-class SettingsScreen extends ConsumerWidget {
+class SettingsScreen extends ConsumerStatefulWidget {
   /// Creates a [SettingsScreen].
   const SettingsScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends ConsumerState<SettingsScreen> {
+  var _rescanning = false;
+
+  Future<void> _rescan() async {
+    setState(() => _rescanning = true);
+    await ref.read(libraryRepositoryProvider).reindex().drain<void>();
+    if (!mounted) return;
+    setState(() => _rescanning = false);
+    final l10n = AppLocalizations.of(context)!;
+    AppToast.show(context, message: l10n.rescanCompleteMessage);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final displayName = ref.watch(userProfileViewModelProvider).value;
     final locale = ref.watch(localeViewModelProvider).value;
@@ -92,6 +105,18 @@ class SettingsScreen extends ConsumerWidget {
                 icon: Icons.bar_chart_rounded,
                 label: l10n.statisticsLabel,
                 onTap: () => context.push(RoutePaths.statistics),
+              ),
+              AppSettingsRow(
+                icon: Icons.refresh_rounded,
+                label: l10n.settingsRescanLabel,
+                trailing: _rescanning
+                    ? const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: AppLoadingIndicator(size: 18),
+                      )
+                    : null,
+                onTap: _rescanning ? null : () => unawaited(_rescan()),
               ),
             ],
           ),

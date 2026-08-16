@@ -613,6 +613,23 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get settingsHapticsLabel => 'Haptic feedback';
+
+  @override
+  String get settingsRescanLabel => 'Rescan library';
+
+  @override
+  String get rescanCompleteMessage => 'Library rescanned';
+
+  @override
+  String get settingsReplayOnboardingLabel => 'Show onboarding again';
+
+  @override
+  String settingsVersionValue(String version, String buildNumber) {
+    return 'Version $version ($buildNumber)';
+  }
+
+  @override
+  String get settingsLicenseLabel => 'License (MIT)';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -1227,4 +1244,21 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get settingsHapticsLabel => 'Feedback háptico';
+
+  @override
+  String get settingsRescanLabel => 'Refazer varredura da biblioteca';
+
+  @override
+  String get rescanCompleteMessage => 'Biblioteca atualizada';
+
+  @override
+  String get settingsReplayOnboardingLabel => 'Mostrar introdução novamente';
+
+  @override
+  String settingsVersionValue(String version, String buildNumber) {
+    return 'Versão $version ($buildNumber)';
+  }
+
+  @override
+  String get settingsLicenseLabel => 'Licença (MIT)';
 }
