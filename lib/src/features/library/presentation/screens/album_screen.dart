@@ -11,6 +11,8 @@ import 'package:music_app/src/core/utils/duration_formatter.dart';
 import 'package:music_app/src/features/library/domain/entities/album.dart';
 import 'package:music_app/src/features/library/domain/entities/track.dart';
 import 'package:music_app/src/features/library/presentation/providers/library_providers.dart';
+import 'package:music_app/src/features/player/presentation/view_models/playback_screen_view_model.dart';
+import 'package:music_app/src/features/player/presentation/view_models/playback_view_model.dart';
 import 'package:music_app/src/features/queue/presentation/view_models/queue_view_model.dart';
 
 /// An album's details: cover, artist, track list, and a play-all button.
@@ -41,6 +43,12 @@ class AlbumScreen extends ConsumerWidget {
 
     final tracks = ref.watch(albumTracksProvider(albumId));
     final artistName = ref.watch(artistNamesProvider)[album.artistId];
+    final currentTrackId = ref.watch(playbackScreenViewModelProvider)?.id;
+    final playing =
+        ref.watch(
+          playbackViewModelProvider.select((state) => state.value?.playing),
+        ) ??
+        false;
 
     return AppScaffold(
       topBar: AppTopBar(
@@ -76,9 +84,12 @@ class AlbumScreen extends ConsumerWidget {
             );
           }
           final trackIndex = index - 2;
+          final track = tracks[trackIndex];
           return _AlbumTrackRow(
-            track: tracks[trackIndex],
+            track: track,
             number: trackIndex + 1,
+            current: track.id == currentTrackId,
+            playing: playing,
             onTap: () => unawaited(
               ref
                   .read(queueViewModelProvider.notifier)
@@ -162,11 +173,15 @@ class _AlbumTrackRow extends StatelessWidget {
   const _AlbumTrackRow({
     required this.track,
     required this.number,
+    required this.current,
+    required this.playing,
     required this.onTap,
   });
 
   final Track track;
   final int number;
+  final bool current;
+  final bool playing;
   final VoidCallback onTap;
 
   @override
@@ -200,15 +215,20 @@ class _AlbumTrackRow extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: AppTypography.rowTitle.copyWith(
-                  color: colors.textPrimary,
+                  color: current ? colors.accent : colors.textPrimary,
                 ),
               ),
             ),
             const SizedBox(width: AppSpacing.sm),
-            Text(
-              formatDuration(track.duration),
-              style: AppTypography.meta.copyWith(color: colors.textTertiary),
-            ),
+            if (current)
+              AppPlaybackIndicator(playing: playing, color: colors.accent)
+            else
+              Text(
+                formatDuration(track.duration),
+                style: AppTypography.meta.copyWith(
+                  color: colors.textTertiary,
+                ),
+              ),
           ],
         ),
       ),

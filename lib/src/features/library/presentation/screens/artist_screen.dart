@@ -12,6 +12,8 @@ import 'package:music_app/src/features/library/domain/entities/artist.dart';
 import 'package:music_app/src/features/library/domain/entities/track.dart';
 import 'package:music_app/src/features/library/presentation/providers/library_providers.dart';
 import 'package:music_app/src/features/library/presentation/widgets/media_card.dart';
+import 'package:music_app/src/features/player/presentation/view_models/playback_screen_view_model.dart';
+import 'package:music_app/src/features/player/presentation/view_models/playback_view_model.dart';
 import 'package:music_app/src/features/queue/presentation/view_models/queue_view_model.dart';
 
 /// An artist's details: albums and their full discography, with a
@@ -43,6 +45,12 @@ class ArtistScreen extends ConsumerWidget {
 
     final albums = ref.watch(artistAlbumsProvider(artistId));
     final tracks = ref.watch(artistTracksProvider(artistId));
+    final currentTrackId = ref.watch(playbackScreenViewModelProvider)?.id;
+    final playing =
+        ref.watch(
+          playbackViewModelProvider.select((state) => state.value?.playing),
+        ) ??
+        false;
 
     return AppScaffold(
       topBar: AppTopBar(
@@ -105,6 +113,8 @@ class ArtistScreen extends ConsumerWidget {
           for (var i = 0; i < tracks.length; i++)
             _ArtistTrackRow(
               track: tracks[i],
+              current: tracks[i].id == currentTrackId,
+              playing: playing,
               onTap: () => unawaited(
                 ref
                     .read(queueViewModelProvider.notifier)
@@ -173,9 +183,16 @@ class _ArtistAlbumCard extends StatelessWidget {
 }
 
 class _ArtistTrackRow extends StatelessWidget {
-  const _ArtistTrackRow({required this.track, required this.onTap});
+  const _ArtistTrackRow({
+    required this.track,
+    required this.current,
+    required this.playing,
+    required this.onTap,
+  });
 
   final Track track;
+  final bool current;
+  final bool playing;
   final VoidCallback onTap;
 
   @override
@@ -198,15 +215,20 @@ class _ArtistTrackRow extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: AppTypography.rowTitle.copyWith(
-                  color: colors.textPrimary,
+                  color: current ? colors.accent : colors.textPrimary,
                 ),
               ),
             ),
             const SizedBox(width: AppSpacing.sm),
-            Text(
-              formatDuration(track.duration),
-              style: AppTypography.meta.copyWith(color: colors.textTertiary),
-            ),
+            if (current)
+              AppPlaybackIndicator(playing: playing, color: colors.accent)
+            else
+              Text(
+                formatDuration(track.duration),
+                style: AppTypography.meta.copyWith(
+                  color: colors.textTertiary,
+                ),
+              ),
           ],
         ),
       ),

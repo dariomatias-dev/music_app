@@ -260,4 +260,29 @@ void main() {
 
     expect(find.byType(PlaylistCoverArt), findsOneWidget);
   });
+
+  testWidgets('shows a playback indicator on the currently playing row', (
+    tester,
+  ) async {
+    final repository = FakePlaylistRepository();
+    final id = await repository.createPlaylist('Road Trip');
+    await repository.setPlaylistTracks(id, ['track-1', 'track-2']);
+
+    await _pumpPlaylistScreen(
+      tester,
+      playlistRepository: repository,
+      tracks: [
+        _track(id: 'track-1', title: 'Night Drive'),
+        _track(id: 'track-2', title: 'Sunset'),
+      ],
+      playlistId: id,
+    );
+
+    expect(find.byType(AppPlaybackIndicator), findsNothing);
+
+    await tester.tap(find.text('Sunset'));
+    await tester.pump(const Duration(milliseconds: 50));
+
+    expect(find.byType(AppPlaybackIndicator), findsOneWidget);
+  });
 }

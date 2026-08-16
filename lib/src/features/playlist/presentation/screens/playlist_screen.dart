@@ -7,6 +7,8 @@ import 'package:music_app/l10n/app_localizations.dart';
 import 'package:music_app/src/core/utils/duration_formatter.dart';
 import 'package:music_app/src/features/library/domain/entities/track.dart';
 import 'package:music_app/src/features/library/presentation/providers/library_providers.dart';
+import 'package:music_app/src/features/player/presentation/view_models/playback_screen_view_model.dart';
+import 'package:music_app/src/features/player/presentation/view_models/playback_view_model.dart';
 import 'package:music_app/src/features/playlist/data/providers/playlist_data_providers.dart';
 import 'package:music_app/src/features/playlist/presentation/providers/playlist_providers.dart';
 import 'package:music_app/src/features/playlist/presentation/widgets/playlist_cover_art.dart';
@@ -34,6 +36,12 @@ class _PlaylistScreenState extends ConsumerState<PlaylistScreen> {
     final playlist = ref.watch(playlistByIdProvider(widget.playlistId)).value;
     final tracks = ref.watch(playlistTracksProvider(widget.playlistId));
     final albumArtwork = ref.watch(albumArtworkProvider);
+    final currentTrackId = ref.watch(playbackScreenViewModelProvider)?.id;
+    final playing =
+        ref.watch(
+          playbackViewModelProvider.select((state) => state.value?.playing),
+        ) ??
+        false;
 
     if (tracks.isEmpty && _editing) _editing = false;
 
@@ -89,6 +97,8 @@ class _PlaylistScreenState extends ConsumerState<PlaylistScreen> {
                 track: tracks[index],
                 index: index,
                 editing: true,
+                current: tracks[index].id == currentTrackId,
+                playing: playing,
                 onTap: () {},
                 onRemove: () =>
                     unawaited(_confirmRemove(context, tracks, index)),
@@ -107,6 +117,8 @@ class _PlaylistScreenState extends ConsumerState<PlaylistScreen> {
                   track: tracks[trackIndex],
                   index: trackIndex,
                   editing: false,
+                  current: tracks[trackIndex].id == currentTrackId,
+                  playing: playing,
                   onTap: () => unawaited(
                     ref
                         .read(queueViewModelProvider.notifier)
@@ -252,6 +264,8 @@ class _PlaylistTrackRow extends StatelessWidget {
     required this.track,
     required this.index,
     required this.editing,
+    required this.current,
+    required this.playing,
     required this.onTap,
     required this.onRemove,
     super.key,
@@ -260,6 +274,8 @@ class _PlaylistTrackRow extends StatelessWidget {
   final Track track;
   final int index;
   final bool editing;
+  final bool current;
+  final bool playing;
   final VoidCallback onTap;
   final VoidCallback onRemove;
 
@@ -302,7 +318,7 @@ class _PlaylistTrackRow extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: AppTypography.rowTitle.copyWith(
-                  color: colors.textPrimary,
+                  color: current ? colors.accent : colors.textPrimary,
                 ),
               ),
             ),
@@ -318,6 +334,8 @@ class _PlaylistTrackRow extends StatelessWidget {
                   ),
                 ),
               )
+            else if (current)
+              AppPlaybackIndicator(playing: playing, color: colors.accent)
             else
               Text(
                 formatDuration(track.duration),

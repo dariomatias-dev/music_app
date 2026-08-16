@@ -1,5 +1,7 @@
 import 'package:app_ui/src/animations/pressable.dart';
 import 'package:app_ui/src/theme/app_theme_extensions.dart';
+import 'package:app_ui/src/tokens/app_curves.dart';
+import 'package:app_ui/src/tokens/app_durations.dart';
 import 'package:app_ui/src/tokens/app_sizes.dart';
 import 'package:flutter/material.dart';
 
@@ -59,10 +61,16 @@ class AppIconButton extends StatelessWidget {
               shape: BoxShape.circle,
               color: background ?? Colors.transparent,
             ),
-            child: Icon(
-              icon,
-              size: iconSize,
-              color: color ?? colors.textPrimary,
+            child: AnimatedSwitcher(
+              duration: AppDurations.fast,
+              switchInCurve: AppCurves.spring,
+              switchOutCurve: AppCurves.emphasized,
+              child: Icon(
+                icon,
+                key: ValueKey(Object.hash(icon, color)),
+                size: iconSize,
+                color: color ?? colors.textPrimary,
+              ),
             ),
           ),
         ),

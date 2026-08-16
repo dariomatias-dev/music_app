@@ -10,6 +10,8 @@ import 'package:music_app/src/features/library/domain/entities/track.dart';
 import 'package:music_app/src/features/library/presentation/providers/library_providers.dart';
 import 'package:music_app/src/features/library/presentation/view_models/track_sort_view_model.dart';
 import 'package:music_app/src/features/library/presentation/widgets/track_sort_sheet.dart';
+import 'package:music_app/src/features/player/presentation/view_models/playback_screen_view_model.dart';
+import 'package:music_app/src/features/player/presentation/view_models/playback_view_model.dart';
 import 'package:music_app/src/features/queue/presentation/view_models/queue_view_model.dart';
 
 /// Every indexed track, sortable, with tap-to-play-from-here.
@@ -25,6 +27,12 @@ class TracksTab extends ConsumerWidget {
     final artistNames = ref.watch(artistNamesProvider);
     final albumArtwork = ref.watch(albumArtworkProvider);
     final sort = ref.watch(trackSortViewModelProvider);
+    final currentTrackId = ref.watch(playbackScreenViewModelProvider)?.id;
+    final playing =
+        ref.watch(
+          playbackViewModelProvider.select((state) => state.value?.playing),
+        ) ??
+        false;
 
     return Column(
       children: [
@@ -84,6 +92,8 @@ class TracksTab extends ConsumerWidget {
                     track: tracks[index],
                     artistName: artistNames[tracks[index].artistId],
                     artworkPath: albumArtwork[tracks[index].albumId],
+                    current: tracks[index].id == currentTrackId,
+                    playing: playing,
                     onTap: () => unawaited(
                       ref
                           .read(queueViewModelProvider.notifier)
@@ -109,12 +119,16 @@ class _TrackRow extends StatelessWidget {
     required this.track,
     required this.artistName,
     required this.artworkPath,
+    required this.current,
+    required this.playing,
     required this.onTap,
   });
 
   final Track track;
   final String? artistName;
   final String? artworkPath;
+  final bool current;
+  final bool playing;
   final VoidCallback onTap;
 
   @override
@@ -144,7 +158,7 @@ class _TrackRow extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: AppTypography.rowTitle.copyWith(
-                      color: colors.textPrimary,
+                      color: current ? colors.accent : colors.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 2),
@@ -160,10 +174,15 @@ class _TrackRow extends StatelessWidget {
               ),
             ),
             const SizedBox(width: AppSpacing.sm),
-            Text(
-              formatDuration(track.duration),
-              style: AppTypography.meta.copyWith(color: colors.textTertiary),
-            ),
+            if (current)
+              AppPlaybackIndicator(playing: playing, color: colors.accent)
+            else
+              Text(
+                formatDuration(track.duration),
+                style: AppTypography.meta.copyWith(
+                  color: colors.textTertiary,
+                ),
+              ),
           ],
         ),
       ),

@@ -177,4 +177,20 @@ void main() {
       ['Zebra', 'Apple'],
     );
   });
+
+  testWidgets('shows a playback indicator on the currently playing row', (
+    tester,
+  ) async {
+    await _pumpTracksTab(tester, [
+      _track(id: 'track-1', title: 'Apple'),
+      _track(id: 'track-2', title: 'Zebra'),
+    ]);
+
+    expect(find.byType(AppPlaybackIndicator), findsNothing);
+
+    await tester.tap(find.text('Zebra'));
+    await tester.pump();
+
+    expect(find.byType(AppPlaybackIndicator), findsOneWidget);
+  });
 }

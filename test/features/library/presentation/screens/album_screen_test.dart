@@ -178,4 +178,25 @@ void main() {
     final service = container.read(audioPlayerServiceProvider);
     expect(service.snapshot.currentIndex, 1);
   });
+
+  testWidgets('shows a playback indicator on the currently playing row', (
+    tester,
+  ) async {
+    await _pumpAlbumScreen(
+      tester,
+      albums: const [album],
+      tracks: [
+        _track(id: 'track-1', title: 'Night Drive', trackNumber: 1),
+        _track(id: 'track-2', title: 'Sunset', trackNumber: 2),
+      ],
+      albumId: 'album-1',
+    );
+
+    expect(find.byType(AppPlaybackIndicator), findsNothing);
+
+    await tester.tap(find.text('Sunset'));
+    await tester.pump(const Duration(milliseconds: 50));
+
+    expect(find.byType(AppPlaybackIndicator), findsOneWidget);
+  });
 }
