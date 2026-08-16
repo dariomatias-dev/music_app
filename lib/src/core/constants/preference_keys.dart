@@ -14,4 +14,16 @@ abstract final class PreferenceKeys {
 
   /// Stores the user's selected theme mode.
   static const themeMode = 'themeMode';
+
+  /// Stores whether gapless playback is enabled.
+  static const gaplessEnabled = 'gaplessEnabled';
+
+  /// Stores the crossfade duration, in seconds (0 means off).
+  static const crossfadeDurationSeconds = 'crossfadeDurationSeconds';
+
+  /// Stores the default playback speed applied when a new queue starts.
+  static const defaultPlaybackSpeed = 'defaultPlaybackSpeed';
+
+  /// Stores whether haptic feedback is enabled on playback controls.
+  static const hapticsEnabled = 'hapticsEnabled';
 }

@@ -598,4 +598,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get themeDarkLabel => 'Dark';
+
+  @override
+  String get settingsGaplessLabel => 'Gapless playback';
+
+  @override
+  String get settingsCrossfadeLabel => 'Crossfade';
+
+  @override
+  String get crossfadeOffValue => 'Off';
+
+  @override
+  String get settingsDefaultSpeedLabel => 'Default speed';
+
+  @override
+  String get settingsHapticsLabel => 'Haptic feedback';
 }

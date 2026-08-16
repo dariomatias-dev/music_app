@@ -573,4 +573,19 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get themeDarkLabel => '深色';
+
+  @override
+  String get settingsGaplessLabel => '无间隔播放';
+
+  @override
+  String get settingsCrossfadeLabel => '淡入淡出';
+
+  @override
+  String get crossfadeOffValue => '关闭';
+
+  @override
+  String get settingsDefaultSpeedLabel => '默认速度';
+
+  @override
+  String get settingsHapticsLabel => '触感反馈';
 }

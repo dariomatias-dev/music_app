@@ -158,6 +158,9 @@ abstract interface class AudioPlayerService {
   /// Sets the playback speed multiplier.
   Future<void> setSpeed(double speed);
 
+  /// Sets the output volume, from `0.0` (silent) to `1.0` (full).
+  Future<void> setVolume(double volume);
+
   /// Sets the repeat behavior.
   Future<void> setLoopMode(AudioLoopMode mode);
 

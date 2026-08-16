@@ -33,6 +33,13 @@ class Pressable extends StatefulWidget {
   /// Whether a light haptic impact fires on tap.
   final bool haptic;
 
+  /// App-wide switch for haptic feedback, honored in addition to [haptic].
+  ///
+  /// Design-system widgets have no access to app-level preferences, so the
+  /// app sets this directly whenever the user's haptics preference
+  /// changes, rather than threading it through every tappable widget.
+  static bool hapticsEnabled = true;
+
   @override
   State<Pressable> createState() => _PressableState();
 }
@@ -56,7 +63,7 @@ class _PressableState extends State<Pressable> {
       onTap: widget.onTap == null
           ? null
           : () {
-              if (widget.haptic) {
+              if (widget.haptic && Pressable.hapticsEnabled) {
                 unawaited(HapticFeedback.lightImpact());
               }
               widget.onTap!();

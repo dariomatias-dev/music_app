@@ -1170,6 +1170,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Dark'**
   String get themeDarkLabel;
+
+  /// No description provided for @settingsGaplessLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Gapless playback'**
+  String get settingsGaplessLabel;
+
+  /// No description provided for @settingsCrossfadeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Crossfade'**
+  String get settingsCrossfadeLabel;
+
+  /// No description provided for @crossfadeOffValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get crossfadeOffValue;
+
+  /// No description provided for @settingsDefaultSpeedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Default speed'**
+  String get settingsDefaultSpeedLabel;
+
+  /// No description provided for @settingsHapticsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Haptic feedback'**
+  String get settingsHapticsLabel;
 }
 
 class _AppLocalizationsDelegate

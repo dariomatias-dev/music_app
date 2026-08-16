@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math' as math;
 
+import 'package:app_ui/src/animations/pressable.dart';
 import 'package:app_ui/src/theme/app_theme_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -113,7 +114,9 @@ class _AppWaveformSeekBarState extends State<AppWaveformSeekBar>
         return GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTapDown: (details) {
-            unawaited(HapticFeedback.selectionClick());
+            if (Pressable.hapticsEnabled) {
+              unawaited(HapticFeedback.selectionClick());
+            }
             _handle(details.localPosition, width, commit: true);
           },
           onHorizontalDragStart: (details) =>
@@ -121,7 +124,9 @@ class _AppWaveformSeekBarState extends State<AppWaveformSeekBar>
           onHorizontalDragUpdate: (details) =>
               _handle(details.localPosition, width),
           onHorizontalDragEnd: (_) {
-            unawaited(HapticFeedback.selectionClick());
+            if (Pressable.hapticsEnabled) {
+              unawaited(HapticFeedback.selectionClick());
+            }
             setState(() => _dragProgress = null);
           },
           child: SizedBox(

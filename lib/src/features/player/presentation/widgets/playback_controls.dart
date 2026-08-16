@@ -21,6 +21,10 @@ AudioLoopMode _nextLoopMode(AudioLoopMode current) {
 }
 
 /// Playback transport: shuffle, previous, play/pause, next and repeat.
+///
+/// Haptic feedback on tap comes from [Pressable] itself (via
+/// [AppIconButton]/[AppPlayPauseButton]), gated app-wide by
+/// `Pressable.hapticsEnabled` rather than here.
 class PlaybackControls extends ConsumerWidget {
   /// Creates a [PlaybackControls].
   const PlaybackControls({super.key});

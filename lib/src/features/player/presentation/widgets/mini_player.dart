@@ -109,10 +109,14 @@ class _MiniPlayerCard extends ConsumerWidget {
           final velocity = details.primaryVelocity ?? 0;
           final service = ref.read(audioPlayerServiceProvider);
           if (velocity < -_skipVelocityThreshold) {
-            unawaited(HapticFeedback.selectionClick());
+            if (Pressable.hapticsEnabled) {
+              unawaited(HapticFeedback.selectionClick());
+            }
             unawaited(service.seekToNext());
           } else if (velocity > _skipVelocityThreshold) {
-            unawaited(HapticFeedback.selectionClick());
+            if (Pressable.hapticsEnabled) {
+              unawaited(HapticFeedback.selectionClick());
+            }
             unawaited(service.seekToPrevious());
           }
         },

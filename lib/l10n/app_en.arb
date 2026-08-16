@@ -202,5 +202,10 @@
   "settingsThemeLabel": "Theme",
   "themeSystemLabel": "System",
   "themeLightLabel": "Light",
-  "themeDarkLabel": "Dark"
+  "themeDarkLabel": "Dark",
+  "settingsGaplessLabel": "Gapless playback",
+  "settingsCrossfadeLabel": "Crossfade",
+  "crossfadeOffValue": "Off",
+  "settingsDefaultSpeedLabel": "Default speed",
+  "settingsHapticsLabel": "Haptic feedback"
 }

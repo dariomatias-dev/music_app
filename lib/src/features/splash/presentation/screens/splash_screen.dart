@@ -8,7 +8,9 @@ import 'package:music_app/l10n/app_localizations.dart';
 import 'package:music_app/src/core/database/database_providers.dart';
 import 'package:music_app/src/core/navigation/route_paths.dart';
 import 'package:music_app/src/features/history/presentation/view_models/playback_history_recorder.dart';
+import 'package:music_app/src/features/player/presentation/view_models/playback_transition_effects.dart';
 import 'package:music_app/src/features/queue/presentation/view_models/queue_view_model.dart';
+import 'package:music_app/src/features/settings/presentation/view_models/playback_preferences_view_model.dart';
 
 /// Splash screen shown while the app's core dependencies (preferences,
 /// database) finish initializing.
@@ -32,7 +34,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
 
   Future<void> _prepare() async {
     await ref.read(appDatabaseProvider).trackDao.getAll();
-    ref.read(playbackHistoryRecorderProvider);
+    ref
+      ..read(playbackHistoryRecorderProvider)
+      ..read(playbackTransitionEffectsProvider)
+      ..read(playbackPreferencesViewModelProvider);
     unawaited(ref.read(queueViewModelProvider.notifier).restoreSession());
     if (!mounted) return;
     context.go(RoutePaths.home);

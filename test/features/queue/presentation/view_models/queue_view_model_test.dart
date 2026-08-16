@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:music_app/src/core/audio/audio_player_service.dart';
 import 'package:music_app/src/core/audio/audio_providers.dart';
 import 'package:music_app/src/core/audio/music_audio_handler.dart';
+import 'package:music_app/src/core/storage/storage_providers.dart';
 import 'package:music_app/src/features/library/data/indexing/library_indexer.dart';
 import 'package:music_app/src/features/library/data/providers/library_data_providers.dart';
 import 'package:music_app/src/features/library/domain/entities/album.dart';
@@ -14,6 +15,7 @@ import 'package:music_app/src/features/queue/data/playback_session_storage.dart'
 import 'package:music_app/src/features/queue/data/providers/queue_data_providers.dart';
 import 'package:music_app/src/features/queue/domain/playback_session.dart';
 import 'package:music_app/src/features/queue/presentation/view_models/queue_view_model.dart';
+import 'package:music_app/src/features/settings/presentation/view_models/playback_preferences_view_model.dart';
 
 import '../../../../helpers/fake_audio_player_service.dart';
 import '../../../../helpers/fake_key_value_storage.dart';
@@ -355,5 +357,26 @@ void main() {
     // beginning of the surviving queue instead of its saved position.
     expect(playerService.snapshot.currentIndex, 0);
     expect(playerService.snapshot.position, Duration.zero);
+  });
+
+  test('playFromSource applies the saved default playback speed', () async {
+    final storage = FakeKeyValueStorage();
+    await storage.setDouble('defaultPlaybackSpeed', 1.5);
+    final speedContainer = ProviderContainer(
+      overrides: [
+        audioPlayerServiceProvider.overrideWithValue(playerService),
+        audioHandlerProvider.overrideWithValue(handler),
+        keyValueStorageProvider.overrideWithValue(storage),
+        libraryRepositoryProvider.overrideWithValue(_FakeLibraryRepository()),
+      ],
+    );
+    addTearDown(speedContainer.dispose);
+
+    await speedContainer.read(playbackPreferencesViewModelProvider.future);
+    await speedContainer.read(queueViewModelProvider.notifier).playFromSource([
+      _track('a'),
+    ], startIndex: 0);
+
+    expect(playerService.snapshot.speed, 1.5);
   });
 }

@@ -600,4 +600,19 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get themeDarkLabel => 'Oscuro';
+
+  @override
+  String get settingsGaplessLabel => 'Reproducción sin intervalo';
+
+  @override
+  String get settingsCrossfadeLabel => 'Crossfade';
+
+  @override
+  String get crossfadeOffValue => 'Desactivado';
+
+  @override
+  String get settingsDefaultSpeedLabel => 'Velocidad predeterminada';
+
+  @override
+  String get settingsHapticsLabel => 'Retroalimentación háptica';
 }

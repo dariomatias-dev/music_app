@@ -10,6 +10,7 @@ import 'package:music_app/src/features/library/domain/entities/track.dart';
 import 'package:music_app/src/features/player/presentation/view_models/playback_view_model.dart';
 import 'package:music_app/src/features/queue/data/providers/queue_data_providers.dart';
 import 'package:music_app/src/features/queue/domain/playback_session.dart';
+import 'package:music_app/src/features/settings/presentation/view_models/playback_preferences_view_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'queue_view_model.g.dart';
@@ -44,6 +45,13 @@ class QueueViewModel extends _$QueueViewModel {
     state = items;
     final handler = ref.read(audioHandlerProvider);
     await handler.setQueue(items, initialIndex: startIndex);
+    final defaultSpeed = ref
+        .read(playbackPreferencesViewModelProvider)
+        .value
+        ?.defaultSpeed;
+    if (defaultSpeed != null) {
+      await ref.read(audioPlayerServiceProvider).setSpeed(defaultSpeed);
+    }
     await handler.play();
   }
 

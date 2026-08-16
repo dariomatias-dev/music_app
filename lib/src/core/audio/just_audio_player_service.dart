@@ -142,6 +142,9 @@ class JustAudioPlayerService implements AudioPlayerService {
   Future<void> setSpeed(double speed) => _player.setSpeed(speed);
 
   @override
+  Future<void> setVolume(double volume) => _player.setVolume(volume);
+
+  @override
   Future<void> setLoopMode(AudioLoopMode mode) =>
       _player.setLoopMode(_toJustAudioLoopMode(mode));
 

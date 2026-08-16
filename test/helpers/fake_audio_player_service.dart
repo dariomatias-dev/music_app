@@ -144,6 +144,18 @@ class FakeAudioPlayerService implements AudioPlayerService {
     _emit((s) => _copyWith(s, speed: speed));
   }
 
+  /// Every volume passed to [setVolume] so far, in order.
+  final List<double> volumeHistory = [];
+
+  /// The most recent volume passed to [setVolume], or `1.0` if never
+  /// called.
+  double get volume => volumeHistory.isEmpty ? 1.0 : volumeHistory.last;
+
+  @override
+  Future<void> setVolume(double volume) async {
+    volumeHistory.add(volume);
+  }
+
   @override
   Future<void> setLoopMode(AudioLoopMode mode) async {
     _emit((s) => _copyWith(s, loopMode: mode));

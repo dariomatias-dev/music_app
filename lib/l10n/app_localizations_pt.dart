@@ -598,6 +598,21 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get themeDarkLabel => 'Dark';
+
+  @override
+  String get settingsGaplessLabel => 'Gapless playback';
+
+  @override
+  String get settingsCrossfadeLabel => 'Crossfade';
+
+  @override
+  String get crossfadeOffValue => 'Off';
+
+  @override
+  String get settingsDefaultSpeedLabel => 'Default speed';
+
+  @override
+  String get settingsHapticsLabel => 'Haptic feedback';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -1197,4 +1212,19 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get themeDarkLabel => 'Escuro';
+
+  @override
+  String get settingsGaplessLabel => 'Reprodução sem intervalo';
+
+  @override
+  String get settingsCrossfadeLabel => 'Crossfade';
+
+  @override
+  String get crossfadeOffValue => 'Desativado';
+
+  @override
+  String get settingsDefaultSpeedLabel => 'Velocidade padrão';
+
+  @override
+  String get settingsHapticsLabel => 'Feedback háptico';
 }

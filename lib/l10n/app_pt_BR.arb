@@ -202,5 +202,10 @@
   "settingsThemeLabel": "Tema",
   "themeSystemLabel": "Sistema",
   "themeLightLabel": "Claro",
-  "themeDarkLabel": "Escuro"
+  "themeDarkLabel": "Escuro",
+  "settingsGaplessLabel": "Reprodução sem intervalo",
+  "settingsCrossfadeLabel": "Crossfade",
+  "crossfadeOffValue": "Desativado",
+  "settingsDefaultSpeedLabel": "Velocidade padrão",
+  "settingsHapticsLabel": "Feedback háptico"
 }

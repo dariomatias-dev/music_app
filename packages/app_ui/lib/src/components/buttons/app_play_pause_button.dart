@@ -99,7 +99,9 @@ class _AppPlayPauseButtonState extends State<AppPlayPauseButton>
             scale: 0.9,
             haptic: false,
             onTap: () {
-              unawaited(HapticFeedback.mediumImpact());
+              if (Pressable.hapticsEnabled) {
+                unawaited(HapticFeedback.mediumImpact());
+              }
               widget.onTap();
             },
             child: AnimatedBuilder(

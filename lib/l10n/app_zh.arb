@@ -202,5 +202,10 @@
   "settingsThemeLabel": "主题",
   "themeSystemLabel": "跟随系统",
   "themeLightLabel": "浅色",
-  "themeDarkLabel": "深色"
+  "themeDarkLabel": "深色",
+  "settingsGaplessLabel": "无间隔播放",
+  "settingsCrossfadeLabel": "淡入淡出",
+  "crossfadeOffValue": "关闭",
+  "settingsDefaultSpeedLabel": "默认速度",
+  "settingsHapticsLabel": "触感反馈"
 }
