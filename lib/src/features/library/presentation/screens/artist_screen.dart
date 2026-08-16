@@ -52,36 +52,47 @@ class ArtistScreen extends ConsumerWidget {
         ) ??
         false;
 
+    // Fixed rows (header, play button, and the horizontal albums strip
+    // when there are any) come before the track list; offsetting by their
+    // count lets a single ListView.builder lazily build the whole screen,
+    // so a large discography doesn't build every row upfront.
+    final fixedRowCount = albums.isEmpty ? 2 : 4;
+
     return AppScaffold(
       topBar: AppTopBar(
         title: artist.name,
         backButtonSemanticLabel: l10n.backButtonSemanticLabel,
       ),
-      body: ListView(
+      body: ListView.builder(
         padding: const EdgeInsets.only(bottom: AppSpacing.xl),
-        children: [
-          _ArtistHeader(artist: artist, albumCount: albums.length),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(
-              AppSpacing.lg,
-              AppSpacing.sm,
-              AppSpacing.lg,
-              AppSpacing.sm,
-            ),
-            child: AppPrimaryButton(
-              label: l10n.playLabel,
-              icon: Icons.play_arrow_rounded,
-              onPressed: tracks.isEmpty
-                  ? null
-                  : () => unawaited(
-                      ref
-                          .read(queueViewModelProvider.notifier)
-                          .playFromSource(tracks, startIndex: 0),
-                    ),
-            ),
-          ),
-          if (albums.isNotEmpty) ...[
-            Padding(
+        itemCount: fixedRowCount + tracks.length,
+        itemBuilder: (context, index) {
+          if (index == 0) {
+            return _ArtistHeader(artist: artist, albumCount: albums.length);
+          }
+          if (index == 1) {
+            return Padding(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.lg,
+                AppSpacing.sm,
+                AppSpacing.lg,
+                AppSpacing.sm,
+              ),
+              child: AppPrimaryButton(
+                label: l10n.playLabel,
+                icon: Icons.play_arrow_rounded,
+                onPressed: tracks.isEmpty
+                    ? null
+                    : () => unawaited(
+                        ref
+                            .read(queueViewModelProvider.notifier)
+                            .playFromSource(tracks, startIndex: 0),
+                      ),
+              ),
+            );
+          }
+          if (albums.isNotEmpty && index == 2) {
+            return Padding(
               padding: const EdgeInsets.fromLTRB(
                 AppSpacing.lg,
                 AppSpacing.md,
@@ -94,8 +105,10 @@ class ArtistScreen extends ConsumerWidget {
                   color: context.colors.textPrimary,
                 ),
               ),
-            ),
-            SizedBox(
+            );
+          }
+          if (albums.isNotEmpty && index == 3) {
+            return SizedBox(
               height: 168,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
@@ -108,20 +121,21 @@ class ArtistScreen extends ConsumerWidget {
                 itemBuilder: (context, index) =>
                     _ArtistAlbumCard(album: albums[index]),
               ),
+            );
+          }
+          final trackIndex = index - fixedRowCount;
+          final track = tracks[trackIndex];
+          return _ArtistTrackRow(
+            track: track,
+            current: track.id == currentTrackId,
+            playing: playing,
+            onTap: () => unawaited(
+              ref
+                  .read(queueViewModelProvider.notifier)
+                  .playFromSource(tracks, startIndex: trackIndex),
             ),
-          ],
-          for (var i = 0; i < tracks.length; i++)
-            _ArtistTrackRow(
-              track: tracks[i],
-              current: tracks[i].id == currentTrackId,
-              playing: playing,
-              onTap: () => unawaited(
-                ref
-                    .read(queueViewModelProvider.notifier)
-                    .playFromSource(tracks, startIndex: i),
-              ),
-            ),
-        ],
+          );
+        },
       ),
     );
   }

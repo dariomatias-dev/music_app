@@ -203,4 +203,45 @@ void main() {
 
     expect(find.byType(AppPlaybackIndicator), findsOneWidget);
   });
+
+  testWidgets('shows tracks with no albums row when the artist has none', (
+    tester,
+  ) async {
+    await _pumpArtistScreen(
+      tester,
+      artists: const [artist],
+      albums: const [],
+      tracks: [
+        _track(id: 'track-1', title: 'Night Drive'),
+        _track(id: 'track-2', title: 'Sunset'),
+      ],
+      artistId: 'artist-1',
+    );
+
+    expect(find.text('Night Drive'), findsOneWidget);
+    expect(find.text('Sunset'), findsOneWidget);
+    expect(find.text('Albums'), findsNothing);
+  });
+
+  testWidgets(
+    'lazily builds a large discography, not every row upfront',
+    (tester) async {
+      final tracks = [
+        for (var i = 0; i < 500; i++) _track(id: 'track-$i', title: 'Track $i'),
+      ];
+
+      await _pumpArtistScreen(
+        tester,
+        artists: const [artist],
+        albums: const [],
+        tracks: tracks,
+        artistId: 'artist-1',
+      );
+
+      // Only rows near the top of the viewport are actually built, not
+      // all 500 upfront.
+      expect(find.textContaining('Track ').evaluate().length, lessThan(50));
+      expect(find.text('Track 499'), findsNothing);
+    },
+  );
 }
