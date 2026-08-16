@@ -22,8 +22,7 @@ class FileLyricsReader implements LyricsReader {
       return await _readId3UsltLyrics(filePath);
       // Malformed binary tags can trip Errors (e.g. RangeError), not just
       // Exceptions; any failure here just means "no lyrics found".
-      // ignore: avoid_catches_without_on_clauses
-    } catch (_) {
+    } on Object catch (_) {
       return null;
     }
   }
@@ -37,8 +36,7 @@ class FileLyricsReader implements LyricsReader {
       return content.trim().isEmpty ? null : content;
       // A sidecar file that isn't readable or valid text just means "no
       // lyrics found" rather than a failure worth surfacing.
-      // ignore: avoid_catches_without_on_clauses
-    } catch (_) {
+    } on Object catch (_) {
       return null;
     }
   }

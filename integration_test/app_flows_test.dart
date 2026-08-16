@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:app_ui/app_ui.dart';
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -206,13 +207,15 @@ void main() {
     await tester.tap(find.text(l10n.libraryTabLabel));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Night Drive').first);
-    await tester.pumpAndSettle();
+    // Not pumpAndSettle: the playing state drives a looping animation
+    // that never settles on its own.
+    await tester.pump(const Duration(seconds: 1));
 
     expect(service.snapshot.playing, isTrue);
     expect(find.text('Night Drive'), findsWidgets);
 
-    await tester.tap(find.byIcon(Icons.pause_rounded).first);
-    await tester.pumpAndSettle();
+    await tester.tap(find.byType(AppPlayPauseButton).first);
+    await tester.pump(const Duration(seconds: 1));
     expect(service.snapshot.playing, isFalse);
   });
 

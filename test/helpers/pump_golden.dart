@@ -21,18 +21,12 @@ Future<void> pumpGoldenScreen(
       debugShowCheckedModeBanner: false,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      // AppScaffold relies on a Material ancestor it would normally get
-      // from MaterialPageRoute's own transition machinery; `home:` skips
-      // that, so provide a bare Scaffold here to match.
+      // AppScaffold needs a Material ancestor to render correctly.
       home: Scaffold(body: screen),
     ),
   );
-  // A first empty pump lets every provider chain (StreamProvider ->
-  // derived Provider -> widget) settle its initial async value before the
-  // frame that gets captured.
+  // Lets provider chains settle, then advances a fixed duration instead
+  // of pumpAndSettle, since some widgets animate continuously.
   await tester.pump();
-  // Advances a fixed amount of frames instead of settling, since some
-  // widgets (e.g. loading spinners, playback indicators) animate
-  // continuously.
   await tester.pump(const Duration(milliseconds: 300));
 }

@@ -23,6 +23,7 @@ class ThemeModeViewModel extends _$ThemeModeViewModel {
     await ref
         .read(keyValueStorageProvider)
         .setString(PreferenceKeys.themeMode, mode.name);
+    if (!ref.mounted) return;
     state = AsyncData(mode);
   }
 }

@@ -21,6 +21,10 @@ class OnboardingViewModel extends _$OnboardingViewModel {
     await ref
         .read(keyValueStorageProvider)
         .setBool(PreferenceKeys.onboardingCompleted, value: true);
+    // Nothing watches this provider while its own screen is up, so it can
+    // be disposed (autoDispose, zero listeners) while the write above is
+    // still in flight.
+    if (!ref.mounted) return;
     state = const AsyncData(true);
   }
 
@@ -31,6 +35,7 @@ class OnboardingViewModel extends _$OnboardingViewModel {
     await ref
         .read(keyValueStorageProvider)
         .setBool(PreferenceKeys.onboardingCompleted, value: false);
+    if (!ref.mounted) return;
     state = const AsyncData(false);
   }
 }

@@ -26,10 +26,12 @@ class UserProfileViewModel extends _$UserProfileViewModel {
     final storage = ref.read(keyValueStorageProvider);
     if (trimmed.isEmpty) {
       await storage.remove(PreferenceKeys.userDisplayName);
+      if (!ref.mounted) return;
       state = const AsyncData(null);
       return;
     }
     await storage.setString(PreferenceKeys.userDisplayName, trimmed);
+    if (!ref.mounted) return;
     state = AsyncData(trimmed);
   }
 }
