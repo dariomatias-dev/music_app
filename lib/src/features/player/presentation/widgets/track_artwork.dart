@@ -1,8 +1,7 @@
-import 'dart:io';
-
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:music_app/src/core/audio/queue_media_item.dart';
+import 'package:music_app/src/core/widgets/cached_square_image.dart';
 
 /// A queue item's cover: the embedded artwork when cached on disk, or a
 /// deterministic procedural cover otherwise.
@@ -33,12 +32,7 @@ class TrackArtwork extends StatelessWidget {
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(radius),
-      child: Image.file(
-        File(artworkPath),
-        width: size,
-        height: size,
-        fit: BoxFit.cover,
-      ),
+      child: CachedSquareImage(path: artworkPath, size: size),
     );
   }
 }

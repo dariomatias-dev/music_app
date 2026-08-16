@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:music_app/l10n/app_localizations.dart';
 import 'package:music_app/src/core/navigation/route_paths.dart';
 import 'package:music_app/src/core/utils/duration_formatter.dart';
+import 'package:music_app/src/core/widgets/cached_square_image.dart';
 import 'package:music_app/src/features/library/domain/entities/album.dart';
 import 'package:music_app/src/features/library/domain/entities/track.dart';
 import 'package:music_app/src/features/library/presentation/providers/library_providers.dart';
@@ -159,12 +159,7 @@ class _AlbumHeader extends StatelessWidget {
     }
     return ClipRRect(
       borderRadius: BorderRadius.circular(AppRadius.large),
-      child: Image.file(
-        File(artworkPath),
-        width: 160,
-        height: 160,
-        fit: BoxFit.cover,
-      ),
+      child: CachedSquareImage(path: artworkPath, size: 160),
     );
   }
 }

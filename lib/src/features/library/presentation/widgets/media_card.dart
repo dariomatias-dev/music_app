@@ -1,7 +1,6 @@
-import 'dart:io';
-
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
+import 'package:music_app/src/core/widgets/cached_square_image.dart';
 
 /// A square media card: artwork, title and an optional subtitle, tappable.
 ///
@@ -85,12 +84,7 @@ class MediaCard extends StatelessWidget {
     if (path == null) {
       return AppArtwork(seed: seed, size: size, circle: circle);
     }
-    final image = Image.file(
-      File(path),
-      width: size,
-      height: size,
-      fit: BoxFit.cover,
-    );
+    final image = CachedSquareImage(path: path, size: size);
     return circle
         ? ClipOval(child: image)
         : ClipRRect(

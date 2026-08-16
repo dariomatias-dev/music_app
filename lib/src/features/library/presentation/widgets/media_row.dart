@@ -1,7 +1,6 @@
-import 'dart:io';
-
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
+import 'package:music_app/src/core/widgets/cached_square_image.dart';
 
 /// A media list row: artwork, title, an optional subtitle, and an optional
 /// trailing widget, tappable.
@@ -103,12 +102,7 @@ class MediaRow extends StatelessWidget {
     if (path == null) {
       return AppArtwork(seed: seed, size: size, circle: circle);
     }
-    final image = Image.file(
-      File(path),
-      width: size,
-      height: size,
-      fit: BoxFit.cover,
-    );
+    final image = CachedSquareImage(path: path, size: size);
     return circle
         ? ClipOval(child: image)
         : ClipRRect(

@@ -1,10 +1,10 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:music_app/l10n/app_localizations.dart';
+import 'package:music_app/src/core/widgets/cached_square_image.dart';
 import 'package:music_app/src/features/library/data/providers/library_data_providers.dart';
 import 'package:music_app/src/features/library/domain/entities/track.dart';
 import 'package:music_app/src/features/library/presentation/providers/library_providers.dart';
@@ -126,7 +126,7 @@ class _FavoriteRow extends ConsumerWidget {
     }
     return ClipRRect(
       borderRadius: BorderRadius.circular(AppRadius.small),
-      child: Image.file(File(path), width: 44, height: 44, fit: BoxFit.cover),
+      child: CachedSquareImage(path: path, size: 44),
     );
   }
 }

@@ -1,7 +1,6 @@
-import 'dart:io';
-
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
+import 'package:music_app/src/core/widgets/cached_square_image.dart';
 
 /// One tile of a playlist cover mosaic: a track's artwork, identified by a
 /// seed (its id, for the procedural fallback) and the cached album artwork
@@ -76,11 +75,6 @@ class PlaylistCoverArt extends StatelessWidget {
     if (path == null) {
       return AppArtwork(seed: track.seed, size: side, radius: 0);
     }
-    return Image.file(
-      File(path),
-      width: side,
-      height: side,
-      fit: BoxFit.cover,
-    );
+    return CachedSquareImage(path: path, size: side);
   }
 }
