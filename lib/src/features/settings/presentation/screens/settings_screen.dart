@@ -29,7 +29,23 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   Future<void> _rescan() async {
     setState(() => _rescanning = true);
-    await ref.read(libraryRepositoryProvider).reindex().drain<void>();
+    try {
+      await ref.read(libraryRepositoryProvider).reindex().drain<void>();
+      // The scan touches device files and metadata parsing outside our
+      // control; any failure here should reset the busy state and tell the
+      // user, not leave the row spinning forever.
+      // ignore: avoid_catches_without_on_clauses
+    } catch (_) {
+      if (!mounted) return;
+      final l10n = AppLocalizations.of(context)!;
+      setState(() => _rescanning = false);
+      AppToast.show(
+        context,
+        message: l10n.scanErrorMessage,
+        variant: AppToastVariant.error,
+      );
+      return;
+    }
     if (!mounted) return;
     setState(() => _rescanning = false);
     final l10n = AppLocalizations.of(context)!;

@@ -17,6 +17,7 @@ import '../../../../helpers/fake_key_value_storage.dart';
 
 class _FakeLibraryRepository implements LibraryRepository {
   int reindexCalls = 0;
+  bool reindexShouldThrow = false;
 
   @override
   Stream<List<Track>> watchTracks() => Stream.value(const []);
@@ -30,6 +31,7 @@ class _FakeLibraryRepository implements LibraryRepository {
   @override
   Stream<IndexingProgress> reindex() {
     reindexCalls++;
+    if (reindexShouldThrow) return Stream.error(Exception('scan boom'));
     return const Stream.empty();
   }
 
@@ -249,5 +251,27 @@ void main() {
 
     expect(libraryRepository.reindexCalls, 1);
     expect(find.text('Library rescanned'), findsOneWidget);
+  });
+
+  testWidgets('shows an error toast and clears busy when rescan fails', (
+    tester,
+  ) async {
+    final libraryRepository = _FakeLibraryRepository()
+      ..reindexShouldThrow = true;
+    await tester.pumpWidget(_app(libraryRepository: libraryRepository));
+    await tester.pump();
+
+    await tester.tap(find.text('Rescan library'));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text('Something went wrong while scanning your music library.'),
+      findsOneWidget,
+    );
+
+    // Not stuck busy: a second tap reaches the repository again.
+    await tester.tap(find.text('Rescan library'));
+    await tester.pumpAndSettle();
+    expect(libraryRepository.reindexCalls, 2);
   });
 }

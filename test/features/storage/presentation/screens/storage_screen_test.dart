@@ -24,6 +24,7 @@ class _FakeLibraryRepository implements LibraryRepository {
   final List<Track> tracks;
   int reindexCalls = 0;
   bool artworkCacheCleared = false;
+  bool reindexShouldThrow = false;
 
   @override
   Stream<List<Track>> watchTracks() => Stream.value(tracks);
@@ -37,6 +38,9 @@ class _FakeLibraryRepository implements LibraryRepository {
   @override
   Stream<IndexingProgress> reindex() {
     reindexCalls++;
+    if (reindexShouldThrow) {
+      return Stream.error(Exception('scan boom'));
+    }
     return const Stream.empty();
   }
 
@@ -174,6 +178,35 @@ void main() {
       ['/music/rock'],
     );
     expect(libraryRepository.reindexCalls, 1);
+  });
+
+  testWidgets('shows an error toast and clears busy when rescan fails', (
+    tester,
+  ) async {
+    final libraryRepository = _FakeLibraryRepository(
+      tracks: [_track('a', filePath: '/music/rock/a.mp3')],
+    )..reindexShouldThrow = true;
+    final excludedFolderRepository = FakeExcludedFolderRepository();
+    await tester.pumpWidget(
+      _app(
+        libraryRepository: libraryRepository,
+        excludedFolderRepository: excludedFolderRepository,
+      ),
+    );
+    await tester.pump();
+
+    await tester.tap(find.byType(AppSwitch));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text('Something went wrong while scanning your music library.'),
+      findsOneWidget,
+    );
+
+    // Not stuck busy: a second toggle reaches the repository again.
+    await tester.tap(find.byType(AppSwitch));
+    await tester.pumpAndSettle();
+    expect(libraryRepository.reindexCalls, 2);
   });
 
   testWidgets('clearing artwork cache calls it after confirming', (

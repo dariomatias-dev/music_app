@@ -217,6 +217,24 @@ abstract class AppLocalizations {
   /// **'Scanning your library…'**
   String get permissionScanning;
 
+  /// No description provided for @scanErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan failed'**
+  String get scanErrorTitle;
+
+  /// No description provided for @scanErrorMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong while scanning your music library.'**
+  String get scanErrorMessage;
+
+  /// No description provided for @retryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get retryLabel;
+
   /// No description provided for @backButtonSemanticLabel.
   ///
   /// In en, this message translates to:

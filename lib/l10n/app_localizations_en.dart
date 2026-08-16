@@ -70,6 +70,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get permissionScanning => 'Scanning your library…';
 
   @override
+  String get scanErrorTitle => 'Scan failed';
+
+  @override
+  String get scanErrorMessage =>
+      'Something went wrong while scanning your music library.';
+
+  @override
+  String get retryLabel => 'Try again';
+
+  @override
   String get backButtonSemanticLabel => 'Back';
 
   @override

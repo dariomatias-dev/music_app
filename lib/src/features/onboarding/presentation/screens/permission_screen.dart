@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -23,6 +25,7 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
   var _isScanning = false;
   var _scanned = 0;
   int? _scanTotal;
+  Object? _scanError;
 
   @override
   void initState() {
@@ -53,15 +56,28 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
       _isScanning = true;
       _scanned = 0;
       _scanTotal = null;
+      _scanError = null;
     });
 
-    await for (final progress
-        in ref.read(libraryRepositoryProvider).reindex()) {
+    try {
+      await for (final progress
+          in ref.read(libraryRepositoryProvider).reindex()) {
+        if (!mounted) return;
+        setState(() {
+          _scanned = progress.processed;
+          _scanTotal = progress.total;
+        });
+      }
+      // The scan touches device files and metadata parsing outside our
+      // control; any failure here should show a retry state, not crash.
+      // ignore: avoid_catches_without_on_clauses
+    } catch (error) {
       if (!mounted) return;
       setState(() {
-        _scanned = progress.processed;
-        _scanTotal = progress.total;
+        _isScanning = false;
+        _scanError = error;
       });
+      return;
     }
 
     if (!mounted) return;
@@ -84,6 +100,15 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
                     message: l10n.permissionScanning,
                   ),
                 ),
+              )
+            : _scanError != null
+            ? AppErrorState(
+                icon: Icons.error_outline,
+                title: l10n.scanErrorTitle,
+                message: l10n.scanErrorMessage,
+                retryLabel: l10n.retryLabel,
+                onRetry: () => unawaited(_startScanAndContinue()),
+                technicalDetails: _scanError.toString(),
               )
             : AppPermissionState(
                 icon: Icons.perm_media_outlined,

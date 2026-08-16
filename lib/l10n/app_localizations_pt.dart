@@ -70,6 +70,16 @@ class AppLocalizationsPt extends AppLocalizations {
   String get permissionScanning => 'Scanning your library…';
 
   @override
+  String get scanErrorTitle => 'Scan failed';
+
+  @override
+  String get scanErrorMessage =>
+      'Something went wrong while scanning your music library.';
+
+  @override
+  String get retryLabel => 'Try again';
+
+  @override
   String get backButtonSemanticLabel => 'Back';
 
   @override
@@ -699,6 +709,16 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get permissionScanning => 'Escaneando sua biblioteca…';
+
+  @override
+  String get scanErrorTitle => 'Falha ao escanear';
+
+  @override
+  String get scanErrorMessage =>
+      'Algo deu errado ao escanear sua biblioteca de música.';
+
+  @override
+  String get retryLabel => 'Tentar novamente';
 
   @override
   String get backButtonSemanticLabel => 'Voltar';

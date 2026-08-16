@@ -67,6 +67,15 @@ class AppLocalizationsZh extends AppLocalizations {
   String get permissionScanning => '正在扫描你的音乐库…';
 
   @override
+  String get scanErrorTitle => '扫描失败';
+
+  @override
+  String get scanErrorMessage => '扫描音乐库时出现问题。';
+
+  @override
+  String get retryLabel => '重试';
+
+  @override
   String get backButtonSemanticLabel => '返回';
 
   @override
