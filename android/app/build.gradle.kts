@@ -7,7 +7,11 @@ plugins {
 
 android {
     namespace = "br.com.dariomatias.music_app"
-    compileSdk = flutter.compileSdkVersion
+    // permission_handler_android compiles against SDK 37, higher than
+    // Flutter's own default; the Flutter-provided value is a floor, not a
+    // ceiling, so take whichever is higher instead of hardcoding a number
+    // that will need bumping again on the next Flutter upgrade.
+    compileSdk = maxOf(flutter.compileSdkVersion, 37)
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
