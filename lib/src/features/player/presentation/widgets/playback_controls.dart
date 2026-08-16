@@ -41,9 +41,15 @@ class PlaybackControls extends ConsumerWidget {
         ? Icons.repeat_one_rounded
         : Icons.repeat_rounded;
     final repeatActive = loopMode != AudioLoopMode.off;
+    // The five controls need ~262px; anything narrower than that plus the
+    // usual xxl margins would clip on small phones (e.g. a 320px-wide
+    // screen), so fall back to a tighter margin there.
+    final horizontalPadding = MediaQuery.sizeOf(context).width < 360
+        ? AppSpacing.lg
+        : AppSpacing.xxl;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxl),
+      padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

@@ -40,6 +40,24 @@ Future<void> _pumpControls(
 }
 
 void main() {
+  testWidgets('does not overflow on a small phone width', (tester) async {
+    await tester.binding.setSurfaceSize(const Size(320, 568));
+    tester.view.physicalSize = const Size(320, 568);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    final service = FakeAudioPlayerService();
+    final handler = MusicAudioHandler(service);
+    addTearDown(handler.dispose);
+
+    await _pumpControls(tester, service, handler);
+    await tester.pump();
+
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('play/pause toggles the player', (tester) async {
     final service = FakeAudioPlayerService();
     final handler = MusicAudioHandler(service);

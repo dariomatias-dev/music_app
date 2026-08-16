@@ -167,47 +167,59 @@ class _OnboardingPage extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 32),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(AppRadius.extraLarge),
-              boxShadow: [
-                BoxShadow(
-                  color: colors.shadow,
-                  blurRadius: 40,
-                  spreadRadius: -8,
-                  offset: const Offset(0, 18),
+      // On short screens the artwork, title and body together can exceed
+      // the space PageView gives this page; scroll instead of overflowing,
+      // while still centering when everything already fits.
+      child: LayoutBuilder(
+        builder: (context, constraints) => SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: constraints.maxHeight),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(
+                      AppRadius.extraLarge,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: colors.shadow,
+                        blurRadius: 40,
+                        spreadRadius: -8,
+                        offset: const Offset(0, 18),
+                      ),
+                    ],
+                  ),
+                  child: AppArtwork(
+                    seed: page.artworkSeed,
+                    size: artworkSize,
+                    radius: AppRadius.extraLarge,
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.xxl),
+                Text(
+                  page.title(l10n),
+                  textAlign: TextAlign.center,
+                  style: AppTypography.display.copyWith(
+                    fontSize: 25,
+                    color: colors.textPrimary,
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.smMd),
+                Text(
+                  page.body(l10n),
+                  textAlign: TextAlign.center,
+                  style: AppTypography.rowSubtitle.copyWith(
+                    fontSize: 14,
+                    height: 1.55,
+                    color: colors.textSecondary,
+                  ),
                 ),
               ],
             ),
-            child: AppArtwork(
-              seed: page.artworkSeed,
-              size: artworkSize,
-              radius: AppRadius.extraLarge,
-            ),
           ),
-          const SizedBox(height: AppSpacing.xxl),
-          Text(
-            page.title(l10n),
-            textAlign: TextAlign.center,
-            style: AppTypography.display.copyWith(
-              fontSize: 25,
-              color: colors.textPrimary,
-            ),
-          ),
-          const SizedBox(height: AppSpacing.smMd),
-          Text(
-            page.body(l10n),
-            textAlign: TextAlign.center,
-            style: AppTypography.rowSubtitle.copyWith(
-              fontSize: 14,
-              height: 1.55,
-              color: colors.textSecondary,
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
