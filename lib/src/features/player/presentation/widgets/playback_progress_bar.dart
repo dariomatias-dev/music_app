@@ -33,10 +33,15 @@ class _PlaybackProgressBarState extends ConsumerState<PlaybackProgressBar> {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    final playbackState = ref.watch(playbackViewModelProvider).value;
-    final position = playbackState?.position ?? Duration.zero;
-    final playing = playbackState?.playing ?? false;
-    final duration = playbackState?.duration ?? Duration.zero;
+    final (position, playing, duration) = ref.watch(
+      playbackViewModelProvider.select(
+        (state) => (
+          state.value?.position ?? Duration.zero,
+          state.value?.playing ?? false,
+          state.value?.duration ?? Duration.zero,
+        ),
+      ),
+    );
     final progress = duration > Duration.zero
         ? (position.inMilliseconds / duration.inMilliseconds).clamp(0.0, 1.0)
         : 0.0;

@@ -33,10 +33,17 @@ class PlaybackControls extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final colors = context.colors;
-    final state = ref.watch(playbackViewModelProvider).value;
-    final playing = state?.playing ?? false;
-    final shuffleEnabled = state?.shuffleModeEnabled ?? false;
-    final loopMode = state?.loopMode ?? AudioLoopMode.off;
+    // Selects only the fields this row actually shows, so the frequent
+    // position ticks during playback don't rebuild it.
+    final (playing, shuffleEnabled, loopMode) = ref.watch(
+      playbackViewModelProvider.select(
+        (state) => (
+          state.value?.playing ?? false,
+          state.value?.shuffleModeEnabled ?? false,
+          state.value?.loopMode ?? AudioLoopMode.off,
+        ),
+      ),
+    );
     final repeatIcon = loopMode == AudioLoopMode.track
         ? Icons.repeat_one_rounded
         : Icons.repeat_rounded;

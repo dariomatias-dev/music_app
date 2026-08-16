@@ -39,9 +39,15 @@ class MiniPlayer extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final queue = ref.watch(queueViewModelProvider);
-    final playback = ref.watch(playbackViewModelProvider).value;
-
-    final currentIndex = playback?.currentIndex;
+    // Selects only currentIndex and playing; position/duration are watched
+    // separately, inside _MiniPlayerPlayPauseButton, so the frequent
+    // position ticks during playback don't rebuild the artwork, label and
+    // gesture handlers here too.
+    final (currentIndex, playing) = ref.watch(
+      playbackViewModelProvider.select(
+        (state) => (state.value?.currentIndex, state.value?.playing ?? false),
+      ),
+    );
     final currentItem = currentIndex == null || currentIndex >= queue.length
         ? null
         : queue[currentIndex];
@@ -63,41 +69,22 @@ class MiniPlayer extends ConsumerWidget {
           : Theme(
               key: const ValueKey('mini-player-visible'),
               data: invertedTheme,
-              child: _MiniPlayerCard(
-                item: currentItem,
-                playing: playback?.playing ?? false,
-                position: playback?.position ?? Duration.zero,
-                duration: playback?.duration ?? currentItem.duration,
-              ),
+              child: _MiniPlayerCard(item: currentItem, playing: playing),
             ),
     );
   }
 }
 
 class _MiniPlayerCard extends ConsumerWidget {
-  const _MiniPlayerCard({
-    required this.item,
-    required this.playing,
-    required this.position,
-    required this.duration,
-  });
+  const _MiniPlayerCard({required this.item, required this.playing});
 
   final QueueMediaItem item;
   final bool playing;
-  final Duration position;
-  final Duration? duration;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final colors = context.colors;
-    final currentDuration = duration;
-    final progress = currentDuration != null && currentDuration > Duration.zero
-        ? (position.inMilliseconds / currentDuration.inMilliseconds).clamp(
-            0.0,
-            1.0,
-          )
-        : 0.0;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
@@ -165,23 +152,55 @@ class _MiniPlayerCard extends ConsumerWidget {
                   child: AppPlaybackIndicator(playing: playing),
                 ),
                 const SizedBox(width: 14),
-                AppPlayPauseButton(
-                  isPlaying: playing,
-                  progress: progress,
-                  size: 44,
-                  playSemanticLabel: l10n.playButtonSemanticLabel,
-                  pauseSemanticLabel: l10n.pauseButtonSemanticLabel,
-                  onTap: () {
-                    final service = ref.read(audioPlayerServiceProvider);
-                    unawaited(playing ? service.pause() : service.play());
-                  },
-                ),
+                _MiniPlayerPlayPauseButton(item: item, playing: playing),
                 const SizedBox(width: 6),
               ],
             ),
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Isolates the progress ring's position/duration watch from the rest of
+/// [_MiniPlayerCard], so the frequent position ticks during playback only
+/// rebuild this small button, not the artwork, label and gesture handlers.
+class _MiniPlayerPlayPauseButton extends ConsumerWidget {
+  const _MiniPlayerPlayPauseButton({required this.item, required this.playing});
+
+  final QueueMediaItem item;
+  final bool playing;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final (position, duration) = ref.watch(
+      playbackViewModelProvider.select(
+        (state) => (
+          state.value?.position ?? Duration.zero,
+          state.value?.duration ?? item.duration,
+        ),
+      ),
+    );
+    final currentDuration = duration;
+    final progress = currentDuration != null && currentDuration > Duration.zero
+        ? (position.inMilliseconds / currentDuration.inMilliseconds).clamp(
+            0.0,
+            1.0,
+          )
+        : 0.0;
+
+    return AppPlayPauseButton(
+      isPlaying: playing,
+      progress: progress,
+      size: 44,
+      playSemanticLabel: l10n.playButtonSemanticLabel,
+      pauseSemanticLabel: l10n.pauseButtonSemanticLabel,
+      onTap: () {
+        final service = ref.read(audioPlayerServiceProvider);
+        unawaited(playing ? service.pause() : service.play());
+      },
     );
   }
 }

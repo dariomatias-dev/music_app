@@ -1,10 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:music_app/src/core/audio/audio_player_service.dart';
 import 'package:music_app/src/features/history/data/providers/history_data_providers.dart';
 import 'package:music_app/src/features/history/domain/repositories/play_history_repository.dart';
-import 'package:music_app/src/features/player/presentation/view_models/playback_state.dart';
 import 'package:music_app/src/features/player/presentation/view_models/playback_view_model.dart';
 import 'package:music_app/src/features/queue/presentation/view_models/queue_view_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -36,18 +36,37 @@ class PlaybackHistoryRecorder extends _$PlaybackHistoryRecorder {
   @override
   void build() {
     ref
-      ..listen(playbackViewModelProvider, (previous, next) {
-        final state = next.value;
-        if (state != null) _onStateChanged(state);
-      })
+      // Selects only currentIndex, playing and processingState: the
+      // frequent position ticks during playback don't touch any of these,
+      // so this stays idle except on an actual track/play-state change.
+      ..listen(
+        playbackViewModelProvider.select(
+          (state) => (
+            state.value?.currentIndex,
+            state.value?.playing ?? false,
+            state.value?.processingState,
+          ),
+        ),
+        (previous, next) => _onStateChanged(
+          currentIndex: next.$1,
+          playing: next.$2,
+          processingState: next.$3,
+        ),
+      )
       ..onDispose(() => _finalize(completed: false));
   }
 
-  void _onStateChanged(PlaybackState state) {
+  void _onStateChanged({
+    required int? currentIndex,
+    required bool playing,
+    required AudioProcessingState? processingState,
+  }) {
     final queue = ref.read(queueViewModelProvider);
-    final index = state.currentIndex;
-    final currentId = (index != null && index >= 0 && index < queue.length)
-        ? queue[index].id
+    final currentId =
+        (currentIndex != null &&
+            currentIndex >= 0 &&
+            currentIndex < queue.length)
+        ? queue[currentIndex].id
         : null;
 
     if (currentId != _trackId) {
@@ -58,14 +77,14 @@ class PlaybackHistoryRecorder extends _$PlaybackHistoryRecorder {
 
     if (_trackId == null) return;
 
-    if (state.playing) {
+    if (playing) {
       _accumulatingSince ??= clock();
     } else {
       _accumulate();
       _accumulatingSince = null;
     }
 
-    if (state.processingState == AudioProcessingState.completed) {
+    if (processingState == AudioProcessingState.completed) {
       _finalize(completed: true);
       _trackId = null;
     }

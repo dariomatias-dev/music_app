@@ -31,8 +31,13 @@ class _QueueScreenState extends ConsumerState<QueueScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final queue = ref.watch(queueViewModelProvider);
-    final playback = ref.watch(playbackViewModelProvider).value;
-    final currentIndex = playback?.currentIndex;
+    // Selects only currentIndex and playing, so the frequent position
+    // ticks during playback don't rebuild every row in the list.
+    final (currentIndex, playing) = ref.watch(
+      playbackViewModelProvider.select(
+        (state) => (state.value?.currentIndex, state.value?.playing ?? false),
+      ),
+    );
 
     if (queue.isEmpty && _editing) _editing = false;
 
@@ -76,7 +81,7 @@ class _QueueScreenState extends ConsumerState<QueueScreen> {
                             item: queue[index],
                             index: index,
                             current: index == currentIndex,
-                            playing: playback?.playing ?? false,
+                            playing: playing,
                             editing: true,
                           ),
                         )
@@ -93,7 +98,7 @@ class _QueueScreenState extends ConsumerState<QueueScreen> {
                             item: queue[index],
                             index: index,
                             current: index == currentIndex,
-                            playing: playback?.playing ?? false,
+                            playing: playing,
                             editing: false,
                           ),
                         ),

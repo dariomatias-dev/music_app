@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:music_app/src/core/audio/audio_providers.dart';
-import 'package:music_app/src/features/player/presentation/view_models/playback_state.dart';
 import 'package:music_app/src/features/player/presentation/view_models/playback_view_model.dart';
 import 'package:music_app/src/features/settings/presentation/view_models/playback_preferences_view_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -36,16 +36,24 @@ class PlaybackTransitionEffects extends _$PlaybackTransitionEffects {
 
   @override
   void build() {
-    ref.listen(playbackViewModelProvider, (previous, next) {
-      final state = next.value;
-      if (state != null) _onStateChanged(state);
-    });
+    // Selects only currentIndex and playing: the frequent position ticks
+    // during playback don't touch either, so this stays idle except on an
+    // actual track change.
+    ref.listen(
+      playbackViewModelProvider.select(
+        (state) => (state.value?.currentIndex, state.value?.playing ?? false),
+      ),
+      (previous, next) => _onStateChanged(
+        currentIndex: next.$1,
+        playing: next.$2,
+      ),
+    );
   }
 
-  void _onStateChanged(PlaybackState state) {
-    final changed = state.currentIndex != _currentIndex;
-    _currentIndex = state.currentIndex;
-    if (!changed || state.currentIndex == null || !state.playing) return;
+  void _onStateChanged({required int? currentIndex, required bool playing}) {
+    final changed = currentIndex != _currentIndex;
+    _currentIndex = currentIndex;
+    if (!changed || currentIndex == null || !playing) return;
 
     final preferences = ref.read(playbackPreferencesViewModelProvider).value;
     if (preferences == null) return;

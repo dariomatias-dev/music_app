@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:music_app/src/core/audio/audio_player_service.dart';
 import 'package:music_app/src/core/audio/audio_providers.dart';
 import 'package:music_app/src/core/audio/queue_media_item.dart';
@@ -26,11 +27,13 @@ part 'queue_view_model.g.dart';
 class QueueViewModel extends _$QueueViewModel {
   @override
   List<QueueMediaItem> build() {
-    ref.listen(playbackViewModelProvider, (previous, next) {
-      final current = next.value;
+    final isPlayingProvider = playbackViewModelProvider.select(
+      (state) => state.value?.playing,
+    );
+    ref.listen(isPlayingProvider, (previous, current) {
       if (current == null) return;
-      final wasPlaying = previous?.value?.playing ?? false;
-      if (wasPlaying && !current.playing) unawaited(saveSession());
+      final wasPlaying = previous ?? false;
+      if (wasPlaying && !current) unawaited(saveSession());
     });
     return const [];
   }
