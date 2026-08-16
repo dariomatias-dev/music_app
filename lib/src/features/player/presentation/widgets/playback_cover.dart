@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:app_ui/app_ui.dart';
@@ -30,9 +31,33 @@ class _PlaybackCoverState extends State<PlaybackCover>
   late final AnimationController _breath = AnimationController(
     vsync: this,
     duration: const Duration(milliseconds: 4200),
-  )..repeat(reverse: true);
+  );
 
   var _dragX = 0.0;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _syncBreath();
+  }
+
+  @override
+  void didUpdateWidget(PlaybackCover oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _syncBreath();
+  }
+
+  // Only ticks while the cover is actually breathing: paused playback and
+  // reduced motion both mask the visual effect in build() already, so
+  // there's no point spending a frame callback on it every 4.2s cycle.
+  void _syncBreath() {
+    final reduceMotion = MediaQuery.of(context).disableAnimations;
+    if (widget.playing && !reduceMotion) {
+      if (!_breath.isAnimating) unawaited(_breath.repeat(reverse: true));
+    } else if (_breath.isAnimating) {
+      _breath.stop();
+    }
+  }
 
   @override
   void dispose() {
