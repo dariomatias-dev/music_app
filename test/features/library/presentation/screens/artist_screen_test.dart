@@ -69,6 +69,13 @@ Future<ProviderContainer> _pumpArtistScreen(
   final handler = MusicAudioHandler(service);
   addTearDown(handler.dispose);
 
+  // The default 800x600 test surface leaves the last row a few pixels
+  // short with real fonts loaded (vs. the fallback test font).
+  tester.view.physicalSize = const Size(800, 900);
+  tester.view.devicePixelRatio = 1;
+  addTearDown(tester.view.resetPhysicalSize);
+  addTearDown(tester.view.resetDevicePixelRatio);
+
   await tester.pumpWidget(
     ProviderScope(
       overrides: [
