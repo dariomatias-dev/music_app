@@ -14,14 +14,14 @@ import 'package:music_app/src/core/audio/queue_media_item.dart';
 class MusicAudioHandler extends audio_service.BaseAudioHandler {
   /// Creates a [MusicAudioHandler] wrapping [_playerService].
   MusicAudioHandler(this._playerService) {
-    _subscription = _playerService.snapshotStream.listen(
-      _broadcastPlaybackState,
-    );
+    _subscription = _playerService.snapshotStream.listen(_onSnapshot);
     _broadcastPlaybackState(_playerService.snapshot);
   }
 
   final AudioPlayerService _playerService;
   late final StreamSubscription<AudioPlaybackSnapshot> _subscription;
+  AudioPlaybackSnapshot? _lastBroadcastSnapshot;
+  DateTime? _lastBroadcastTime;
 
   /// Replaces the queue with [items] and loads the item at [initialIndex].
   Future<void> setQueue(
@@ -109,7 +109,42 @@ class MusicAudioHandler extends audio_service.BaseAudioHandler {
     await _playerService.dispose();
   }
 
+  void _onSnapshot(AudioPlaybackSnapshot snapshot) {
+    if (_isSignificant(snapshot)) _broadcastPlaybackState(snapshot);
+  }
+
+  /// Whether [next] is worth pushing to the OS media session.
+  ///
+  /// The engine reports a new position roughly every 200ms while playing;
+  /// pushing every one of those across the platform channel costs battery
+  /// for no benefit, since the OS already extrapolates the displayed
+  /// position from `updatePosition`/`updateTime`/`speed` between updates.
+  /// A real seek is still caught: it moves position further than normal
+  /// playback progression could explain since the last broadcast.
+  bool _isSignificant(AudioPlaybackSnapshot next) {
+    final prev = _lastBroadcastSnapshot;
+    final prevTime = _lastBroadcastTime;
+    if (prev == null || prevTime == null) return true;
+    if (prev.playing != next.playing ||
+        prev.processingState != next.processingState ||
+        prev.speed != next.speed ||
+        prev.currentIndex != next.currentIndex ||
+        prev.queueLength != next.queueLength ||
+        prev.loopMode != next.loopMode ||
+        prev.shuffleModeEnabled != next.shuffleModeEnabled ||
+        prev.duration != next.duration) {
+      return true;
+    }
+    final elapsed = DateTime.now().difference(prevTime);
+    final expected =
+        prev.position + (prev.playing ? elapsed * prev.speed : Duration.zero);
+    final drift = next.position - expected;
+    return drift.abs() > const Duration(seconds: 2);
+  }
+
   void _broadcastPlaybackState(AudioPlaybackSnapshot snapshot) {
+    _lastBroadcastSnapshot = snapshot;
+    _lastBroadcastTime = DateTime.now();
     playbackState.add(
       playbackState.value.copyWith(
         controls: [

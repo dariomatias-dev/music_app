@@ -89,4 +89,34 @@ void main() {
     );
     expect(handler.playbackState.value.queueIndex, 0);
   });
+
+  test('does not rebroadcast to the OS on ordinary position ticks', () async {
+    await handler.setQueue(const [
+      QueueMediaItem(id: 'track-1', filePath: '/music/a.mp3', title: 'A'),
+    ]);
+    await handler.play();
+    final positionAfterPlay = handler.playbackState.value.updatePosition;
+
+    // Ordinary ticks, matching the engine's real ~200ms granularity.
+    await playerService.seek(const Duration(milliseconds: 200));
+    await playerService.seek(const Duration(milliseconds: 400));
+    await playerService.seek(const Duration(milliseconds: 600));
+
+    expect(handler.playbackState.value.updatePosition, positionAfterPlay);
+    expect(playerService.snapshot.position, const Duration(milliseconds: 600));
+  });
+
+  test('rebroadcasts to the OS on a real seek', () async {
+    await handler.setQueue(const [
+      QueueMediaItem(id: 'track-1', filePath: '/music/a.mp3', title: 'A'),
+    ]);
+    await handler.play();
+
+    await playerService.seek(const Duration(seconds: 30));
+
+    expect(
+      handler.playbackState.value.updatePosition,
+      const Duration(seconds: 30),
+    );
+  });
 }
