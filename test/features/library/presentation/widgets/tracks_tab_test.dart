@@ -193,4 +193,20 @@ void main() {
 
     expect(find.byType(AppPlaybackIndicator), findsOneWidget);
   });
+
+  testWidgets('the sort button meets the minimum touch target size', (
+    tester,
+  ) async {
+    await _pumpTracksTab(tester, [_track(id: 'track-1', title: 'Apple')]);
+
+    final size = tester.getSize(
+      find.ancestor(
+        of: find.byIcon(Icons.swap_vert_rounded),
+        matching: find.byType(ConstrainedBox),
+      ),
+    );
+
+    expect(size.width, greaterThanOrEqualTo(AppSizes.minTouchTarget));
+    expect(size.height, greaterThanOrEqualTo(AppSizes.minTouchTarget));
+  });
 }

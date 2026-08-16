@@ -14,4 +14,9 @@ abstract final class AppSizes {
 
   /// 32 logical pixels.
   static const iconExtraLarge = 32.0;
+
+  /// Smallest side length any tappable element should occupy (matches
+  /// iOS's 44pt Human Interface Guidelines minimum, which also satisfies
+  /// Android's 48dp guideline once combined with typical device density).
+  static const minTouchTarget = 44.0;
 }

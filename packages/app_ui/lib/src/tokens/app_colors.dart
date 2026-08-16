@@ -26,24 +26,34 @@ class AppColors {
   });
 
   /// Light theme palette.
+  ///
+  /// [textSecondary], [textTertiary] and [warning] are tuned to clear a
+  /// 4.5:1 contrast ratio (WCAG AA for normal text) against every
+  /// background token ([background], [surface] and [card]) — the surface
+  /// is the binding constraint, being the darkest of the three.
   static const light = AppColors(
     background: Color(0xFFFFFFFF),
     surface: Color(0xFFF2F2F2),
     surfaceAlt: Color(0xFFE8E8E8),
     card: Color(0xFFF7F7F7),
     textPrimary: Color(0xFF0A0A0A),
-    textSecondary: Color(0xFF757575),
-    textTertiary: Color(0xFFA3A3A3),
+    textSecondary: Color(0xFF5B5B5B),
+    textTertiary: Color(0xFF6E6E6E),
     accent: Color(0xFF0A0A0A),
     onAccent: Color(0xFFFFFFFF),
     divider: Color(0xFFEAEAEA),
     shadow: Color(0x14000000),
     error: Color(0xFFB3261E),
     success: Color(0xFF2E7D32),
-    warning: Color(0xFFB26A00),
+    warning: Color(0xFFA05F00),
   );
 
   /// Dark theme palette.
+  ///
+  /// [textTertiary] is tuned to clear a 4.5:1 contrast ratio (WCAG AA for
+  /// normal text) against every background token ([background], [surface]
+  /// and [card]) — the surface is the binding constraint, being the
+  /// lightest of the three.
   static const dark = AppColors(
     background: Color(0xFF0A0A0A),
     surface: Color(0xFF171717),
@@ -51,7 +61,7 @@ class AppColors {
     card: Color(0xFF161616),
     textPrimary: Color(0xFFF5F5F5),
     textSecondary: Color(0xFF9C9C9C),
-    textTertiary: Color(0xFF6B6B6B),
+    textTertiary: Color(0xFF808080),
     accent: Color(0xFFF5F5F5),
     onAccent: Color(0xFF0A0A0A),
     divider: Color(0xFF242424),

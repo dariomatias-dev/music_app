@@ -49,27 +49,34 @@ class TracksTab extends ConsumerWidget {
               Pressable(
                 scale: 0.95,
                 onTap: () => unawaited(showTrackSortSheet(context, ref)),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.xs,
-                    vertical: AppSpacing.xxs,
+                child: ConstrainedBox(
+                  // Keeps the tappable area at least the platform minimum,
+                  // even though the visible icon and label are compact.
+                  constraints: const BoxConstraints(
+                    minWidth: AppSizes.minTouchTarget,
+                    minHeight: AppSizes.minTouchTarget,
                   ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.swap_vert_rounded,
-                        size: 17,
-                        color: colors.textSecondary,
-                      ),
-                      const SizedBox(width: AppSpacing.xxs),
-                      Text(
-                        _sortLabel(l10n, sort),
-                        style: AppTypography.meta.copyWith(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.xs,
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.swap_vert_rounded,
+                          size: 17,
                           color: colors.textSecondary,
                         ),
-                      ),
-                    ],
+                        const SizedBox(width: AppSpacing.xxs),
+                        Text(
+                          _sortLabel(l10n, sort),
+                          style: AppTypography.meta.copyWith(
+                            color: colors.textSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),

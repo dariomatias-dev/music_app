@@ -1,7 +1,9 @@
 import 'dart:async';
 
+import 'package:app_ui/src/theme/app_theme_extensions.dart';
 import 'package:app_ui/src/tokens/app_curves.dart';
 import 'package:app_ui/src/tokens/app_durations.dart';
+import 'package:app_ui/src/tokens/app_elevations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -46,34 +48,66 @@ class Pressable extends StatefulWidget {
 
 class _PressableState extends State<Pressable> {
   bool _isPressed = false;
+  bool _isFocused = false;
 
   void _setPressed({required bool value}) {
     setState(() => _isPressed = value);
   }
 
+  void _activate() {
+    if (widget.haptic && Pressable.hapticsEnabled) {
+      unawaited(HapticFeedback.lightImpact());
+    }
+    widget.onTap!();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTapDown: widget.onTap == null ? null : (_) => _setPressed(value: true),
-      onTapUp: widget.onTap == null ? null : (_) => _setPressed(value: false),
-      onTapCancel: widget.onTap == null
-          ? null
-          : () => _setPressed(value: false),
-      onTap: widget.onTap == null
-          ? null
-          : () {
-              if (widget.haptic && Pressable.hapticsEnabled) {
-                unawaited(HapticFeedback.lightImpact());
-              }
-              widget.onTap!();
-            },
-      onLongPress: widget.onLongPress,
-      child: AnimatedScale(
-        scale: _isPressed ? widget.scale : 1,
-        duration: AppDurations.resolve(context, AppDurations.fast),
-        curve: AppCurves.emphasized,
-        child: widget.child,
+    final colors = context.colors;
+
+    return FocusableActionDetector(
+      enabled: widget.onTap != null,
+      onShowFocusHighlight: (focused) => setState(() => _isFocused = focused),
+      actions: {
+        ActivateIntent: CallbackAction<ActivateIntent>(
+          onInvoke: (_) {
+            _activate();
+            return null;
+          },
+        ),
+      },
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTapDown: widget.onTap == null
+            ? null
+            : (_) => _setPressed(value: true),
+        onTapUp: widget.onTap == null ? null : (_) => _setPressed(value: false),
+        onTapCancel: widget.onTap == null
+            ? null
+            : () => _setPressed(value: false),
+        onTap: widget.onTap == null ? null : _activate,
+        onLongPress: widget.onLongPress,
+        child: AnimatedContainer(
+          duration: AppDurations.resolve(context, AppDurations.fast),
+          curve: AppCurves.emphasized,
+          decoration: BoxDecoration(
+            boxShadow: _isFocused
+                ? [
+                    BoxShadow(
+                      color: colors.accent.withValues(alpha: 0.55),
+                      blurRadius: 10,
+                      spreadRadius: 1,
+                    ),
+                  ]
+                : AppElevations.none,
+          ),
+          child: AnimatedScale(
+            scale: _isPressed ? widget.scale : 1,
+            duration: AppDurations.resolve(context, AppDurations.fast),
+            curve: AppCurves.emphasized,
+            child: widget.child,
+          ),
+        ),
       ),
     );
   }
