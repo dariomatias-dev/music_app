@@ -66,7 +66,7 @@ final class PlaybackTransitionEffectsProvider
 }
 
 String _$playbackTransitionEffectsHash() =>
-    r'5449590591486c2fdccdff38d0f8daea0a9bb109';
+    r'2468e16b0b48f8875c1648e946302b387705c43a';
 
 /// Applies the user's gapless/crossfade preference whenever the current
 /// queue item changes: either a brief pause (gapless disabled) or a

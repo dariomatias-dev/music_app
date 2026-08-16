@@ -12,7 +12,9 @@ part of 'playback_preferences_view_model.dart';
 ///
 /// Kept alive (rather than the default per-widget lifetime) since it's
 /// read from outside any UI subscription, when a new queue starts and on
-/// every track transition.
+/// every track transition. Also mirrors [PlaybackPreferences.hapticsEnabled]
+/// onto `Pressable.hapticsEnabled`, since the design system has no access
+/// to app-level preferences of its own.
 
 @ProviderFor(PlaybackPreferencesViewModel)
 const playbackPreferencesViewModelProvider =
@@ -22,7 +24,9 @@ const playbackPreferencesViewModelProvider =
 ///
 /// Kept alive (rather than the default per-widget lifetime) since it's
 /// read from outside any UI subscription, when a new queue starts and on
-/// every track transition.
+/// every track transition. Also mirrors [PlaybackPreferences.hapticsEnabled]
+/// onto `Pressable.hapticsEnabled`, since the design system has no access
+/// to app-level preferences of its own.
 final class PlaybackPreferencesViewModelProvider
     extends
         $AsyncNotifierProvider<
@@ -33,7 +37,9 @@ final class PlaybackPreferencesViewModelProvider
   ///
   /// Kept alive (rather than the default per-widget lifetime) since it's
   /// read from outside any UI subscription, when a new queue starts and on
-  /// every track transition.
+  /// every track transition. Also mirrors [PlaybackPreferences.hapticsEnabled]
+  /// onto `Pressable.hapticsEnabled`, since the design system has no access
+  /// to app-level preferences of its own.
   const PlaybackPreferencesViewModelProvider._()
     : super(
         from: null,
@@ -54,13 +60,15 @@ final class PlaybackPreferencesViewModelProvider
 }
 
 String _$playbackPreferencesViewModelHash() =>
-    r'2c90b16a26461071dbf80901291c6457877ff5e9';
+    r'637a6ade5461a4604015d8b84e1ccef5cb823a09';
 
 /// Manages the user's playback preferences, persisting each choice.
 ///
 /// Kept alive (rather than the default per-widget lifetime) since it's
 /// read from outside any UI subscription, when a new queue starts and on
-/// every track transition.
+/// every track transition. Also mirrors [PlaybackPreferences.hapticsEnabled]
+/// onto `Pressable.hapticsEnabled`, since the design system has no access
+/// to app-level preferences of its own.
 
 abstract class _$PlaybackPreferencesViewModel
     extends $AsyncNotifier<PlaybackPreferences> {

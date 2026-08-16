@@ -60,7 +60,7 @@ final class PlaybackHistoryRecorderProvider
 }
 
 String _$playbackHistoryRecorderHash() =>
-    r'a2e4cc135c7da6c5b1a2f91e2c5a5aa87409a00b';
+    r'b66a3968eca1c1e4f79de10277536c3a3cddbc72';
 
 /// Watches playback and records how long each queued track is actually
 /// played, so [PlayHistoryRepository] backs both recently-played and future
