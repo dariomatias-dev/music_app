@@ -33,6 +33,7 @@ class MusicApp extends ConsumerWidget {
     final router = ref.watch(appRouterProvider);
 
     return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
       theme: theme,
       locale: locale,
       localizationsDelegates: AppLocalizations.localizationsDelegates,

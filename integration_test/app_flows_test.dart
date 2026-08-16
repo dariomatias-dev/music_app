@@ -80,6 +80,9 @@ Future<KeyValueStorage> _onboardedStorage() async {
     await SharedPreferences.getInstance(),
   );
   await storage.setBool(PreferenceKeys.onboardingCompleted, value: true);
+  // Pin the locale so button/tab labels match the English strings this
+  // suite looks up, regardless of the device's own system locale.
+  await storage.setString(PreferenceKeys.locale, 'en');
   return storage;
 }
 
@@ -92,6 +95,9 @@ void main() {
     final storage = SharedPreferencesStorage(
       await SharedPreferences.getInstance(),
     );
+    // Pin the locale so button/tab labels match the English strings this
+    // suite looks up, regardless of the device's own system locale.
+    await storage.setString(PreferenceKeys.locale, 'en');
     final service = FakeAudioPlayerService();
     final handler = MusicAudioHandler(service);
     addTearDown(handler.dispose);
@@ -114,13 +120,11 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    // Splash -> onboarding: skip the slides straight to the permission ask.
+    // Splash -> onboarding: skip the slides straight to the permission
+    // check, which the fake service auto-grants and moves past on its own
+    // (an empty scan, then straight to Home).
     final l10n = await AppLocalizations.delegate.load(const Locale('en'));
     await tester.tap(find.text(l10n.onboardingSkip));
-    await tester.pumpAndSettle();
-
-    // Permission -> granted -> empty scan -> Home.
-    await tester.tap(find.text(l10n.permissionGrant));
     await tester.pumpAndSettle();
 
     expect(find.text(l10n.homeTabLabel), findsWidgets);
@@ -189,6 +193,9 @@ void main() {
           audioPlayerServiceProvider.overrideWithValue(service),
           audioHandlerProvider.overrideWithValue(handler),
           appDatabaseProvider.overrideWithValue(database),
+          mediaPermissionServiceProvider.overrideWithValue(
+            _FakeGrantedPermissionService(),
+          ),
         ],
         child: const MusicApp(),
       ),
