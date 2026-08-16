@@ -105,6 +105,12 @@ class AppLocalizationsPt extends AppLocalizations {
   String get nextTrackButtonSemanticLabel => 'Next track';
 
   @override
+  String get playButtonSemanticLabel => 'Play';
+
+  @override
+  String get pauseButtonSemanticLabel => 'Pause';
+
+  @override
   String get repeatButtonSemanticLabel => 'Repeat';
 
   @override
@@ -744,6 +750,12 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get nextTrackButtonSemanticLabel => 'Próxima faixa';
+
+  @override
+  String get playButtonSemanticLabel => 'Reproduzir';
+
+  @override
+  String get pauseButtonSemanticLabel => 'Pausar';
 
   @override
   String get repeatButtonSemanticLabel => 'Repetir';

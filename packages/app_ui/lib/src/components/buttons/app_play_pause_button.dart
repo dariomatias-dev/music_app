@@ -14,6 +14,8 @@ class AppPlayPauseButton extends StatefulWidget {
   const AppPlayPauseButton({
     required this.isPlaying,
     required this.onTap,
+    required this.playSemanticLabel,
+    required this.pauseSemanticLabel,
     this.progress,
     this.size = 64,
     this.filled = true,
@@ -26,6 +28,12 @@ class AppPlayPauseButton extends StatefulWidget {
 
   /// Called when tapped.
   final VoidCallback onTap;
+
+  /// Spoken by screen readers when the button will start playback.
+  final String playSemanticLabel;
+
+  /// Spoken by screen readers when the button will pause playback.
+  final String pauseSemanticLabel;
 
   /// Playback progress, from 0 to 1. When `null`, no ring is drawn.
   final double? progress;
@@ -135,7 +143,9 @@ class _AppPlayPauseButtonState extends State<AppPlayPauseButton>
                 child: Center(
                   child: Semantics(
                     button: true,
-                    label: widget.isPlaying ? 'Pause' : 'Play',
+                    label: widget.isPlaying
+                        ? widget.pauseSemanticLabel
+                        : widget.playSemanticLabel,
                     child: AnimatedIcon(
                       icon: AnimatedIcons.play_pause,
                       progress: _icon,

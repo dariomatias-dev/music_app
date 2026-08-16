@@ -69,6 +69,8 @@ class PlaybackControls extends ConsumerWidget {
           AppPlayPauseButton(
             isPlaying: playing,
             size: 66,
+            playSemanticLabel: l10n.playButtonSemanticLabel,
+            pauseSemanticLabel: l10n.pauseButtonSemanticLabel,
             onTap: () {
               final service = ref.read(audioPlayerServiceProvider);
               unawaited(playing ? service.pause() : service.play());

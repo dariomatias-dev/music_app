@@ -30,6 +30,8 @@
   "shuffleButtonSemanticLabel": "随机播放",
   "previousTrackButtonSemanticLabel": "上一首",
   "nextTrackButtonSemanticLabel": "下一首",
+  "playButtonSemanticLabel": "播放",
+  "pauseButtonSemanticLabel": "暂停",
   "repeatButtonSemanticLabel": "循环播放",
   "moreOptionsButtonSemanticLabel": "更多选项",
   "viewQueueLabel": "队列",

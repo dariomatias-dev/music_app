@@ -10,10 +10,32 @@ void main() {
       mainAxisSize: MainAxisSize.min,
       spacing: 16,
       children: [
-        AppPlayPauseButton(isPlaying: false, onTap: () {}),
-        AppPlayPauseButton(isPlaying: true, onTap: () {}),
-        AppPlayPauseButton(isPlaying: true, progress: 0.4, onTap: () {}),
-        AppPlayPauseButton(isPlaying: false, filled: false, onTap: () {}),
+        AppPlayPauseButton(
+          isPlaying: false,
+          onTap: () {},
+          playSemanticLabel: 'Play',
+          pauseSemanticLabel: 'Pause',
+        ),
+        AppPlayPauseButton(
+          isPlaying: true,
+          onTap: () {},
+          playSemanticLabel: 'Play',
+          pauseSemanticLabel: 'Pause',
+        ),
+        AppPlayPauseButton(
+          isPlaying: true,
+          progress: 0.4,
+          onTap: () {},
+          playSemanticLabel: 'Play',
+          pauseSemanticLabel: 'Pause',
+        ),
+        AppPlayPauseButton(
+          isPlaying: false,
+          filled: false,
+          onTap: () {},
+          playSemanticLabel: 'Play',
+          pauseSemanticLabel: 'Pause',
+        ),
       ],
     );
   }

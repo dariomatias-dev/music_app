@@ -34,8 +34,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       // The scan touches device files and metadata parsing outside our
       // control; any failure here should reset the busy state and tell the
       // user, not leave the row spinning forever.
-      // ignore: avoid_catches_without_on_clauses
-    } catch (_) {
+    } on Object catch (_) {
       if (!mounted) return;
       final l10n = AppLocalizations.of(context)!;
       setState(() => _rescanning = false);

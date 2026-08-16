@@ -100,6 +100,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get nextTrackButtonSemanticLabel => '下一首';
 
   @override
+  String get playButtonSemanticLabel => '播放';
+
+  @override
+  String get pauseButtonSemanticLabel => '暂停';
+
+  @override
   String get repeatButtonSemanticLabel => '循环播放';
 
   @override

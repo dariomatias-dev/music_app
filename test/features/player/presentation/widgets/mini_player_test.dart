@@ -64,6 +64,8 @@ class _FakeLibraryRepository implements LibraryRepository {
 Widget _scaffold(Widget child) {
   return MaterialApp(
     theme: AppTheme.light,
+    localizationsDelegates: AppLocalizations.localizationsDelegates,
+    supportedLocales: AppLocalizations.supportedLocales,
     home: Scaffold(
       body: Align(alignment: Alignment.topCenter, child: child),
     ),
@@ -86,7 +88,12 @@ Widget _routedScaffold(Widget child) {
       ),
     ],
   );
-  return MaterialApp.router(theme: AppTheme.light, routerConfig: router);
+  return MaterialApp.router(
+    theme: AppTheme.light,
+    localizationsDelegates: AppLocalizations.localizationsDelegates,
+    supportedLocales: AppLocalizations.supportedLocales,
+    routerConfig: router,
+  );
 }
 
 Track _track({
@@ -153,6 +160,55 @@ void main() {
     expect(find.text('Night Drive'), findsOneWidget);
     expect(find.text('Charcoal'), findsOneWidget);
   });
+
+  testWidgets(
+    'exposes a single combined semantic label for title and artist',
+    (tester) async {
+      // Disposed explicitly at the end of the test body, not via
+      // addTearDown: the framework verifies every handle is disposed
+      // before addTearDown callbacks run, so an addTearDown-based dispose
+      // would always fail that check.
+      final handle = tester.ensureSemantics();
+
+      final service = FakeAudioPlayerService();
+      final handler = MusicAudioHandler(service);
+      addTearDown(handler.dispose);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            audioPlayerServiceProvider.overrideWithValue(service),
+            audioHandlerProvider.overrideWithValue(handler),
+            libraryRepositoryProvider.overrideWithValue(
+              const _FakeLibraryRepository(),
+            ),
+          ],
+          child: _scaffold(const MiniPlayer()),
+        ),
+      );
+
+      final element = tester.element(find.byType(MiniPlayer));
+      final container = ProviderScope.containerOf(element);
+      await container.read(queueViewModelProvider.notifier).playFromSource([
+        _track(),
+      ], startIndex: 0);
+      // AppPlaybackIndicator's equalizer animates forever while playing, so
+      // pumpAndSettle would never settle; step through the cross-fade's
+      // duration manually instead. The first, zero-duration pump starts the
+      // AnimatedSwitcher's transition; without it, the entering child's
+      // semantics never populate even after further pumps.
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 400));
+
+      expect(
+        find.bySemanticsLabel('Now playing, Night Drive, Charcoal'),
+        findsOneWidget,
+      );
+      // The title and artist are no longer separately reachable stops.
+      expect(find.bySemanticsLabel('Night Drive'), findsNothing);
+      handle.dispose();
+    },
+  );
 
   testWidgets('tapping opens the playback screen', (tester) async {
     final service = FakeAudioPlayerService();

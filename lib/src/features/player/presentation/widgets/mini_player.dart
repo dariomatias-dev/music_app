@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:music_app/l10n/app_localizations.dart';
 import 'package:music_app/src/core/audio/audio_providers.dart';
 import 'package:music_app/src/core/audio/queue_media_item.dart';
 import 'package:music_app/src/core/navigation/route_paths.dart';
@@ -88,6 +89,7 @@ class _MiniPlayerCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final colors = context.colors;
     final currentDuration = duration;
     final progress = currentDuration != null && currentDuration > Duration.zero
@@ -143,7 +145,19 @@ class _MiniPlayerCard extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(width: 12),
-                Expanded(child: _MiniPlayerLabel(item: item)),
+                Expanded(
+                  child: Semantics(
+                    container: true,
+                    button: true,
+                    excludeSemantics: true,
+                    label: [
+                      l10n.nowPlayingSemanticLabel,
+                      item.title,
+                      if (item.artist != null) item.artist!,
+                    ].join(', '),
+                    child: _MiniPlayerLabel(item: item),
+                  ),
+                ),
                 const SizedBox(width: 10),
                 AnimatedOpacity(
                   opacity: playing ? 0.7 : 0.25,
@@ -155,6 +169,8 @@ class _MiniPlayerCard extends ConsumerWidget {
                   isPlaying: playing,
                   progress: progress,
                   size: 44,
+                  playSemanticLabel: l10n.playButtonSemanticLabel,
+                  pauseSemanticLabel: l10n.pauseButtonSemanticLabel,
                   onTap: () {
                     final service = ref.read(audioPlayerServiceProvider);
                     unawaited(playing ? service.pause() : service.play());

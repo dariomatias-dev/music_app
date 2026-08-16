@@ -105,6 +105,12 @@ class AppLocalizationsEs extends AppLocalizations {
   String get nextTrackButtonSemanticLabel => 'Siguiente pista';
 
   @override
+  String get playButtonSemanticLabel => 'Reproducir';
+
+  @override
+  String get pauseButtonSemanticLabel => 'Pausar';
+
+  @override
   String get repeatButtonSemanticLabel => 'Repetir';
 
   @override

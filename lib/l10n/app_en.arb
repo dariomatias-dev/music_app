@@ -30,6 +30,8 @@
   "shuffleButtonSemanticLabel": "Shuffle",
   "previousTrackButtonSemanticLabel": "Previous track",
   "nextTrackButtonSemanticLabel": "Next track",
+  "playButtonSemanticLabel": "Play",
+  "pauseButtonSemanticLabel": "Pause",
   "repeatButtonSemanticLabel": "Repeat",
   "moreOptionsButtonSemanticLabel": "More options",
   "viewQueueLabel": "Queue",

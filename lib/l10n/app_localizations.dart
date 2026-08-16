@@ -283,6 +283,18 @@ abstract class AppLocalizations {
   /// **'Next track'**
   String get nextTrackButtonSemanticLabel;
 
+  /// No description provided for @playButtonSemanticLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Play'**
+  String get playButtonSemanticLabel;
+
+  /// No description provided for @pauseButtonSemanticLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Pause'**
+  String get pauseButtonSemanticLabel;
+
   /// No description provided for @repeatButtonSemanticLabel.
   ///
   /// In en, this message translates to:

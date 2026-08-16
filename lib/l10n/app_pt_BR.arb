@@ -30,6 +30,8 @@
   "shuffleButtonSemanticLabel": "Aleatório",
   "previousTrackButtonSemanticLabel": "Faixa anterior",
   "nextTrackButtonSemanticLabel": "Próxima faixa",
+  "playButtonSemanticLabel": "Reproduzir",
+  "pauseButtonSemanticLabel": "Pausar",
   "repeatButtonSemanticLabel": "Repetir",
   "moreOptionsButtonSemanticLabel": "Mais opções",
   "viewQueueLabel": "Fila",

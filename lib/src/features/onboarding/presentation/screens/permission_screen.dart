@@ -70,8 +70,7 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
       }
       // The scan touches device files and metadata parsing outside our
       // control; any failure here should show a retry state, not crash.
-      // ignore: avoid_catches_without_on_clauses
-    } catch (error) {
+    } on Object catch (error) {
       if (!mounted) return;
       setState(() {
         _isScanning = false;
