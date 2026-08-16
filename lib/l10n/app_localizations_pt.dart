@@ -546,6 +546,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get fileDeleteFailedMessage => 'Couldn\'t delete this file';
 
   @override
+  String get playbackErrorMessage => 'Couldn\'t play this track';
+
+  @override
   String get settingsSectionProfileLabel => 'Profile';
 
   @override
@@ -1174,6 +1177,9 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get fileDeleteFailedMessage => 'Não foi possível excluir este arquivo';
+
+  @override
+  String get playbackErrorMessage => 'Não foi possível reproduzir esta faixa';
 
   @override
   String get settingsSectionProfileLabel => 'Perfil';

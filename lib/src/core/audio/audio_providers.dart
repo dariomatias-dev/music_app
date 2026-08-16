@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:music_app/src/core/audio/audio_player_service.dart';
 import 'package:music_app/src/core/audio/audio_session_coordinator.dart';
 import 'package:music_app/src/core/audio/music_audio_handler.dart';
+import 'package:music_app/src/core/errors/app_exception.dart';
 
 /// Provides the [AudioPlayerService] used across the app.
 ///
@@ -32,4 +33,10 @@ final audioSessionCoordinatorProvider = Provider<AudioSessionCoordinator>((
   throw UnimplementedError(
     'audioSessionCoordinatorProvider was not overridden',
   );
+});
+
+/// Streams playback engine failures (e.g. a corrupt or missing file), so
+/// the UI can surface them to the user.
+final playbackErrorProvider = StreamProvider<PlaybackException>((ref) {
+  return ref.watch(audioPlayerServiceProvider).errorStream;
 });

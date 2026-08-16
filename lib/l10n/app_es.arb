@@ -185,6 +185,7 @@
   "deleteFileConfirmAction": "Eliminar",
   "fileDeletedMessage": "Archivo eliminado",
   "fileDeleteFailedMessage": "No se pudo eliminar este archivo",
+  "playbackErrorMessage": "No se pudo reproducir esta pista",
   "settingsSectionProfileLabel": "Perfil",
   "settingsSectionAppearanceLabel": "Apariencia",
   "settingsSectionPlaybackLabel": "Reproducción",

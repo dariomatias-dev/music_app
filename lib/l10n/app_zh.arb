@@ -185,6 +185,7 @@
   "deleteFileConfirmAction": "删除",
   "fileDeletedMessage": "文件已删除",
   "fileDeleteFailedMessage": "无法删除此文件",
+  "playbackErrorMessage": "无法播放此曲目",
   "settingsSectionProfileLabel": "个人资料",
   "settingsSectionAppearanceLabel": "外观",
   "settingsSectionPlaybackLabel": "播放",

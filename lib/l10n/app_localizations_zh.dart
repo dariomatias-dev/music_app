@@ -521,6 +521,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get fileDeleteFailedMessage => '无法删除此文件';
 
   @override
+  String get playbackErrorMessage => '无法播放此曲目';
+
+  @override
   String get settingsSectionProfileLabel => '个人资料';
 
   @override

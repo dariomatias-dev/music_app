@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:music_app/l10n/app_localizations.dart';
 import 'package:music_app/src/core/navigation/app_router.dart';
 import 'package:music_app/src/core/navigation/route_transitions.dart';
+import 'package:music_app/src/features/player/presentation/widgets/playback_error_listener.dart';
 import 'package:music_app/src/features/settings/presentation/view_models/locale_view_model.dart';
 import 'package:music_app/src/features/settings/presentation/view_models/theme_mode_view_model.dart';
 
@@ -46,7 +47,7 @@ class MusicApp extends ConsumerWidget {
                 maxScaleFactor: AppTypography.maxTextScaleFactor,
               ),
             ),
-            child: child!,
+            child: PlaybackErrorListener(child: child!),
           ),
         );
       },

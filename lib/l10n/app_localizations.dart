@@ -1063,6 +1063,12 @@ abstract class AppLocalizations {
   /// **'Couldn\'t delete this file'**
   String get fileDeleteFailedMessage;
 
+  /// No description provided for @playbackErrorMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t play this track'**
+  String get playbackErrorMessage;
+
   /// No description provided for @settingsSectionProfileLabel.
   ///
   /// In en, this message translates to:

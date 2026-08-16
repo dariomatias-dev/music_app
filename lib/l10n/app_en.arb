@@ -185,6 +185,7 @@
   "deleteFileConfirmAction": "Delete",
   "fileDeletedMessage": "File deleted",
   "fileDeleteFailedMessage": "Couldn't delete this file",
+  "playbackErrorMessage": "Couldn't play this track",
   "settingsSectionProfileLabel": "Profile",
   "settingsSectionAppearanceLabel": "Appearance",
   "settingsSectionPlaybackLabel": "Playback",

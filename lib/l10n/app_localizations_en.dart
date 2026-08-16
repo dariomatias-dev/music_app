@@ -546,6 +546,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get fileDeleteFailedMessage => 'Couldn\'t delete this file';
 
   @override
+  String get playbackErrorMessage => 'Couldn\'t play this track';
+
+  @override
   String get settingsSectionProfileLabel => 'Profile';
 
   @override

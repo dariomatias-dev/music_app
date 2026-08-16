@@ -185,6 +185,7 @@
   "deleteFileConfirmAction": "Excluir",
   "fileDeletedMessage": "Arquivo excluído",
   "fileDeleteFailedMessage": "Não foi possível excluir este arquivo",
+  "playbackErrorMessage": "Não foi possível reproduzir esta faixa",
   "settingsSectionProfileLabel": "Perfil",
   "settingsSectionAppearanceLabel": "Aparência",
   "settingsSectionPlaybackLabel": "Reprodução",
