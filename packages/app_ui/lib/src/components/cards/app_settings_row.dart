@@ -77,12 +77,14 @@ class AppSettingsRow extends StatelessWidget {
             trailing!
           else ...[
             if (value != null) ...[
-              Text(
-                value!,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: AppTypography.rowSubtitle.copyWith(
-                  color: colors.textSecondary,
+              Flexible(
+                child: Text(
+                  value!,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTypography.rowSubtitle.copyWith(
+                    color: colors.textSecondary,
+                  ),
                 ),
               ),
               const SizedBox(width: AppSpacing.sm),

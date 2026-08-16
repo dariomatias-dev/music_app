@@ -98,7 +98,7 @@ class AppMediaRow extends StatelessWidget {
                 ],
               ),
             ),
-            ...trailing,
+            for (final widget in trailing) Flexible(child: widget),
           ],
         ),
       ),

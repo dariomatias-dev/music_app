@@ -89,7 +89,7 @@ class MediaRow extends StatelessWidget {
             ),
             if (trailing != null) ...[
               const SizedBox(width: AppSpacing.sm),
-              trailing!,
+              Flexible(child: trailing!),
             ],
           ],
         ),
