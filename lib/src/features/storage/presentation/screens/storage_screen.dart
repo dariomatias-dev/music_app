@@ -7,6 +7,7 @@ import 'package:music_app/l10n/app_localizations.dart';
 import 'package:music_app/src/core/utils/file_size_formatter.dart';
 import 'package:music_app/src/features/library/data/providers/library_data_providers.dart';
 import 'package:music_app/src/features/library/domain/entities/track.dart';
+import 'package:music_app/src/features/player/presentation/widgets/mini_player.dart';
 import 'package:music_app/src/features/queue/presentation/view_models/queue_view_model.dart';
 import 'package:music_app/src/features/storage/data/providers/storage_data_providers.dart';
 import 'package:music_app/src/features/storage/domain/entities/folder_usage.dart';
@@ -23,8 +24,37 @@ class StorageScreen extends ConsumerStatefulWidget {
   ConsumerState<StorageScreen> createState() => _StorageScreenState();
 }
 
+/// One row in the storage list: everything but a folder's tracks is fixed;
+/// a folder contributes one header row, then one row per track only while
+/// it's expanded.
+sealed class _Row {}
+
+class _SummaryRow extends _Row {}
+
+class _FoldersLabelRow extends _Row {}
+
+class _FolderHeaderRow extends _Row {
+  _FolderHeaderRow(this.folder);
+  final FolderUsage folder;
+}
+
+class _TrackRow extends _Row {
+  _TrackRow(this.folder, this.track);
+  final FolderUsage folder;
+  final Track track;
+}
+
+class _ClearCacheRow extends _Row {}
+
 class _StorageScreenState extends ConsumerState<StorageScreen> {
   var _busy = false;
+  final _expandedFolders = <String>{};
+
+  void _toggleExpanded(String path) {
+    setState(() {
+      if (!_expandedFolders.remove(path)) _expandedFolders.add(path);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,93 +63,82 @@ class _StorageScreenState extends ConsumerState<StorageScreen> {
     final folders = ref.watch(folderUsageProvider);
     final folderTracks = ref.watch(folderTracksProvider);
 
-    return AppScaffold(
-      topBar: AppTopBar(
-        title: l10n.storageLabel,
-        backButtonSemanticLabel: l10n.backButtonSemanticLabel,
-      ),
-      body: Column(
-        children: [
-          if (_busy) const LinearProgressIndicator(),
-          Expanded(
-            child: folders.isEmpty
-                ? AppEmptyState(
-                    icon: Icons.folder_off_outlined,
-                    title: l10n.tracksEmptyTitle,
-                    message: l10n.tracksEmptyMessage,
-                  )
-                : ListView(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: AppSpacing.sm,
-                    ),
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppSpacing.lg,
-                          vertical: AppSpacing.sm,
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.sd_storage_outlined,
-                              size: 20,
-                              color: context.colors.textSecondary,
-                            ),
-                            const SizedBox(width: AppSpacing.sm),
-                            Text(
-                              l10n.storageTotalUsedLabel,
-                              style: AppTypography.rowTitle.copyWith(
-                                color: context.colors.textPrimary,
-                              ),
-                            ),
-                            const Spacer(),
-                            Text(
-                              formatFileSize(totalUsed),
-                              style: AppTypography.rowTitle.copyWith(
-                                color: context.colors.textPrimary,
-                              ),
-                            ),
-                          ],
-                        ),
+    // A lightweight index of rows, not widgets: ListView.builder only
+    // calls itemBuilder for rows actually on screen, so a folder with
+    // thousands of tracks costs nothing until it's expanded and scrolled
+    // into view, rather than laying every track out immediately like
+    // ExpansionTile's own (eagerly built) children used to.
+    final rows = <_Row>[_SummaryRow(), _FoldersLabelRow()];
+    for (final folder in folders) {
+      rows.add(_FolderHeaderRow(folder));
+      if (_expandedFolders.contains(folder.path)) {
+        final tracks = folderTracks[folder.path] ?? const <Track>[];
+        for (final track in tracks) {
+          rows.add(_TrackRow(folder, track));
+        }
+      }
+    }
+    rows.add(_ClearCacheRow());
+
+    return MiniPlayerDock(
+      child: AppScaffold(
+        topBar: AppTopBar(
+          title: l10n.storageLabel,
+          backButtonSemanticLabel: l10n.backButtonSemanticLabel,
+        ),
+        body: Column(
+          children: [
+            if (_busy)
+              LinearProgressIndicator(
+                color: context.colors.accent,
+                backgroundColor: context.colors.divider,
+              ),
+            Expanded(
+              child: folders.isEmpty
+                  ? AppEmptyState(
+                      icon: Icons.folder_off_outlined,
+                      title: l10n.storageEmptyTitle,
+                      message: l10n.storageEmptyMessage,
+                    )
+                  : ListView.builder(
+                      padding: EdgeInsets.only(
+                        top: AppSpacing.sm,
+                        bottom: MiniPlayerDock.insetOf(context),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(
-                          AppSpacing.lg,
-                          AppSpacing.md,
-                          AppSpacing.lg,
-                          AppSpacing.xs,
+                      itemCount: rows.length,
+                      itemBuilder: (context, index) => switch (rows[index]) {
+                        _SummaryRow() => _SummaryTile(totalUsed: totalUsed),
+                        _FoldersLabelRow() => _FoldersLabel(
+                          label: l10n.storageFoldersLabel,
                         ),
-                        child: Text(
-                          l10n.storageFoldersLabel,
-                          style: AppTypography.section.copyWith(
-                            color: context.colors.textPrimary,
-                          ),
-                        ),
-                      ),
-                      for (final folder in folders)
-                        _FolderTile(
+                        _FolderHeaderRow(:final folder) => _FolderHeader(
                           folder: folder,
-                          tracks: folderTracks[folder.path] ?? const [],
+                          expanded: _expandedFolders.contains(folder.path),
                           enabled: !_busy,
-                          onToggle: (included) => unawaited(
+                          onExpandToggle: () => _toggleExpanded(folder.path),
+                          onToggleIncluded: (included) => unawaited(
                             _toggleFolder(folder.path, included),
                           ),
-                          onDeleteTrack: (track) =>
-                              unawaited(_confirmDeleteTrack(track)),
                         ),
-                      Padding(
-                        padding: const EdgeInsets.all(AppSpacing.lg),
-                        child: AppTextButton(
-                          label: l10n.clearArtworkCacheLabel,
-                          onPressed: _busy
-                              ? null
-                              : () => unawaited(_confirmClearArtworkCache()),
+                        _TrackRow(:final track) => _TrackTile(
+                          track: track,
+                          enabled: !_busy,
+                          onDelete: () => unawaited(_confirmDeleteTrack(track)),
                         ),
-                      ),
-                    ],
-                  ),
-          ),
-        ],
+                        _ClearCacheRow() => Padding(
+                          padding: const EdgeInsets.all(AppSpacing.lg),
+                          child: AppTextButton(
+                            label: l10n.clearArtworkCacheLabel,
+                            onPressed: _busy
+                                ? null
+                                : () => unawaited(_confirmClearArtworkCache()),
+                          ),
+                        ),
+                      },
+                    ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -198,88 +217,193 @@ class _StorageScreenState extends ConsumerState<StorageScreen> {
   }
 }
 
-class _FolderTile extends StatelessWidget {
-  const _FolderTile({
-    required this.folder,
-    required this.tracks,
-    required this.enabled,
-    required this.onToggle,
-    required this.onDeleteTrack,
-  });
+class _SummaryTile extends StatelessWidget {
+  const _SummaryTile({required this.totalUsed});
 
-  final FolderUsage folder;
-  final List<Track> tracks;
-  final bool enabled;
-  final ValueChanged<bool> onToggle;
-  final ValueChanged<Track> onDeleteTrack;
+  final int totalUsed;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final colors = context.colors;
 
-    return ExpansionTile(
-      title: Row(
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.lg,
+        vertical: AppSpacing.sm,
+      ),
+      child: Row(
+        children: [
+          Icon(
+            Icons.sd_storage_outlined,
+            size: 20,
+            color: colors.textSecondary,
+          ),
+          const SizedBox(width: AppSpacing.sm),
+          Text(
+            l10n.storageTotalUsedLabel,
+            style: AppTypography.rowTitle.copyWith(color: colors.textPrimary),
+          ),
+          const Spacer(),
+          Text(
+            formatFileSize(totalUsed),
+            style: AppTypography.rowTitle.copyWith(color: colors.textPrimary),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _FoldersLabel extends StatelessWidget {
+  const _FoldersLabel({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.lg,
+        AppSpacing.md,
+        AppSpacing.lg,
+        AppSpacing.xs,
+      ),
+      child: Text(
+        label,
+        style: AppTypography.section.copyWith(
+          color: context.colors.textPrimary,
+        ),
+      ),
+    );
+  }
+}
+
+class _FolderHeader extends StatelessWidget {
+  const _FolderHeader({
+    required this.folder,
+    required this.expanded,
+    required this.enabled,
+    required this.onExpandToggle,
+    required this.onToggleIncluded,
+  });
+
+  final FolderUsage folder;
+  final bool expanded;
+  final bool enabled;
+  final VoidCallback onExpandToggle;
+  final ValueChanged<bool> onToggleIncluded;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final colors = context.colors;
+
+    return Pressable(
+      onTap: folder.trackCount == 0 ? null : onExpandToggle,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.lg,
+          vertical: AppSpacing.sm,
+        ),
+        child: Row(
+          children: [
+            AnimatedRotation(
+              turns: expanded ? 0.25 : 0,
+              duration: AppDurations.resolve(context, AppDurations.fast),
+              child: Icon(
+                Icons.chevron_right_rounded,
+                color: folder.trackCount == 0
+                    ? colors.textTertiary.withValues(alpha: 0.4)
+                    : colors.textTertiary,
+              ),
+            ),
+            const SizedBox(width: AppSpacing.xs),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    p.basename(folder.path),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTypography.rowTitle.copyWith(
+                      color: colors.textPrimary,
+                    ),
+                  ),
+                  Text(
+                    '${l10n.trackCountLabel(folder.trackCount)} · '
+                    '${formatFileSize(folder.sizeBytes)}',
+                    style: AppTypography.caption.copyWith(
+                      color: colors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: AppSpacing.sm),
+            AppSwitch(
+              value: folder.isIncluded,
+              onChanged: enabled ? onToggleIncluded : null,
+              semanticLabel: l10n.includeInScanSemanticLabel,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _TrackTile extends StatelessWidget {
+  const _TrackTile({
+    required this.track,
+    required this.enabled,
+    required this.onDelete,
+  });
+
+  final Track track;
+  final bool enabled;
+  final VoidCallback onDelete;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final colors = context.colors;
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.xl,
+        AppSpacing.xxs,
+        AppSpacing.smMd,
+        AppSpacing.xxs,
+      ),
+      child: Row(
         children: [
           Expanded(
             child: Text(
-              p.basename(folder.path),
+              track.title,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: AppTypography.rowTitle.copyWith(
+              style: AppTypography.rowSubtitle.copyWith(
                 color: colors.textPrimary,
               ),
             ),
           ),
           const SizedBox(width: AppSpacing.sm),
-          AppSwitch(
-            value: folder.isIncluded,
-            onChanged: enabled ? onToggle : (_) {},
-            semanticLabel: l10n.includeInScanSemanticLabel,
+          Text(
+            formatFileSize(track.fileSize),
+            style: AppTypography.meta.copyWith(color: colors.textTertiary),
+          ),
+          AppIconButton(
+            icon: Icons.delete_outline_rounded,
+            semanticLabel: l10n.deleteFileSemanticLabel,
+            size: 36,
+            iconSize: AppSizes.iconSmall,
+            onPressed: enabled ? onDelete : null,
           ),
         ],
       ),
-      subtitle: Text(
-        '${l10n.trackCountLabel(folder.trackCount)} · '
-        '${formatFileSize(folder.sizeBytes)}',
-        style: AppTypography.caption.copyWith(color: colors.textSecondary),
-      ),
-      children: [
-        for (final track in tracks)
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.lg,
-              vertical: AppSpacing.xs,
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    track.title,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: AppTypography.rowSubtitle.copyWith(
-                      color: colors.textPrimary,
-                    ),
-                  ),
-                ),
-                Text(
-                  formatFileSize(track.fileSize),
-                  style: AppTypography.meta.copyWith(
-                    color: colors.textTertiary,
-                  ),
-                ),
-                AppIconButton(
-                  icon: Icons.delete_outline_rounded,
-                  semanticLabel: l10n.deleteFileSemanticLabel,
-                  size: 36,
-                  iconSize: AppSizes.iconSmall,
-                  onPressed: enabled ? () => onDeleteTrack(track) : null,
-                ),
-              ],
-            ),
-          ),
-      ],
     );
   }
 }

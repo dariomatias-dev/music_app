@@ -110,13 +110,13 @@ Widget _app({
 }
 
 void main() {
-  testWidgets('shows the empty state when there are no tracks', (
+  testWidgets('shows the empty state when there are no folders', (
     tester,
   ) async {
     await tester.pumpWidget(_app());
     await tester.pump();
 
-    expect(find.text('No tracks yet'), findsOneWidget);
+    expect(find.text('No folders yet'), findsOneWidget);
   });
 
   testWidgets('shows total space used and each folder', (tester) async {
@@ -154,6 +154,29 @@ void main() {
 
     expect(find.text('Track a'), findsOneWidget);
   });
+
+  testWidgets(
+    'expanding a folder with many tracks only builds the visible ones',
+    (tester) async {
+      await tester.pumpWidget(
+        _app(
+          libraryRepository: _FakeLibraryRepository(
+            tracks: [
+              for (var i = 0; i < 1000; i++)
+                _track('t$i', filePath: '/music/rock/t$i.mp3'),
+            ],
+          ),
+        ),
+      );
+      await tester.pump();
+
+      await tester.tap(find.text('rock'));
+      await tester.pump();
+
+      expect(find.text('Track t0'), findsOneWidget);
+      expect(find.text('Track t999'), findsNothing);
+    },
+  );
 
   testWidgets('toggling a folder off excludes it and triggers a rescan', (
     tester,
