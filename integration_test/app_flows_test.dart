@@ -206,6 +206,8 @@ void main() {
     final l10n = await AppLocalizations.delegate.load(const Locale('en'));
     await tester.tap(find.text(l10n.libraryTabLabel));
     await tester.pumpAndSettle();
+    await tester.tap(find.text(l10n.libraryTracksTab));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Night Drive').first);
     // Not pumpAndSettle: the playing state drives a looping animation
     // that never settles on its own.

@@ -11,6 +11,9 @@ import 'package:music_app/src/features/library/domain/entities/track.dart';
 import 'package:music_app/src/features/library/domain/repositories/library_repository.dart';
 import 'package:music_app/src/features/library/presentation/screens/library_screen.dart';
 import 'package:music_app/src/features/library/presentation/view_models/library_view_model.dart';
+import 'package:music_app/src/features/playlist/data/providers/playlist_data_providers.dart';
+
+import '../../../../helpers/fake_playlist_repository.dart';
 
 class _FakeLibraryRepository implements LibraryRepository {
   const _FakeLibraryRepository();
@@ -40,6 +43,7 @@ Widget _app() {
       libraryRepositoryProvider.overrideWithValue(
         const _FakeLibraryRepository(),
       ),
+      playlistRepositoryProvider.overrideWithValue(FakePlaylistRepository()),
     ],
     child: MaterialApp(
       theme: AppTheme.light,
@@ -68,7 +72,7 @@ void main() {
     final container = ProviderScope.containerOf(element);
     expect(
       container.read(libraryViewModelProvider),
-      LibrarySection.tracks,
+      LibrarySection.playlists,
     );
 
     await tester.tap(find.text('Albums'));

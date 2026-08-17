@@ -4,6 +4,9 @@ part 'library_view_model.g.dart';
 
 /// The library's content types, switched between with a segmented control.
 enum LibrarySection {
+  /// User-created playlists.
+  playlists,
+
   /// Every indexed track.
   tracks,
 
@@ -13,9 +16,6 @@ enum LibrarySection {
   /// Every indexed artist.
   artists,
 
-  /// User-created playlists.
-  playlists,
-
   /// Favorited tracks.
   favorites,
 }
@@ -24,7 +24,7 @@ enum LibrarySection {
 @riverpod
 class LibraryViewModel extends _$LibraryViewModel {
   @override
-  LibrarySection build() => LibrarySection.tracks;
+  LibrarySection build() => LibrarySection.playlists;
 
   /// The section currently shown.
   LibrarySection get section => state;

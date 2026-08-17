@@ -34,10 +34,10 @@ class LibraryScreen extends ConsumerWidget {
             ),
             child: AppSegmentedBar(
               labels: [
+                l10n.libraryPlaylistsTab,
                 l10n.libraryTracksTab,
                 l10n.libraryAlbumsTab,
                 l10n.libraryArtistsTab,
-                l10n.libraryPlaylistsTab,
                 l10n.libraryFavoritesTab,
               ],
               index: LibrarySection.values.indexOf(section),
