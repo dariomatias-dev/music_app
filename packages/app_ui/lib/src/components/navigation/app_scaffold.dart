@@ -36,26 +36,33 @@ class _AppScaffoldState extends State<AppScaffold> {
   Widget build(BuildContext context) {
     final colors = context.colors;
 
-    return SafeArea(
-      bottom: false,
-      child: Column(
-        children: [
-          widget.topBar,
-          SizedBox(
-            height: 1,
-            child: AnimatedOpacity(
-              opacity: _dividerOpacity,
-              duration: AppDurations.resolve(context, AppDurations.fast),
-              child: ColoredBox(color: colors.divider),
+    return Material(
+      // Paints its own background rather than relying on an ancestor
+      // Scaffold: screens pushed outside MainShell (Storage, Statistics,
+      // ...) have no such ancestor, so without this they render whatever
+      // is behind them (typically black) instead of the theme.
+      color: colors.background,
+      child: SafeArea(
+        bottom: false,
+        child: Column(
+          children: [
+            widget.topBar,
+            SizedBox(
+              height: 1,
+              child: AnimatedOpacity(
+                opacity: _dividerOpacity,
+                duration: AppDurations.resolve(context, AppDurations.fast),
+                child: ColoredBox(color: colors.divider),
+              ),
             ),
-          ),
-          Expanded(
-            child: NotificationListener<ScrollNotification>(
-              onNotification: _handleScroll,
-              child: widget.body,
+            Expanded(
+              child: NotificationListener<ScrollNotification>(
+                onNotification: _handleScroll,
+                child: widget.body,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

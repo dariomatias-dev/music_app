@@ -30,6 +30,7 @@ abstract final class AppBottomSheet {
         ),
         child: SafeArea(
           top: false,
+          bottom: false,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
