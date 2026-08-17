@@ -61,6 +61,11 @@ class AppSettingsRow extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Flexible(
+            // Weighted above the trailing block: the label tends to run
+            // longer, while the trailing block (a chevron, a value) is
+            // usually shorter — but not so far above that a real value
+            // like "System default" gets crowded out.
+            flex: 3,
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -84,6 +89,7 @@ class AppSettingsRow extends StatelessWidget {
             ),
           ),
           Flexible(
+            flex: 2,
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [

@@ -61,18 +61,6 @@ abstract final class RoutePaths {
   /// The statistics screen.
   static const statistics = '/statistics';
 
-  /// The language settings screen.
-  ///
-  /// A stub until Etapa 92.
-  static const settingsLanguage = '/settings/language';
-
-  /// The playback settings screen.
-  ///
-  /// A stub until Etapa 93.
-  static const settingsPlayback = '/settings/playback';
-
   /// The about screen.
-  ///
-  /// A stub until Etapa 94.
   static const about = '/about';
 }

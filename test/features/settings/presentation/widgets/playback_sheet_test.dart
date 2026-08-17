@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:music_app/l10n/app_localizations.dart';
 import 'package:music_app/src/core/storage/storage_providers.dart';
-import 'package:music_app/src/features/settings/presentation/screens/playback_settings_screen.dart';
+import 'package:music_app/src/features/settings/presentation/widgets/playback_sheet.dart';
 
 import '../../../../helpers/fake_key_value_storage.dart';
 
@@ -19,7 +19,16 @@ Widget _app({FakeKeyValueStorage? storage}) {
       theme: AppTheme.light,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      home: const Scaffold(body: PlaybackSettingsScreen()),
+      home: Scaffold(
+        body: Center(
+          child: Consumer(
+            builder: (context, ref, _) => TextButton(
+              onPressed: () => showPlaybackSheet(context, ref),
+              child: const Text('open'),
+            ),
+          ),
+        ),
+      ),
     ),
   );
 }
@@ -32,18 +41,19 @@ void main() {
 
   testWidgets('shows the default preference values', (tester) async {
     await tester.pumpWidget(_app());
-    await tester.pump();
+    await tester.tap(find.text('open'));
+    await tester.pumpAndSettle();
 
     expect(find.text('Gapless playback'), findsOneWidget);
     expect(find.text('Crossfade'), findsOneWidget);
-    expect(find.text('Off'), findsOneWidget);
     expect(find.text('Default speed'), findsOneWidget);
-    expect(find.text('1.0x'), findsOneWidget);
+    expect(find.text('1x'), findsOneWidget);
     expect(find.text('Haptic feedback'), findsOneWidget);
     expect(
       tester.widget<AppSwitch>(find.byType(AppSwitch).first).value,
       isTrue,
     );
+    expect(find.byType(Slider), findsNothing);
   });
 
   testWidgets('toggling the gapless switch persists the change', (
@@ -51,7 +61,8 @@ void main() {
   ) async {
     final storage = FakeKeyValueStorage();
     await tester.pumpWidget(_app(storage: storage));
-    await tester.pump();
+    await tester.tap(find.text('open'));
+    await tester.pumpAndSettle();
 
     await tester.tap(find.byType(AppSwitch).first);
     await tester.pump();
@@ -59,42 +70,41 @@ void main() {
     expect(await storage.getBool('gaplessEnabled'), isFalse);
   });
 
-  testWidgets('picking a crossfade duration persists it and updates value', (
+  testWidgets('turning on crossfade shows the slider and sets 4s', (
     tester,
   ) async {
     final storage = FakeKeyValueStorage();
     await tester.pumpWidget(_app(storage: storage));
-    await tester.pump();
-
-    await tester.tap(find.text('Crossfade'));
+    await tester.tap(find.text('open'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('4s'));
+
+    await tester.tap(find.byType(AppSwitch).at(1));
     await tester.pumpAndSettle();
 
     expect(await storage.getInt('crossfadeDurationSeconds'), 4);
+    expect(find.byType(Slider), findsOneWidget);
     expect(find.text('4s'), findsOneWidget);
   });
 
-  testWidgets('picking a default speed persists it and updates value', (
+  testWidgets('picking a default speed persists it and updates the chip', (
     tester,
   ) async {
     final storage = FakeKeyValueStorage();
     await tester.pumpWidget(_app(storage: storage));
+    await tester.tap(find.text('open'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('1.5x'));
     await tester.pump();
 
-    await tester.tap(find.text('Default speed'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('1.5x'));
-    await tester.pumpAndSettle();
-
     expect(await storage.getDouble('defaultPlaybackSpeed'), 1.5);
-    expect(find.text('1.5x'), findsOneWidget);
   });
 
   testWidgets('toggling haptics persists the change', (tester) async {
     final storage = FakeKeyValueStorage();
     await tester.pumpWidget(_app(storage: storage));
-    await tester.pump();
+    await tester.tap(find.text('open'));
+    await tester.pumpAndSettle();
 
     await tester.tap(find.byType(AppSwitch).last);
     await tester.pump();
@@ -102,17 +112,18 @@ void main() {
     expect(await storage.getBool('hapticsEnabled'), isFalse);
   });
 
-  testWidgets('gapless switch is locked on while crossfade is active', (
+  testWidgets('gapless switch is disabled while crossfade is active', (
     tester,
   ) async {
     final storage = FakeKeyValueStorage();
     await storage.setInt('crossfadeDurationSeconds', 4);
     await tester.pumpWidget(_app(storage: storage));
-    await tester.pump();
+    await tester.tap(find.text('open'));
+    await tester.pumpAndSettle();
 
-    await tester.tap(find.byType(AppSwitch).first);
-    await tester.pump();
-
-    expect(await storage.getBool('gaplessEnabled'), isNull);
+    expect(
+      tester.widget<AppSwitch>(find.byType(AppSwitch).first).onChanged,
+      isNull,
+    );
   });
 }

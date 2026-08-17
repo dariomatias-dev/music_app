@@ -47,7 +47,12 @@ class _EditNameSheetContentState extends State<_EditNameSheetContent> {
         bottom: MediaQuery.of(context).viewInsets.bottom,
       ),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(22, 10, 22, 22),
+        padding: const EdgeInsets.fromLTRB(
+          AppSpacing.lg,
+          AppSpacing.smMd,
+          AppSpacing.lg,
+          AppSpacing.lg,
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,

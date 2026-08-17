@@ -54,14 +54,9 @@ Widget _app({
         builder: (context, state) => const Scaffold(body: SettingsScreen()),
       ),
       GoRoute(
-        path: '/settings/language',
+        path: '/onboarding',
         builder: (context, state) =>
-            const Scaffold(body: Text('Language screen reached')),
-      ),
-      GoRoute(
-        path: '/settings/playback',
-        builder: (context, state) =>
-            const Scaffold(body: Text('Playback screen reached')),
+            const Scaffold(body: Text('Onboarding screen reached')),
       ),
       GoRoute(
         path: '/storage',
@@ -116,22 +111,21 @@ void main() {
     await tester.pump();
 
     expect(find.text('Profile'), findsOneWidget);
-    expect(find.text('Appearance'), findsOneWidget);
-    expect(find.text('Playback'), findsOneWidget);
     expect(find.text('Library'), findsOneWidget);
     expect(find.text('About'), findsOneWidget);
   });
 
-  testWidgets('shows a placeholder name and the system language by default', (
-    tester,
-  ) async {
-    await tester.pumpWidget(_app());
-    await tester.pump();
+  testWidgets(
+    'shows a placeholder name, light theme and system language by default',
+    (tester) async {
+      await tester.pumpWidget(_app());
+      await tester.pump();
 
-    expect(find.text('Not set'), findsOneWidget);
-    expect(find.text('System default'), findsOneWidget);
-    expect(find.text('System'), findsOneWidget);
-  });
+      expect(find.text('Not set'), findsOneWidget);
+      expect(find.text('Light'), findsOneWidget);
+      expect(find.text('System default'), findsOneWidget);
+    },
+  );
 
   testWidgets('shows the stored display name', (tester) async {
     final storage = FakeKeyValueStorage();
@@ -180,35 +174,38 @@ void main() {
     expect(await storage.getString('userDisplayName'), isNull);
   });
 
-  testWidgets('selecting a theme from the sheet persists it', (tester) async {
+  testWidgets('tapping Appearance toggles the theme directly', (
+    tester,
+  ) async {
     final storage = FakeKeyValueStorage();
     await tester.pumpWidget(_app(storage: storage));
     await tester.pump();
 
-    await tester.tap(find.text('System'));
-    await tester.pumpAndSettle();
-
-    expect(find.text('Dark'), findsOneWidget);
-    await tester.tap(find.text('Dark'));
-    await tester.pumpAndSettle();
+    await tester.tap(find.text('Light'));
+    await tester.pump();
 
     expect(find.text('Dark'), findsOneWidget);
     expect(await storage.getString('themeMode'), 'dark');
+
+    await tester.tap(find.text('Dark'));
+    await tester.pump();
+
+    expect(find.text('Light'), findsOneWidget);
+    expect(await storage.getString('themeMode'), 'light');
   });
 
-  testWidgets('tapping Language opens the language settings route', (
-    tester,
-  ) async {
+  testWidgets('tapping Language opens the language sheet', (tester) async {
     await tester.pumpWidget(_app());
     await tester.pump();
 
     await tester.tap(find.text('Language'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Language screen reached'), findsOneWidget);
+    expect(find.text('System default'), findsWidgets);
+    expect(find.text('English'), findsOneWidget);
   });
 
-  testWidgets('tapping the playback row opens the playback settings route', (
+  testWidgets('tapping the playback row opens the playback sheet', (
     tester,
   ) async {
     await tester.pumpWidget(_app());
@@ -217,7 +214,8 @@ void main() {
     await tester.tap(find.text('Gapless, crossfade & speed'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Playback screen reached'), findsOneWidget);
+    expect(find.text('Gapless playback'), findsOneWidget);
+    expect(find.text('Haptic feedback'), findsOneWidget);
   });
 
   testWidgets('tapping Storage opens the storage route', (tester) async {
@@ -250,6 +248,21 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('About screen reached'), findsOneWidget);
+  });
+
+  testWidgets('replaying onboarding resets it and navigates there', (
+    tester,
+  ) async {
+    final storage = FakeKeyValueStorage();
+    await storage.setBool('onboardingCompleted', value: true);
+    await tester.pumpWidget(_app(storage: storage));
+    await tester.pump();
+
+    await tester.tap(find.text('Show onboarding again'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Onboarding screen reached'), findsOneWidget);
+    expect(await storage.getBool('onboardingCompleted'), isFalse);
   });
 
   testWidgets('tapping Rescan library triggers a reindex', (tester) async {
