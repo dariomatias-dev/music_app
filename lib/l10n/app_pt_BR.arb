@@ -78,6 +78,8 @@
   "sortSheetTitle": "Ordenar por",
   "tracksEmptyTitle": "Nenhuma faixa ainda",
   "tracksEmptyMessage": "As faixas encontradas no seu dispositivo vão aparecer aqui.",
+  "storageEmptyTitle": "Nenhuma pasta ainda",
+  "storageEmptyMessage": "Depois que sua biblioteca for escaneada, as pastas vão aparecer aqui para você incluir ou excluir.",
   "playLabel": "Reproduzir",
   "trackCountLabel": "{count, plural, one{{count} faixa} other{{count} faixas}}",
   "@trackCountLabel": {

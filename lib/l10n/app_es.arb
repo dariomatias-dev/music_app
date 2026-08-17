@@ -78,6 +78,8 @@
   "sortSheetTitle": "Ordenar por",
   "tracksEmptyTitle": "Aún no hay pistas",
   "tracksEmptyMessage": "Las pistas encontradas en tu dispositivo aparecerán aquí.",
+  "storageEmptyTitle": "Aún no hay carpetas",
+  "storageEmptyMessage": "Una vez que se escanee tu biblioteca, sus carpetas aparecerán aquí para incluir o excluir.",
   "playLabel": "Reproducir",
   "trackCountLabel": "{count, plural, one{{count} pista} other{{count} pistas}}",
   "@trackCountLabel": {

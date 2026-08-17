@@ -244,6 +244,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get tracksEmptyMessage => '在你设备上找到的曲目会显示在这里。';
 
   @override
+  String get storageEmptyTitle => '暂无文件夹';
+
+  @override
+  String get storageEmptyMessage => '扫描音乐库后，文件夹会显示在这里，方便你选择包含或排除。';
+
+  @override
   String get playLabel => '播放';
 
   @override

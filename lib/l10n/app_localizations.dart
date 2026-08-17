@@ -571,6 +571,18 @@ abstract class AppLocalizations {
   /// **'Tracks found on your device will show up here.'**
   String get tracksEmptyMessage;
 
+  /// No description provided for @storageEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No folders yet'**
+  String get storageEmptyTitle;
+
+  /// No description provided for @storageEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Once your library is scanned, its folders will show up here to include or exclude.'**
+  String get storageEmptyMessage;
+
   /// No description provided for @playLabel.
   ///
   /// In en, this message translates to:

@@ -78,6 +78,8 @@
   "sortSheetTitle": "Sort by",
   "tracksEmptyTitle": "No tracks yet",
   "tracksEmptyMessage": "Tracks found on your device will show up here.",
+  "storageEmptyTitle": "No folders yet",
+  "storageEmptyMessage": "Once your library is scanned, its folders will show up here to include or exclude.",
   "playLabel": "Play",
   "trackCountLabel": "{count, plural, one{{count} track} other{{count} tracks}}",
   "@trackCountLabel": {

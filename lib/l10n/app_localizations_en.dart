@@ -254,6 +254,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'Tracks found on your device will show up here.';
 
   @override
+  String get storageEmptyTitle => 'No folders yet';
+
+  @override
+  String get storageEmptyMessage =>
+      'Once your library is scanned, its folders will show up here to include or exclude.';
+
+  @override
   String get playLabel => 'Play';
 
   @override

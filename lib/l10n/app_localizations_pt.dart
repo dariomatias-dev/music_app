@@ -254,6 +254,13 @@ class AppLocalizationsPt extends AppLocalizations {
       'Tracks found on your device will show up here.';
 
   @override
+  String get storageEmptyTitle => 'No folders yet';
+
+  @override
+  String get storageEmptyMessage =>
+      'Once your library is scanned, its folders will show up here to include or exclude.';
+
+  @override
   String get playLabel => 'Play';
 
   @override
@@ -899,6 +906,13 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   @override
   String get tracksEmptyMessage =>
       'As faixas encontradas no seu dispositivo vão aparecer aqui.';
+
+  @override
+  String get storageEmptyTitle => 'Nenhuma pasta ainda';
+
+  @override
+  String get storageEmptyMessage =>
+      'Depois que sua biblioteca for escaneada, as pastas vão aparecer aqui para você incluir ou excluir.';
 
   @override
   String get playLabel => 'Reproduzir';

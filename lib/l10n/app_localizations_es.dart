@@ -254,6 +254,13 @@ class AppLocalizationsEs extends AppLocalizations {
       'Las pistas encontradas en tu dispositivo aparecerán aquí.';
 
   @override
+  String get storageEmptyTitle => 'Aún no hay carpetas';
+
+  @override
+  String get storageEmptyMessage =>
+      'Una vez que se escanee tu biblioteca, sus carpetas aparecerán aquí para incluir o excluir.';
+
+  @override
   String get playLabel => 'Reproducir';
 
   @override
