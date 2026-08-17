@@ -1,12 +1,9 @@
-import 'dart:async';
-
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:music_app/l10n/app_localizations.dart';
-import 'package:music_app/src/core/navigation/route_paths.dart';
-import 'package:music_app/src/features/onboarding/presentation/view_models/onboarding_view_model.dart';
+import 'package:music_app/src/features/library/presentation/providers/library_providers.dart';
+import 'package:music_app/src/features/player/presentation/widgets/mini_player.dart';
 import 'package:music_app/src/features/settings/data/providers/app_info_provider.dart';
 
 /// Mirrors the project's root `LICENSE` file.
@@ -33,8 +30,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.''';
 
-/// App identity, version, a shortcut to replay onboarding, and the MIT
-/// license text.
+/// App identity, version, a library facts card, and the MIT license text.
 class AboutScreen extends ConsumerWidget {
   /// Creates an [AboutScreen].
   const AboutScreen({super.key});
@@ -44,77 +40,127 @@ class AboutScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final colors = context.colors;
     final packageInfo = ref.watch(appInfoProvider).value;
+    final trackCount = ref.watch(tracksStreamProvider).value?.length ?? 0;
+    final albumCount = ref.watch(albumsStreamProvider).value?.length ?? 0;
+    final artistCount = ref.watch(artistsStreamProvider).value?.length ?? 0;
 
-    return AppScaffold(
-      topBar: AppTopBar(
-        title: l10n.settingsAboutLabel,
-        backButtonSemanticLabel: l10n.backButtonSemanticLabel,
-      ),
-      body: ListView(
-        padding: const EdgeInsets.all(AppSpacing.lg),
+    Widget fact(String label, String value) => Padding(
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
+      child: Row(
         children: [
-          Center(
-            child: Column(
+          Expanded(
+            child: Text(
+              label,
+              style: AppTypography.rowSubtitle.copyWith(
+                color: colors.textSecondary,
+              ),
+            ),
+          ),
+          Text(
+            value,
+            style: AppTypography.rowTitle.copyWith(color: colors.textPrimary),
+          ),
+        ],
+      ),
+    );
+
+    return MiniPlayerDock(
+      child: AppScaffold(
+        topBar: AppTopBar(
+          title: l10n.settingsAboutLabel,
+          backButtonSemanticLabel: l10n.backButtonSemanticLabel,
+        ),
+        body: ListView(
+          padding: EdgeInsets.fromLTRB(
+            AppSpacing.lg,
+            AppSpacing.lg,
+            AppSpacing.lg,
+            MiniPlayerDock.insetOf(context),
+          ),
+          children: [
+            Row(
               children: [
                 Container(
-                  width: 72,
-                  height: 72,
+                  width: 54,
+                  height: 54,
                   decoration: BoxDecoration(
-                    color: colors.card,
-                    borderRadius: BorderRadius.circular(AppRadius.large),
+                    color: colors.accent,
+                    borderRadius: BorderRadius.circular(AppRadius.medium),
                   ),
                   child: Icon(
                     Icons.music_note_rounded,
-                    size: 36,
-                    color: colors.textPrimary,
+                    color: colors.onAccent,
+                    size: 27,
                   ),
                 ),
-                const SizedBox(height: AppSpacing.md),
-                Text(
-                  l10n.appName,
-                  style: AppTypography.header.copyWith(
-                    color: colors.textPrimary,
+                const SizedBox(width: AppSpacing.md),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        l10n.appName,
+                        style: AppTypography.section.copyWith(
+                          color: colors.textPrimary,
+                        ),
+                      ),
+                      if (packageInfo != null) ...[
+                        const SizedBox(height: AppSpacing.xxs),
+                        Text(
+                          l10n.settingsVersionValue(
+                            packageInfo.version,
+                            packageInfo.buildNumber,
+                          ),
+                          style: AppTypography.rowSubtitle.copyWith(
+                            color: colors.textSecondary,
+                          ),
+                        ),
+                      ],
+                    ],
                   ),
                 ),
-                if (packageInfo != null) ...[
-                  const SizedBox(height: AppSpacing.xs),
-                  Text(
-                    l10n.settingsVersionValue(
-                      packageInfo.version,
-                      packageInfo.buildNumber,
-                    ),
-                    style: AppTypography.rowSubtitle.copyWith(
-                      color: colors.textSecondary,
-                    ),
-                  ),
-                ],
               ],
             ),
-          ),
-          const SizedBox(height: AppSpacing.xl),
-          AppSectionContainer(
-            child: AppSettingsRow(
-              icon: Icons.replay_rounded,
-              label: l10n.settingsReplayOnboardingLabel,
-              onTap: () => unawaited(_replayOnboarding(context, ref)),
+            const SizedBox(height: AppSpacing.lg),
+            Text(
+              l10n.settingsSectionLibraryLabel,
+              style: AppTypography.section.copyWith(
+                color: colors.textSecondary,
+              ),
             ),
-          ),
-          const SizedBox(height: AppSpacing.lg),
-          Padding(
-            padding: const EdgeInsets.only(
-              left: AppSpacing.sm,
-              bottom: AppSpacing.xs,
+            const SizedBox(height: AppSpacing.xs),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+              decoration: BoxDecoration(
+                color: colors.surface,
+                borderRadius: BorderRadius.circular(AppRadius.medium),
+              ),
+              child: Column(
+                children: [
+                  fact(l10n.libraryTracksTab, '$trackCount'),
+                  Divider(color: colors.divider, height: 1),
+                  fact(l10n.libraryAlbumsTab, '$albumCount'),
+                  Divider(color: colors.divider, height: 1),
+                  fact(l10n.libraryArtistsTab, '$artistCount'),
+                ],
+              ),
             ),
-            child: Text(
+            const SizedBox(height: AppSpacing.lg),
+            Text(
               l10n.settingsLicenseLabel,
               style: AppTypography.section.copyWith(
                 color: colors.textSecondary,
               ),
             ),
-          ),
-          AppSectionContainer(
-            child: Padding(
+            const SizedBox(height: AppSpacing.xs),
+            Container(
+              width: double.infinity,
               padding: const EdgeInsets.all(AppSpacing.md),
+              decoration: BoxDecoration(
+                color: colors.surface,
+                borderRadius: BorderRadius.circular(AppRadius.medium),
+              ),
               child: SelectableText(
                 _mitLicenseText,
                 style: AppTypography.rowSubtitle.copyWith(
@@ -122,15 +168,9 @@ class AboutScreen extends ConsumerWidget {
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
-  }
-
-  Future<void> _replayOnboarding(BuildContext context, WidgetRef ref) async {
-    await ref.read(onboardingViewModelProvider.notifier).reset();
-    if (!context.mounted) return;
-    context.go(RoutePaths.onboarding);
   }
 }
