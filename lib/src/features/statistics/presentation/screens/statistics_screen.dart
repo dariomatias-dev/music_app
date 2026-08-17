@@ -10,6 +10,7 @@ import 'package:music_app/src/core/utils/duration_formatter.dart';
 import 'package:music_app/src/features/history/data/providers/history_data_providers.dart';
 import 'package:music_app/src/features/library/presentation/providers/library_providers.dart';
 import 'package:music_app/src/features/library/presentation/widgets/media_row.dart';
+import 'package:music_app/src/features/player/presentation/widgets/mini_player.dart';
 import 'package:music_app/src/features/queue/presentation/view_models/queue_view_model.dart';
 import 'package:music_app/src/features/statistics/presentation/providers/statistics_providers.dart';
 import 'package:music_app/src/features/statistics/presentation/view_models/statistics_period_view_model.dart';
@@ -26,27 +27,29 @@ class StatisticsScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final hasHistory = ref.watch(hasPlayHistoryProvider).value;
 
-    return AppScaffold(
-      topBar: AppTopBar(
-        title: l10n.statisticsLabel,
-        backButtonSemanticLabel: l10n.backButtonSemanticLabel,
-        trailing: hasHistory ?? false
-            ? AppIconButton(
-                icon: Icons.delete_outline_rounded,
-                semanticLabel: l10n.clearHistoryLabel,
-                onPressed: () => unawaited(_confirmClear(context, ref)),
-              )
-            : null,
-      ),
-      body: switch (hasHistory) {
-        null => const AppLoadingIndicator(),
-        false => AppEmptyState(
-          icon: Icons.bar_chart_rounded,
-          title: l10n.statisticsEmptyTitle,
-          message: l10n.statisticsEmptyMessage,
+    return MiniPlayerDock(
+      child: AppScaffold(
+        topBar: AppTopBar(
+          title: l10n.statisticsLabel,
+          backButtonSemanticLabel: l10n.backButtonSemanticLabel,
+          trailing: hasHistory ?? false
+              ? AppIconButton(
+                  icon: Icons.delete_outline_rounded,
+                  semanticLabel: l10n.clearHistoryLabel,
+                  onPressed: () => unawaited(_confirmClear(context, ref)),
+                )
+              : null,
         ),
-        true => const _StatisticsContent(),
-      },
+        body: switch (hasHistory) {
+          null => const AppLoadingIndicator(),
+          false => AppEmptyState(
+            icon: Icons.bar_chart_rounded,
+            title: l10n.statisticsEmptyTitle,
+            message: l10n.statisticsEmptyMessage,
+          ),
+          true => const _StatisticsContent(),
+        },
+      ),
     );
   }
 
@@ -82,7 +85,10 @@ class _StatisticsContent extends ConsumerWidget {
     final albumArtwork = ref.watch(albumArtworkProvider);
 
     return ListView(
-      padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+      padding: EdgeInsets.only(
+        top: AppSpacing.sm,
+        bottom: MiniPlayerDock.insetOf(context),
+      ),
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(

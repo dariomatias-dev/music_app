@@ -75,6 +75,49 @@ class MiniPlayer extends ConsumerWidget {
   }
 }
 
+/// Floats a [MiniPlayer] over [child], for screens reached outside the
+/// main shell (which docks it above the bottom navigation bar instead).
+///
+/// Without this, navigating to one of those screens while a track is
+/// playing makes the mini player disappear until the user goes back.
+class MiniPlayerDock extends StatelessWidget {
+  /// Creates a [MiniPlayerDock] around [child].
+  const MiniPlayerDock({required this.child, super.key});
+
+  /// The screen content the mini player floats over.
+  final Widget child;
+
+  /// Bottom padding a scroll view under this dock needs so its last item
+  /// isn't hidden behind the mini player.
+  static double insetOf(BuildContext context) =>
+      MiniPlayer.height +
+      AppSpacing.lgXl +
+      MediaQuery.of(context).padding.bottom;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        child,
+        Positioned(
+          left: 0,
+          right: 0,
+          bottom: 0,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const MiniPlayer(),
+              SizedBox(
+                height: AppSpacing.smMd + MediaQuery.of(context).padding.bottom,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class _MiniPlayerCard extends ConsumerWidget {
   const _MiniPlayerCard({required this.item, required this.playing});
 
