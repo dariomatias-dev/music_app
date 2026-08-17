@@ -101,8 +101,8 @@ class _StatTile extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.smMd,
-        vertical: AppSpacing.sm,
+        horizontal: AppSpacing.md,
+        vertical: AppSpacing.smMd,
       ),
       decoration: BoxDecoration(
         color: colors.surface,
@@ -151,8 +151,8 @@ class _LinkRow extends StatelessWidget {
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.smMd,
-          vertical: AppSpacing.sm,
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.smMd,
         ),
         decoration: BoxDecoration(
           color: colors.surface,
@@ -161,7 +161,7 @@ class _LinkRow extends StatelessWidget {
         child: Row(
           children: [
             Icon(icon, size: 20, color: colors.textSecondary),
-            const SizedBox(width: AppSpacing.sm),
+            const SizedBox(width: AppSpacing.smMd),
             Expanded(
               child: Text(
                 label,

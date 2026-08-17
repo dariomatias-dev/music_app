@@ -183,8 +183,8 @@ class _Section extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.only(
-            left: AppSpacing.sm,
-            bottom: AppSpacing.xs,
+            left: AppSpacing.lg,
+            bottom: AppSpacing.sm,
           ),
           child: Text(
             title,

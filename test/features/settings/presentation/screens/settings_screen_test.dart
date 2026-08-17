@@ -100,6 +100,17 @@ Widget _app({
 }
 
 void main() {
+  setUp(() {
+    // The default 800x600 test surface leaves the last rows a few pixels
+    // short now that rows have more generous padding.
+    final view =
+        TestWidgetsFlutterBinding.instance.platformDispatcher.views.first
+          ..physicalSize = const Size(800, 1000)
+          ..devicePixelRatio = 1;
+    addTearDown(view.resetPhysicalSize);
+    addTearDown(view.resetDevicePixelRatio);
+  });
+
   testWidgets('shows every section title', (tester) async {
     await tester.pumpWidget(_app());
     await tester.pump();

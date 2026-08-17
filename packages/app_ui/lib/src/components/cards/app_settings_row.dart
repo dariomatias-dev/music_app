@@ -54,44 +54,64 @@ class AppSettingsRow extends StatelessWidget {
 
     final content = Padding(
       padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.md,
-        vertical: AppSpacing.sm,
+        horizontal: AppSpacing.lg,
+        vertical: AppSpacing.smMd,
       ),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Icon(
-            icon,
-            size: AppSizes.iconSmall,
-            color: destructive ? colors.error : colors.textSecondary,
-          ),
-          const SizedBox(width: AppSpacing.smMd),
-          Expanded(
-            child: Text(
-              label,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: AppTypography.rowTitle.copyWith(color: foreground),
-            ),
-          ),
-          if (trailing != null)
-            trailing!
-          else ...[
-            if (value != null) ...[
-              Flexible(
-                child: Text(
-                  value!,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: AppTypography.rowSubtitle.copyWith(
-                    color: colors.textSecondary,
+          Flexible(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  icon,
+                  size: AppSizes.iconSmall,
+                  color: destructive ? colors.error : colors.textSecondary,
+                ),
+                const SizedBox(width: AppSpacing.md),
+                Flexible(
+                  child: Text(
+                    label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTypography.rowTitle.copyWith(
+                      color: foreground,
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(width: AppSpacing.sm),
-            ],
-            if (onTap != null)
-              Icon(Icons.chevron_right_rounded, color: colors.textTertiary),
-          ],
+              ],
+            ),
+          ),
+          Flexible(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (trailing != null)
+                  trailing!
+                else ...[
+                  if (value != null)
+                    Flexible(
+                      child: Text(
+                        value!,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTypography.rowSubtitle.copyWith(
+                          color: colors.textSecondary,
+                        ),
+                      ),
+                    ),
+                  if (onTap != null) ...[
+                    const SizedBox(width: AppSpacing.sm),
+                    Icon(
+                      Icons.chevron_right_rounded,
+                      color: colors.textTertiary,
+                    ),
+                  ],
+                ],
+              ],
+            ),
+          ),
         ],
       ),
     );
