@@ -40,7 +40,7 @@ final class OnboardingViewModelProvider
 }
 
 String _$onboardingViewModelHash() =>
-    r'f7317eafa7d5361cbffec68dc81b3a950611be06';
+    r'6e7da68953faeabf3e1cccc410f02b696941ffdf';
 
 /// Whether the user has completed the onboarding flow, persisting the
 /// choice so it survives app restarts.

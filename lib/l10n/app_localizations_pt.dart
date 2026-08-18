@@ -388,6 +388,21 @@ class AppLocalizationsPt extends AppLocalizations {
   String get playlistEmptyMessage => 'Add tracks from a track\'s more menu.';
 
   @override
+  String get playlistDescriptionHint => 'Description';
+
+  @override
+  String get reorderTracksLabel => 'Reorder tracks';
+
+  @override
+  String get removeFromPlaylistLabel => 'Remove from playlist';
+
+  @override
+  String get searchTracksSemanticLabel => 'Search tracks';
+
+  @override
+  String get sortByPlaylistOrderLabel => 'Playlist order';
+
+  @override
   String get homeEmptyTitle => 'Your library is empty';
 
   @override
@@ -1042,6 +1057,21 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   @override
   String get playlistEmptyMessage =>
       'Adicione faixas pelo menu \"mais\" de uma faixa.';
+
+  @override
+  String get playlistDescriptionHint => 'Descrição';
+
+  @override
+  String get reorderTracksLabel => 'Reordenar faixas';
+
+  @override
+  String get removeFromPlaylistLabel => 'Remover da playlist';
+
+  @override
+  String get searchTracksSemanticLabel => 'Pesquisar faixas';
+
+  @override
+  String get sortByPlaylistOrderLabel => 'Ordem da playlist';
 
   @override
   String get homeEmptyTitle => 'Sua biblioteca está vazia';

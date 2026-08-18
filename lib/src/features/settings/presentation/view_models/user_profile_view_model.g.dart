@@ -46,7 +46,7 @@ final class UserProfileViewModelProvider
 }
 
 String _$userProfileViewModelHash() =>
-    r'92599754b3a8d5eacfa4659a9bbb8f9e705df471';
+    r'ec65a47a276263bf04f8b321ac7bb2f41cfbe9c6';
 
 /// The user's display name, shown in the Home greeting.
 ///

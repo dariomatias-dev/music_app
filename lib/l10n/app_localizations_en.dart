@@ -388,6 +388,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get playlistEmptyMessage => 'Add tracks from a track\'s more menu.';
 
   @override
+  String get playlistDescriptionHint => 'Description';
+
+  @override
+  String get reorderTracksLabel => 'Reorder tracks';
+
+  @override
+  String get removeFromPlaylistLabel => 'Remove from playlist';
+
+  @override
+  String get searchTracksSemanticLabel => 'Search tracks';
+
+  @override
+  String get sortByPlaylistOrderLabel => 'Playlist order';
+
+  @override
   String get homeEmptyTitle => 'Your library is empty';
 
   @override

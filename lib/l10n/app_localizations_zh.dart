@@ -368,6 +368,21 @@ class AppLocalizationsZh extends AppLocalizations {
   String get playlistEmptyMessage => '从曲目的更多菜单中添加曲目。';
 
   @override
+  String get playlistDescriptionHint => '描述';
+
+  @override
+  String get reorderTracksLabel => '调整顺序';
+
+  @override
+  String get removeFromPlaylistLabel => '从播放列表中移除';
+
+  @override
+  String get searchTracksSemanticLabel => '搜索曲目';
+
+  @override
+  String get sortByPlaylistOrderLabel => '播放列表顺序';
+
+  @override
   String get homeEmptyTitle => '音乐库为空';
 
   @override

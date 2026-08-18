@@ -389,6 +389,21 @@ class AppLocalizationsEs extends AppLocalizations {
       'Agrega pistas desde el menú \"más\" de una pista.';
 
   @override
+  String get playlistDescriptionHint => 'Descripción';
+
+  @override
+  String get reorderTracksLabel => 'Reordenar canciones';
+
+  @override
+  String get removeFromPlaylistLabel => 'Quitar de la playlist';
+
+  @override
+  String get searchTracksSemanticLabel => 'Buscar canciones';
+
+  @override
+  String get sortByPlaylistOrderLabel => 'Orden de la playlist';
+
+  @override
   String get homeEmptyTitle => 'Tu biblioteca está vacía';
 
   @override

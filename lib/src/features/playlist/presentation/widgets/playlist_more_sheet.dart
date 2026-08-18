@@ -9,12 +9,14 @@ import 'package:music_app/src/features/playlist/domain/entities/playlist.dart';
 import 'package:music_app/src/features/playlist/presentation/providers/playlist_providers.dart';
 import 'package:music_app/src/features/playlist/presentation/widgets/playlist_name_sheet.dart';
 
-/// Shows a playlist's contextual actions: rename, duplicate and delete.
+/// Shows a playlist's contextual actions: rename, duplicate, delete and,
+/// when [onReorderTracks] is given, reorder its tracks.
 Future<void> showPlaylistMoreSheet(
   BuildContext context,
   WidgetRef ref,
-  Playlist playlist,
-) {
+  Playlist playlist, {
+  VoidCallback? onReorderTracks,
+}) {
   final l10n = AppLocalizations.of(context)!;
 
   void close(VoidCallback action) {
@@ -34,6 +36,12 @@ Future<void> showPlaylistMoreSheet(
           label: l10n.renamePlaylistLabel,
           onTap: () => close(() => _rename(context, ref, playlist)),
         ),
+        if (onReorderTracks != null)
+          AppSheetAction(
+            icon: Icons.reorder_rounded,
+            label: l10n.reorderTracksLabel,
+            onTap: () => close(onReorderTracks),
+          ),
         AppSheetAction(
           icon: Icons.copy_outlined,
           label: l10n.duplicatePlaylistLabel,
@@ -57,14 +65,18 @@ Future<void> _rename(
   Playlist playlist,
 ) async {
   final l10n = AppLocalizations.of(context)!;
-  final name = await showPlaylistNameSheet(
+  final result = await showPlaylistNameSheet(
     context,
     title: l10n.renamePlaylistSheetTitle,
     confirmLabel: l10n.saveLabel,
     initialName: playlist.name,
+    initialDescription: playlist.description,
+    showDescriptionField: true,
   );
-  if (name == null) return;
-  await ref.read(playlistRepositoryProvider).renamePlaylist(playlist.id, name);
+  if (result == null) return;
+  final repository = ref.read(playlistRepositoryProvider);
+  await repository.renamePlaylist(playlist.id, result.name);
+  await repository.updatePlaylistDescription(playlist.id, result.description);
 }
 
 Future<void> _duplicate(

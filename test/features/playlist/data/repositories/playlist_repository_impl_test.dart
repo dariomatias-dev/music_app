@@ -96,6 +96,30 @@ void main() {
     expect(renamed?.createdAt, original?.createdAt);
   });
 
+  test('updatePlaylistDescription sets and clears the description', () async {
+    final id = await repository.createPlaylist('Road Trip');
+
+    await repository.updatePlaylistDescription(id, 'Songs for the highway');
+    expect(
+      (await repository.watchPlaylist(id).first)?.description,
+      'Songs for the highway',
+    );
+
+    await repository.updatePlaylistDescription(id, null);
+    expect((await repository.watchPlaylist(id).first)?.description, isNull);
+  });
+
+  test('setPlaylistFavorite toggles the favorite flag', () async {
+    final id = await repository.createPlaylist('Road Trip');
+    expect((await repository.watchPlaylist(id).first)?.isFavorite, isFalse);
+
+    await repository.setPlaylistFavorite(id, isFavorite: true);
+    expect((await repository.watchPlaylist(id).first)?.isFavorite, isTrue);
+
+    await repository.setPlaylistFavorite(id, isFavorite: false);
+    expect((await repository.watchPlaylist(id).first)?.isFavorite, isFalse);
+  });
+
   test('deletePlaylist removes it', () async {
     final id = await repository.createPlaylist('Road Trip');
 

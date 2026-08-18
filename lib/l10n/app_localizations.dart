@@ -787,6 +787,36 @@ abstract class AppLocalizations {
   /// **'Add tracks from a track\'s more menu.'**
   String get playlistEmptyMessage;
 
+  /// No description provided for @playlistDescriptionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get playlistDescriptionHint;
+
+  /// No description provided for @reorderTracksLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Reorder tracks'**
+  String get reorderTracksLabel;
+
+  /// No description provided for @removeFromPlaylistLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from playlist'**
+  String get removeFromPlaylistLabel;
+
+  /// No description provided for @searchTracksSemanticLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Search tracks'**
+  String get searchTracksSemanticLabel;
+
+  /// No description provided for @sortByPlaylistOrderLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Playlist order'**
+  String get sortByPlaylistOrderLabel;
+
   /// No description provided for @homeEmptyTitle.
   ///
   /// In en, this message translates to:

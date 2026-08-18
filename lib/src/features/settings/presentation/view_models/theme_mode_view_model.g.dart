@@ -43,7 +43,7 @@ final class ThemeModeViewModelProvider
 }
 
 String _$themeModeViewModelHash() =>
-    r'1ceb23621d9614fd018acd30856922fb024b8483';
+    r'12763fd0cb9d51312d983f41a6f6edfaa39b98f8';
 
 /// Manages the user's selected theme mode, persisting the choice.
 ///

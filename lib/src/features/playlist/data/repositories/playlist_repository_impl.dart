@@ -60,6 +60,31 @@ class PlaylistRepositoryImpl implements PlaylistRepository {
   }
 
   @override
+  Future<void> updatePlaylistDescription(
+    String playlistId,
+    String? description,
+  ) {
+    return _database.playlistDao.updateOne(
+      playlistId,
+      PlaylistTableCompanion(
+        description: Value(description),
+        updatedAt: Value(DateTime.now()),
+      ),
+    );
+  }
+
+  @override
+  Future<void> setPlaylistFavorite(
+    String playlistId, {
+    required bool isFavorite,
+  }) {
+    return _database.playlistDao.updateOne(
+      playlistId,
+      PlaylistTableCompanion(isFavorite: Value(isFavorite)),
+    );
+  }
+
+  @override
   Future<void> deletePlaylist(String playlistId) =>
       _database.playlistDao.deleteById(playlistId);
 
@@ -92,5 +117,7 @@ class PlaylistRepositoryImpl implements PlaylistRepository {
     name: row.name,
     createdAt: row.createdAt,
     updatedAt: row.updatedAt,
+    description: row.description,
+    isFavorite: row.isFavorite,
   );
 }

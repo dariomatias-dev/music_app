@@ -76,6 +76,31 @@ class FakePlaylistRepository implements PlaylistRepository {
   }
 
   @override
+  Future<void> updatePlaylistDescription(
+    String playlistId,
+    String? description,
+  ) async {
+    final existing = _playlists[playlistId];
+    if (existing == null) return;
+    _playlists[playlistId] = existing.copyWith(
+      description: description,
+      updatedAt: DateTime.now(),
+    );
+    _emitPlaylists();
+  }
+
+  @override
+  Future<void> setPlaylistFavorite(
+    String playlistId, {
+    required bool isFavorite,
+  }) async {
+    final existing = _playlists[playlistId];
+    if (existing == null) return;
+    _playlists[playlistId] = existing.copyWith(isFavorite: isFavorite);
+    _emitPlaylists();
+  }
+
+  @override
   Future<void> deletePlaylist(String playlistId) async {
     _playlists.remove(playlistId);
     _tracks.remove(playlistId);

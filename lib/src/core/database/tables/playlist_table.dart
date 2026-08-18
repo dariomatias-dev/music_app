@@ -9,6 +9,12 @@ class PlaylistTable extends Table {
   /// Playlist name.
   TextColumn get name => text()();
 
+  /// Optional description shown under the playlist's title.
+  TextColumn get description => text().nullable()();
+
+  /// Whether the user has favorited this playlist.
+  BoolColumn get isFavorite => boolean().withDefault(const Constant(false))();
+
   /// Whether this is the built-in favorites playlist.
   BoolColumn get isFavoritesPlaylist =>
       boolean().withDefault(const Constant(false))();

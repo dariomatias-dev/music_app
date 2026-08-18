@@ -87,13 +87,13 @@ class PlaylistsTab extends ConsumerWidget {
 
   Future<void> _createPlaylist(BuildContext context, WidgetRef ref) async {
     final l10n = AppLocalizations.of(context)!;
-    final name = await showPlaylistNameSheet(
+    final result = await showPlaylistNameSheet(
       context,
       title: l10n.newPlaylistLabel,
       confirmLabel: l10n.createLabel,
     );
-    if (name == null) return;
-    await ref.read(playlistRepositoryProvider).createPlaylist(name);
+    if (result == null) return;
+    await ref.read(playlistRepositoryProvider).createPlaylist(result.name);
   }
 }
 

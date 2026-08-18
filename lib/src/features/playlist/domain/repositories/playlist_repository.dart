@@ -18,6 +18,19 @@ abstract interface class PlaylistRepository {
   /// Renames the playlist with [playlistId].
   Future<void> renamePlaylist(String playlistId, String name);
 
+  /// Sets the description of the playlist with [playlistId]. `null` clears
+  /// it.
+  Future<void> updatePlaylistDescription(
+    String playlistId,
+    String? description,
+  );
+
+  /// Sets whether the playlist with [playlistId] is favorited.
+  Future<void> setPlaylistFavorite(
+    String playlistId, {
+    required bool isFavorite,
+  });
+
   /// Deletes the playlist with [playlistId].
   Future<void> deletePlaylist(String playlistId);
 

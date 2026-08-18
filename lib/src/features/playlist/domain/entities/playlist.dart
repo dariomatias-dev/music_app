@@ -11,5 +11,7 @@ abstract class Playlist with _$Playlist {
     required String name,
     required DateTime createdAt,
     required DateTime updatedAt,
+    String? description,
+    @Default(false) bool isFavorite,
   }) = _Playlist;
 }

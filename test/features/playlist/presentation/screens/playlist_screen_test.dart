@@ -2,6 +2,7 @@ import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:music_app/l10n/app_localizations.dart';
 import 'package:music_app/src/core/audio/audio_providers.dart';
 import 'package:music_app/src/core/audio/music_audio_handler.dart';
@@ -77,6 +78,22 @@ Future<ProviderContainer> _pumpPlaylistScreen(
   final handler = MusicAudioHandler(service);
   addTearDown(handler.dispose);
 
+  final router = GoRouter(
+    initialLocation: '/playlists/$playlistId',
+    routes: [
+      GoRoute(
+        path: '/playlists/:playlistId',
+        builder: (context, state) =>
+            PlaylistScreen(playlistId: state.pathParameters['playlistId']!),
+      ),
+      GoRoute(
+        path: '/player',
+        builder: (context, state) =>
+            const Scaffold(body: Text('Player screen reached')),
+      ),
+    ],
+  );
+
   await tester.pumpWidget(
     ProviderScope(
       overrides: [
@@ -87,11 +104,11 @@ Future<ProviderContainer> _pumpPlaylistScreen(
         ),
         playlistRepositoryProvider.overrideWithValue(playlistRepository),
       ],
-      child: MaterialApp(
+      child: MaterialApp.router(
         theme: AppTheme.light,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
-        home: PlaylistScreen(playlistId: playlistId),
+        routerConfig: router,
       ),
     ),
   );
@@ -177,7 +194,9 @@ void main() {
       playlistId: id,
     );
 
-    await tester.tap(find.text('Edit'));
+    await tester.tap(find.byIcon(Icons.more_horiz));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Reorder tracks'));
     await tester.pumpAndSettle();
 
     expect(find.byIcon(Icons.remove_circle_outline), findsNWidgets(2));
@@ -283,6 +302,134 @@ void main() {
     await tester.tap(find.text('Sunset'));
     await tester.pump(const Duration(milliseconds: 50));
 
-    expect(find.byType(AppPlaybackIndicator), findsOneWidget);
+    // One in the track row, one in the mini player docked below.
+    expect(find.byType(AppPlaybackIndicator), findsWidgets);
   });
+
+  testWidgets('shows the playlist description when set', (tester) async {
+    final repository = FakePlaylistRepository();
+    final id = await repository.createPlaylist('Road Trip');
+    await repository.updatePlaylistDescription(id, 'Songs for the highway');
+
+    await _pumpPlaylistScreen(
+      tester,
+      playlistRepository: repository,
+      tracks: const [],
+      playlistId: id,
+    );
+
+    expect(find.text('Songs for the highway'), findsOneWidget);
+  });
+
+  testWidgets('tapping the favorite icon favorites the playlist', (
+    tester,
+  ) async {
+    final repository = FakePlaylistRepository();
+    final id = await repository.createPlaylist('Road Trip');
+
+    await _pumpPlaylistScreen(
+      tester,
+      playlistRepository: repository,
+      tracks: const [],
+      playlistId: id,
+    );
+
+    expect(find.byIcon(Icons.favorite_border), findsOneWidget);
+
+    await tester.tap(find.byIcon(Icons.favorite_border));
+    await tester.pump();
+
+    expect(find.byIcon(Icons.favorite), findsOneWidget);
+    expect((await repository.watchPlaylist(id).first)?.isFavorite, isTrue);
+  });
+
+  testWidgets('searching filters the track list by title', (tester) async {
+    final repository = FakePlaylistRepository();
+    final id = await repository.createPlaylist('Road Trip');
+    await repository.setPlaylistTracks(id, ['track-1', 'track-2']);
+
+    await _pumpPlaylistScreen(
+      tester,
+      playlistRepository: repository,
+      tracks: [
+        _track(id: 'track-1', title: 'Night Drive'),
+        _track(id: 'track-2', title: 'Sunset'),
+      ],
+      playlistId: id,
+    );
+
+    await tester.tap(find.byIcon(Icons.search));
+    await tester.pump();
+    await tester.enterText(find.byType(TextField), 'sun');
+    await tester.pump();
+
+    expect(find.text('Sunset'), findsOneWidget);
+    expect(find.text('Night Drive'), findsNothing);
+  });
+
+  testWidgets('switching sort order re-sorts the track list', (tester) async {
+    final repository = FakePlaylistRepository();
+    final id = await repository.createPlaylist('Road Trip');
+    await repository.setPlaylistTracks(id, ['track-1', 'track-2']);
+
+    await _pumpPlaylistScreen(
+      tester,
+      playlistRepository: repository,
+      tracks: [
+        _track(id: 'track-1', title: 'Zebra'),
+        _track(id: 'track-2', title: 'Apple'),
+      ],
+      playlistId: id,
+    );
+
+    final titlesBefore = tester
+        .widgetList<Text>(find.byType(Text))
+        .map((widget) => widget.data)
+        .whereType<String>();
+    expect(
+      titlesBefore.toList().indexOf('Zebra') <
+          titlesBefore.toList().indexOf('Apple'),
+      isTrue,
+    );
+
+    await tester.tap(find.text('Playlist order'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Title'));
+    await tester.pumpAndSettle();
+
+    final titlesAfter = tester
+        .widgetList<Text>(find.byType(Text))
+        .map((widget) => widget.data)
+        .whereType<String>()
+        .toList();
+    expect(titlesAfter.indexOf('Apple') < titlesAfter.indexOf('Zebra'), isTrue);
+  });
+
+  testWidgets(
+    'removing a track from its more menu takes it out of the playlist',
+    (tester) async {
+      final repository = FakePlaylistRepository();
+      final id = await repository.createPlaylist('Road Trip');
+      await repository.setPlaylistTracks(id, ['track-1', 'track-2']);
+
+      await _pumpPlaylistScreen(
+        tester,
+        playlistRepository: repository,
+        tracks: [
+          _track(id: 'track-1', title: 'Night Drive'),
+          _track(id: 'track-2', title: 'Sunset'),
+        ],
+        playlistId: id,
+      );
+
+      await tester.tap(find.byIcon(Icons.more_vert).first);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Remove from playlist'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Delete'));
+      await tester.pumpAndSettle();
+
+      expect(await repository.watchPlaylistTrackIds(id).first, ['track-2']);
+    },
+  );
 }
