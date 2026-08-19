@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
-# Automatically drives the app through its main screens and saves a
-# screenshot of each into screenshots/, for use in the README, Play
-# Store listing, official website, etc.
+# Automatically drives the app through its main screens, once per README
+# locale, and saves a screenshot of each into screenshots/<locale>/, for
+# use in the READMEs, Play Store listing, official website, etc.
+#
+# A single app install covers every locale (each is its own test case in
+# screenshot_test.dart, run in the same `flutter drive` session), since
+# installing the app is the slow part.
 #
 # Usage:
 #   scripts/screenshot.sh [device-id]
