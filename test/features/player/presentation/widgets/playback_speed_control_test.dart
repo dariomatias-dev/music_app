@@ -21,9 +21,9 @@ void main() {
       ),
     );
 
-    expect(find.text('1.00x'), findsOneWidget);
+    expect(find.text('1x'), findsOneWidget);
 
-    await tester.tap(find.text('1.00x'));
+    await tester.tap(find.text('1x'));
     await tester.pump();
     expect(service.snapshot.speed, 1.25);
     expect(find.text('1.25x'), findsOneWidget);

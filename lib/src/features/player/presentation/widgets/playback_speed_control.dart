@@ -4,6 +4,7 @@ import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:music_app/src/core/audio/audio_providers.dart';
+import 'package:music_app/src/core/utils/playback_speed_formatter.dart';
 import 'package:music_app/src/features/player/presentation/view_models/playback_view_model.dart';
 
 /// Presets cycled through by [PlaybackSpeedControl].
@@ -23,7 +24,7 @@ class PlaybackSpeedControl extends ConsumerWidget {
     final index = _speedPresets.indexOf(speed);
 
     return AppTextButton(
-      label: '${speed.toStringAsFixed(2)}x',
+      label: formatPlaybackSpeed(speed),
       onPressed: () {
         final next =
             _speedPresets[(index < 0 ? 0 : index + 1) % _speedPresets.length];
