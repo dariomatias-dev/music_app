@@ -1,0 +1,179 @@
+<br>
+<div align="center">
+<img src="https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white" alt="Flutter">
+<img src="https://img.shields.io/badge/Dart-0175C2?style=for-the-badge&logo=dart&logoColor=white" alt="Dart">
+<img src="https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white" alt="Android">
+</div>
+<br>
+<div align="center">
+<a href="https://github.com/dariomatias-dev/music_app/actions/workflows/ci.yml"><img src="https://github.com/dariomatias-dev/music_app/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+<img src="https://img.shields.io/badge/lints-very__good__analysis-blueviolet?style=flat" alt="very_good_analysis">
+<a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="Licença MIT"></a>
+</div>
+<br>
+
+<p align="center">
+<a href="README.md">English</a> · <a href="README.es.md">Español</a> · <strong>Português (BR)</strong>
+</p>
+
+<h1 align="center">Music App</h1>
+
+<p align="center">
+Um aplicativo Android para tocar a música que já está no seu dispositivo — totalmente offline, sem contas, sem streaming.
+<br>
+<a href="#sobre-o-projeto"><strong>Explore a documentação »</strong></a>
+<br>
+<br>
+<a href="https://github.com/dariomatias-dev/music_app/issues">Reportar Bug</a>
+·
+<a href="https://github.com/dariomatias-dev/music_app/issues">Solicitar Funcionalidade</a>
+</p>
+
+## Sumário
+
+- [Sobre O Projeto](#sobre-o-projeto)
+- [Funcionalidades](#funcionalidades)
+- [Construído Com](#construído-com)
+- [Arquitetura](#arquitetura)
+- [Testes](#testes)
+- [Capturas de Tela](#capturas-de-tela)
+- [Baixar o App](#baixar-o-app)
+- [Começando](#começando)
+- [Scripts](#scripts)
+- [Contribuindo](#contribuindo)
+- [Licença](#licença)
+- [Autor](#autor)
+
+## Sobre O Projeto
+
+**Music App** é um player de música local e offline para Android. Ele escaneia os arquivos de áudio que já estão no seu dispositivo, monta uma biblioteca navegável a partir deles, e toca tudo sem conexão com a internet, sem conta e sem nenhum serviço de streaming envolvido.
+
+O player suporta reprodução sem pausas (gapless) e crossfade, uma fila persistente, temporizador de suspensão, e velocidade de reprodução ajustável. Além da reprodução, ele te dá controle real sobre sua biblioteca: playlists, favoritos, gerenciamento de armazenamento por pasta (incluindo quais pastas são escaneadas), e estatísticas simples de audição.
+
+## Funcionalidades
+
+- **Biblioteca Local**: Escaneia seu dispositivo em busca de arquivos de áudio e indexa faixas, álbuns e artistas, com capas e metadados.
+- **Reprodução**: Reprodução sem pausas (gapless), crossfade, aleatório, repetição, velocidade ajustável e temporizador de suspensão.
+- **Playlists**: Crie, renomeie, duplique e exclua playlists, com descrição opcional, favoritar, reordenar arrastando, busca dentro da playlist e múltiplos critérios de ordenação.
+- **Favoritos**: Favorite qualquer faixa para acesso rápido na sua própria aba.
+- **Busca**: Filtre sua biblioteca por título ou artista enquanto digita.
+- **Letras**: Veja a letra de uma faixa junto com a reprodução, lida de arquivos locais ou de metadados embutidos.
+- **Gerenciamento de Armazenamento**: Veja o espaço usado por pasta, inclua ou exclua pastas do escaneamento, exclua arquivos e limpe o cache de capas.
+- **Estatísticas**: Histórico de audição e tempo gasto, detalhado por faixa e artista.
+- **Tema Claro e Escuro**: Temas em todo o app, seguindo o sistema ou escolhido manualmente, com preferência salva.
+- **Múltiplos Idiomas**: Interface completa em inglês, espanhol, português (Brasil) e chinês.
+- **Acessibilidade**: Labels semânticos em elementos interativos para leitores de tela.
+
+## Construído Com
+
+- **[Flutter](https://flutter.dev/)**: Kit de ferramentas de UI do Google para construir aplicações nativas a partir de uma única base de código.
+- **[Dart](https://dart.dev/)**: A linguagem de programação por trás do Flutter.
+- **[Riverpod](https://riverpod.dev/)**: Gerenciamento de estado e injeção de dependência.
+- **[go_router](https://pub.dev/packages/go_router)**: Roteamento declarativo, incluindo um shell persistente de abas inferiores.
+- **[just_audio](https://pub.dev/packages/just_audio)** e **[audio_service](https://pub.dev/packages/audio_service)**: Reprodução gapless/crossfade e integração com a sessão de mídia do sistema (tela de bloqueio, notificação, controles Bluetooth).
+- **[drift](https://pub.dev/packages/drift)**: O banco de dados SQLite local por trás do índice da biblioteca, das playlists, dos favoritos e do histórico de audição.
+- **[metadata_god](https://pub.dev/packages/metadata_god)** e **[on_audio_query](https://pub.dev/packages/on_audio_query)**: Leitura de metadados de arquivos de áudio e consultas ao repositório de mídia do dispositivo.
+- **[freezed](https://pub.dev/packages/freezed_annotation)**: Modelos de domínio imutáveis.
+- **[intl](https://pub.dev/packages/intl)** e o suporte nativo de `l10n` do Flutter: localização em inglês, espanhol, português (BR) e chinês.
+- **[mocktail](https://pub.dev/packages/mocktail)**: Mocks na suíte de testes.
+
+## Arquitetura
+
+O app é organizado por feature (`lib/src/features/`), cada uma com suas
+próprias camadas `data`, `domain` e `presentation`, seguindo Clean
+Architecture e MVVM:
+
+- **library**: as faixas, álbuns e artistas indexados, e suas abas.
+- **player** / **queue**: os controles de reprodução, a tela de reprodução atual e a fila.
+- **playlist**: as playlists criadas pelo usuário e suas faixas.
+- **history** / **statistics**: as reproduções registradas e as estatísticas de audição derivadas delas.
+- **storage**: o uso de espaço por pasta e a inclusão/exclusão do escaneamento.
+- **search**, **home**, **settings**, **onboarding**, **splash**: as demais telas de nível superior.
+
+O estado é gerenciado com Riverpod (classes `ViewModel`/`Notifier`
+expostas via providers), o roteamento com `go_router`, e a persistência
+por `drift` (SQLite) e `shared_preferences`. O design system
+compartilhado — cada componente com tema, dos botões ao bottom sheet
+usado em todo o app — vive em seu próprio pacote local,
+`packages/app_ui`; responsabilidades transversais (navegação, banco de
+dados, áudio, permissões) ficam em `lib/src/core`.
+
+## Testes
+
+O projeto tem 129 arquivos de teste (87 no app, 42 em
+`packages/app_ui`), cobrindo repositórios, view models, widgets e 56
+testes golden para o design system e as telas principais, além de testes
+de integração para os fluxos de onboarding, reprodução e persistência. O
+código segue o conjunto rigoroso de lints `very_good_analysis`,
+verificado no CI junto com `dart format` e `flutter test`.
+
+```sh
+fvm flutter analyze
+fvm flutter test
+```
+
+## Capturas de Tela
+
+<div align="center">
+<img src="screenshots/pt-BR/01_home.png" width="200" alt="Início"/>
+<img src="screenshots/pt-BR/02_library_playlists.png" width="200" alt="Playlists"/>
+<img src="screenshots/pt-BR/03_playlist_detail.png" width="200" alt="Detalhe da playlist"/>
+<img src="screenshots/pt-BR/04_library_tracks.png" width="200" alt="Faixas"/>
+<img src="screenshots/pt-BR/05_now_playing.png" width="200" alt="Tocando agora"/>
+<img src="screenshots/pt-BR/06_search.png" width="200" alt="Busca"/>
+<img src="screenshots/pt-BR/07_settings.png" width="200" alt="Configurações"/>
+<img src="screenshots/pt-BR/08_storage.png" width="200" alt="Armazenamento"/>
+<img src="screenshots/pt-BR/09_statistics.png" width="200" alt="Estatísticas"/>
+</div>
+
+## Baixar o App
+
+O **Music App** não está na Play Store. Baixe o APK assinado mais
+recente nas **GitHub Releases** do projeto:
+
+<a href="https://github.com/dariomatias-dev/music_app/releases/latest" target="_blank"><strong>Baixar a última versão »</strong></a>
+
+## Começando
+
+O projeto fixa a versão do Flutter SDK via [FVM](https://fvm.app/), por isso todos os comandos abaixo usam `fvm flutter` em vez de um `flutter` instalado direto.
+
+```sh
+git clone https://github.com/dariomatias-dev/music_app.git
+cd music_app
+fvm install
+fvm flutter pub get
+```
+
+Depois rode o app em um dispositivo ou emulador conectado:
+
+```sh
+fvm flutter run
+```
+
+## Scripts
+
+Scripts utilitários ficam em `scripts/`.
+
+| Script       | Comando                             | Descrição                                                                                                                                                                                       |
+| ------------ | ------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `screenshot` | `scripts/screenshot.sh [device-id]` | Percorre as principais telas do app em um dispositivo ou emulador conectado e salva uma captura de cada uma em `screenshots/`, usadas no README, na Play Store e no site oficial. Rode `fvm flutter devices` para listar os ids de dispositivos disponíveis. |
+
+## Contribuindo
+
+Contribuições tornam a comunidade open-source um lugar incrível para aprender e criar. Qualquer contribuição que você fizer será muito bem-vinda.
+
+Abra uma issue para discutir uma mudança antes de começar a trabalhar nela, siga o estilo de código existente, e garanta que `fvm flutter analyze` e `fvm flutter test` passem antes de abrir um pull request.
+
+## Licença
+
+Distribuído sob a **Licença MIT**. Veja o arquivo [LICENSE](LICENSE) para mais informações.
+
+## Autor
+
+Desenvolvido por **Dário Matias Sales**:
+
+- **Portfólio**: [dariomatias-dev](https://dariomatias-dev.com)
+- **GitHub**: [dariomatias-dev](https://github.com/dariomatias-dev)
+- **Email**: [dariomatias.dev@gmail.com](mailto:dariomatias.dev@gmail.com)
+- **Instagram**: [@dariomatias_dev](https://instagram.com/dariomatias_dev)
+- **LinkedIn**: [linkedin.com/in/dariomatias-dev](https://linkedin.com/in/dariomatias-dev)
