@@ -31,10 +31,22 @@ const _openVelocityThreshold = 180.0;
 /// always reads as a distinct layer over the content.
 class MiniPlayer extends ConsumerWidget {
   /// Creates a [MiniPlayer].
-  const MiniPlayer({super.key});
+  ///
+  /// [enableHeroAnimation] should stay `true` for at most one mini player
+  /// on screen at a time: the main shell's own docked instance is always
+  /// mounted, so [MiniPlayerDock]'s floating copy (mounted alongside it,
+  /// on screens pushed outside the shell) passes `false` to avoid two
+  /// simultaneously-mounted Heroes sharing a tag — which Flutter resolves
+  /// by flying the artwork between the two docks on unrelated navigation,
+  /// instead of only towards the actual playback screen.
+  const MiniPlayer({this.enableHeroAnimation = true, super.key});
 
   /// The card's height.
   static const height = 70.0;
+
+  /// Whether the artwork participates in the shared-element transition
+  /// into the playback screen.
+  final bool enableHeroAnimation;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -69,7 +81,11 @@ class MiniPlayer extends ConsumerWidget {
           : Theme(
               key: const ValueKey('mini-player-visible'),
               data: invertedTheme,
-              child: _MiniPlayerCard(item: currentItem, playing: playing),
+              child: _MiniPlayerCard(
+                item: currentItem,
+                playing: playing,
+                enableHeroAnimation: enableHeroAnimation,
+              ),
             ),
     );
   }
@@ -103,14 +119,21 @@ class MiniPlayerDock extends StatelessWidget {
           left: 0,
           right: 0,
           bottom: 0,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const MiniPlayer(),
-              SizedBox(
-                height: AppSpacing.smMd + MediaQuery.of(context).padding.bottom,
-              ),
-            ],
+          // A sibling of `child`'s own Material (typically AppScaffold's),
+          // not a descendant of it, so it needs its own: without one, the
+          // card's text rendered a stray underline under it.
+          child: Material(
+            type: MaterialType.transparency,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const MiniPlayer(enableHeroAnimation: false),
+                SizedBox(
+                  height:
+                      AppSpacing.smMd + MediaQuery.of(context).padding.bottom,
+                ),
+              ],
+            ),
           ),
         ),
       ],
@@ -119,10 +142,15 @@ class MiniPlayerDock extends StatelessWidget {
 }
 
 class _MiniPlayerCard extends ConsumerWidget {
-  const _MiniPlayerCard({required this.item, required this.playing});
+  const _MiniPlayerCard({
+    required this.item,
+    required this.playing,
+    required this.enableHeroAnimation,
+  });
 
   final QueueMediaItem item;
   final bool playing;
+  final bool enableHeroAnimation;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -166,14 +194,17 @@ class _MiniPlayerCard extends ConsumerWidget {
             child: Row(
               children: [
                 const SizedBox(width: 10),
-                Hero(
-                  tag: heroTagFor(origin: 'player', id: item.id),
-                  child: TrackArtwork(
-                    item: item,
-                    size: 52,
-                    radius: AppRadius.small,
-                  ),
-                ),
+                if (enableHeroAnimation)
+                  Hero(
+                    tag: heroTagFor(origin: 'player', id: item.id),
+                    child: TrackArtwork(
+                      item: item,
+                      size: 52,
+                      radius: AppRadius.small,
+                    ),
+                  )
+                else
+                  TrackArtwork(item: item, size: 52, radius: AppRadius.small),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Semantics(

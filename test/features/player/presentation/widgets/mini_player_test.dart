@@ -391,4 +391,51 @@ void main() {
       expect(coverHero.tag, expectedTag);
     },
   );
+
+  testWidgets(
+    'a second, docked mini player next to the main one does not add a '
+    'competing Hero',
+    (tester) async {
+      // Reproduces the shape of MainShell (always-mounted MiniPlayer) plus
+      // MiniPlayerDock (its own floating copy, on screens pushed outside
+      // the shell): with both showing the same track, a second Hero
+      // sharing the first's tag made Flutter treat unrelated navigation
+      // between the two as a flight, sliding the artwork across the
+      // screen instead of just appearing in place.
+      final service = FakeAudioPlayerService();
+      final handler = MusicAudioHandler(service);
+      addTearDown(handler.dispose);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            audioPlayerServiceProvider.overrideWithValue(service),
+            audioHandlerProvider.overrideWithValue(handler),
+            libraryRepositoryProvider.overrideWithValue(
+              const _FakeLibraryRepository(),
+            ),
+          ],
+          child: _scaffold(
+            const Column(
+              children: [
+                MiniPlayer(),
+                MiniPlayer(enableHeroAnimation: false),
+              ],
+            ),
+          ),
+        ),
+      );
+
+      final element = tester.element(find.byType(MiniPlayer).first);
+      final container = ProviderScope.containerOf(element);
+      await container.read(queueViewModelProvider.notifier).playFromSource([
+        _track(),
+      ], startIndex: 0);
+      await tester.pump();
+
+      expect(tester.takeException(), isNull);
+      expect(find.byType(Hero), findsOneWidget);
+      expect(find.text('Night Drive'), findsNWidgets(2));
+    },
+  );
 }
