@@ -28,6 +28,12 @@ class PlaybackHistoryRecorder extends _$PlaybackHistoryRecorder {
   Duration _playedDuration = Duration.zero;
   DateTime? _accumulatingSince;
 
+  // Read once in `build`, not inside `onDispose`: Riverpod forbids
+  // `ref.read` from within a dispose callback, since it's a mutation of
+  // the provider graph made while that same graph is already tearing
+  // down.
+  late PlayHistoryRepository _repository;
+
   /// Source of the current time, overridable so tests can simulate elapsed
   /// playback without real waits.
   @visibleForTesting
@@ -35,6 +41,7 @@ class PlaybackHistoryRecorder extends _$PlaybackHistoryRecorder {
 
   @override
   void build() {
+    _repository = ref.read(playHistoryRepositoryProvider);
     ref
       // Selects only currentIndex, playing and processingState: the
       // frequent position ticks during playback don't touch any of these,
@@ -110,14 +117,12 @@ class PlaybackHistoryRecorder extends _$PlaybackHistoryRecorder {
     if (playedDuration < _minPlayedDuration && !completed) return;
 
     unawaited(
-      ref
-          .read(playHistoryRepositoryProvider)
-          .recordPlay(
-            trackId: trackId,
-            startedAt: startedAt,
-            playedDuration: playedDuration,
-            completed: completed,
-          ),
+      _repository.recordPlay(
+        trackId: trackId,
+        startedAt: startedAt,
+        playedDuration: playedDuration,
+        completed: completed,
+      ),
     );
   }
 }
