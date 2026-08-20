@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:music_app/l10n/app_localizations.dart';
-import 'package:music_app/src/core/navigation/route_paths.dart';
+import 'package:music_app/src/core/navigation/navigators/library_navigator.dart';
+import 'package:music_app/src/core/navigation/navigators/playlist_navigator.dart';
 import 'package:music_app/src/core/utils/duration_formatter.dart';
 import 'package:music_app/src/features/library/presentation/providers/library_providers.dart';
 import 'package:music_app/src/features/library/presentation/widgets/media_row.dart';
@@ -78,7 +78,8 @@ class SearchResultsList extends ConsumerWidget {
                     Icons.chevron_right_rounded,
                     color: context.colors.textTertiary,
                   ),
-                  onTap: () => context.push(RoutePaths.album(album.id)),
+                  onTap: () =>
+                      LibraryNavigator.openAlbum(context, albumId: album.id),
                 ),
             ],
           ),
@@ -95,7 +96,10 @@ class SearchResultsList extends ConsumerWidget {
                     Icons.chevron_right_rounded,
                     color: context.colors.textTertiary,
                   ),
-                  onTap: () => context.push(RoutePaths.artist(artist.id)),
+                  onTap: () => LibraryNavigator.openArtist(
+                    context,
+                    artistId: artist.id,
+                  ),
                 ),
             ],
           ),
@@ -111,7 +115,10 @@ class SearchResultsList extends ConsumerWidget {
                     Icons.chevron_right_rounded,
                     color: context.colors.textTertiary,
                   ),
-                  onTap: () => context.push(RoutePaths.playlist(playlist.id)),
+                  onTap: () => PlaylistNavigator.openPlaylist(
+                    context,
+                    playlistId: playlist.id,
+                  ),
                 ),
             ],
           ),

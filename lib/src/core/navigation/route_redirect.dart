@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:music_app/src/core/constants/preference_keys.dart';
-import 'package:music_app/src/core/navigation/route_paths.dart';
+import 'package:music_app/src/core/navigation/app_router.dart';
 import 'package:music_app/src/core/permissions/media_permission_service.dart';
 import 'package:music_app/src/core/permissions/permission_providers.dart';
 import 'package:music_app/src/core/storage/storage_providers.dart';
@@ -15,8 +15,12 @@ Future<String?> appRouteRedirect({
   required GoRouterState state,
 }) async {
   final location = state.matchedLocation;
+  const splash = SplashRoute();
+  const onboarding = OnboardingRoute();
+  const permissions = PermissionsRoute();
+  const home = HomeRoute();
 
-  if (location == RoutePaths.splash) {
+  if (location == splash.location) {
     // The splash screen decides its own destination once ready.
     return null;
   }
@@ -28,7 +32,7 @@ Future<String?> appRouteRedirect({
       false;
 
   if (!onboardingCompleted) {
-    return location == RoutePaths.onboarding ? null : RoutePaths.onboarding;
+    return location == onboarding.location ? null : onboarding.location;
   }
 
   final permissionStatus = await ref
@@ -36,11 +40,11 @@ Future<String?> appRouteRedirect({
       .check();
 
   if (permissionStatus != MediaPermissionStatus.granted) {
-    return location == RoutePaths.permissions ? null : RoutePaths.permissions;
+    return location == permissions.location ? null : permissions.location;
   }
 
-  if (location == RoutePaths.onboarding || location == RoutePaths.permissions) {
-    return RoutePaths.home;
+  if (location == onboarding.location || location == permissions.location) {
+    return home.location;
   }
 
   return null;

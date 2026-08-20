@@ -70,6 +70,7 @@ dev_dependencies:
   riverpod_generator: ^3.0.0
   json_serializable: ^6.9.5
   freezed: ^3.2.3
+  go_router_builder: ^4.4.0
   # Pinned: must match the drift version above.
   drift_dev: 2.31.0
 

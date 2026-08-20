@@ -3,10 +3,9 @@ import 'dart:async';
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:music_app/l10n/app_localizations.dart';
 import 'package:music_app/src/core/database/database_providers.dart';
-import 'package:music_app/src/core/navigation/route_paths.dart';
+import 'package:music_app/src/core/navigation/navigators/home_navigator.dart';
 import 'package:music_app/src/features/history/presentation/view_models/playback_history_recorder.dart';
 import 'package:music_app/src/features/player/presentation/view_models/playback_transition_effects.dart';
 import 'package:music_app/src/features/queue/presentation/view_models/queue_view_model.dart';
@@ -15,8 +14,8 @@ import 'package:music_app/src/features/settings/presentation/view_models/playbac
 /// Splash screen shown while the app's core dependencies (preferences,
 /// database) finish initializing.
 ///
-/// Once ready, it hands off navigation to [RoutePaths.home]; the router's
-/// redirect then sends the user to onboarding, permissions or home.
+/// Once ready, it hands off navigation to Home; the router's redirect then
+/// sends the user to onboarding, permissions or home.
 class SplashScreen extends ConsumerStatefulWidget {
   /// Creates a [SplashScreen].
   const SplashScreen({super.key});
@@ -40,7 +39,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
       ..read(playbackPreferencesViewModelProvider);
     unawaited(ref.read(queueViewModelProvider.notifier).restoreSession());
     if (!mounted) return;
-    context.go(RoutePaths.home);
+    HomeNavigator.goToHome(context);
   }
 
   @override

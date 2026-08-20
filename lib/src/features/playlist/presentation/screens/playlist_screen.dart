@@ -3,9 +3,8 @@ import 'dart:async';
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:music_app/l10n/app_localizations.dart';
-import 'package:music_app/src/core/navigation/route_paths.dart';
+import 'package:music_app/src/core/navigation/navigators/player_navigator.dart';
 import 'package:music_app/src/core/utils/duration_formatter.dart';
 import 'package:music_app/src/features/library/domain/entities/track.dart';
 import 'package:music_app/src/features/library/presentation/providers/library_providers.dart';
@@ -116,7 +115,7 @@ class _PlaylistScreenState extends ConsumerState<PlaylistScreen> {
           .read(queueViewModelProvider.notifier)
           .playFromSource(source, startIndex: startIndex);
       if (!context.mounted) return;
-      await context.push(RoutePaths.player);
+      await PlayerNavigator.openPlayer(context);
     }
 
     final header = _PlaylistHeader(
@@ -304,7 +303,7 @@ class _PlaylistScreenState extends ConsumerState<PlaylistScreen> {
         .read(queueViewModelProvider.notifier)
         .playFromSource(shuffled, startIndex: 0);
     if (!mounted) return;
-    await GoRouter.of(context).push(RoutePaths.player);
+    await PlayerNavigator.openPlayer(context);
   }
 
   Future<void> _reorder(

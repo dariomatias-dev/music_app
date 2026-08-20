@@ -3,10 +3,9 @@ import 'dart:async';
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:music_app/l10n/app_localizations.dart';
 import 'package:music_app/src/core/audio/queue_media_item.dart';
-import 'package:music_app/src/core/navigation/route_paths.dart';
+import 'package:music_app/src/core/navigation/navigators/player_navigator.dart';
 import 'package:music_app/src/features/player/presentation/widgets/file_info_dialog.dart';
 import 'package:music_app/src/features/player/presentation/widgets/sleep_timer_sheet.dart';
 import 'package:music_app/src/features/playlist/presentation/widgets/add_to_playlist_sheet.dart';
@@ -38,7 +37,7 @@ Future<void> showPlaybackMoreSheet(
         AppSheetAction(
           icon: Icons.queue_music_rounded,
           label: l10n.viewQueueLabel,
-          onTap: () => close(() => context.push(RoutePaths.queue)),
+          onTap: () => close(() => PlayerNavigator.openQueue(context)),
         ),
         AppSheetAction(
           icon: Icons.playlist_add,
@@ -50,7 +49,7 @@ Future<void> showPlaybackMoreSheet(
         AppSheetAction(
           icon: Icons.menu_book_outlined,
           label: l10n.openLyricsLabel,
-          onTap: () => close(() => context.push(RoutePaths.lyrics)),
+          onTap: () => close(() => PlayerNavigator.openLyrics(context)),
         ),
         AppSheetAction(
           icon: Icons.timer_outlined,

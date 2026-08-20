@@ -1,13 +1,9 @@
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:music_app/l10n/app_localizations.dart';
+import 'package:music_app/src/core/navigation/navigators/main_shell_navigator.dart';
 import 'package:music_app/src/features/settings/presentation/view_models/user_profile_view_model.dart';
-
-/// Index of the Search tab within the main shell's branches (home, search,
-/// library, settings, in that order).
-const _searchTabIndex = 1;
 
 /// The Home tab's header: a time-of-day greeting with the user's name (once
 /// set, in Etapa 91), and a tappable trigger that switches to the Search
@@ -77,9 +73,7 @@ class _SearchTrigger extends StatelessWidget {
 
     return Pressable(
       scale: 0.98,
-      onTap: () => StatefulNavigationShell.of(context).goBranch(
-        _searchTabIndex,
-      ),
+      onTap: () => MainShellNavigator.goToSearchTab(context),
       child: Container(
         height: 46,
         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),

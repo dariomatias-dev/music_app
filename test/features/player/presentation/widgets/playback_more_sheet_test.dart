@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:music_app/l10n/app_localizations.dart';
 import 'package:music_app/src/core/audio/queue_media_item.dart';
+import 'package:music_app/src/core/navigation/route_names.dart';
 import 'package:music_app/src/core/navigation/route_paths.dart';
 import 'package:music_app/src/features/player/presentation/widgets/playback_more_sheet.dart';
 
@@ -33,10 +34,12 @@ Widget _app() {
         ),
       ),
       GoRoute(
+        name: RouteNames.queue,
         path: RoutePaths.queue,
         builder: (context, state) => const Scaffold(body: Text('Queue screen')),
       ),
       GoRoute(
+        name: RouteNames.lyrics,
         path: RoutePaths.lyrics,
         builder: (context, state) =>
             const Scaffold(body: Text('Lyrics screen')),

@@ -3,10 +3,9 @@ import 'dart:async';
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:music_app/l10n/app_localizations.dart';
 import 'package:music_app/src/core/audio/queue_media_item.dart';
-import 'package:music_app/src/core/navigation/route_paths.dart';
+import 'package:music_app/src/core/navigation/navigators/library_navigator.dart';
 import 'package:music_app/src/features/library/data/providers/library_data_providers.dart';
 import 'package:music_app/src/features/library/presentation/providers/favorite_providers.dart';
 
@@ -94,7 +93,7 @@ class _TrackLabel extends StatelessWidget {
             scale: 0.97,
             onTap: albumId == null
                 ? null
-                : () => context.push(RoutePaths.album(albumId)),
+                : () => LibraryNavigator.openAlbum(context, albumId: albumId),
             child: Text(
               item.title,
               maxLines: 1,
@@ -107,7 +106,8 @@ class _TrackLabel extends StatelessWidget {
             scale: 0.97,
             onTap: artistId == null
                 ? null
-                : () => context.push(RoutePaths.artist(artistId)),
+                : () =>
+                      LibraryNavigator.openArtist(context, artistId: artistId),
             child: Text(
               item.artist ?? '',
               maxLines: 1,

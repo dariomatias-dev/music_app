@@ -3,9 +3,11 @@ import 'dart:async';
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:music_app/l10n/app_localizations.dart';
-import 'package:music_app/src/core/navigation/route_paths.dart';
+import 'package:music_app/src/core/navigation/navigators/onboarding_navigator.dart';
+import 'package:music_app/src/core/navigation/navigators/settings_navigator.dart';
+import 'package:music_app/src/core/navigation/navigators/statistics_navigator.dart';
+import 'package:music_app/src/core/navigation/navigators/storage_navigator.dart';
 import 'package:music_app/src/core/utils/language_names.dart';
 import 'package:music_app/src/features/library/data/providers/library_data_providers.dart';
 import 'package:music_app/src/features/onboarding/presentation/view_models/onboarding_view_model.dart';
@@ -103,12 +105,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           AppSettingsRow(
             icon: Icons.sd_storage_outlined,
             label: l10n.storageLabel,
-            onTap: () => context.push(RoutePaths.storage),
+            onTap: () => StorageNavigator.openStorage(context),
           ),
           AppSettingsRow(
             icon: Icons.bar_chart_rounded,
             label: l10n.statisticsLabel,
-            onTap: () => context.push(RoutePaths.statistics),
+            onTap: () => StatisticsNavigator.openStatistics(context),
           ),
           AppSettingsRow(
             icon: Icons.refresh_rounded,
@@ -131,7 +133,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           AppSettingsRow(
             icon: Icons.info_outline_rounded,
             label: l10n.settingsAboutRowLabel,
-            onTap: () => context.push(RoutePaths.about),
+            onTap: () => SettingsNavigator.openAbout(context),
           ),
           const SizedBox(height: AppSpacing.lg),
           Center(
@@ -171,7 +173,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   Future<void> _replayOnboarding(BuildContext context, WidgetRef ref) async {
     await ref.read(onboardingViewModelProvider.notifier).reset();
     if (!context.mounted) return;
-    context.go(RoutePaths.onboarding);
+    OnboardingNavigator.goToOnboarding(context);
   }
 }
 

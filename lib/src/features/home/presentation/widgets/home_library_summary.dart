@@ -1,9 +1,9 @@
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:music_app/l10n/app_localizations.dart';
-import 'package:music_app/src/core/navigation/route_paths.dart';
+import 'package:music_app/src/core/navigation/navigators/statistics_navigator.dart';
+import 'package:music_app/src/core/navigation/navigators/storage_navigator.dart';
 import 'package:music_app/src/core/utils/duration_formatter.dart';
 import 'package:music_app/src/features/library/presentation/providers/library_providers.dart';
 
@@ -75,13 +75,13 @@ class HomeLibrarySummary extends ConsumerWidget {
           _LinkRow(
             icon: Icons.bar_chart_rounded,
             label: l10n.statisticsLabel,
-            onTap: () => context.push(RoutePaths.statistics),
+            onTap: () => StatisticsNavigator.openStatistics(context),
           ),
           const SizedBox(height: AppSpacing.smMd),
           _LinkRow(
             icon: Icons.sd_storage_outlined,
             label: l10n.storageLabel,
-            onTap: () => context.push(RoutePaths.storage),
+            onTap: () => StorageNavigator.openStorage(context),
           ),
         ],
       ),

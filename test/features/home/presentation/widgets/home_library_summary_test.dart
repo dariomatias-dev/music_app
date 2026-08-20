@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:music_app/l10n/app_localizations.dart';
+import 'package:music_app/src/core/navigation/route_names.dart';
 import 'package:music_app/src/features/home/presentation/widgets/home_library_summary.dart';
 import 'package:music_app/src/features/library/data/indexing/library_indexer.dart';
 import 'package:music_app/src/features/library/data/providers/library_data_providers.dart';
@@ -126,6 +127,7 @@ void main() {
               const Scaffold(body: HomeLibrarySummary()),
         ),
         GoRoute(
+          name: RouteNames.storage,
           path: '/storage',
           builder: (context, state) =>
               const Scaffold(body: Text('Storage screen reached')),
@@ -168,6 +170,7 @@ void main() {
               const Scaffold(body: HomeLibrarySummary()),
         ),
         GoRoute(
+          name: RouteNames.statistics,
           path: '/statistics',
           builder: (context, state) =>
               const Scaffold(body: Text('Statistics screen reached')),

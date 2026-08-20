@@ -3,9 +3,8 @@ import 'dart:async';
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:music_app/l10n/app_localizations.dart';
-import 'package:music_app/src/core/navigation/route_paths.dart';
+import 'package:music_app/src/core/navigation/navigators/library_navigator.dart';
 import 'package:music_app/src/core/utils/duration_formatter.dart';
 import 'package:music_app/src/core/widgets/cached_square_image.dart';
 import 'package:music_app/src/features/library/domain/entities/album.dart';
@@ -132,7 +131,10 @@ class _AlbumHeader extends StatelessWidget {
           if (artistName != null) ...[
             const SizedBox(height: 4),
             Pressable(
-              onTap: () => context.push(RoutePaths.artist(album.artistId)),
+              onTap: () => LibraryNavigator.openArtist(
+                context,
+                artistId: album.artistId,
+              ),
               child: Text(
                 artistName!,
                 style: AppTypography.rowSubtitle.copyWith(

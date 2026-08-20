@@ -3,6 +3,9 @@ include: package:very_good_analysis/analysis_options.yaml
 analyzer:
   exclude:
     - build/**
+    # Unlike the project's other generators, go_router_builder's output
+    # doesn't add its own `// ignore_for_file: type=lint`.
+    - lib/src/core/navigation/app_router.g.dart
 
 linter:
   rules:

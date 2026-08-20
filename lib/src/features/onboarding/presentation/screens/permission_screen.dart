@@ -3,9 +3,8 @@ import 'dart:async';
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:music_app/l10n/app_localizations.dart';
-import 'package:music_app/src/core/navigation/route_paths.dart';
+import 'package:music_app/src/core/navigation/navigators/home_navigator.dart';
 import 'package:music_app/src/core/permissions/media_permission_service.dart';
 import 'package:music_app/src/core/permissions/permission_providers.dart';
 import 'package:music_app/src/features/library/data/providers/library_data_providers.dart';
@@ -80,7 +79,7 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
     }
 
     if (!mounted) return;
-    context.go(RoutePaths.home);
+    HomeNavigator.goToHome(context);
   }
 
   @override

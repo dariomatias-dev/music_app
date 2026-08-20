@@ -4,11 +4,10 @@ import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:music_app/l10n/app_localizations.dart';
 import 'package:music_app/src/core/audio/audio_providers.dart';
 import 'package:music_app/src/core/audio/queue_media_item.dart';
-import 'package:music_app/src/core/navigation/route_paths.dart';
+import 'package:music_app/src/core/navigation/navigators/player_navigator.dart';
 import 'package:music_app/src/core/navigation/route_transitions.dart';
 import 'package:music_app/src/features/player/presentation/view_models/playback_view_model.dart';
 import 'package:music_app/src/features/player/presentation/widgets/track_artwork.dart';
@@ -163,7 +162,7 @@ class _MiniPlayerCard extends ConsumerWidget {
         key: const ValueKey('miniPlayerGestureArea'),
         onVerticalDragEnd: (details) {
           if ((details.primaryVelocity ?? 0) < -_openVelocityThreshold) {
-            unawaited(context.push(RoutePaths.player));
+            unawaited(PlayerNavigator.openPlayer(context));
           }
         },
         onHorizontalDragEnd: (details) {
@@ -183,7 +182,7 @@ class _MiniPlayerCard extends ConsumerWidget {
         },
         child: Pressable(
           scale: 0.985,
-          onTap: () => context.push(RoutePaths.player),
+          onTap: () => PlayerNavigator.openPlayer(context),
           child: Container(
             height: MiniPlayer.height,
             decoration: BoxDecoration(

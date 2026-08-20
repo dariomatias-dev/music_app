@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:music_app/l10n/app_localizations.dart';
 import 'package:music_app/src/core/audio/audio_providers.dart';
 import 'package:music_app/src/core/audio/music_audio_handler.dart';
+import 'package:music_app/src/core/navigation/route_names.dart';
 import 'package:music_app/src/features/library/data/indexing/library_indexer.dart';
 import 'package:music_app/src/features/library/data/providers/library_data_providers.dart';
 import 'package:music_app/src/features/library/domain/entities/album.dart';
@@ -82,11 +83,13 @@ Future<ProviderContainer> _pumpPlaylistScreen(
     initialLocation: '/playlists/$playlistId',
     routes: [
       GoRoute(
+        name: RouteNames.playlist,
         path: '/playlists/:playlistId',
         builder: (context, state) =>
             PlaylistScreen(playlistId: state.pathParameters['playlistId']!),
       ),
       GoRoute(
+        name: RouteNames.player,
         path: '/player',
         builder: (context, state) =>
             const Scaffold(body: Text('Player screen reached')),

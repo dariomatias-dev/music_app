@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:music_app/l10n/app_localizations.dart';
 import 'package:music_app/src/core/audio/audio_providers.dart';
 import 'package:music_app/src/core/audio/music_audio_handler.dart';
+import 'package:music_app/src/core/navigation/route_names.dart';
 import 'package:music_app/src/core/navigation/route_paths.dart';
 import 'package:music_app/src/core/navigation/route_transitions.dart';
 import 'package:music_app/src/features/library/data/indexing/library_indexer.dart';
@@ -83,6 +84,7 @@ Widget _routedScaffold(Widget child) {
         ),
       ),
       GoRoute(
+        name: RouteNames.player,
         path: '/player',
         builder: (context, state) => const Scaffold(body: Text('Now Playing')),
       ),
@@ -316,6 +318,7 @@ void main() {
             ),
           ),
           GoRoute(
+            name: RouteNames.player,
             path: RoutePaths.player,
             pageBuilder: (context, state) => buildVerticalTransitionPage(
               key: state.pageKey,

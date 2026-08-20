@@ -1,9 +1,8 @@
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:music_app/l10n/app_localizations.dart';
-import 'package:music_app/src/core/navigation/route_paths.dart';
+import 'package:music_app/src/core/navigation/navigators/library_navigator.dart';
 import 'package:music_app/src/core/widgets/cached_square_image.dart';
 import 'package:music_app/src/features/library/domain/entities/album.dart';
 import 'package:music_app/src/features/library/presentation/providers/library_providers.dart';
@@ -50,7 +49,7 @@ class _AlbumRow extends StatelessWidget {
 
     return Pressable(
       scale: 0.99,
-      onTap: () => context.push(RoutePaths.album(album.id)),
+      onTap: () => LibraryNavigator.openAlbum(context, albumId: album.id),
       child: Padding(
         padding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.smMd,

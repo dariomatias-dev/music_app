@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:music_app/l10n/app_localizations.dart';
+import 'package:music_app/src/core/navigation/route_names.dart';
 import 'package:music_app/src/features/history/data/providers/history_data_providers.dart';
 import 'package:music_app/src/features/home/presentation/widgets/home_playlists_and_albums.dart';
 import 'package:music_app/src/features/library/data/indexing/library_indexer.dart';
@@ -153,6 +154,7 @@ void main() {
               const Scaffold(body: HomePlaylistsAndAlbums()),
         ),
         GoRoute(
+          name: RouteNames.album,
           path: '/albums/:albumId',
           builder: (context, state) => Scaffold(
             body: Text('Album ${state.pathParameters['albumId']}'),
@@ -187,6 +189,7 @@ void main() {
               const Scaffold(body: HomePlaylistsAndAlbums()),
         ),
         GoRoute(
+          name: RouteNames.playlist,
           path: '/playlists/:playlistId',
           builder: (context, state) => Scaffold(
             body: Text('Playlist ${state.pathParameters['playlistId']}'),
