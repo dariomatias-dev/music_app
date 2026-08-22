@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Backup rules for Android < 12 (API 30 and below), consumed via
+  android:fullBackupContent. Covers the local database (playlists,
+  history, indexed library) and every user preference, so both survive
+  a reinstall or a restore on a new device.
+-->
+<full-backup-content>
+    <include domain="file" path="app_flutter/"/>
+    <include domain="sharedpref" path="."/>
+</full-backup-content>
