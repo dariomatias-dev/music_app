@@ -2,9 +2,12 @@ import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:music_app/l10n/app_localizations.dart';
 import 'package:music_app/src/core/audio/audio_providers.dart';
 import 'package:music_app/src/core/audio/music_audio_handler.dart';
+import 'package:music_app/src/core/navigation/route_names.dart';
+import 'package:music_app/src/core/widgets/cached_square_image.dart';
 import 'package:music_app/src/features/library/data/indexing/library_indexer.dart';
 import 'package:music_app/src/features/library/data/providers/library_data_providers.dart';
 import 'package:music_app/src/features/library/domain/entities/album.dart';
@@ -98,6 +101,55 @@ Future<ProviderContainer> _pumpAlbumScreen(
 
   final element = tester.element(find.byType(AlbumScreen));
   return ProviderScope.containerOf(element);
+}
+
+/// Pumps the screen behind a router, so the artist link has somewhere to go.
+Future<void> _pumpRoutedAlbumScreen(
+  WidgetTester tester, {
+  required List<Album> albums,
+  required List<Track> tracks,
+  required String albumId,
+}) async {
+  final service = FakeAudioPlayerService();
+  final handler = MusicAudioHandler(service);
+  addTearDown(handler.dispose);
+
+  final router = GoRouter(
+    initialLocation: '/',
+    routes: [
+      GoRoute(
+        path: '/',
+        builder: (context, state) => AlbumScreen(albumId: albumId),
+      ),
+      GoRoute(
+        name: RouteNames.artist,
+        path: '/artists/:artistId',
+        builder: (context, state) =>
+            Scaffold(body: Text('Artist ${state.pathParameters['artistId']}')),
+      ),
+    ],
+  );
+  addTearDown(router.dispose);
+
+  await tester.pumpWidget(
+    ProviderScope(
+      overrides: [
+        audioPlayerServiceProvider.overrideWithValue(service),
+        audioHandlerProvider.overrideWithValue(handler),
+        libraryRepositoryProvider.overrideWithValue(
+          _FakeLibraryRepository(albums, tracks),
+        ),
+      ],
+      child: MaterialApp.router(
+        theme: AppTheme.light,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        routerConfig: router,
+      ),
+    ),
+  );
+  await tester.pump();
+  await tester.pump();
 }
 
 void main() {
@@ -198,5 +250,43 @@ void main() {
     await tester.pump(const Duration(milliseconds: 50));
 
     expect(find.byType(AppPlaybackIndicator), findsOneWidget);
+  });
+
+  testWidgets('tapping the artist opens their screen', (tester) async {
+    await _pumpRoutedAlbumScreen(
+      tester,
+      albums: const [album],
+      tracks: [_track(id: 'track-1', title: 'Night Drive', trackNumber: 1)],
+      albumId: 'album-1',
+    );
+
+    await tester.tap(find.text('Charcoal'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Artist artist-1'), findsOneWidget);
+  });
+
+  testWidgets('shows the embedded cover when the album has one', (
+    tester,
+  ) async {
+    await _pumpAlbumScreen(
+      tester,
+      albums: const [
+        Album(
+          id: 'album-1',
+          sourceId: 'album-1',
+          title: 'Chill Vibes',
+          artistId: 'artist-1',
+          trackCount: 1,
+          totalDuration: Duration(minutes: 3),
+          artworkPath: '/covers/album-1.jpg',
+        ),
+      ],
+      tracks: [_track(id: 'track-1', title: 'Night Drive', trackNumber: 1)],
+      albumId: 'album-1',
+    );
+
+    expect(find.byType(CachedSquareImage), findsOneWidget);
+    tester.takeException();
   });
 }

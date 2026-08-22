@@ -86,6 +86,24 @@ void main() {
     expect(find.text('4s'), findsOneWidget);
   });
 
+  testWidgets('dragging the crossfade slider persists the new duration', (
+    tester,
+  ) async {
+    final storage = FakeKeyValueStorage();
+    await storage.setInt('crossfadeDurationSeconds', 4);
+    await tester.pumpWidget(_app(storage: storage));
+    await tester.tap(find.text('open'));
+    await tester.pumpAndSettle();
+
+    final slider = tester.getCenter(find.byType(Slider));
+    await tester.dragFrom(slider, const Offset(200, 0));
+    await tester.pumpAndSettle();
+
+    final seconds = await storage.getInt('crossfadeDurationSeconds');
+    expect(seconds, greaterThan(4));
+    expect(find.text('${seconds}s'), findsOneWidget);
+  });
+
   testWidgets('picking a default speed persists it and updates the chip', (
     tester,
   ) async {

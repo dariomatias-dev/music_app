@@ -2,6 +2,7 @@ import 'package:drift/native.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:music_app/src/core/audio/audio_providers.dart';
 import 'package:music_app/src/core/database/app_database.dart';
 import 'package:music_app/src/core/database/database_providers.dart';
 import 'package:music_app/src/core/permissions/media_permission_service_impl.dart';
@@ -195,6 +196,38 @@ void main() {
 
     expect(
       () => container.read(keyValueStorageProvider),
+      throwsA(
+        isA<ProviderException>().having(
+          (exception) => exception.exception,
+          'exception',
+          isA<UnimplementedError>(),
+        ),
+      ),
+    );
+  });
+
+  test('the audio handler must be overridden before the app starts', () {
+    final container = ProviderContainer();
+    addTearDown(container.dispose);
+
+    expect(
+      () => container.read(audioHandlerProvider),
+      throwsA(
+        isA<ProviderException>().having(
+          (exception) => exception.exception,
+          'exception',
+          isA<UnimplementedError>(),
+        ),
+      ),
+    );
+  });
+
+  test('the session coordinator must be overridden before the app starts', () {
+    final container = ProviderContainer();
+    addTearDown(container.dispose);
+
+    expect(
+      () => container.read(audioSessionCoordinatorProvider),
       throwsA(
         isA<ProviderException>().having(
           (exception) => exception.exception,

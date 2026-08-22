@@ -190,4 +190,40 @@ void main() {
       1.25,
     );
   });
+
+  test(
+    'restores the theme mode and display name when the backup has them',
+    () async {
+      await restoreBackup(
+        _snapshot(
+          settings: _settings(themeMode: 'dark', userDisplayName: 'Dario'),
+        ),
+      );
+
+      expect(await keyValueStorage.getString(PreferenceKeys.themeMode), 'dark');
+      expect(
+        await keyValueStorage.getString(PreferenceKeys.userDisplayName),
+        'Dario',
+      );
+    },
+  );
+
+  test('leaves the theme mode and display name alone when absent', () async {
+    await restoreBackup(_snapshot());
+
+    expect(await keyValueStorage.getString(PreferenceKeys.themeMode), isNull);
+    expect(
+      await keyValueStorage.getString(PreferenceKeys.userDisplayName),
+      isNull,
+    );
+  });
+
+  test('counts a favorite whose track left the library as skipped', () async {
+    final result = await restoreBackup(
+      _snapshot(favoriteTrackSourceIds: const ['source-1', 'source-gone']),
+    );
+
+    expect(result.restoredFavorites, 1);
+    expect(result.skippedTracks, 1);
+  });
 }

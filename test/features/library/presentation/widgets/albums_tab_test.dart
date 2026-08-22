@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:music_app/l10n/app_localizations.dart';
 import 'package:music_app/src/core/navigation/route_names.dart';
+import 'package:music_app/src/core/widgets/cached_square_image.dart';
 import 'package:music_app/src/features/library/data/indexing/library_indexer.dart';
 import 'package:music_app/src/features/library/data/providers/library_data_providers.dart';
 import 'package:music_app/src/features/library/domain/entities/album.dart';
@@ -45,7 +46,11 @@ class _FakeLibraryRepository implements LibraryRepository {
   Future<void> clearArtworkCache() async {}
 }
 
-Album _album({required String id, required String title}) {
+Album _album({
+  required String id,
+  required String title,
+  String? artworkPath,
+}) {
   return Album(
     id: id,
     sourceId: id,
@@ -53,6 +58,7 @@ Album _album({required String id, required String title}) {
     artistId: 'artist-1',
     trackCount: 3,
     totalDuration: const Duration(minutes: 12),
+    artworkPath: artworkPath,
   );
 }
 
@@ -129,5 +135,32 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Album album-1'), findsOneWidget);
+  });
+
+  testWidgets('shows the cover of an album that has one', (tester) async {
+    await tester.pumpWidget(
+      _app([
+        _album(
+          id: 'album-1',
+          title: 'Chill Vibes',
+          artworkPath: '/covers/album-1.jpg',
+        ),
+      ]),
+    );
+    await tester.pump();
+
+    expect(find.byType(CachedSquareImage), findsOneWidget);
+    expect(find.byType(AppArtwork), findsNothing);
+    tester.takeException();
+  });
+
+  testWidgets('falls back to a procedural cover without one', (tester) async {
+    await tester.pumpWidget(
+      _app([_album(id: 'album-1', title: 'Chill Vibes')]),
+    );
+    await tester.pump();
+
+    expect(find.byType(AppArtwork), findsOneWidget);
+    expect(find.byType(CachedSquareImage), findsNothing);
   });
 }

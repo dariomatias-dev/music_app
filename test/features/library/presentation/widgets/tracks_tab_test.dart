@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:music_app/l10n/app_localizations.dart';
 import 'package:music_app/src/core/audio/audio_providers.dart';
 import 'package:music_app/src/core/audio/music_audio_handler.dart';
+import 'package:music_app/src/core/widgets/cached_square_image.dart';
 import 'package:music_app/src/features/library/data/indexing/library_indexer.dart';
 import 'package:music_app/src/features/library/data/providers/library_data_providers.dart';
 import 'package:music_app/src/features/library/domain/entities/album.dart';
@@ -16,9 +17,10 @@ import 'package:music_app/src/features/library/presentation/widgets/tracks_tab.d
 import '../../../../helpers/fake_audio_player_service.dart';
 
 class _FakeLibraryRepository implements LibraryRepository {
-  const _FakeLibraryRepository(this.tracks);
+  const _FakeLibraryRepository(this.tracks, {this.albumArtworkPath});
 
   final List<Track> tracks;
+  final String? albumArtworkPath;
 
   @override
   Stream<List<Track>> watchTracks() => Stream.value(tracks);
@@ -35,14 +37,15 @@ class _FakeLibraryRepository implements LibraryRepository {
   ]);
 
   @override
-  Stream<List<Album>> watchAlbums() => Stream.value(const [
+  Stream<List<Album>> watchAlbums() => Stream.value([
     Album(
       id: 'album-1',
       sourceId: 'album-1',
       title: 'Chill Vibes',
       artistId: 'artist-1',
       trackCount: 2,
-      totalDuration: Duration(minutes: 6),
+      totalDuration: const Duration(minutes: 6),
+      artworkPath: albumArtworkPath,
     ),
   ]);
 
@@ -79,8 +82,9 @@ Track _track({
 
 Future<ProviderContainer> _pumpTracksTab(
   WidgetTester tester,
-  List<Track> tracks,
-) async {
+  List<Track> tracks, {
+  String? albumArtworkPath,
+}) async {
   final service = FakeAudioPlayerService();
   final handler = MusicAudioHandler(service);
   addTearDown(handler.dispose);
@@ -91,7 +95,7 @@ Future<ProviderContainer> _pumpTracksTab(
         audioPlayerServiceProvider.overrideWithValue(service),
         audioHandlerProvider.overrideWithValue(handler),
         libraryRepositoryProvider.overrideWithValue(
-          _FakeLibraryRepository(tracks),
+          _FakeLibraryRepository(tracks, albumArtworkPath: albumArtworkPath),
         ),
       ],
       child: MaterialApp(
@@ -208,5 +212,28 @@ void main() {
 
     expect(size.width, greaterThanOrEqualTo(AppSizes.minTouchTarget));
     expect(size.height, greaterThanOrEqualTo(AppSizes.minTouchTarget));
+  });
+
+  testWidgets('shows the album cover on a row whose album has one', (
+    tester,
+  ) async {
+    await _pumpTracksTab(
+      tester,
+      [_track(id: 'track-1', title: 'Night Drive')],
+      albumArtworkPath: '/covers/album-1.jpg',
+    );
+
+    expect(find.byType(CachedSquareImage), findsOneWidget);
+    expect(find.byType(AppArtwork), findsNothing);
+    tester.takeException();
+  });
+
+  testWidgets('falls back to a procedural cover without one', (tester) async {
+    await _pumpTracksTab(tester, [
+      _track(id: 'track-1', title: 'Night Drive'),
+    ]);
+
+    expect(find.byType(AppArtwork), findsOneWidget);
+    expect(find.byType(CachedSquareImage), findsNothing);
   });
 }

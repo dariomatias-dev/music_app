@@ -1,6 +1,7 @@
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:music_app/src/core/widgets/cached_square_image.dart';
 import 'package:music_app/src/features/library/presentation/widgets/media_row.dart';
 
 void main() {
@@ -127,4 +128,48 @@ void main() {
       expect(tester.takeException(), isNull);
     },
   );
+
+  group('embedded artwork', () {
+    testWidgets('replaces the procedural cover with the file', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light,
+          home: Scaffold(
+            body: MediaRow(
+              seed: 'track-1',
+              title: 'Night Drive',
+              artworkPath: '/covers/album-1.jpg',
+              onTap: () {},
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byType(CachedSquareImage), findsOneWidget);
+      expect(find.byType(AppArtwork), findsNothing);
+      expect(find.byType(ClipRRect), findsOneWidget);
+      tester.takeException();
+    });
+
+    testWidgets('clips it to a circle when asked', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light,
+          home: Scaffold(
+            body: MediaRow(
+              seed: 'artist-1',
+              title: 'Charcoal',
+              artworkPath: '/covers/artist-1.jpg',
+              circle: true,
+              onTap: () {},
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byType(ClipOval), findsOneWidget);
+      expect(find.byType(ClipRRect), findsNothing);
+      tester.takeException();
+    });
+  });
 }
