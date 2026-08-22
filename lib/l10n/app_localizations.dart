@@ -1099,6 +1099,60 @@ abstract class AppLocalizations {
   /// **'Artwork cache cleared'**
   String get artworkCacheClearedMessage;
 
+  /// No description provided for @backupSectionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup'**
+  String get backupSectionLabel;
+
+  /// No description provided for @exportBackupLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Export backup'**
+  String get exportBackupLabel;
+
+  /// No description provided for @importBackupLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore backup'**
+  String get importBackupLabel;
+
+  /// No description provided for @backupExportedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup saved'**
+  String get backupExportedMessage;
+
+  /// No description provided for @backupExportFailedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t create the backup'**
+  String get backupExportFailedMessage;
+
+  /// No description provided for @backupImportedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup restored'**
+  String get backupImportedMessage;
+
+  /// No description provided for @backupImportedWithSkippedTracksMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{Backup restored. {count} track wasn\'t found — rescan your library and try again.} other{Backup restored. {count} tracks weren\'t found — rescan your library and try again.}}'**
+  String backupImportedWithSkippedTracksMessage(int count);
+
+  /// No description provided for @backupImportFailedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t restore this backup. Make sure the file is a valid backup.'**
+  String get backupImportFailedMessage;
+
+  /// No description provided for @backupUnsupportedFormatMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This backup was made with a different app version and can\'t be restored.'**
+  String get backupUnsupportedFormatMessage;
+
   /// No description provided for @deleteFileSemanticLabel.
   ///
   /// In en, this message translates to:

@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -5,6 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:music_app/l10n/app_localizations.dart';
 import 'package:music_app/src/core/audio/audio_providers.dart';
 import 'package:music_app/src/core/audio/music_audio_handler.dart';
+import 'package:music_app/src/core/services/device_file/device_file_service_provider.dart';
 import 'package:music_app/src/features/library/data/indexing/library_indexer.dart';
 import 'package:music_app/src/features/library/data/providers/library_data_providers.dart';
 import 'package:music_app/src/features/library/domain/entities/album.dart';
@@ -12,10 +16,15 @@ import 'package:music_app/src/features/library/domain/entities/artist.dart';
 import 'package:music_app/src/features/library/domain/entities/track.dart';
 import 'package:music_app/src/features/library/domain/repositories/library_repository.dart';
 import 'package:music_app/src/features/storage/data/providers/storage_data_providers.dart';
+import 'package:music_app/src/features/storage/domain/create_backup.dart';
 import 'package:music_app/src/features/storage/domain/delete_track_file.dart';
+import 'package:music_app/src/features/storage/domain/entities/backup_settings.dart';
+import 'package:music_app/src/features/storage/domain/entities/backup_snapshot.dart';
+import 'package:music_app/src/features/storage/domain/restore_backup.dart';
 import 'package:music_app/src/features/storage/presentation/screens/storage_screen.dart';
 
 import '../../../../helpers/fake_audio_player_service.dart';
+import '../../../../helpers/fake_device_file_service.dart';
 import '../../../../helpers/fake_excluded_folder_repository.dart';
 
 class _FakeLibraryRepository implements LibraryRepository {
@@ -64,6 +73,47 @@ class _FakeDeleteTrackFile implements DeleteTrackFile {
   }
 }
 
+class _FakeCreateBackup implements CreateBackup {
+  _FakeCreateBackup(this.snapshot);
+  final BackupSnapshot snapshot;
+
+  @override
+  Future<BackupSnapshot> call() async => snapshot;
+}
+
+class _FakeRestoreBackup implements RestoreBackup {
+  _FakeRestoreBackup(this.result);
+  final RestoreBackupResult result;
+  BackupSnapshot? received;
+
+  @override
+  Future<RestoreBackupResult> call(BackupSnapshot snapshot) async {
+    received = snapshot;
+    return result;
+  }
+}
+
+BackupSnapshot _snapshot({int formatVersion = backupFormatVersion}) {
+  return BackupSnapshot(
+    formatVersion: formatVersion,
+    createdAt: DateTime(2026),
+    playlists: const [],
+    favoriteTrackSourceIds: const [],
+    excludedFolders: const [],
+    searchHistoryTerms: const [],
+    settings: const BackupSettings(
+      gaplessEnabled: true,
+      crossfadeDurationSeconds: 0,
+      defaultPlaybackSpeed: 1,
+      hapticsEnabled: true,
+    ),
+  );
+}
+
+Uint8List _encode(BackupSnapshot snapshot) {
+  return Uint8List.fromList(utf8.encode(jsonEncode(snapshot.toJson())));
+}
+
 Track _track(String id, {required String filePath, int fileSize = 1000}) {
   return Track(
     id: id,
@@ -85,6 +135,9 @@ Widget _app({
   _FakeLibraryRepository? libraryRepository,
   FakeExcludedFolderRepository? excludedFolderRepository,
   DeleteTrackFile? deleteTrackFile,
+  CreateBackup? createBackup,
+  RestoreBackup? restoreBackup,
+  FakeDeviceFileService? deviceFileService,
 }) {
   final playerService = FakeAudioPlayerService();
   return ProviderScope(
@@ -97,6 +150,13 @@ Widget _app({
       ),
       if (deleteTrackFile != null)
         deleteTrackFileProvider.overrideWithValue(deleteTrackFile),
+      if (createBackup != null)
+        createBackupProvider.overrideWithValue(createBackup),
+      if (restoreBackup != null)
+        restoreBackupProvider.overrideWithValue(restoreBackup),
+      deviceFileServiceProvider.overrideWithValue(
+        deviceFileService ?? FakeDeviceFileService(),
+      ),
       audioPlayerServiceProvider.overrideWithValue(playerService),
       audioHandlerProvider.overrideWithValue(MusicAudioHandler(playerService)),
     ],
@@ -294,5 +354,171 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text("Couldn't delete this file"), findsOneWidget);
+  });
+
+  testWidgets('the backup actions are reachable with an empty library', (
+    tester,
+  ) async {
+    await tester.pumpWidget(_app());
+    await tester.pump();
+
+    expect(find.text('No folders yet'), findsOneWidget);
+    expect(find.text('Export backup'), findsOneWidget);
+    expect(find.text('Restore backup'), findsOneWidget);
+  });
+
+  testWidgets('exporting a backup saves it and confirms', (tester) async {
+    final deviceFileService = FakeDeviceFileService();
+    final snapshot = _snapshot();
+    await tester.pumpWidget(
+      _app(
+        createBackup: _FakeCreateBackup(snapshot),
+        deviceFileService: deviceFileService,
+      ),
+    );
+    await tester.pump();
+
+    await tester.tap(find.text('Export backup'));
+    await tester.pumpAndSettle();
+
+    expect(deviceFileService.savedFileName, isNotNull);
+    final savedJson =
+        jsonDecode(utf8.decode(deviceFileService.savedBytes!))
+            as Map<String, dynamic>;
+    expect(BackupSnapshot.fromJson(savedJson), snapshot);
+    expect(find.text('Backup saved'), findsOneWidget);
+  });
+
+  testWidgets('shows an error toast when the export fails', (tester) async {
+    final deviceFileService = FakeDeviceFileService()..saveShouldThrow = true;
+    await tester.pumpWidget(
+      _app(
+        createBackup: _FakeCreateBackup(_snapshot()),
+        deviceFileService: deviceFileService,
+      ),
+    );
+    await tester.pump();
+
+    await tester.tap(find.text('Export backup'));
+    await tester.pumpAndSettle();
+
+    expect(find.text("Couldn't create the backup"), findsOneWidget);
+  });
+
+  testWidgets('importing a valid backup restores it and confirms', (
+    tester,
+  ) async {
+    final restoreBackup = _FakeRestoreBackup((
+      restoredPlaylists: 1,
+      restoredFavorites: 2,
+      skippedTracks: 0,
+    ));
+    final snapshot = _snapshot();
+    await tester.pumpWidget(
+      _app(
+        restoreBackup: restoreBackup,
+        deviceFileService: FakeDeviceFileService()
+          ..fileToPick = _encode(snapshot),
+      ),
+    );
+    await tester.pump();
+
+    await tester.tap(find.text('Restore backup'));
+    await tester.pumpAndSettle();
+
+    expect(restoreBackup.received, snapshot);
+    expect(find.text('Backup restored'), findsOneWidget);
+  });
+
+  testWidgets('mentions skipped tracks when some could not be resolved', (
+    tester,
+  ) async {
+    final restoreBackup = _FakeRestoreBackup((
+      restoredPlaylists: 1,
+      restoredFavorites: 0,
+      skippedTracks: 2,
+    ));
+    await tester.pumpWidget(
+      _app(
+        restoreBackup: restoreBackup,
+        deviceFileService: FakeDeviceFileService()
+          ..fileToPick = _encode(_snapshot()),
+      ),
+    );
+    await tester.pump();
+
+    await tester.tap(find.text('Restore backup'));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text(
+        "Backup restored. 2 tracks weren't found — rescan your library "
+        'and try again.',
+      ),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('does nothing when the user cancels picking a file', (
+    tester,
+  ) async {
+    final restoreBackup = _FakeRestoreBackup((
+      restoredPlaylists: 0,
+      restoredFavorites: 0,
+      skippedTracks: 0,
+    ));
+    await tester.pumpWidget(_app(restoreBackup: restoreBackup));
+    await tester.pump();
+
+    await tester.tap(find.text('Restore backup'));
+    await tester.pumpAndSettle();
+
+    expect(restoreBackup.received, isNull);
+  });
+
+  testWidgets('rejects a backup made with an unsupported format version', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _app(
+        deviceFileService: FakeDeviceFileService()
+          ..fileToPick = _encode(_snapshot(formatVersion: 999)),
+      ),
+    );
+    await tester.pump();
+
+    await tester.tap(find.text('Restore backup'));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text(
+        "This backup was made with a different app version and can't be "
+        'restored.',
+      ),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('shows an error toast for a corrupted backup file', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _app(
+        deviceFileService: FakeDeviceFileService()
+          ..fileToPick = Uint8List.fromList(utf8.encode('not json')),
+      ),
+    );
+    await tester.pump();
+
+    await tester.tap(find.text('Restore backup'));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text(
+        "Couldn't restore this backup. Make sure the file is a valid "
+        'backup.',
+      ),
+      findsOneWidget,
+    );
   });
 }

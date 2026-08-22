@@ -538,6 +538,40 @@ class AppLocalizationsZh extends AppLocalizations {
   String get artworkCacheClearedMessage => '封面缓存已清除';
 
   @override
+  String get backupSectionLabel => '备份';
+
+  @override
+  String get exportBackupLabel => '导出备份';
+
+  @override
+  String get importBackupLabel => '恢复备份';
+
+  @override
+  String get backupExportedMessage => '备份已保存';
+
+  @override
+  String get backupExportFailedMessage => '无法创建备份';
+
+  @override
+  String get backupImportedMessage => '备份已恢复';
+
+  @override
+  String backupImportedWithSkippedTracksMessage(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '备份已恢复。有 $count 首歌曲未找到——请重新扫描音乐库后再试一次。',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get backupImportFailedMessage => '无法恢复此备份，请确认文件是有效的备份文件。';
+
+  @override
+  String get backupUnsupportedFormatMessage => '此备份由其他版本的应用创建，无法恢复。';
+
+  @override
   String get deleteFileSemanticLabel => '删除文件';
 
   @override

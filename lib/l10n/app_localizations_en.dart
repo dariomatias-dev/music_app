@@ -565,6 +565,45 @@ class AppLocalizationsEn extends AppLocalizations {
   String get artworkCacheClearedMessage => 'Artwork cache cleared';
 
   @override
+  String get backupSectionLabel => 'Backup';
+
+  @override
+  String get exportBackupLabel => 'Export backup';
+
+  @override
+  String get importBackupLabel => 'Restore backup';
+
+  @override
+  String get backupExportedMessage => 'Backup saved';
+
+  @override
+  String get backupExportFailedMessage => 'Couldn\'t create the backup';
+
+  @override
+  String get backupImportedMessage => 'Backup restored';
+
+  @override
+  String backupImportedWithSkippedTracksMessage(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          'Backup restored. $count tracks weren\'t found — rescan your library and try again.',
+      one:
+          'Backup restored. $count track wasn\'t found — rescan your library and try again.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get backupImportFailedMessage =>
+      'Couldn\'t restore this backup. Make sure the file is a valid backup.';
+
+  @override
+  String get backupUnsupportedFormatMessage =>
+      'This backup was made with a different app version and can\'t be restored.';
+
+  @override
   String get deleteFileSemanticLabel => 'Delete file';
 
   @override

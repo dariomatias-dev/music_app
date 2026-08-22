@@ -191,6 +191,20 @@
   "clearArtworkCacheConfirmMessage": "This deletes cached album art. It's re-extracted the next time you scan your library.",
   "clearArtworkCacheConfirmAction": "Clear",
   "artworkCacheClearedMessage": "Artwork cache cleared",
+  "backupSectionLabel": "Backup",
+  "exportBackupLabel": "Export backup",
+  "importBackupLabel": "Restore backup",
+  "backupExportedMessage": "Backup saved",
+  "backupExportFailedMessage": "Couldn't create the backup",
+  "backupImportedMessage": "Backup restored",
+  "backupImportedWithSkippedTracksMessage": "{count, plural, one{Backup restored. {count} track wasn't found — rescan your library and try again.} other{Backup restored. {count} tracks weren't found — rescan your library and try again.}}",
+  "@backupImportedWithSkippedTracksMessage": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "backupImportFailedMessage": "Couldn't restore this backup. Make sure the file is a valid backup.",
+  "backupUnsupportedFormatMessage": "This backup was made with a different app version and can't be restored.",
   "deleteFileSemanticLabel": "Delete file",
   "deleteFileConfirmTitle": "Delete this file?",
   "deleteFileConfirmMessage": "This permanently removes it from your device, along with any playlist entries and favorite. It can't be undone.",

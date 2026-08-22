@@ -57,6 +57,8 @@ dependencies:
 
   # Immutable models (used only where it meaningfully reduces manual code)
   freezed_annotation: ^3.1.0
+  # Required directly: generated fromJson/toJson code references its types.
+  json_annotation: ^4.9.0
   package_info_plus: ^9.0.1
 
 dev_dependencies:
@@ -76,6 +78,8 @@ dev_dependencies:
 
   # Testing
   mocktail: ^1.0.5
+  # For faking FilePickerPlatform.instance in widget tests.
+  plugin_platform_interface: ^2.1.8
 
   # Quality
   very_good_analysis: ^10.3.0

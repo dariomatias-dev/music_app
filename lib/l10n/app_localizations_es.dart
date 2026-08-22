@@ -567,6 +567,46 @@ class AppLocalizationsEs extends AppLocalizations {
   String get artworkCacheClearedMessage => 'Caché de carátulas borrada';
 
   @override
+  String get backupSectionLabel => 'Copia de seguridad';
+
+  @override
+  String get exportBackupLabel => 'Exportar copia de seguridad';
+
+  @override
+  String get importBackupLabel => 'Restaurar copia de seguridad';
+
+  @override
+  String get backupExportedMessage => 'Copia de seguridad guardada';
+
+  @override
+  String get backupExportFailedMessage =>
+      'No se pudo crear la copia de seguridad';
+
+  @override
+  String get backupImportedMessage => 'Copia de seguridad restaurada';
+
+  @override
+  String backupImportedWithSkippedTracksMessage(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          'Copia de seguridad restaurada. No se encontraron $count canciones — vuelve a escanear tu biblioteca e inténtalo de nuevo.',
+      one:
+          'Copia de seguridad restaurada. No se encontró $count canción — vuelve a escanear tu biblioteca e inténtalo de nuevo.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get backupImportFailedMessage =>
+      'No se pudo restaurar esta copia de seguridad. Asegúrate de que el archivo sea una copia de seguridad válida.';
+
+  @override
+  String get backupUnsupportedFormatMessage =>
+      'Esta copia de seguridad se creó con otra versión de la app y no se puede restaurar.';
+
+  @override
   String get deleteFileSemanticLabel => 'Eliminar archivo';
 
   @override
