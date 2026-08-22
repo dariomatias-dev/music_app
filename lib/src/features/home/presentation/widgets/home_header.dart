@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:music_app/l10n/app_localizations.dart';
 import 'package:music_app/src/core/navigation/navigators/main_shell_navigator.dart';
+import 'package:music_app/src/core/utils/clock.dart';
 import 'package:music_app/src/features/settings/presentation/view_models/user_profile_view_model.dart';
 
 /// The Home tab's header: a time-of-day greeting with the user's name (once
@@ -17,6 +18,7 @@ class HomeHeader extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final colors = context.colors;
     final name = ref.watch(userProfileViewModelProvider).value;
+    final now = ref.watch(clockProvider)();
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(
@@ -35,7 +37,7 @@ class HomeHeader extends ConsumerWidget {
             )
           else ...[
             Text(
-              _greeting(l10n),
+              _greeting(l10n, now),
               style: AppTypography.rowSubtitle.copyWith(
                 color: colors.textSecondary,
               ),
@@ -54,8 +56,8 @@ class HomeHeader extends ConsumerWidget {
     );
   }
 
-  String _greeting(AppLocalizations l10n) {
-    final hour = DateTime.now().hour;
+  String _greeting(AppLocalizations l10n, DateTime now) {
+    final hour = now.hour;
     if (hour < 12) return l10n.goodMorningLabel;
     if (hour < 18) return l10n.goodAfternoonLabel;
     return l10n.goodEveningLabel;

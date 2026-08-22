@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:music_app/src/core/storage/storage_providers.dart';
+import 'package:music_app/src/core/utils/clock.dart';
 import 'package:music_app/src/features/history/data/providers/history_data_providers.dart';
 import 'package:music_app/src/features/home/presentation/screens/home_screen.dart';
 import 'package:music_app/src/features/library/data/indexing/library_indexer.dart';
@@ -90,6 +91,7 @@ Future<void> _pump(WidgetTester tester, {required ThemeData theme}) async {
           FakePlayHistoryRepository(const ['track-1']),
         ),
         playlistRepositoryProvider.overrideWithValue(playlistRepository),
+        clockProvider.overrideWithValue(() => DateTime(2024, 1, 1, 9)),
       ],
       child: const HomeScreen(),
     ),
