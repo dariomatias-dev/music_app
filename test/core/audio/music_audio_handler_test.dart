@@ -57,6 +57,60 @@ void main() {
     expect(handler.mediaItem.value?.id, 'track-2');
   });
 
+  test('stop forwards to the player service', () async {
+    await handler.setQueue(const [
+      QueueMediaItem(id: 'track-1', filePath: '/music/a.mp3', title: 'A'),
+    ]);
+    await handler.play();
+
+    await handler.stop();
+
+    expect(playerService.snapshot.playing, isFalse);
+  });
+
+  test('seek forwards the position to the player service', () async {
+    await handler.setQueue(const [
+      QueueMediaItem(id: 'track-1', filePath: '/music/a.mp3', title: 'A'),
+    ]);
+
+    await handler.seek(const Duration(seconds: 45));
+
+    expect(playerService.snapshot.position, const Duration(seconds: 45));
+  });
+
+  test('skipToPrevious forwards to the player service', () async {
+    await handler.setQueue(const [
+      QueueMediaItem(id: 'track-1', filePath: '/music/a.mp3', title: 'A'),
+      QueueMediaItem(id: 'track-2', filePath: '/music/b.mp3', title: 'B'),
+    ], initialIndex: 1);
+
+    await handler.skipToPrevious();
+
+    expect(playerService.snapshot.currentIndex, 0);
+    expect(handler.mediaItem.value?.id, 'track-1');
+  });
+
+  test('setSpeed forwards to the player service', () async {
+    await handler.setSpeed(1.5);
+
+    expect(playerService.snapshot.speed, 1.5);
+  });
+
+  test('setRepeatMode maps every mode the OS can send', () async {
+    const cases = {
+      audio_service.AudioServiceRepeatMode.none: 'off',
+      audio_service.AudioServiceRepeatMode.one: 'track',
+      audio_service.AudioServiceRepeatMode.all: 'queue',
+      audio_service.AudioServiceRepeatMode.group: 'queue',
+    };
+
+    for (final entry in cases.entries) {
+      await handler.setRepeatMode(entry.key);
+
+      expect(playerService.snapshot.loopMode.name, entry.value);
+    }
+  });
+
   test('setRepeatMode forwards the mapped loop mode', () async {
     await handler.setRepeatMode(audio_service.AudioServiceRepeatMode.one);
 

@@ -1,4 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:music_app/src/core/errors/app_exception.dart';
+import 'package:music_app/src/core/permissions/media_permission_service.dart';
 import 'package:music_app/src/core/services/media_scanner/media_scanner.dart';
 import 'package:music_app/src/core/services/media_scanner/on_audio_query_media_scanner.dart';
 import 'package:on_audio_query/on_audio_query.dart';
@@ -29,7 +32,123 @@ SongModel _song({
   });
 }
 
+class _MockOnAudioQuery extends Mock implements OnAudioQuery {}
+
+class _FakeMediaPermissionService implements MediaPermissionService {
+  _FakeMediaPermissionService(this.status);
+
+  final MediaPermissionStatus status;
+  int requestCount = 0;
+
+  @override
+  Future<MediaPermissionStatus> check() async => status;
+
+  @override
+  Future<MediaPermissionStatus> request() async {
+    requestCount++;
+    return status;
+  }
+
+  @override
+  Future<void> openSystemSettings() async {}
+}
+
 void main() {
+  group('scan', () {
+    late _MockOnAudioQuery query;
+
+    setUp(() {
+      query = _MockOnAudioQuery();
+      when(
+        () => query.querySongs(
+          sortType: any(named: 'sortType'),
+          orderType: any(named: 'orderType'),
+          uriType: any(named: 'uriType'),
+          ignoreCase: any(named: 'ignoreCase'),
+          path: any(named: 'path'),
+        ),
+      ).thenAnswer((_) async => [_song(title: 'Night Drive')]);
+    });
+
+    test('requests the media permission before querying', () async {
+      final permissions = _FakeMediaPermissionService(
+        MediaPermissionStatus.granted,
+      );
+      final scanner = OnAudioQueryMediaScanner(query, permissions);
+
+      await scanner.scan();
+
+      expect(permissions.requestCount, 1);
+    });
+
+    test('returns the mapped songs once permission is granted', () async {
+      final scanner = OnAudioQueryMediaScanner(
+        query,
+        _FakeMediaPermissionService(MediaPermissionStatus.granted),
+      );
+
+      final files = await scanner.scan();
+
+      expect(files.single.title, 'Night Drive');
+    });
+
+    test('refuses to query when permission is denied', () async {
+      final scanner = OnAudioQueryMediaScanner(
+        query,
+        _FakeMediaPermissionService(MediaPermissionStatus.denied),
+      );
+
+      await expectLater(
+        scanner.scan,
+        throwsA(isA<PermissionException>()),
+      );
+      verifyNever(
+        () => query.querySongs(
+          sortType: any(named: 'sortType'),
+          orderType: any(named: 'orderType'),
+          uriType: any(named: 'uriType'),
+          ignoreCase: any(named: 'ignoreCase'),
+          path: any(named: 'path'),
+        ),
+      );
+    });
+
+    test('refuses to query when permission is permanently denied', () async {
+      final scanner = OnAudioQueryMediaScanner(
+        query,
+        _FakeMediaPermissionService(MediaPermissionStatus.permanentlyDenied),
+      );
+
+      await expectLater(scanner.scan, throwsA(isA<PermissionException>()));
+    });
+
+    test('passes the folder filters through to the mapping', () async {
+      final scanner = OnAudioQueryMediaScanner(
+        query,
+        _FakeMediaPermissionService(MediaPermissionStatus.granted),
+      );
+
+      final files = await scanner.scan(
+        excludedFolders: const ['/storage/emulated/0/Music'],
+      );
+
+      expect(files, isEmpty);
+    });
+  });
+
+  test('notifyFileRemoved asks the platform to rescan the path', () async {
+    final query = _MockOnAudioQuery();
+    when(() => query.scanMedia(any())).thenAnswer((_) async => true);
+    final scanner = OnAudioQueryMediaScanner(
+      query,
+      _FakeMediaPermissionService(MediaPermissionStatus.granted),
+    );
+
+    await scanner.notifyFileRemoved('/music/gone.mp3');
+
+    verify(() => query.scanMedia('/music/gone.mp3')).called(1);
+  });
+
   group('filterAndMapSongs', () {
     test('ignores unsupported formats', () {
       final songs = [_song(fileExtension: 'wma')];
