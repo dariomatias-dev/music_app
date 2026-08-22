@@ -7,10 +7,13 @@ import 'package:music_app/src/core/audio/audio_player_service.dart';
 /// [_playerService] on interruptions (calls, other apps) and when audio
 /// output devices (e.g. headphones) are disconnected.
 class AudioSessionCoordinator {
-  /// Creates an [AudioSessionCoordinator] for [_playerService].
-  AudioSessionCoordinator(this._playerService);
+  /// Creates an [AudioSessionCoordinator] for [_playerService], optionally
+  /// over an existing [session] (useful for tests).
+  AudioSessionCoordinator(this._playerService, {Future<AudioSession>? session})
+    : _session = session ?? AudioSession.instance;
 
   final AudioPlayerService _playerService;
+  final Future<AudioSession> _session;
   StreamSubscription<AudioInterruptionEvent>? _interruptionSubscription;
   StreamSubscription<void>? _becomingNoisySubscription;
 
@@ -18,7 +21,7 @@ class AudioSessionCoordinator {
   ///
   /// Must be called once before playback starts.
   Future<void> initialize() async {
-    final session = await AudioSession.instance;
+    final session = await _session;
     await session.configure(
       const AudioSessionConfiguration(
         avAudioSessionCategory: AVAudioSessionCategory.playback,
