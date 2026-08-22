@@ -4,7 +4,12 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+/// Loads the fonts every test in this package renders with.
+///
+/// The binding is initialized first because font loading reaches it, and a
+/// file with only plain `test()` calls never initializes it otherwise.
 Future<void> testExecutable(FutureOr<void> Function() testMain) async {
+  TestWidgetsFlutterBinding.ensureInitialized();
   setUpAll(() async {
     await _loadAssetFont('Roboto', const [
       'assets/fonts/Roboto-Regular.ttf',
