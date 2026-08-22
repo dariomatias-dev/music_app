@@ -33,6 +33,7 @@ migrate_working_dir/
 /build/
 packages/*/build/
 /coverage/
+packages/*/coverage/
 
 # Golden test failure artifacts
 **/test/**/failures/

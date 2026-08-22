@@ -47,7 +47,10 @@ jobs:
         run: flutter analyze
 
       - name: Test
-        run: flutter test
+        run: flutter test --coverage
+
+      - name: Check coverage
+        run: ./scripts/check_coverage.sh coverage/lcov.info 88
 
   build_apk:
     name: Build APK
@@ -105,4 +108,7 @@ jobs:
         run: flutter analyze
 
       - name: Test
-        run: flutter test
+        run: flutter test --coverage
+
+      - name: Check coverage
+        run: ../../scripts/check_coverage.sh coverage/lcov.info 90
