@@ -7,6 +7,9 @@ on:
 
 env:
   FLUTTER_VERSION: "3.44.9"
+  # Kept in step with compileSdk in android/app/build.gradle.kts,
+  # which permission_handler_android pins to 37.
+  ANDROID_COMPILE_SDK: "37"
 
 permissions:
   contents: write
@@ -32,6 +35,12 @@ jobs:
 
       - name: Generate localizations
         run: flutter gen-l10n
+
+      - name: Install the Android SDK platform the build targets
+        run: |
+          sdkmanager="${ANDROID_HOME:-$ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager"
+          yes | "$sdkmanager" --licenses > /dev/null
+          "$sdkmanager" "platforms;android-${{ env.ANDROID_COMPILE_SDK }}"
 
       - name: Build release APK
         run: flutter build apk --release
