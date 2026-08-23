@@ -35,7 +35,10 @@ class _AppSkeletonState extends State<AppSkeleton>
     duration: const Duration(milliseconds: 1200),
   );
 
-  bool _reducedMotion = false;
+  /// Null until the first [didChangeDependencies], so the initial value is
+  /// always applied: starting it at `false` matched the common case and
+  /// left the pulse never started.
+  bool? _reducedMotion;
 
   @override
   void didChangeDependencies() {
@@ -60,7 +63,7 @@ class _AppSkeletonState extends State<AppSkeleton>
   Widget build(BuildContext context) {
     final colors = context.colors;
 
-    if (_reducedMotion) {
+    if (_reducedMotion ?? false) {
       return Container(
         width: widget.width,
         height: widget.height,
