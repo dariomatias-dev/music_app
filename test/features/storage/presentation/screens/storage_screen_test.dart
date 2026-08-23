@@ -22,7 +22,9 @@ import 'package:music_app/src/features/storage/domain/create_backup.dart';
 import 'package:music_app/src/features/storage/domain/delete_track_file.dart';
 import 'package:music_app/src/features/storage/domain/entities/backup_settings.dart';
 import 'package:music_app/src/features/storage/domain/entities/backup_snapshot.dart';
+import 'package:music_app/src/features/storage/domain/entities/folder_usage.dart';
 import 'package:music_app/src/features/storage/domain/restore_backup.dart';
+import 'package:music_app/src/features/storage/presentation/providers/storage_providers.dart';
 import 'package:music_app/src/features/storage/presentation/screens/storage_screen.dart';
 
 import '../../../../helpers/fake_audio_player_service.dart';
@@ -142,6 +144,7 @@ Widget _app({
   CreateBackup? createBackup,
   RestoreBackup? restoreBackup,
   FakeDeviceFileService? deviceFileService,
+  List<FolderUsage>? folderUsage,
 }) {
   final playerService = FakeAudioPlayerService();
   return ProviderScope(
@@ -152,6 +155,8 @@ Widget _app({
       excludedFolderRepositoryProvider.overrideWithValue(
         excludedFolderRepository ?? FakeExcludedFolderRepository(),
       ),
+      if (folderUsage != null)
+        folderUsageProvider.overrideWithValue(folderUsage),
       if (deleteTrackFile != null)
         deleteTrackFileProvider.overrideWithValue(deleteTrackFile),
       if (createBackup != null)
@@ -200,6 +205,39 @@ void main() {
     expect(find.text('rock'), findsOneWidget);
     expect(find.text('pop'), findsOneWidget);
   });
+
+  testWidgets(
+    'an empty folder is not expandable and shows a dimmed chevron',
+    (tester) async {
+      await tester.pumpWidget(
+        _app(
+          folderUsage: const [
+            FolderUsage(
+              path: '/music/empty',
+              sizeBytes: 0,
+              trackCount: 0,
+              isIncluded: true,
+            ),
+          ],
+        ),
+      );
+      await tester.pump();
+
+      expect(find.text('empty'), findsOneWidget);
+
+      await tester.tap(find.text('empty'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Track a'), findsNothing);
+      final icon = tester.widget<Icon>(
+        find.descendant(
+          of: find.byType(AnimatedRotation),
+          matching: find.byType(Icon),
+        ),
+      );
+      expect(icon.color?.a, closeTo(0.4, 0.01));
+    },
+  );
 
   testWidgets('expanding a folder shows its files', (tester) async {
     await tester.pumpWidget(

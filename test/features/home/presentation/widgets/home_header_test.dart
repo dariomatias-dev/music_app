@@ -2,6 +2,7 @@ import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:music_app/l10n/app_localizations.dart';
 import 'package:music_app/src/core/constants/preference_keys.dart';
 import 'package:music_app/src/core/storage/storage_providers.dart';
@@ -96,5 +97,61 @@ void main() {
     await _pumpHeader(tester, now: DateTime(2024, 1, 1, 9));
 
     expect(find.text('Search your library'), findsOneWidget);
+  });
+
+  testWidgets('tapping the search trigger switches to the Search tab', (
+    tester,
+  ) async {
+    final storage = FakeKeyValueStorage();
+    final router = GoRouter(
+      initialLocation: '/home',
+      routes: [
+        StatefulShellRoute.indexedStack(
+          builder: (context, state, navigationShell) =>
+              Scaffold(body: navigationShell),
+          branches: [
+            StatefulShellBranch(
+              routes: [
+                GoRoute(
+                  path: '/home',
+                  builder: (context, state) => const HomeHeader(),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: [
+                GoRoute(
+                  path: '/search',
+                  builder: (context, state) => const Text('Search screen'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
+    );
+    addTearDown(router.dispose);
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          keyValueStorageProvider.overrideWithValue(storage),
+          clockProvider.overrideWithValue(() => DateTime(2024, 1, 1, 9)),
+        ],
+        child: MaterialApp.router(
+          theme: AppTheme.light,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          routerConfig: router,
+        ),
+      ),
+    );
+    await tester.pump();
+    await tester.pump();
+
+    await tester.tap(find.text('Search your library'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Search screen'), findsOneWidget);
   });
 }

@@ -144,6 +144,22 @@ void main() {
     expect(find.text('Chill Vibes'), findsOneWidget);
   });
 
+  testWidgets('renders a separator between multiple cards in a row', (
+    tester,
+  ) async {
+    await _pumpWidget(
+      tester,
+      albums: [
+        _album(id: 'album-1', title: 'Chill Vibes'),
+        _album(id: 'album-2', title: 'Night Drive'),
+      ],
+      playlistRepository: FakePlaylistRepository(),
+    );
+
+    expect(find.text('Chill Vibes'), findsOneWidget);
+    expect(find.text('Night Drive'), findsOneWidget);
+  });
+
   testWidgets('tapping an album opens its detail route', (tester) async {
     final router = GoRouter(
       initialLocation: '/',

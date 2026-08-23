@@ -109,6 +109,15 @@ void main() {
 
       expect(_ringPainter(tester).progress, 0.4);
     });
+
+    testWidgets('repaints the ring when progress changes', (tester) async {
+      await _pumpButton(tester, isPlaying: true, progress: 0.2);
+      expect(_ringPainter(tester).progress, 0.2);
+
+      await _pumpButton(tester, isPlaying: true, progress: 0.6);
+
+      expect(_ringPainter(tester).progress, 0.6);
+    });
   });
 
   group('switching state', () {

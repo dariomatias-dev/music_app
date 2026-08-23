@@ -253,4 +253,60 @@ void main() {
 
     expect(second, isNot(first));
   });
+
+  testWidgets('rebuilds the waveform when barCount changes', (tester) async {
+    Widget app(int barCount) => MaterialApp(
+      theme: AppTheme.light,
+      home: Scaffold(
+        body: Center(
+          child: SizedBox(
+            width: 200,
+            child: AppWaveformSeekBar(
+              progress: 0,
+              isPlaying: false,
+              seed: 1,
+              barCount: barCount,
+              onSeek: (_) {},
+            ),
+          ),
+        ),
+      ),
+    );
+
+    dynamic paintedAmps() =>
+        (tester
+                        .widget<CustomPaint>(
+                          find
+                              .descendant(
+                                of: find.byType(AppWaveformSeekBar),
+                                matching: find.byType(CustomPaint),
+                              )
+                              .first,
+                        )
+                        .painter
+                    as dynamic)
+                .amps
+            as List<double>;
+
+    await tester.pumpWidget(app(72));
+    await tester.pump();
+    final first = paintedAmps();
+    expect(first, hasLength(72));
+
+    await tester.pumpWidget(app(40));
+    await tester.pump();
+
+    expect(paintedAmps(), hasLength(40));
+  });
+
+  testWidgets('the pulse stops when playback stops mid-animation', (
+    tester,
+  ) async {
+    await _pumpSeekBar(tester, isPlaying: true);
+    expect(SchedulerBinding.instance.transientCallbackCount, greaterThan(0));
+
+    await _pumpSeekBar(tester);
+
+    expect(SchedulerBinding.instance.transientCallbackCount, 0);
+  });
 }

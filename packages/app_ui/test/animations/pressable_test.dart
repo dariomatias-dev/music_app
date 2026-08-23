@@ -25,6 +25,27 @@ void main() {
     expect(tapped, isTrue);
   });
 
+  testWidgets('cancelling the gesture releases the pressed scale', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _app(Pressable(onTap: () {}, child: const Text('tap'))),
+    );
+
+    final gesture = await tester.startGesture(
+      tester.getCenter(find.text('tap')),
+    );
+    await tester.pump();
+    var scale = tester.widget<AnimatedScale>(find.byType(AnimatedScale));
+    expect(scale.scale, 0.96);
+
+    await gesture.cancel();
+    await tester.pump();
+
+    scale = tester.widget<AnimatedScale>(find.byType(AnimatedScale));
+    expect(scale.scale, 1);
+  });
+
   testWidgets('is focusable and activates onTap via keyboard', (
     tester,
   ) async {
