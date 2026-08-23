@@ -35,7 +35,7 @@ Future<void> _loadAssetFont(String family, List<String> assets) async {
 /// `packages/flutter/fonts/...` asset bundle path does not resolve in this
 /// environment.
 Future<void> _loadSdkFont(String family, List<String> sdkRelativePaths) async {
-  final sdkRoot = _findFlutterSdkRoot(Directory.current);
+  final sdkRoot = _flutterSdkRoot();
   final fontLoader = FontLoader(family);
   for (final relativePath in sdkRelativePaths) {
     final file = File('${sdkRoot.path}/$relativePath');
@@ -46,17 +46,25 @@ Future<void> _loadSdkFont(String family, List<String> sdkRelativePaths) async {
   await fontLoader.load();
 }
 
-Directory _findFlutterSdkRoot(Directory from) {
-  var dir = from;
-  while (true) {
-    final candidate = Directory('${dir.path}/.fvm/flutter_sdk');
-    if (candidate.existsSync()) {
-      return Directory(candidate.resolveSymbolicLinksSync());
-    }
-    final parent = dir.parent;
-    if (parent.path == dir.path) {
-      throw StateError('Could not locate .fvm/flutter_sdk above ${from.path}');
-    }
-    dir = parent;
+/// The Flutter SDK the tests are running under.
+///
+/// `flutter test` exports `FLUTTER_ROOT`, which works the same under fvm and
+/// on CI runners. The executable is only walked as a fallback, for runners
+/// that launch the test binary without that variable.
+Directory _flutterSdkRoot() {
+  final fromEnvironment = Platform.environment['FLUTTER_ROOT'];
+  if (fromEnvironment != null && fromEnvironment.isNotEmpty) {
+    return Directory(fromEnvironment);
   }
+
+  var dir = File(Platform.resolvedExecutable).parent;
+  while (dir.parent.path != dir.path) {
+    final fonts = Directory('${dir.path}/bin/cache/artifacts/material_fonts');
+    if (fonts.existsSync()) return dir;
+    dir = dir.parent;
+  }
+  throw StateError(
+    'Could not locate the Flutter SDK root: FLUTTER_ROOT is unset and no '
+    'SDK was found above ${Platform.resolvedExecutable}.',
+  );
 }
