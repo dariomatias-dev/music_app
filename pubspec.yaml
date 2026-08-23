@@ -87,8 +87,14 @@ dev_dependencies:
 # metadata_god 1.1.0 was code-generated against flutter_rust_bridge 2.11.1;
 # its unconstrained `^2.11.1` dependency otherwise resolves to newer
 # releases, which fail its own codegen/runtime version check at startup.
+#
+# permission_handler_android 14.0.0 compiles against compileSdk 37, which
+# Google has not published as a downloadable SDK platform yet, breaking
+# CI's build_apk job. Pinned to 13.0.1, the newest release that still
+# targets a compileSdk (35) that actually exists.
 dependency_overrides:
   flutter_rust_bridge: 2.11.1
+  permission_handler_android: 13.0.1
 
 flutter:
   uses-material-design: true
