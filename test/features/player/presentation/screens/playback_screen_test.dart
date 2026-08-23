@@ -57,6 +57,23 @@ class _FakeLibraryRepository implements LibraryRepository {
   Future<void> clearArtworkCache() async {}
 }
 
+Track _track() {
+  return Track(
+    id: 'track-1',
+    sourceId: 'track-1',
+    filePath: '/music/track-1.mp3',
+    title: 'Night Drive',
+    artistId: 'artist-1',
+    albumId: 'album-1',
+    duration: const Duration(minutes: 3),
+    format: 'mp3',
+    fileSize: 1000,
+    hasEmbeddedArtwork: false,
+    dateAdded: DateTime(2026),
+    dateModified: DateTime(2026),
+  );
+}
+
 void main() {
   testWidgets('shows the empty state when nothing is playing', (
     tester,
@@ -126,5 +143,80 @@ void main() {
 
     expect(find.byType(PlaybackCover), findsOneWidget);
     expect(find.text('Nothing playing'), findsNothing);
+  });
+
+  testWidgets('the more button opens the track actions', (tester) async {
+    final service = FakeAudioPlayerService();
+    final handler = MusicAudioHandler(service);
+    addTearDown(handler.dispose);
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          audioPlayerServiceProvider.overrideWithValue(service),
+          audioHandlerProvider.overrideWithValue(handler),
+          libraryRepositoryProvider.overrideWithValue(
+            const _FakeLibraryRepository(),
+          ),
+          favoriteRepositoryProvider.overrideWithValue(
+            FakeFavoriteRepository(),
+          ),
+        ],
+        child: MaterialApp(
+          theme: AppTheme.light,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: const PlaybackScreen(),
+        ),
+      ),
+    );
+
+    final container = ProviderScope.containerOf(
+      tester.element(find.byType(PlaybackScreen)),
+    );
+    await container.read(queueViewModelProvider.notifier).playFromSource([
+      _track(),
+    ], startIndex: 0);
+    await tester.pump(const Duration(milliseconds: 500));
+
+    await tester.tap(find.byIcon(Icons.more_horiz));
+    // The cover's breathing animation never settles while playback is
+    // active, so the sheet is given a fixed number of frames instead.
+    for (var i = 0; i < 10; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+
+    expect(find.text('Add to playlist'), findsOneWidget);
+    expect(find.text('Sleep timer'), findsOneWidget);
+  });
+
+  testWidgets('hides the more button while nothing is playing', (tester) async {
+    final service = FakeAudioPlayerService();
+    final handler = MusicAudioHandler(service);
+    addTearDown(handler.dispose);
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          audioPlayerServiceProvider.overrideWithValue(service),
+          audioHandlerProvider.overrideWithValue(handler),
+          libraryRepositoryProvider.overrideWithValue(
+            const _FakeLibraryRepository(),
+          ),
+          favoriteRepositoryProvider.overrideWithValue(
+            FakeFavoriteRepository(),
+          ),
+        ],
+        child: MaterialApp(
+          theme: AppTheme.light,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: const PlaybackScreen(),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    expect(find.byIcon(Icons.more_horiz), findsNothing);
   });
 }

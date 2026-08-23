@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:music_app/l10n/app_localizations.dart';
 import 'package:music_app/src/core/audio/audio_providers.dart';
 import 'package:music_app/src/core/audio/music_audio_handler.dart';
+import 'package:music_app/src/core/widgets/cached_square_image.dart';
 import 'package:music_app/src/features/library/data/indexing/library_indexer.dart';
 import 'package:music_app/src/features/library/data/providers/library_data_providers.dart';
 import 'package:music_app/src/features/library/domain/entities/album.dart';
@@ -17,9 +18,10 @@ import '../../../../helpers/fake_audio_player_service.dart';
 import '../../../../helpers/fake_favorite_repository.dart';
 
 class _FakeLibraryRepository implements LibraryRepository {
-  const _FakeLibraryRepository(this.tracks);
+  const _FakeLibraryRepository(this.tracks, {this.albumArtworkPath});
 
   final List<Track> tracks;
+  final String? albumArtworkPath;
 
   @override
   Stream<List<Track>> watchTracks() => Stream.value(tracks);
@@ -36,7 +38,17 @@ class _FakeLibraryRepository implements LibraryRepository {
   ]);
 
   @override
-  Stream<List<Album>> watchAlbums() => Stream.value(const []);
+  Stream<List<Album>> watchAlbums() => Stream.value([
+    Album(
+      id: 'album-1',
+      sourceId: 'album-1',
+      title: 'Chill Vibes',
+      artistId: 'artist-1',
+      trackCount: 1,
+      totalDuration: const Duration(minutes: 3),
+      artworkPath: albumArtworkPath,
+    ),
+  ]);
 
   @override
   Stream<IndexingProgress> reindex() => const Stream.empty();
@@ -68,7 +80,11 @@ Track _track({required String id, required String title}) {
 Future<
   ({ProviderContainer container, FakeFavoriteRepository favoriteRepository})
 >
-_pumpFavoritesTab(WidgetTester tester, List<Track> tracks) async {
+_pumpFavoritesTab(
+  WidgetTester tester,
+  List<Track> tracks, {
+  String? albumArtworkPath,
+}) async {
   final service = FakeAudioPlayerService();
   final handler = MusicAudioHandler(service);
   addTearDown(handler.dispose);
@@ -80,7 +96,7 @@ _pumpFavoritesTab(WidgetTester tester, List<Track> tracks) async {
         audioPlayerServiceProvider.overrideWithValue(service),
         audioHandlerProvider.overrideWithValue(handler),
         libraryRepositoryProvider.overrideWithValue(
-          _FakeLibraryRepository(tracks),
+          _FakeLibraryRepository(tracks, albumArtworkPath: albumArtworkPath),
         ),
         favoriteRepositoryProvider.overrideWithValue(favoriteRepository),
       ],
@@ -169,5 +185,22 @@ void main() {
 
     final service = result.container.read(audioPlayerServiceProvider);
     expect(service.snapshot.currentIndex, 1);
+  });
+
+  testWidgets('shows the album cover on a favorite whose album has one', (
+    tester,
+  ) async {
+    final result = await _pumpFavoritesTab(
+      tester,
+      [_track(id: 'track-1', title: 'Night Drive')],
+      albumArtworkPath: '/covers/album-1.jpg',
+    );
+    await result.favoriteRepository.setFavorite('track-1', isFavorite: true);
+    await tester.pump();
+    await tester.pump();
+
+    expect(find.byType(CachedSquareImage), findsOneWidget);
+    expect(find.byType(AppArtwork), findsNothing);
+    tester.takeException();
   });
 }

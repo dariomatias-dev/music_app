@@ -37,6 +37,13 @@ class _FakeLibraryRepository implements LibraryRepository {
       albumCount: 1,
       trackCount: 2,
     ),
+    Artist(
+      id: 'artist-2',
+      sourceId: 'artist-2',
+      name: 'Amber',
+      albumCount: 1,
+      trackCount: 1,
+    ),
   ]);
 
   @override
@@ -52,15 +59,20 @@ class _FakeLibraryRepository implements LibraryRepository {
   Future<void> clearArtworkCache() async {}
 }
 
-Track _track({required String id, required String title}) {
+Track _track({
+  required String id,
+  required String title,
+  String artistId = 'artist-1',
+  Duration duration = const Duration(minutes: 3),
+}) {
   return Track(
     id: id,
     sourceId: id,
     filePath: '/music/$id.mp3',
     title: title,
-    artistId: 'artist-1',
+    artistId: artistId,
     albumId: 'album-1',
-    duration: const Duration(minutes: 3),
+    duration: duration,
     format: 'mp3',
     fileSize: 1000,
     hasEmbeddedArtwork: false,
@@ -435,4 +447,176 @@ void main() {
       expect(await repository.watchPlaylistTrackIds(id).first, ['track-2']);
     },
   );
+
+  /// The visible track titles, in the order the list renders them.
+  List<String> visibleTitles(WidgetTester tester, List<String> candidates) {
+    final texts = tester
+        .widgetList<Text>(find.byType(Text))
+        .map((widget) => widget.data)
+        .whereType<String>()
+        .toList();
+    return texts.where(candidates.contains).toList();
+  }
+
+  Future<String> seedTwoTracks(
+    WidgetTester tester,
+    FakePlaylistRepository repository,
+    List<Track> tracks,
+  ) async {
+    final id = await repository.createPlaylist('Road Trip');
+    await repository.setPlaylistTracks(
+      id,
+      tracks.map((track) => track.id).toList(),
+    );
+
+    await _pumpPlaylistScreen(
+      tester,
+      playlistRepository: repository,
+      tracks: tracks,
+      playlistId: id,
+    );
+    return id;
+  }
+
+  Future<void> pickSort(WidgetTester tester, String label) async {
+    await tester.tap(find.text('Playlist order'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(label));
+    await tester.pumpAndSettle();
+  }
+
+  testWidgets('sorting by artist orders the tracks by artist name', (
+    tester,
+  ) async {
+    await seedTwoTracks(tester, FakePlaylistRepository(), [
+      _track(id: 'track-1', title: 'Zebra'),
+      _track(id: 'track-2', title: 'Apple', artistId: 'artist-2'),
+    ]);
+
+    await pickSort(tester, 'Artist');
+
+    expect(visibleTitles(tester, ['Zebra', 'Apple']), ['Apple', 'Zebra']);
+  });
+
+  testWidgets('sorting by duration puts the longest track first', (
+    tester,
+  ) async {
+    await seedTwoTracks(tester, FakePlaylistRepository(), [
+      _track(
+        id: 'track-1',
+        title: 'Short',
+        duration: const Duration(minutes: 2),
+      ),
+      _track(
+        id: 'track-2',
+        title: 'Long',
+        duration: const Duration(minutes: 9),
+      ),
+    ]);
+
+    await pickSort(tester, 'Duration');
+
+    expect(visibleTitles(tester, ['Short', 'Long']), ['Long', 'Short']);
+  });
+
+  testWidgets('clearing the search field restores every track', (tester) async {
+    await seedTwoTracks(tester, FakePlaylistRepository(), [
+      _track(id: 'track-1', title: 'Night Drive'),
+      _track(id: 'track-2', title: 'Sunset'),
+    ]);
+
+    await tester.tap(find.byIcon(Icons.search));
+    await tester.pump();
+    await tester.enterText(find.byType(TextField), 'sun');
+    await tester.pumpAndSettle();
+    expect(find.text('Night Drive'), findsNothing);
+
+    await tester.tap(find.bySemanticsLabel('Clear search'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Night Drive'), findsOneWidget);
+    expect(find.text('Sunset'), findsOneWidget);
+  });
+
+  testWidgets('closing the search bar drops the term with it', (tester) async {
+    await seedTwoTracks(tester, FakePlaylistRepository(), [
+      _track(id: 'track-1', title: 'Night Drive'),
+      _track(id: 'track-2', title: 'Sunset'),
+    ]);
+
+    await tester.tap(find.byIcon(Icons.search));
+    await tester.pump();
+    await tester.enterText(find.byType(TextField), 'sun');
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byIcon(Icons.search).first);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Night Drive'), findsOneWidget);
+    expect(find.text('Sunset'), findsOneWidget);
+  });
+
+  group('reordering', () {
+    Future<void> enterReorderMode(WidgetTester tester) async {
+      await tester.tap(find.byIcon(Icons.more_horiz));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Reorder tracks'));
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('the more menu switches the list into reorder mode', (
+      tester,
+    ) async {
+      await seedTwoTracks(tester, FakePlaylistRepository(), [
+        _track(id: 'track-1', title: 'Night Drive'),
+        _track(id: 'track-2', title: 'Sunset'),
+      ]);
+
+      await enterReorderMode(tester);
+
+      expect(find.byType(ReorderableListView), findsOneWidget);
+      expect(find.text('Done'), findsOneWidget);
+    });
+
+    testWidgets('Done leaves reorder mode', (tester) async {
+      await seedTwoTracks(tester, FakePlaylistRepository(), [
+        _track(id: 'track-1', title: 'Night Drive'),
+        _track(id: 'track-2', title: 'Sunset'),
+      ]);
+      await enterReorderMode(tester);
+
+      await tester.tap(find.text('Done'));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(ReorderableListView), findsNothing);
+    });
+
+    testWidgets('dragging a track persists the new order', (tester) async {
+      final repository = FakePlaylistRepository();
+      final id = await seedTwoTracks(tester, repository, [
+        _track(id: 'track-1', title: 'Night Drive'),
+        _track(id: 'track-2', title: 'Sunset'),
+      ]);
+      await enterReorderMode(tester);
+
+      final handles = find.byIcon(Icons.drag_handle_rounded);
+      final rowHeight =
+          tester.getCenter(handles.at(1)).dy -
+          tester.getCenter(handles.first).dy;
+
+      final drag = await tester.startGesture(tester.getCenter(handles.first));
+      await tester.pump(const Duration(milliseconds: 100));
+      for (var moved = 0.0; moved < rowHeight; moved += rowHeight / 4) {
+        await drag.moveBy(Offset(0, rowHeight / 4));
+        await tester.pump(const Duration(milliseconds: 20));
+      }
+      await drag.up();
+      await tester.pumpAndSettle();
+
+      expect(await repository.watchPlaylistTrackIds(id).first, [
+        'track-2',
+        'track-1',
+      ]);
+    });
+  });
 }

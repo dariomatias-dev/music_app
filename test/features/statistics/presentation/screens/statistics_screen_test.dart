@@ -2,7 +2,11 @@ import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:music_app/l10n/app_localizations.dart';
+import 'package:music_app/src/core/audio/audio_providers.dart';
+import 'package:music_app/src/core/audio/music_audio_handler.dart';
+import 'package:music_app/src/core/navigation/route_names.dart';
 import 'package:music_app/src/features/history/data/providers/history_data_providers.dart';
 import 'package:music_app/src/features/library/data/indexing/library_indexer.dart';
 import 'package:music_app/src/features/library/data/providers/library_data_providers.dart';
@@ -15,6 +19,7 @@ import 'package:music_app/src/features/statistics/domain/entities/listening_stre
 import 'package:music_app/src/features/statistics/domain/entities/track_play_count.dart';
 import 'package:music_app/src/features/statistics/presentation/screens/statistics_screen.dart';
 
+import '../../../../helpers/fake_audio_player_service.dart';
 import '../../../../helpers/fake_play_history_repository.dart';
 import '../../../../helpers/fake_statistics_repository.dart';
 
@@ -68,9 +73,17 @@ Widget _app({
   FakePlayHistoryRepository? playHistoryRepository,
   List<Track> tracks = const [],
   List<Artist> artists = const [],
+  FakeAudioPlayerService? audioService,
+  GoRouter? router,
 }) {
+  final service = audioService ?? FakeAudioPlayerService();
+  final handler = MusicAudioHandler(service);
+  addTearDown(handler.dispose);
+
   return ProviderScope(
     overrides: [
+      audioPlayerServiceProvider.overrideWithValue(service),
+      audioHandlerProvider.overrideWithValue(handler),
       statisticsRepositoryProvider.overrideWithValue(
         statisticsRepository ?? FakeStatisticsRepository(),
       ),
@@ -81,14 +94,36 @@ Widget _app({
         _FakeLibraryRepository(tracks: tracks, artists: artists),
       ),
     ],
-    child: MaterialApp(
-      theme: AppTheme.light,
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-      home: const StatisticsScreen(),
-    ),
+    child: router == null
+        ? MaterialApp(
+            theme: AppTheme.light,
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: const StatisticsScreen(),
+          )
+        : MaterialApp.router(
+            theme: AppTheme.light,
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            routerConfig: router,
+          ),
   );
 }
+
+/// The fixture the ranked lists render from.
+FakeStatisticsRepository _populatedStatistics() => FakeStatisticsRepository(
+  trackPlayCounts: const [TrackPlayCount(trackId: 'track-1', playCount: 3)],
+  totalListenedDuration: const Duration(hours: 2, minutes: 5),
+  listeningStreak: const ListeningStreak(currentDays: 2, longestDays: 5),
+);
+
+const _artist = Artist(
+  id: 'artist-1',
+  sourceId: 'artist-1',
+  name: 'Charcoal',
+  albumCount: 1,
+  trackCount: 1,
+);
 
 void main() {
   testWidgets('shows the empty state when nothing was ever played', (
@@ -188,5 +223,65 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(playHistoryRepository.historyCleared, isTrue);
+  });
+
+  testWidgets('tapping a most played track plays it', (tester) async {
+    final service = FakeAudioPlayerService();
+
+    await tester.pumpWidget(
+      _app(
+        statisticsRepository: _populatedStatistics(),
+        tracks: [_track('track-1', artistId: 'artist-1')],
+        artists: const [_artist],
+        audioService: service,
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Track track-1'));
+    await tester.pump(const Duration(milliseconds: 50));
+
+    expect(service.snapshot.queueLength, 1);
+    expect(service.snapshot.playing, isTrue);
+  });
+
+  testWidgets('tapping a most played artist opens their screen', (
+    tester,
+  ) async {
+    final router = GoRouter(
+      initialLocation: '/',
+      routes: [
+        GoRoute(
+          path: '/',
+          builder: (context, state) => const StatisticsScreen(),
+        ),
+        GoRoute(
+          name: RouteNames.artist,
+          path: '/artists/:artistId',
+          builder: (context, state) => Scaffold(
+            body: Text('Artist ${state.pathParameters['artistId']}'),
+          ),
+        ),
+      ],
+    );
+    addTearDown(router.dispose);
+
+    await tester.pumpWidget(
+      _app(
+        statisticsRepository: _populatedStatistics(),
+        tracks: [_track('track-1', artistId: 'artist-1')],
+        artists: const [_artist],
+        router: router,
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final artistRow = find.text('Charcoal').last;
+    await tester.ensureVisible(artistRow);
+    await tester.pumpAndSettle();
+    await tester.tap(artistRow);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Artist artist-1'), findsOneWidget);
   });
 }

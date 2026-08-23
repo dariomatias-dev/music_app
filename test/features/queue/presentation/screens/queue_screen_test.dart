@@ -242,4 +242,53 @@ void main() {
     expect(find.text('Queue is empty'), findsOneWidget);
     expect(container.read(queueViewModelProvider), isEmpty);
   });
+
+  testWidgets('dragging a queue track reorders playback', (tester) async {
+    final service = FakeAudioPlayerService();
+    final handler = MusicAudioHandler(service);
+    addTearDown(handler.dispose);
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          audioPlayerServiceProvider.overrideWithValue(service),
+          audioHandlerProvider.overrideWithValue(handler),
+          libraryRepositoryProvider.overrideWithValue(
+            const _FakeLibraryRepository(),
+          ),
+        ],
+        child: _app(const QueueScreen()),
+      ),
+    );
+
+    final container = ProviderScope.containerOf(
+      tester.element(find.byType(QueueScreen)),
+    );
+    await container.read(queueViewModelProvider.notifier).playFromSource([
+      _track(id: 'track-1', title: 'Night Drive'),
+      _track(id: 'track-2', title: 'Sunset'),
+    ], startIndex: 0);
+    await tester.pump();
+
+    await tester.tap(find.text('Edit'));
+    await tester.pump();
+
+    final handles = find.byIcon(Icons.drag_handle_rounded);
+    final rowHeight =
+        tester.getCenter(handles.at(1)).dy - tester.getCenter(handles.first).dy;
+
+    final drag = await tester.startGesture(tester.getCenter(handles.first));
+    await tester.pump(const Duration(milliseconds: 100));
+    for (var moved = 0.0; moved < rowHeight; moved += rowHeight / 4) {
+      await drag.moveBy(Offset(0, rowHeight / 4));
+      await tester.pump(const Duration(milliseconds: 20));
+    }
+    await drag.up();
+    await tester.pumpAndSettle();
+
+    expect(container.read(queueViewModelProvider).map((item) => item.id), [
+      'track-2',
+      'track-1',
+    ]);
+  });
 }

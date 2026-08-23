@@ -9,6 +9,7 @@ import 'package:music_app/src/core/audio/music_audio_handler.dart';
 import 'package:music_app/src/core/navigation/route_names.dart';
 import 'package:music_app/src/core/navigation/route_paths.dart';
 import 'package:music_app/src/core/navigation/route_transitions.dart';
+import 'package:music_app/src/core/storage/storage_providers.dart';
 import 'package:music_app/src/features/library/data/indexing/library_indexer.dart';
 import 'package:music_app/src/features/library/data/providers/library_data_providers.dart';
 import 'package:music_app/src/features/library/domain/entities/album.dart';
@@ -22,6 +23,7 @@ import 'package:music_app/src/features/queue/presentation/view_models/queue_view
 
 import '../../../../helpers/fake_audio_player_service.dart';
 import '../../../../helpers/fake_favorite_repository.dart';
+import '../../../../helpers/fake_key_value_storage.dart';
 
 class _FakeLibraryRepository implements LibraryRepository {
   const _FakeLibraryRepository();
@@ -62,9 +64,9 @@ class _FakeLibraryRepository implements LibraryRepository {
   Future<void> clearArtworkCache() async {}
 }
 
-Widget _scaffold(Widget child) {
+Widget _scaffold(Widget child, {ThemeData? theme}) {
   return MaterialApp(
-    theme: AppTheme.light,
+    theme: theme ?? AppTheme.light,
     localizationsDelegates: AppLocalizations.localizationsDelegates,
     supportedLocales: AppLocalizations.supportedLocales,
     home: Scaffold(
@@ -441,4 +443,125 @@ void main() {
       expect(find.text('Night Drive'), findsNWidgets(2));
     },
   );
+
+  /// Pumps the mini player with one track already loaded and playing.
+  Future<(FakeAudioPlayerService, ProviderContainer)> pumpLoaded(
+    WidgetTester tester, {
+    bool routed = false,
+    ThemeData? theme,
+  }) async {
+    final service = FakeAudioPlayerService();
+    final handler = MusicAudioHandler(service);
+    addTearDown(handler.dispose);
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          audioPlayerServiceProvider.overrideWithValue(service),
+          audioHandlerProvider.overrideWithValue(handler),
+          libraryRepositoryProvider.overrideWithValue(
+            const _FakeLibraryRepository(),
+          ),
+          keyValueStorageProvider.overrideWithValue(FakeKeyValueStorage()),
+        ],
+        child: routed
+            ? _routedScaffold(const MiniPlayer())
+            : _scaffold(const MiniPlayer(), theme: theme),
+      ),
+    );
+
+    final container = ProviderScope.containerOf(
+      tester.element(find.byType(MiniPlayer)),
+    );
+    await container.read(queueViewModelProvider.notifier).playFromSource([
+      _track(),
+      _track(id: 'track-2', title: 'Sunset'),
+    ], startIndex: 1);
+    await tester.pump();
+    await tester.pump();
+
+    return (service, container);
+  }
+
+  testWidgets('swiping right goes back to the previous track', (tester) async {
+    final (service, _) = await pumpLoaded(tester);
+
+    final gestureArea = tester.widget<GestureDetector>(
+      find.byKey(const ValueKey('miniPlayerGestureArea')),
+    );
+    gestureArea.onHorizontalDragEnd!(
+      DragEndDetails(
+        velocity: const Velocity(pixelsPerSecond: Offset(300, 0)),
+        primaryVelocity: 300,
+      ),
+    );
+    await tester.pump(const Duration(milliseconds: 500));
+
+    expect(service.snapshot.currentIndex, 0);
+  });
+
+  testWidgets('a swipe too slow to count changes nothing', (tester) async {
+    final (service, _) = await pumpLoaded(tester);
+
+    final gestureArea = tester.widget<GestureDetector>(
+      find.byKey(const ValueKey('miniPlayerGestureArea')),
+    );
+    gestureArea.onHorizontalDragEnd!(
+      DragEndDetails(
+        velocity: const Velocity(pixelsPerSecond: Offset(50, 0)),
+        primaryVelocity: 50,
+      ),
+    );
+    await tester.pump(const Duration(milliseconds: 500));
+
+    expect(service.snapshot.currentIndex, 1);
+  });
+
+  testWidgets('tapping the card opens the playback screen', (tester) async {
+    await pumpLoaded(tester, routed: true);
+
+    final pressable = tester.widget<Pressable>(
+      find
+          .descendant(
+            of: find.byKey(const ValueKey('miniPlayerGestureArea')),
+            matching: find.byType(Pressable),
+          )
+          .first,
+    );
+    pressable.onTap!();
+    for (var i = 0; i < 10; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+
+    expect(find.text('Now Playing'), findsOneWidget);
+  });
+
+  testWidgets('the play button pauses while playing', (tester) async {
+    final (service, _) = await pumpLoaded(tester);
+    expect(service.snapshot.playing, isTrue);
+
+    tester.widget<AppPlayPauseButton>(find.byType(AppPlayPauseButton)).onTap();
+    await tester.pump(const Duration(milliseconds: 500));
+
+    expect(service.snapshot.playing, isFalse);
+  });
+
+  testWidgets('the play button resumes once paused', (tester) async {
+    final (service, _) = await pumpLoaded(tester);
+    await service.pause();
+    await tester.pump();
+    await tester.pump();
+
+    tester.widget<AppPlayPauseButton>(find.byType(AppPlayPauseButton)).onTap();
+    await tester.pump(const Duration(milliseconds: 500));
+
+    expect(service.snapshot.playing, isTrue);
+  });
+
+  testWidgets('inverts its theme against a dark app', (tester) async {
+    await pumpLoaded(tester, theme: AppTheme.dark);
+
+    expect(find.byType(MiniPlayer), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
 }

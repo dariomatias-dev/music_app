@@ -2,7 +2,9 @@ import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:music_app/l10n/app_localizations.dart';
+import 'package:music_app/src/core/navigation/route_names.dart';
 import 'package:music_app/src/features/library/presentation/widgets/playlists_tab.dart';
 import 'package:music_app/src/features/playlist/data/providers/playlist_data_providers.dart';
 
@@ -29,6 +31,43 @@ Future<ProviderContainer> _pumpPlaylistsTab(
   return ProviderScope.containerOf(element);
 }
 
+/// Pumps the tab behind a router, so a playlist row has somewhere to go.
+Future<void> _pumpRoutedPlaylistsTab(
+  WidgetTester tester,
+  FakePlaylistRepository repository,
+) async {
+  final router = GoRouter(
+    initialLocation: '/',
+    routes: [
+      GoRoute(
+        path: '/',
+        builder: (context, state) => const Scaffold(body: PlaylistsTab()),
+      ),
+      GoRoute(
+        name: RouteNames.playlist,
+        path: '/playlists/:playlistId',
+        builder: (context, state) => Scaffold(
+          body: Text('Playlist ${state.pathParameters['playlistId']}'),
+        ),
+      ),
+    ],
+  );
+  addTearDown(router.dispose);
+
+  await tester.pumpWidget(
+    ProviderScope(
+      overrides: [playlistRepositoryProvider.overrideWithValue(repository)],
+      child: MaterialApp.router(
+        theme: AppTheme.light,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        routerConfig: router,
+      ),
+    ),
+  );
+  await tester.pump();
+}
+
 void main() {
   testWidgets('shows the empty state when there are no playlists', (
     tester,
@@ -51,15 +90,36 @@ void main() {
   });
 
   testWidgets('creating a playlist adds it to the list', (tester) async {
-    await _pumpPlaylistsTab(tester, FakePlaylistRepository());
+    final repository = FakePlaylistRepository();
+    await _pumpPlaylistsTab(tester, repository);
 
     await tester.tap(find.text('New playlist'));
     await tester.pumpAndSettle();
     await tester.enterText(find.byType(TextField), 'Focus');
+    // The confirm button stays disabled until the field reports a name, so
+    // without this frame the tap below is a no-op and the sheet's own text
+    // field satisfies the assertion instead of the created playlist.
+    await tester.pump();
     await tester.tap(find.text('Create'));
     await tester.pumpAndSettle();
 
+    expect(
+      (await repository.watchPlaylists().first).map((p) => p.name),
+      ['Focus'],
+    );
     expect(find.text('Focus'), findsOneWidget);
+  });
+
+  testWidgets('dismissing the sheet creates nothing', (tester) async {
+    final repository = FakePlaylistRepository();
+    await _pumpPlaylistsTab(tester, repository);
+
+    await tester.tap(find.text('New playlist'));
+    await tester.pumpAndSettle();
+    Navigator.of(tester.element(find.byType(TextField))).pop();
+    await tester.pumpAndSettle();
+
+    expect(await repository.watchPlaylists().first, isEmpty);
   });
 
   testWidgets('renaming a playlist updates its name', (tester) async {
@@ -125,5 +185,18 @@ void main() {
 
     expect(find.text('Road Trip'), findsNothing);
     expect(find.text('No playlists yet'), findsOneWidget);
+  });
+
+  testWidgets('tapping a playlist opens it', (tester) async {
+    final repository = FakePlaylistRepository();
+    final id = await repository.createPlaylist('Road Trip');
+
+    await _pumpRoutedPlaylistsTab(tester, repository);
+    await tester.pump();
+
+    await tester.tap(find.text('Road Trip'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Playlist $id'), findsOneWidget);
   });
 }

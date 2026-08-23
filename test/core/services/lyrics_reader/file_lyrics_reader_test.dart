@@ -24,6 +24,55 @@ List<int> _bigEndian(int value) {
   ];
 }
 
+/// Encodes [text] as UTF-16, optionally prefixed by a byte order mark.
+List<int> _utf16(String text, {required bool bigEndian, List<int>? bom}) {
+  final bytes = <int>[...?bom];
+  for (final unit in text.codeUnits) {
+    bytes.addAll(
+      bigEndian ? [unit >> 8, unit & 0xFF] : [unit & 0xFF, unit >> 8],
+    );
+  }
+  return bytes;
+}
+
+/// Builds an ID3v2.3 tag whose USLT frame carries UTF-16 [lyrics].
+///
+/// Encoding 1 is UTF-16 with a BOM; encoding 2 is UTF-16BE without one.
+Uint8List _mp3WithUtf16Uslt(
+  String lyrics, {
+  required int encoding,
+  required bool bigEndian,
+  bool withBom = true,
+  bool terminateDescription = true,
+}) {
+  final bom = !withBom
+      ? null
+      : bigEndian
+      ? [0xFE, 0xFF]
+      : [0xFF, 0xFE];
+  final frameContent = [
+    encoding,
+    ...utf8.encode('eng'),
+    if (terminateDescription) ...[0x00, 0x00],
+    ..._utf16(lyrics, bigEndian: bigEndian, bom: bom),
+  ];
+  final frame = [
+    ...utf8.encode('USLT'),
+    ..._bigEndian(frameContent.length),
+    0,
+    0,
+    ...frameContent,
+  ];
+  final header = [
+    ...utf8.encode('ID3'),
+    3,
+    0,
+    0,
+    ..._synchsafe(frame.length),
+  ];
+  return Uint8List.fromList([...header, ...frame]);
+}
+
 Uint8List _mp3WithUslt(
   String lyrics, {
   int encoding = 3,
@@ -79,6 +128,64 @@ void main() {
       await file.writeAsBytes(_mp3WithUslt('Café', encoding: 0));
 
       expect(await reader.readEmbedded(file.path), 'Café');
+    });
+
+    test('reads a UTF-16 USLT frame with a big-endian BOM', () async {
+      final file = File(p.join(tempDir.path, 'song.mp3'));
+      await file.writeAsBytes(
+        _mp3WithUtf16Uslt('Canção', encoding: 1, bigEndian: true),
+      );
+
+      expect(await reader.readEmbedded(file.path), 'Canção');
+    });
+
+    test('reads a UTF-16 USLT frame with a little-endian BOM', () async {
+      final file = File(p.join(tempDir.path, 'song.mp3'));
+      await file.writeAsBytes(
+        _mp3WithUtf16Uslt('Canção', encoding: 1, bigEndian: false),
+      );
+
+      expect(await reader.readEmbedded(file.path), 'Canção');
+    });
+
+    test('reads a UTF-16BE USLT frame, which carries no BOM', () async {
+      final file = File(p.join(tempDir.path, 'song.mp3'));
+      await file.writeAsBytes(
+        _mp3WithUtf16Uslt(
+          'Canção',
+          encoding: 2,
+          bigEndian: true,
+          withBom: false,
+        ),
+      );
+
+      expect(await reader.readEmbedded(file.path), 'Canção');
+    });
+
+    test(
+      'returns null when a UTF-16 description is never terminated',
+      () async {
+        final file = File(p.join(tempDir.path, 'song.mp3'));
+        await file.writeAsBytes(
+          _mp3WithUtf16Uslt(
+            'Canção',
+            encoding: 1,
+            bigEndian: true,
+            terminateDescription: false,
+          ),
+        );
+
+        expect(await reader.readEmbedded(file.path), isNull);
+      },
+    );
+
+    test('returns null for an unknown text encoding', () async {
+      final file = File(p.join(tempDir.path, 'song.mp3'));
+      await file.writeAsBytes(
+        _mp3WithUtf16Uslt('Ignored', encoding: 9, bigEndian: true),
+      );
+
+      expect(await reader.readEmbedded(file.path), isNull);
     });
 
     test('returns null for non-mp3 files', () async {
