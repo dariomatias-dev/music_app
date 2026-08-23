@@ -22,4 +22,20 @@ void main() {
     expect(exception.message, 'denied');
     expect(exception.cause, 'oops');
   });
+
+  test('FileException carries its message and cause', () {
+    const cause = FormatException('unreadable header');
+    const exception = FileException('Could not read the file.', cause: cause);
+
+    expect(exception.message, 'Could not read the file.');
+    expect(exception.cause, cause);
+    expect(exception.toString(), contains('Could not read the file.'));
+  });
+
+  test('PlaybackException carries its message and cause', () {
+    const exception = PlaybackException('Playback failed.', cause: 'boom');
+
+    expect(exception.message, 'Playback failed.');
+    expect(exception.cause, 'boom');
+  });
 }

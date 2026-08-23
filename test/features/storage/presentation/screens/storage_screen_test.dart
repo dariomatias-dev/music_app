@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'dart:convert';
 import 'dart:typed_data';
 
@@ -35,6 +37,9 @@ class _FakeLibraryRepository implements LibraryRepository {
   bool artworkCacheCleared = false;
   bool reindexShouldThrow = false;
 
+  /// Held open so a test can observe the screen mid-rescan.
+  Completer<void>? reindexGate;
+
   @override
   Stream<List<Track>> watchTracks() => Stream.value(tracks);
 
@@ -45,12 +50,11 @@ class _FakeLibraryRepository implements LibraryRepository {
   Stream<List<Album>> watchAlbums() => Stream.value(const []);
 
   @override
-  Stream<IndexingProgress> reindex() {
+  Stream<IndexingProgress> reindex() async* {
     reindexCalls++;
-    if (reindexShouldThrow) {
-      return Stream.error(Exception('scan boom'));
-    }
-    return const Stream.empty();
+    if (reindexShouldThrow) throw Exception('scan boom');
+    final gate = reindexGate;
+    if (gate != null) await gate.future;
   }
 
   @override
@@ -520,5 +524,25 @@ void main() {
       ),
       findsOneWidget,
     );
+  });
+
+  testWidgets('shows a progress bar while a rescan runs', (tester) async {
+    final libraryRepository = _FakeLibraryRepository(
+      tracks: [_track('a', filePath: '/music/rock/a.mp3')],
+    )..reindexGate = Completer<void>();
+
+    await tester.pumpWidget(_app(libraryRepository: libraryRepository));
+    await tester.pump();
+    expect(find.byType(LinearProgressIndicator), findsNothing);
+
+    await tester.tap(find.byType(AppSwitch));
+    await tester.pump();
+
+    expect(find.byType(LinearProgressIndicator), findsOneWidget);
+
+    libraryRepository.reindexGate!.complete();
+    await tester.pumpAndSettle();
+
+    expect(find.byType(LinearProgressIndicator), findsNothing);
   });
 }

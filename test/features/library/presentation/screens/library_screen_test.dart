@@ -11,8 +11,11 @@ import 'package:music_app/src/features/library/domain/entities/track.dart';
 import 'package:music_app/src/features/library/domain/repositories/library_repository.dart';
 import 'package:music_app/src/features/library/presentation/screens/library_screen.dart';
 import 'package:music_app/src/features/library/presentation/view_models/library_view_model.dart';
+import 'package:music_app/src/features/library/presentation/widgets/favorites_tab.dart';
+import 'package:music_app/src/features/library/presentation/widgets/playlists_tab.dart';
 import 'package:music_app/src/features/playlist/data/providers/playlist_data_providers.dart';
 
+import '../../../../helpers/fake_favorite_repository.dart';
 import '../../../../helpers/fake_playlist_repository.dart';
 
 class _FakeLibraryRepository implements LibraryRepository {
@@ -44,6 +47,7 @@ Widget _app() {
         const _FakeLibraryRepository(),
       ),
       playlistRepositoryProvider.overrideWithValue(FakePlaylistRepository()),
+      favoriteRepositoryProvider.overrideWithValue(FakeFavoriteRepository()),
     ],
     child: MaterialApp(
       theme: AppTheme.light,
@@ -82,5 +86,19 @@ void main() {
       container.read(libraryViewModelProvider),
       LibrarySection.albums,
     );
+  });
+
+  testWidgets('the favorites section renders the favorites tab', (
+    tester,
+  ) async {
+    await tester.pumpWidget(_app());
+    await tester.pump();
+    expect(find.byType(PlaylistsTab), findsOneWidget);
+
+    await tester.tap(find.text('Favorites'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(FavoritesTab), findsOneWidget);
+    expect(find.byType(PlaylistsTab), findsNothing);
   });
 }

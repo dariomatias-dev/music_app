@@ -1,6 +1,7 @@
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:music_app/src/core/widgets/cached_square_image.dart';
 import 'package:music_app/src/features/playlist/presentation/widgets/playlist_cover_art.dart';
 
 void main() {
@@ -43,5 +44,29 @@ void main() {
 
     // 3 unique tracks repeat to fill all 4 quadrants.
     expect(find.byType(AppArtwork), findsNWidgets(4));
+  });
+
+  testWidgets('uses a track cover in the mosaic when one is cached', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: AppTheme.light,
+        home: const Scaffold(
+          body: PlaylistCoverArt(
+            playlistId: 'playlist-1',
+            tracks: [
+              (seed: 'track-1', artworkPath: '/covers/album-1.jpg'),
+              (seed: 'track-2', artworkPath: null),
+            ],
+            size: 120,
+          ),
+        ),
+      ),
+    );
+
+    expect(find.byType(CachedSquareImage), findsNWidgets(2));
+    expect(find.byType(AppArtwork), findsNWidgets(2));
+    tester.takeException();
   });
 }
