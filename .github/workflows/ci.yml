@@ -91,7 +91,12 @@ jobs:
           rm cmdline-tools.zip
           sdkmanager="$sdk_root/cmdline-tools/fresh/cmdline-tools/bin/sdkmanager"
           yes | "$sdkmanager" --sdk_root="$sdk_root" --licenses > /dev/null
-          "$sdkmanager" --sdk_root="$sdk_root" "platforms;android-${{ env.ANDROID_COMPILE_SDK }}"
+          # platforms;android-37 isn't in the stable channel's manifest yet
+          # (only the newest, still-previewed API levels land there first),
+          # so the default channel (0=stable) reports it as not found.
+          # --channel=3 (canary) includes those.
+          "$sdkmanager" --sdk_root="$sdk_root" --channel=3 \
+            "platforms;android-${{ env.ANDROID_COMPILE_SDK }}"
 
       - name: Build release APK
         run: flutter build apk --release
