@@ -25,7 +25,10 @@ awk -v minimum="$minimum" '
     file = substr($0, 4)
     skip = (file ~ /\.g\.dart$/) ||
            (file ~ /\.freezed\.dart$/) ||
-           (file ~ /lib\/l10n\//)
+           (file ~ /lib\/l10n\//) ||
+           # Drift table declarations: read by the build_runner generator
+           # to emit lib/**/*.g.dart, never executed at runtime.
+           (file ~ /lib\/src\/core\/database\/tables\//)
     next
   }
   /^DA:/ {

@@ -21,5 +21,9 @@ void main() {
         LibrarySection.albums;
 
     expect(container.read(libraryViewModelProvider), LibrarySection.albums);
+    expect(
+      container.read(libraryViewModelProvider.notifier).section,
+      LibrarySection.albums,
+    );
   });
 }

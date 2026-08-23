@@ -76,7 +76,8 @@ Track _track() {
 
 Future<ProviderContainer> _pumpWithTrack(
   WidgetTester tester, {
-  required String? lyricsContent,
+  String? lyricsContent,
+  FakeLyricsRepository? lyricsRepository,
 }) async {
   final service = FakeAudioPlayerService();
   final handler = MusicAudioHandler(service);
@@ -84,6 +85,9 @@ Future<ProviderContainer> _pumpWithTrack(
 
   await tester.pumpWidget(
     ProviderScope(
+      // Disables the default retry-with-backoff so a repository that
+      // throws settles into AsyncError on the first attempt.
+      retry: (retryCount, error) => null,
       overrides: [
         audioPlayerServiceProvider.overrideWithValue(service),
         audioHandlerProvider.overrideWithValue(handler),
@@ -91,7 +95,7 @@ Future<ProviderContainer> _pumpWithTrack(
           const _FakeLibraryRepository(),
         ),
         lyricsRepositoryProvider.overrideWithValue(
-          FakeLyricsRepository(content: lyricsContent),
+          lyricsRepository ?? FakeLyricsRepository(content: lyricsContent),
         ),
       ],
       child: MaterialApp(
@@ -137,10 +141,24 @@ void main() {
   testWidgets('shows the empty state when there are no lyrics', (
     tester,
   ) async {
-    await _pumpWithTrack(tester, lyricsContent: null);
+    await _pumpWithTrack(tester);
 
     expect(find.text('No lyrics found'), findsOneWidget);
   });
+
+  testWidgets(
+    'shows the empty state when resolving lyrics fails, instead of an '
+    'unhandled error',
+    (tester) async {
+      await _pumpWithTrack(
+        tester,
+        lyricsRepository: FakeLyricsRepository.throwing(),
+      );
+
+      expect(find.text('No lyrics found'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   testWidgets('shows plain lyrics lines once resolved', (tester) async {
     await _pumpWithTrack(tester, lyricsContent: 'Line one\nLine two');

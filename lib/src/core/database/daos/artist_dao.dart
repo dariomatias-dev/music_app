@@ -13,10 +13,6 @@ class ArtistDao extends DatabaseAccessor<AppDatabase> with _$ArtistDaoMixin {
   /// Watches all artists.
   Stream<List<ArtistRow>> watchAll() => select(artistTable).watch();
 
-  /// Reads a single artist by [id].
-  Future<ArtistRow?> getById(String id) =>
-      (select(artistTable)..where((t) => t.id.equals(id))).getSingleOrNull();
-
   /// Reads a single artist by its [sourceId].
   Future<ArtistRow?> getBySourceId(String sourceId) => (select(
     artistTable,
@@ -25,8 +21,4 @@ class ArtistDao extends DatabaseAccessor<AppDatabase> with _$ArtistDaoMixin {
   /// Inserts or updates [entry].
   Future<void> upsertOne(Insertable<ArtistRow> entry) =>
       into(artistTable).insertOnConflictUpdate(entry);
-
-  /// Deletes the artist with [id].
-  Future<void> deleteById(String id) =>
-      (delete(artistTable)..where((t) => t.id.equals(id))).go();
 }

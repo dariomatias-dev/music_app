@@ -109,4 +109,26 @@ void main() {
 
     expect(find.text('Sleep timer set'), findsOneWidget);
   });
+
+  testWidgets(
+    'end of track already reached (position at or past duration) pauses '
+    'immediately instead of scheduling a negative timer',
+    (tester) async {
+      final service = FakeAudioPlayerService();
+      await service.setQueue(['a.mp3']);
+      await service.play();
+      service.setDurationForTesting(const Duration(minutes: 4));
+      await service.seek(const Duration(minutes: 4));
+
+      await tester.pumpWidget(_app(service));
+
+      await tester.tap(find.text('open'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('End of track'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Sleep timer set'), findsOneWidget);
+      expect(service.snapshot.playing, isFalse);
+    },
+  );
 }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:music_app/src/features/home/presentation/view_models/home_view_model.dart';
@@ -74,6 +76,31 @@ void main() {
     )..listen(tracksStreamProvider, (_, _) {});
     addTearDown(container.dispose);
     await container.read(tracksStreamProvider.future);
+
+    expect(container.read(homeViewModelProvider), HomeState.empty);
+  });
+
+  test('is empty when the track stream errors', () async {
+    final container = ProviderContainer(
+      // Disables the default retry-with-backoff so a failed stream settles
+      // into AsyncError immediately instead of staying AsyncLoading for a
+      // few seconds of retries.
+      retry: (retryCount, error) => null,
+      overrides: [
+        tracksStreamProvider.overrideWith(
+          (ref) => Stream.error(Exception('scan failed')),
+        ),
+      ],
+    );
+    addTearDown(container.dispose);
+
+    final errored = Completer<void>();
+    container.listen(tracksStreamProvider, (_, next) {
+      if (next.hasError && !next.isLoading && !errored.isCompleted) {
+        errored.complete();
+      }
+    });
+    await errored.future;
 
     expect(container.read(homeViewModelProvider), HomeState.empty);
   });

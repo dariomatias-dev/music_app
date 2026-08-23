@@ -359,6 +359,43 @@ void main() {
     expect(playerService.snapshot.position, Duration.zero);
   });
 
+  test(
+    'restoreSession starts from the beginning when the saved index is out '
+    'of range',
+    () async {
+      final storage = PlaybackSessionStorage(FakeKeyValueStorage());
+      await storage.save(
+        const PlaybackSession(
+          trackIds: ['a', 'b'],
+          currentIndex: -1,
+          position: Duration(seconds: 20),
+        ),
+      );
+      final sessionContainer = ProviderContainer(
+        overrides: [
+          audioPlayerServiceProvider.overrideWithValue(playerService),
+          audioHandlerProvider.overrideWithValue(handler),
+          playbackSessionStorageProvider.overrideWithValue(storage),
+          libraryRepositoryProvider.overrideWithValue(
+            _FakeLibraryRepository(tracks: [_track('a'), _track('b')]),
+          ),
+        ],
+      );
+      addTearDown(sessionContainer.dispose);
+
+      await sessionContainer
+          .read(queueViewModelProvider.notifier)
+          .restoreSession();
+
+      expect(
+        sessionContainer.read(queueViewModelProvider).map((t) => t.id),
+        ['a', 'b'],
+      );
+      expect(playerService.snapshot.currentIndex, 0);
+      expect(playerService.snapshot.position, Duration.zero);
+    },
+  );
+
   test('playFromSource applies the saved default playback speed', () async {
     final storage = FakeKeyValueStorage();
     await storage.setDouble('defaultPlaybackSpeed', 1.5);

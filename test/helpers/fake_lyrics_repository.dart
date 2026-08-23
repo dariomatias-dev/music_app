@@ -7,10 +7,19 @@ import 'package:music_app/src/features/player/domain/repositories/lyrics_reposit
 class FakeLyricsRepository implements LyricsRepository {
   FakeLyricsRepository({String? content})
     : _content = content,
-      _source = content == null ? LyricsSource.none : LyricsSource.file;
+      _source = content == null ? LyricsSource.none : LyricsSource.file,
+      _throws = false;
+
+  /// A [FakeLyricsRepository] whose [resolve] always fails, for testing the
+  /// error path.
+  FakeLyricsRepository.throwing()
+    : _content = null,
+      _source = LyricsSource.none,
+      _throws = true;
 
   final String? _content;
   final LyricsSource _source;
+  final bool _throws;
   final _controllers = <String, StreamController<Lyrics?>>{};
 
   StreamController<Lyrics?> _controllerFor(String trackId) =>
@@ -24,6 +33,7 @@ class FakeLyricsRepository implements LyricsRepository {
 
   @override
   Future<Lyrics> resolve(String trackId, String filePath) async {
+    if (_throws) throw Exception('could not read lyrics');
     final lyrics = Lyrics(trackId: trackId, content: _content, source: _source);
     _controllerFor(trackId).add(lyrics);
     return lyrics;

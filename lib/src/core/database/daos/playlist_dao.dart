@@ -14,10 +14,6 @@ class PlaylistDao extends DatabaseAccessor<AppDatabase>
   /// Watches all playlists.
   Stream<List<PlaylistRow>> watchAll() => select(playlistTable).watch();
 
-  /// Reads a single playlist by [id].
-  Future<PlaylistRow?> getById(String id) =>
-      (select(playlistTable)..where((t) => t.id.equals(id))).getSingleOrNull();
-
   /// Watches a single playlist by [id].
   Stream<PlaylistRow?> watchById(String id) => (select(
     playlistTable,

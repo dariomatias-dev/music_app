@@ -104,6 +104,29 @@ Uint8List _mp3WithUslt(
   return Uint8List.fromList([...header, ...frame]);
 }
 
+/// Builds an ID3v2.4 tag whose USLT frame carries UTF-8 [lyrics].
+///
+/// Unlike ID3v2.3, v2.4 encodes the frame size itself as a synchsafe
+/// integer, not big-endian.
+Uint8List _mp3WithUsltV4(String lyrics) {
+  final textBytes = utf8.encode(lyrics);
+  final frameContent = [3, ...utf8.encode('eng'), 0x00, ...textBytes];
+  final frame = [
+    ...utf8.encode('USLT'),
+    ..._synchsafe(frameContent.length),
+    0,
+    0,
+    ...frameContent,
+  ];
+  final header = [
+    ...utf8.encode('ID3'),
+    4, 0, // major version 4, revision 0
+    0, // flags
+    ..._synchsafe(frame.length),
+  ];
+  return Uint8List.fromList([...header, ...frame]);
+}
+
 void main() {
   late Directory tempDir;
   late FileLyricsReader reader;
@@ -122,6 +145,17 @@ void main() {
 
       expect(await reader.readEmbedded(file.path), 'Line one\nLine two');
     });
+
+    test(
+      'reads a UTF-8 USLT frame from an ID3v2.4 tag, whose frame size is '
+      'synchsafe-encoded rather than big-endian',
+      () async {
+        final file = File(p.join(tempDir.path, 'song.mp3'));
+        await file.writeAsBytes(_mp3WithUsltV4('Line one\nLine two'));
+
+        expect(await reader.readEmbedded(file.path), 'Line one\nLine two');
+      },
+    );
 
     test('reads a Latin-1 USLT frame', () async {
       final file = File(p.join(tempDir.path, 'song.mp3'));

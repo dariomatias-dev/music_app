@@ -13,7 +13,7 @@ SongModel _song({
   int duration = 60000,
   String fileExtension = 'mp3',
   int size = 1000000,
-  int dateAdded = 1700000000,
+  int? dateAdded = 1700000000,
   int dateModified = 1700000000,
   String? artist,
   String? album,
@@ -252,5 +252,36 @@ void main() {
       expect(file.artist, 'Charcoal');
       expect(file.album, 'Chill Vibes');
     });
+
+    test(
+      'falls back to the current time when the media store has no '
+      'date_added',
+      () {
+        final songs = [_song(dateAdded: null)];
+        final before = DateTime.now();
+
+        final result = filterAndMapSongs(
+          songs,
+          includedFolders: const [],
+          excludedFolders: const [],
+          minimumDuration: const Duration(seconds: 30),
+        );
+
+        final after = DateTime.now();
+        expect(result, hasLength(1));
+        expect(
+          result.single.dateAdded.isAfter(
+            before.subtract(const Duration(seconds: 1)),
+          ),
+          isTrue,
+        );
+        expect(
+          result.single.dateAdded.isBefore(
+            after.add(const Duration(seconds: 1)),
+          ),
+          isTrue,
+        );
+      },
+    );
   });
 }
