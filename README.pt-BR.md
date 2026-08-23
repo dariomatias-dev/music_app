@@ -100,12 +100,13 @@ dados, áudio, permissões) ficam em `lib/src/core`.
 
 ## Testes
 
-O projeto tem 129 arquivos de teste (87 no app, 42 em
-`packages/app_ui`), cobrindo repositórios, view models, widgets e 56
-testes golden para o design system e as telas principais, além de testes
-de integração para os fluxos de onboarding, reprodução e persistência. O
-código segue o conjunto rigoroso de lints `very_good_analysis`,
-verificado no CI junto com `dart format` e `flutter test`.
+O projeto tem 177 arquivos de teste (120 no app, 57 em
+`packages/app_ui`), cobrindo repositórios, view models e widgets, além de
+40 arquivos de testes golden para o design system e as telas principais,
+e testes de integração para os fluxos de onboarding, reprodução e
+persistência. O CI exige cobertura mínima de linha de 97% no app e 98% em
+`packages/app_ui`, junto do conjunto rigoroso de lints
+`very_good_analysis` e `dart format`.
 
 ```sh
 fvm flutter analyze
@@ -154,9 +155,10 @@ fvm flutter run
 
 Scripts utilitários ficam em `scripts/`.
 
-| Script       | Comando                             | Descrição                                                                                                                                                                                       |
-| ------------ | ------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `screenshot` | `scripts/screenshot.sh [device-id]` | Percorre as principais telas do app em um dispositivo ou emulador conectado e salva uma captura de cada uma em `screenshots/`, usadas no README, na Play Store e no site oficial. Rode `fvm flutter devices` para listar os ids de dispositivos disponíveis. |
+| Script           | Comando                                          | Descrição                                                                                                                                                                                       |
+| ---------------- | ------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `screenshot`     | `scripts/screenshot.sh [device-id]`              | Percorre as principais telas do app em um dispositivo ou emulador conectado e salva uma captura de cada uma em `screenshots/`, usadas no README, na Play Store e no site oficial. Rode `fvm flutter devices` para listar os ids de dispositivos disponíveis. |
+| `check_coverage` | `scripts/check_coverage.sh <lcov-file> <minimum>` | Falha se a cobertura de linha de um relatório `lcov.info` (gerado com `flutter test --coverage`) ficar abaixo de `<minimum>`. Usado no CI para impor os limites acima; rode localmente após gerar a cobertura para checar antes de dar push. |
 
 ## Contribuindo
 
