@@ -161,4 +161,25 @@ void main() {
       expect(await dataSource.findAllTracks(), isEmpty);
     });
   });
+
+  test('clearAlbumArtworkPaths forgets every cached cover', () async {
+    await dataSource.upsertAlbum(
+      const Album(
+        id: 'album-1',
+        sourceId: 'album-1',
+        title: 'Chill Vibes',
+        artistId: 'artist-1',
+        trackCount: 1,
+        totalDuration: Duration(minutes: 3),
+        artworkPath: '/covers/album-1.jpg',
+      ),
+    );
+
+    await dataSource.clearAlbumArtworkPaths();
+
+    expect(
+      (await dataSource.findAlbumBySourceId('album-1'))?.artworkPath,
+      isNull,
+    );
+  });
 }

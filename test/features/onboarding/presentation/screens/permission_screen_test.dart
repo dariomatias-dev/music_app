@@ -17,15 +17,24 @@ import 'package:music_app/src/features/library/domain/repositories/library_repos
 import 'package:music_app/src/features/onboarding/presentation/screens/permission_screen.dart';
 
 class _FakeMediaPermissionService implements MediaPermissionService {
+  _FakeMediaPermissionService({
+    this.checkStatus = MediaPermissionStatus.denied,
+  });
+
+  final MediaPermissionStatus checkStatus;
+  int openSettingsCalls = 0;
+
   @override
-  Future<MediaPermissionStatus> check() async => MediaPermissionStatus.denied;
+  Future<MediaPermissionStatus> check() async => checkStatus;
 
   @override
   Future<MediaPermissionStatus> request() async =>
       MediaPermissionStatus.granted;
 
   @override
-  Future<void> openSystemSettings() async {}
+  Future<void> openSystemSettings() async {
+    openSettingsCalls++;
+  }
 }
 
 class _FakeLibraryRepository implements LibraryRepository {
@@ -142,5 +151,61 @@ void main() {
 
     expect(find.text('Home screen reached'), findsOneWidget);
     expect(libraryRepository.reindexCalls, 2);
+  });
+
+  testWidgets('offers system settings once permission is permanently denied', (
+    tester,
+  ) async {
+    final permissionService = _FakeMediaPermissionService(
+      checkStatus: MediaPermissionStatus.permanentlyDenied,
+    );
+
+    await tester.pumpWidget(
+      _app(
+        permissionService: permissionService,
+        libraryRepository: _FakeLibraryRepository(),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      find.descendant(
+        of: find.byType(AppPrimaryButton),
+        matching: find.text('Open settings'),
+      ),
+      findsOneWidget,
+    );
+
+    await tester.tap(find.text('Open settings'));
+    await tester.pumpAndSettle();
+
+    expect(permissionService.openSettingsCalls, 1);
+  });
+
+  testWidgets('keeps granting primary while it can still be granted', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _app(
+        permissionService: _FakeMediaPermissionService(),
+        libraryRepository: _FakeLibraryRepository(),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      find.descendant(
+        of: find.byType(AppPrimaryButton),
+        matching: find.text('Allow access'),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(
+        of: find.byType(AppTextButton),
+        matching: find.text('Open settings'),
+      ),
+      findsOneWidget,
+    );
   });
 }

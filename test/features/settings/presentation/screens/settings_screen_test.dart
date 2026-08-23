@@ -12,7 +12,9 @@ import 'package:music_app/src/features/library/domain/entities/album.dart';
 import 'package:music_app/src/features/library/domain/entities/artist.dart';
 import 'package:music_app/src/features/library/domain/entities/track.dart';
 import 'package:music_app/src/features/library/domain/repositories/library_repository.dart';
+import 'package:music_app/src/features/settings/data/providers/app_info_provider.dart';
 import 'package:music_app/src/features/settings/presentation/screens/settings_screen.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../../../helpers/fake_key_value_storage.dart';
 
@@ -46,6 +48,7 @@ class _FakeLibraryRepository implements LibraryRepository {
 Widget _app({
   FakeKeyValueStorage? storage,
   LibraryRepository? libraryRepository,
+  PackageInfo? packageInfo,
 }) {
   final router = GoRouter(
     initialLocation: '/',
@@ -89,6 +92,8 @@ Widget _app({
       libraryRepositoryProvider.overrideWithValue(
         libraryRepository ?? _FakeLibraryRepository(),
       ),
+      if (packageInfo != null)
+        appInfoProvider.overrideWith((ref) async => packageInfo),
     ],
     child: MaterialApp.router(
       theme: AppTheme.light,
@@ -302,5 +307,43 @@ void main() {
     await tester.tap(find.text('Rescan library'));
     await tester.pumpAndSettle();
     expect(libraryRepository.reindexCalls, 2);
+  });
+
+  testWidgets('shows the app name alone until the version is known', (
+    tester,
+  ) async {
+    await tester.pumpWidget(_app());
+    await tester.pumpAndSettle();
+
+    expect(find.text('Music App'), findsOneWidget);
+  });
+
+  testWidgets('appends the version once package info resolves', (tester) async {
+    await tester.pumpWidget(
+      _app(
+        packageInfo: PackageInfo(
+          appName: 'Music App',
+          packageName: 'dev.dariomatias.music_app',
+          version: '1.2.3',
+          buildNumber: '7',
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Music App 1.2.3'), findsOneWidget);
+  });
+
+  testWidgets('names the chosen language instead of the system default', (
+    tester,
+  ) async {
+    final storage = FakeKeyValueStorage();
+    await storage.setString('locale', 'es');
+
+    await tester.pumpWidget(_app(storage: storage));
+    await tester.pumpAndSettle();
+
+    expect(find.text('System default'), findsNothing);
+    expect(find.text('Espa\u00f1ol'), findsOneWidget);
   });
 }

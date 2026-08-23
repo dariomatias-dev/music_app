@@ -146,4 +146,17 @@ void main() {
 
     expect(await repository.watchRecentTrackIds().first, ['track-1']);
   });
+
+  test('clearHistory drops every recorded play', () async {
+    await repository.recordPlay(
+      trackId: 'track-1',
+      startedAt: DateTime(2026),
+      playedDuration: const Duration(seconds: 45),
+      completed: true,
+    );
+
+    await repository.clearHistory();
+
+    expect(await repository.watchRecentTrackIds().first, isEmpty);
+  });
 }
