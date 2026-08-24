@@ -19,7 +19,7 @@
 <h1 align="center">Music App</h1>
 
 <p align="center">
-Um aplicativo Android para tocar a música que já está no seu dispositivo — totalmente offline, sem contas, sem streaming.
+Um aplicativo Android para tocar a música que já está no seu dispositivo, totalmente offline, sem contas, sem streaming.
 <br>
 <a href="#sobre-o-projeto"><strong>Explore a documentação »</strong></a>
 <br>
@@ -93,8 +93,8 @@ Architecture e MVVM:
 O estado é gerenciado com Riverpod (classes `ViewModel`/`Notifier`
 expostas via providers), o roteamento com `go_router`, e a persistência
 por `drift` (SQLite) e `shared_preferences`. O design system
-compartilhado — cada componente com tema, dos botões ao bottom sheet
-usado em todo o app — vive em seu próprio pacote local,
+compartilhado, cada componente com tema, dos botões ao bottom sheet
+usado em todo o app, vive em seu próprio pacote local,
 `packages/app_ui`; responsabilidades transversais (navegação, banco de
 dados, áudio, permissões) ficam em `lib/src/core`.
 

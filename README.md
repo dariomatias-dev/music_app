@@ -19,7 +19,7 @@
 <h1 align="center">Music App</h1>
 
 <p align="center">
-An Android app for playing the music already on your device — fully offline, no accounts, no streaming.
+An Android app for playing the music already on your device, fully offline, no accounts, no streaming.
 <br>
 <a href="#about-the-project"><strong>Explore the docs »</strong></a>
 <br>
@@ -92,9 +92,9 @@ and MVVM:
 
 State is managed with Riverpod (`ViewModel`/`Notifier` classes exposed
 through providers), routing with `go_router`, and persistence through
-`drift` (SQLite) and `shared_preferences`. The shared design system —
-every themed component, from buttons to the bottom sheet used across the
-app — lives in its own local package, `packages/app_ui`; cross-cutting
+`drift` (SQLite) and `shared_preferences`. The shared design system,
+every themed component from buttons to the bottom sheet used across the
+app, lives in its own local package, `packages/app_ui`; cross-cutting
 concerns (navigation, the database, audio, permissions) live under
 `lib/src/core`.
 
