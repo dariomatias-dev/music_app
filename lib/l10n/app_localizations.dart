@@ -99,7 +99,6 @@ abstract class AppLocalizations {
     Locale('en'),
     Locale('es'),
     Locale('pt'),
-    Locale('pt', 'BR'),
     Locale('zh'),
   ];
 
@@ -1382,18 +1381,6 @@ class _AppLocalizationsDelegate
 }
 
 AppLocalizations lookupAppLocalizations(Locale locale) {
-  // Lookup logic when language+country codes are specified.
-  switch (locale.languageCode) {
-    case 'pt':
-      {
-        switch (locale.countryCode) {
-          case 'BR':
-            return AppLocalizationsPtBr();
-        }
-        break;
-      }
-  }
-
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
     case 'en':

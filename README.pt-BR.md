@@ -61,7 +61,7 @@ O player suporta reprodução sem pausas (gapless) e crossfade, uma fila persist
 - **Gerenciamento de Armazenamento**: Veja o espaço usado por pasta, inclua ou exclua pastas do escaneamento, exclua arquivos e limpe o cache de capas.
 - **Estatísticas**: Histórico de audição e tempo gasto, detalhado por faixa e artista.
 - **Tema Claro e Escuro**: Temas em todo o app, seguindo o sistema ou escolhido manualmente, com preferência salva.
-- **Múltiplos Idiomas**: Interface completa em inglês, espanhol, português (Brasil) e chinês.
+- **Múltiplos Idiomas**: Interface completa em inglês, espanhol, português e chinês.
 - **Acessibilidade**: Labels semânticos em elementos interativos para leitores de tela.
 
 ## Construído Com
@@ -74,7 +74,7 @@ O player suporta reprodução sem pausas (gapless) e crossfade, uma fila persist
 - **[drift](https://pub.dev/packages/drift)**: O banco de dados SQLite local por trás do índice da biblioteca, das playlists, dos favoritos e do histórico de audição.
 - **[metadata_god](https://pub.dev/packages/metadata_god)** e **[on_audio_query](https://pub.dev/packages/on_audio_query)**: Leitura de metadados de arquivos de áudio e consultas ao repositório de mídia do dispositivo.
 - **[freezed](https://pub.dev/packages/freezed_annotation)**: Modelos de domínio imutáveis.
-- **[intl](https://pub.dev/packages/intl)** e o suporte nativo de `l10n` do Flutter: localização em inglês, espanhol, português (BR) e chinês.
+- **[intl](https://pub.dev/packages/intl)** e o suporte nativo de `l10n` do Flutter: localização em inglês, espanhol, português e chinês.
 - **[mocktail](https://pub.dev/packages/mocktail)**: Mocks na suíte de testes.
 
 ## Arquitetura

@@ -61,7 +61,7 @@ The player supports gapless playback and crossfade, a persistent queue, a sleep 
 - **Storage Management**: See space used per folder, include or exclude folders from scanning, delete files, and clear the cached artwork.
 - **Statistics**: Listening history and time spent, broken down by track and artist.
 - **Light & Dark Theme**: App-wide theming, following the system or set manually, with a persisted preference.
-- **Multiple Languages**: Full app UI in English, Spanish, Portuguese (Brazil), and Chinese.
+- **Multiple Languages**: Full app UI in English, Spanish, Portuguese, and Chinese.
 - **Accessibility**: Semantic labels on interactive elements for screen readers.
 
 ## Built With
@@ -74,7 +74,7 @@ The player supports gapless playback and crossfade, a persistent queue, a sleep 
 - **[drift](https://pub.dev/packages/drift)**: The local SQLite database backing the library index, playlists, favorites, and listening history.
 - **[metadata_god](https://pub.dev/packages/metadata_god)** and **[on_audio_query](https://pub.dev/packages/on_audio_query)**: Reading audio file metadata and querying the device's media store.
 - **[freezed](https://pub.dev/packages/freezed_annotation)**: Immutable domain models.
-- **[intl](https://pub.dev/packages/intl)** and Flutter's built-in `l10n` tooling: English, Spanish, Portuguese (BR), and Chinese localization.
+- **[intl](https://pub.dev/packages/intl)** and Flutter's built-in `l10n` tooling: English, Spanish, Portuguese, and Chinese localization.
 - **[mocktail](https://pub.dev/packages/mocktail)**: Mocking in the test suite.
 
 ## Architecture

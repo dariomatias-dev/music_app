@@ -61,7 +61,7 @@ El reproductor soporta reproducción sin pausas (gapless) y crossfade, una cola 
 - **Gestión de Almacenamiento**: Ve el espacio usado por carpeta, incluye o excluye carpetas del escaneo, elimina archivos y limpia la caché de carátulas.
 - **Estadísticas**: Historial de escucha y tiempo dedicado, desglosado por pista y artista.
 - **Tema Claro y Oscuro**: Temas en toda la app, siguiendo el sistema o elegido manualmente, con preferencia guardada.
-- **Múltiples Idiomas**: Interfaz completa en inglés, español, portugués (Brasil) y chino.
+- **Múltiples Idiomas**: Interfaz completa en inglés, español, portugués y chino.
 - **Accesibilidad**: Etiquetas semánticas en elementos interactivos para lectores de pantalla.
 
 ## Construido Con
@@ -74,7 +74,7 @@ El reproductor soporta reproducción sin pausas (gapless) y crossfade, una cola 
 - **[drift](https://pub.dev/packages/drift)**: La base de datos SQLite local que respalda el índice de la biblioteca, las playlists, los favoritos y el historial de escucha.
 - **[metadata_god](https://pub.dev/packages/metadata_god)** y **[on_audio_query](https://pub.dev/packages/on_audio_query)**: Lectura de metadatos de archivos de audio y consultas al almacén multimedia del dispositivo.
 - **[freezed](https://pub.dev/packages/freezed_annotation)**: Modelos de dominio inmutables.
-- **[intl](https://pub.dev/packages/intl)** y las herramientas de `l10n` nativas de Flutter: localización en inglés, español, portugués (BR) y chino.
+- **[intl](https://pub.dev/packages/intl)** y las herramientas de `l10n` nativas de Flutter: localización en inglés, español, portugués y chino.
 - **[mocktail](https://pub.dev/packages/mocktail)**: Mocks en la suite de pruebas.
 
 ## Arquitectura

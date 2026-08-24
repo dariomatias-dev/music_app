@@ -10,7 +10,7 @@ import 'package:music_app/src/features/settings/presentation/view_models/locale_
 const _selectableLocales = [
   Locale('en'),
   Locale('es'),
-  Locale('pt', 'BR'),
+  Locale('pt'),
   Locale('zh'),
 ];
 
