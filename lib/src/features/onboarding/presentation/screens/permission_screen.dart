@@ -92,10 +92,23 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
             ? Center(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 48),
-                  child: AppIndexingProgress(
-                    processedCount: _scanned,
-                    totalCount: _scanTotal,
-                    message: l10n.permissionScanning,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      AppIndexingProgress(
+                        processedCount: _scanned,
+                        totalCount: _scanTotal,
+                        message: l10n.permissionScanning,
+                      ),
+                      const SizedBox(height: AppSpacing.lg),
+                      Text(
+                        l10n.permissionScanningFolderTip,
+                        style: AppTypography.caption.copyWith(
+                          color: context.colors.textTertiary,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               )

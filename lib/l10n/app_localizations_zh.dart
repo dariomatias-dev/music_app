@@ -67,6 +67,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get permissionScanning => '正在扫描你的音乐库…';
 
   @override
+  String get permissionScanningFolderTip => '提示：你可以随时在 设置 > 存储空间 中排除某些文件夹。';
+
+  @override
   String get scanErrorTitle => '扫描失败';
 
   @override

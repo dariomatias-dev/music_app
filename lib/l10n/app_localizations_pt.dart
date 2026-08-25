@@ -70,6 +70,10 @@ class AppLocalizationsPt extends AppLocalizations {
   String get permissionScanning => 'Escaneando sua biblioteca…';
 
   @override
+  String get permissionScanningFolderTip =>
+      'Dica: você pode excluir pastas da sua biblioteca a qualquer momento em Configurações > Armazenamento.';
+
+  @override
   String get scanErrorTitle => 'Falha ao escanear';
 
   @override

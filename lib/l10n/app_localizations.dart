@@ -216,6 +216,12 @@ abstract class AppLocalizations {
   /// **'Scanning your library…'**
   String get permissionScanning;
 
+  /// No description provided for @permissionScanningFolderTip.
+  ///
+  /// In en, this message translates to:
+  /// **'Tip: you can exclude folders from your library anytime in Settings > Storage.'**
+  String get permissionScanningFolderTip;
+
   /// No description provided for @scanErrorTitle.
   ///
   /// In en, this message translates to:

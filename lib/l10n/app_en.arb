@@ -19,6 +19,7 @@
   "permissionGrant": "Allow access",
   "permissionOpenSettings": "Open settings",
   "permissionScanning": "Scanning your library…",
+  "permissionScanningFolderTip": "Tip: you can exclude folders from your library anytime in Settings > Storage.",
   "scanErrorTitle": "Scan failed",
   "scanErrorMessage": "Something went wrong while scanning your music library.",
   "retryLabel": "Try again",

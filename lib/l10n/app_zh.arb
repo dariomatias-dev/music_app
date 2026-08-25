@@ -19,6 +19,7 @@
   "permissionGrant": "允许访问",
   "permissionOpenSettings": "打开设置",
   "permissionScanning": "正在扫描你的音乐库…",
+  "permissionScanningFolderTip": "提示：你可以随时在 设置 > 存储空间 中排除某些文件夹。",
   "scanErrorTitle": "扫描失败",
   "scanErrorMessage": "扫描音乐库时出现问题。",
   "retryLabel": "重试",

@@ -70,6 +70,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get permissionScanning => 'Scanning your library…';
 
   @override
+  String get permissionScanningFolderTip =>
+      'Tip: you can exclude folders from your library anytime in Settings > Storage.';
+
+  @override
   String get scanErrorTitle => 'Scan failed';
 
   @override

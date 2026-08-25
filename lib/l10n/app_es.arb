@@ -19,6 +19,7 @@
   "permissionGrant": "Permitir acceso",
   "permissionOpenSettings": "Abrir configuración",
   "permissionScanning": "Escaneando tu biblioteca…",
+  "permissionScanningFolderTip": "Consejo: puedes excluir carpetas de tu biblioteca en cualquier momento en Configuración > Almacenamiento.",
   "scanErrorTitle": "Error al escanear",
   "scanErrorMessage": "Algo salió mal al escanear tu biblioteca de música.",
   "retryLabel": "Intentar de nuevo",

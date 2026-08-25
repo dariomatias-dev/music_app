@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -43,6 +45,9 @@ class _FakeLibraryRepository implements LibraryRepository {
   bool shouldThrow;
   int reindexCalls = 0;
 
+  /// Held open so a test can observe the screen mid-scan.
+  Completer<void>? scanGate;
+
   @override
   Stream<List<Track>> watchTracks() => Stream.value(const []);
 
@@ -56,6 +61,8 @@ class _FakeLibraryRepository implements LibraryRepository {
   Stream<IndexingProgress> reindex() async* {
     reindexCalls++;
     if (shouldThrow) throw Exception('scan boom');
+    final gate = scanGate;
+    if (gate != null) await gate.future;
     yield const IndexingProgress(processed: 1, total: 1, trackSourceId: 'a');
   }
 
@@ -128,6 +135,35 @@ void main() {
     await tester.pump();
 
     expect(find.text('Home screen reached'), findsOneWidget);
+  });
+
+  testWidgets('mentions folder exclusion while scanning', (tester) async {
+    final permissionService = _FakeMediaPermissionService();
+    final libraryRepository = _FakeLibraryRepository()
+      ..scanGate = Completer<void>();
+
+    await tester.pumpWidget(
+      _app(
+        permissionService: permissionService,
+        libraryRepository: libraryRepository,
+      ),
+    );
+    await tester.pump();
+
+    await tester.tap(find.text('Allow access'));
+    await tester.pump();
+
+    expect(
+      find.text(
+        'Tip: you can exclude folders from your library anytime in '
+        'Settings > Storage.',
+      ),
+      findsOneWidget,
+    );
+
+    libraryRepository.scanGate!.complete();
+    await tester.pump();
+    await tester.pump();
   });
 
   testWidgets('shows an error state with retry when the scan fails', (
