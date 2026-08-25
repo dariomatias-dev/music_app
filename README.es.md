@@ -13,7 +13,7 @@
 <br>
 
 <p align="center">
-<a href="README.md">English</a> · <strong>Español</strong> · <a href="README.pt-BR.md">Português (BR)</a>
+<a href="README.md">English</a> · <strong>Español</strong> · <a href="README.pt-BR.md">Português (BR)</a> · <a href="README.zh.md">中文</a>
 </p>
 
 <h1 align="center">Music App</h1>
@@ -40,6 +40,7 @@ Una aplicación Android para reproducir la música que ya tienes en tu dispositi
 - [Descargar la Aplicación](#descargar-la-aplicación)
 - [Primeros Pasos](#primeros-pasos)
 - [Scripts](#scripts)
+- [Documentación](#documentación)
 - [Contribuir](#contribuir)
 - [Licencia](#licencia)
 - [Autor](#autor)
@@ -160,11 +161,21 @@ Los scripts utilitarios están en `scripts/`.
 | `screenshot`     | `scripts/screenshot.sh [device-id]`              | Recorre las pantallas principales de la app en un dispositivo o emulador conectado y guarda una captura de cada una en `screenshots/`, usadas en este README, en la Play Store y en el sitio oficial. Ejecuta `fvm flutter devices` para listar los ids de dispositivos disponibles. |
 | `check_coverage` | `scripts/check_coverage.sh <lcov-file> <minimum>` | Falla si la cobertura de línea de un reporte `lcov.info` (generado con `flutter test --coverage`) cae por debajo de `<minimum>`. Se usa en CI para exigir los umbrales de arriba; ejecútalo localmente tras generar la cobertura para verificar antes de hacer push. |
 
+## Documentación
+
+Documentación técnica más profunda vive en [`docs/`](docs/architecture.es.md), disponible en todos los idiomas que soporta la app:
+
+- **[Arquitectura](docs/architecture.es.md)**: capas, gestión de estado, navegación, persistencia y el sistema de diseño, con más profundidad que la visión general de arriba.
+- **[Notas de Dependencias](docs/dependencies.es.md)**: por qué algunos paquetes quedan topados por debajo de su última versión.
+- **[Guía de Contribución](docs/contributing.es.md)**: configuración, convenciones y el checklist del pull request.
+- **[Código de Conducta](docs/code_of_conduct.es.md)**.
+- **[Política de Seguridad](docs/security.es.md)**: cómo reportar una vulnerabilidad.
+
 ## Contribuir
 
 Las contribuciones hacen que la comunidad de código abierto sea un lugar increíble para aprender y crear. Cualquier contribución que hagas será muy apreciada.
 
-Abre un issue para discutir un cambio antes de empezar a trabajar en él, sigue el estilo de código existente, y asegúrate de que `fvm flutter analyze` y `fvm flutter test` pasen antes de abrir un pull request.
+Abre un issue para discutir un cambio antes de empezar a trabajar en él, sigue el estilo de código existente, y asegúrate de que `fvm flutter analyze` y `fvm flutter test` pasen antes de abrir un pull request. Consulta la [Guía de Contribución](docs/contributing.es.md) completa para más detalles.
 
 ## Licencia
 

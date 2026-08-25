@@ -13,7 +13,7 @@
 <br>
 
 <p align="center">
-<a href="README.md">English</a> · <a href="README.es.md">Español</a> · <strong>Português (BR)</strong>
+<a href="README.md">English</a> · <a href="README.es.md">Español</a> · <strong>Português (BR)</strong> · <a href="README.zh.md">中文</a>
 </p>
 
 <h1 align="center">Music App</h1>
@@ -40,6 +40,7 @@ Um aplicativo Android para tocar a música que já está no seu dispositivo, tot
 - [Baixar o App](#baixar-o-app)
 - [Começando](#começando)
 - [Scripts](#scripts)
+- [Documentação](#documentação)
 - [Contribuindo](#contribuindo)
 - [Licença](#licença)
 - [Autor](#autor)
@@ -129,8 +130,8 @@ fvm flutter test
 
 ## Baixar o App
 
-O **Music App** não está na Play Store. Baixe o APK assinado mais
-recente nas **GitHub Releases** do projeto:
+O **Music App** não está disponível na Play Store. Baixe o APK assinado
+mais recente nas **GitHub Releases** do projeto:
 
 <a href="https://github.com/dariomatias-dev/music_app/releases/latest" target="_blank"><strong>Baixar a última versão »</strong></a>
 
@@ -160,11 +161,21 @@ Scripts utilitários ficam em `scripts/`.
 | `screenshot`     | `scripts/screenshot.sh [device-id]`              | Percorre as principais telas do app em um dispositivo ou emulador conectado e salva uma captura de cada uma em `screenshots/`, usadas no README, na Play Store e no site oficial. Rode `fvm flutter devices` para listar os ids de dispositivos disponíveis. |
 | `check_coverage` | `scripts/check_coverage.sh <lcov-file> <minimum>` | Falha se a cobertura de linha de um relatório `lcov.info` (gerado com `flutter test --coverage`) ficar abaixo de `<minimum>`. Usado no CI para impor os limites acima; rode localmente após gerar a cobertura para checar antes de dar push. |
 
+## Documentação
+
+Documentação técnica mais aprofundada mora em [`docs/`](docs/architecture.pt-BR.md), disponível em todo idioma que o app suporta:
+
+- **[Arquitetura](docs/architecture.pt-BR.md)**: camadas, gerenciamento de estado, navegação, persistência e o design system, com mais profundidade que a visão geral acima.
+- **[Notas de Dependências](docs/dependencies.pt-BR.md)**: por que alguns pacotes ficam travados abaixo da última versão.
+- **[Guia de Contribuição](docs/contributing.pt-BR.md)**: configuração, convenções e o checklist do pull request.
+- **[Código de Conduta](docs/code_of_conduct.pt-BR.md)**.
+- **[Política de Segurança](docs/security.pt-BR.md)**: como reportar uma vulnerabilidade.
+
 ## Contribuindo
 
 Contribuições tornam a comunidade open-source um lugar incrível para aprender e criar. Qualquer contribuição que você fizer será muito bem-vinda.
 
-Abra uma issue para discutir uma mudança antes de começar a trabalhar nela, siga o estilo de código existente, e garanta que `fvm flutter analyze` e `fvm flutter test` passem antes de abrir um pull request.
+Abra uma issue para discutir uma mudança antes de começar a trabalhar nela, siga o estilo de código existente, e garanta que `fvm flutter analyze` e `fvm flutter test` passem antes de abrir um pull request. Veja o [Guia de Contribuição](docs/contributing.pt-BR.md) completo para mais detalhes.
 
 ## Licença
 

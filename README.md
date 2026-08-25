@@ -13,7 +13,7 @@
 <br>
 
 <p align="center">
-<strong>English</strong> · <a href="README.es.md">Español</a> · <a href="README.pt-BR.md">Português (BR)</a>
+<strong>English</strong> · <a href="README.es.md">Español</a> · <a href="README.pt-BR.md">Português (BR)</a> · <a href="README.zh.md">中文</a>
 </p>
 
 <h1 align="center">Music App</h1>
@@ -40,6 +40,7 @@ An Android app for playing the music already on your device, fully offline, no a
 - [Download the App](#download-the-app)
 - [Getting Started](#getting-started)
 - [Scripts](#scripts)
+- [Documentation](#documentation)
 - [Contributing](#contributing)
 - [License](#license)
 - [Author](#author)
@@ -159,11 +160,21 @@ Utility scripts live under `scripts/`.
 | `screenshot`     | `scripts/screenshot.sh [device-id]`              | Drives the app through its main screens on a connected device or emulator and saves a screenshot of each one into `screenshots/`, used for the README, Play Store listing, and official website. Run `fvm flutter devices` to list available device ids. |
 | `check_coverage` | `scripts/check_coverage.sh <lcov-file> <minimum>` | Fails if line coverage in an `lcov.info` report (from `flutter test --coverage`) falls below `<minimum>`. Used in CI to enforce the thresholds above; run it locally after generating coverage to check before pushing. |
 
+## Documentation
+
+Deeper technical docs live under [`docs/`](docs/architecture.md), each available in every language the app supports:
+
+- **[Architecture](docs/architecture.md)**: layering, state management, navigation, persistence, and the design system, in more depth than the overview above.
+- **[Dependency Notes](docs/dependencies.md)**: why a few packages are pinned below their latest version.
+- **[Contributing Guide](docs/contributing.md)**: setup, conventions, and the pull request checklist.
+- **[Code of Conduct](docs/code_of_conduct.md)**.
+- **[Security Policy](docs/security.md)**: how to report a vulnerability.
+
 ## Contributing
 
 Contributions make the open-source community an amazing place to learn and create. Any contributions you make are greatly appreciated.
 
-Open an issue to discuss a change before starting on it, follow the existing code style, and make sure `fvm flutter analyze` and `fvm flutter test` pass before opening a pull request.
+Open an issue to discuss a change before starting on it, follow the existing code style, and make sure `fvm flutter analyze` and `fvm flutter test` pass before opening a pull request. See the full [Contributing Guide](docs/contributing.md) for details.
 
 ## License
 
