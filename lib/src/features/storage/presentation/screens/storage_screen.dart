@@ -6,8 +6,10 @@ import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:music_app/l10n/app_localizations.dart';
+import 'package:music_app/src/core/database/database_providers.dart';
 import 'package:music_app/src/core/services/device_file/device_file_service_provider.dart';
 import 'package:music_app/src/core/utils/file_size_formatter.dart';
+import 'package:music_app/src/core/widgets/restart_widget.dart';
 import 'package:music_app/src/features/library/data/providers/library_data_providers.dart';
 import 'package:music_app/src/features/library/domain/entities/track.dart';
 import 'package:music_app/src/features/player/presentation/widgets/mini_player.dart';
@@ -16,6 +18,7 @@ import 'package:music_app/src/features/storage/data/providers/storage_data_provi
 import 'package:music_app/src/features/storage/domain/create_backup.dart';
 import 'package:music_app/src/features/storage/domain/entities/backup_snapshot.dart';
 import 'package:music_app/src/features/storage/domain/entities/folder_usage.dart';
+import 'package:music_app/src/features/storage/domain/restore_database_backup.dart';
 import 'package:music_app/src/features/storage/presentation/providers/storage_providers.dart';
 import 'package:path/path.dart' as p;
 
@@ -57,6 +60,8 @@ class _TrackRow extends _Row {
 class _ClearCacheRow extends _Row {}
 
 class _BackupActionsRow extends _Row {}
+
+class _DatabaseBackupActionsRow extends _Row {}
 
 /// Thrown when a picked backup file parses but was made with a
 /// [backupFormatVersion] this build doesn't support, distinct from a file
@@ -107,7 +112,9 @@ class _StorageScreenState extends ConsumerState<StorageScreen> {
     rows
       ..add(_ClearCacheRow())
       ..add(_SectionLabelRow(l10n.backupSectionLabel))
-      ..add(_BackupActionsRow());
+      ..add(_BackupActionsRow())
+      ..add(_SectionLabelRow(l10n.databaseBackupSectionLabel))
+      ..add(_DatabaseBackupActionsRow());
 
     return MiniPlayerDock(
       child: AppScaffold(
@@ -171,6 +178,13 @@ class _StorageScreenState extends ConsumerState<StorageScreen> {
                     enabled: !_busy,
                     onExport: () => unawaited(_exportBackup()),
                     onImport: () => unawaited(_importBackup()),
+                  ),
+                  _DatabaseBackupActionsRow() => _BackupActions(
+                    enabled: !_busy,
+                    exportLabel: l10n.exportDatabaseBackupLabel,
+                    importLabel: l10n.importDatabaseBackupLabel,
+                    onExport: () => unawaited(_exportDatabaseBackup()),
+                    onImport: () => unawaited(_importDatabaseBackup()),
                   ),
                 },
               ),
@@ -326,6 +340,85 @@ class _StorageScreenState extends ConsumerState<StorageScreen> {
     } finally {
       if (mounted) setState(() => _busy = false);
     }
+  }
+
+  Future<void> _exportDatabaseBackup() async {
+    final l10n = AppLocalizations.of(context)!;
+    setState(() => _busy = true);
+    try {
+      final bytes = await ref.read(createDatabaseBackupProvider)();
+      final timestamp = DateTime.now().toIso8601String().replaceAll(
+        RegExp('[:.]'),
+        '-',
+      );
+      await ref
+          .read(deviceFileServiceProvider)
+          .saveFile(fileName: 'music_app_db_$timestamp.sqlite', bytes: bytes);
+      if (!mounted) return;
+      AppToast.show(context, message: l10n.databaseBackupExportedMessage);
+    } on Object catch (_) {
+      if (!mounted) return;
+      AppToast.show(
+        context,
+        message: l10n.databaseBackupExportFailedMessage,
+        variant: AppToastVariant.error,
+      );
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  Future<void> _importDatabaseBackup() async {
+    final l10n = AppLocalizations.of(context)!;
+    final confirmed = await AppDestructiveDialog.show(
+      context,
+      title: l10n.restoreDatabaseConfirmTitle,
+      message: l10n.restoreDatabaseConfirmMessage,
+      confirmLabel: l10n.restoreLabel,
+      cancelLabel: l10n.cancelLabel,
+    );
+    if (!confirmed) return;
+    if (!mounted) return;
+
+    final bytes = await ref
+        .read(deviceFileServiceProvider)
+        .pickFile(allowedExtensions: ['sqlite', 'db']);
+    if (bytes == null) return;
+
+    if (!isSqliteDatabase(bytes)) {
+      if (!mounted) return;
+      AppToast.show(
+        context,
+        message: l10n.invalidDatabaseBackupMessage,
+        variant: AppToastVariant.error,
+      );
+      return;
+    }
+
+    setState(() => _busy = true);
+    // The database file is about to be overwritten on disk, so the live
+    // connection is closed first: writing under an open SQLite connection
+    // can corrupt it. Past this point there's no state worth resetting to
+    // if the write below fails — the app restarts either way, reopening
+    // whatever ends up on disk, since a closed connection can't otherwise
+    // be recovered from this screen.
+    await ref.read(appDatabaseProvider).close();
+    try {
+      await ref.read(restoreDatabaseBackupProvider)(bytes);
+    } on Object catch (_) {
+      if (mounted) {
+        AppToast.show(
+          context,
+          message: l10n.databaseBackupImportFailedMessage,
+          variant: AppToastVariant.error,
+        );
+        // Gives the toast above a moment on screen before the restart below
+        // tears down the whole widget tree, taking it with it.
+        await Future<void>.delayed(const Duration(seconds: 2));
+      }
+    }
+    if (!mounted) return;
+    RestartWidget.restartApp(context);
   }
 }
 
@@ -525,11 +618,15 @@ class _BackupActions extends StatelessWidget {
     required this.enabled,
     required this.onExport,
     required this.onImport,
+    this.exportLabel,
+    this.importLabel,
   });
 
   final bool enabled;
   final VoidCallback onExport;
   final VoidCallback onImport;
+  final String? exportLabel;
+  final String? importLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -544,14 +641,14 @@ class _BackupActions extends StatelessWidget {
         children: [
           Expanded(
             child: AppTextButton(
-              label: l10n.exportBackupLabel,
+              label: exportLabel ?? l10n.exportBackupLabel,
               onPressed: enabled ? onExport : null,
             ),
           ),
           const SizedBox(width: AppSpacing.sm),
           Expanded(
             child: AppTextButton(
-              label: l10n.importBackupLabel,
+              label: importLabel ?? l10n.importBackupLabel,
               onPressed: enabled ? onImport : null,
             ),
           ),

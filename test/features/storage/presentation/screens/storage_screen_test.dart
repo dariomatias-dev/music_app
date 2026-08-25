@@ -4,13 +4,17 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:app_ui/app_ui.dart';
+import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:music_app/l10n/app_localizations.dart';
 import 'package:music_app/src/core/audio/audio_providers.dart';
 import 'package:music_app/src/core/audio/music_audio_handler.dart';
+import 'package:music_app/src/core/database/app_database.dart';
+import 'package:music_app/src/core/database/database_providers.dart';
 import 'package:music_app/src/core/services/device_file/device_file_service_provider.dart';
+import 'package:music_app/src/core/widgets/restart_widget.dart';
 import 'package:music_app/src/features/library/data/indexing/library_indexer.dart';
 import 'package:music_app/src/features/library/data/providers/library_data_providers.dart';
 import 'package:music_app/src/features/library/domain/entities/album.dart';
@@ -19,11 +23,13 @@ import 'package:music_app/src/features/library/domain/entities/track.dart';
 import 'package:music_app/src/features/library/domain/repositories/library_repository.dart';
 import 'package:music_app/src/features/storage/data/providers/storage_data_providers.dart';
 import 'package:music_app/src/features/storage/domain/create_backup.dart';
+import 'package:music_app/src/features/storage/domain/create_database_backup.dart';
 import 'package:music_app/src/features/storage/domain/delete_track_file.dart';
 import 'package:music_app/src/features/storage/domain/entities/backup_settings.dart';
 import 'package:music_app/src/features/storage/domain/entities/backup_snapshot.dart';
 import 'package:music_app/src/features/storage/domain/entities/folder_usage.dart';
 import 'package:music_app/src/features/storage/domain/restore_backup.dart';
+import 'package:music_app/src/features/storage/domain/restore_database_backup.dart';
 import 'package:music_app/src/features/storage/presentation/providers/storage_providers.dart';
 import 'package:music_app/src/features/storage/presentation/screens/storage_screen.dart';
 
@@ -107,6 +113,46 @@ class _FakeRestoreBackup implements RestoreBackup {
   }
 }
 
+class _FakeCreateDatabaseBackup implements CreateDatabaseBackup {
+  _FakeCreateDatabaseBackup(this.bytes);
+  final Uint8List bytes;
+
+  @override
+  Future<Uint8List> call() async => bytes;
+}
+
+class _FakeRestoreDatabaseBackup implements RestoreDatabaseBackup {
+  _FakeRestoreDatabaseBackup({this.shouldThrow = false});
+  final bool shouldThrow;
+  Uint8List? received;
+
+  @override
+  Future<void> call(Uint8List bytes) async {
+    if (shouldThrow) throw const InvalidDatabaseBackupFile();
+    received = bytes;
+  }
+}
+
+Uint8List _sqliteBytes() => Uint8List.fromList([
+  0x53,
+  0x51,
+  0x4c,
+  0x69,
+  0x74,
+  0x65,
+  0x20,
+  0x66,
+  0x6f,
+  0x72,
+  0x6d,
+  0x61,
+  0x74,
+  0x20,
+  0x33,
+  0x00,
+  ...List.filled(16, 0),
+]);
+
 BackupSnapshot _snapshot({int formatVersion = backupFormatVersion}) {
   return BackupSnapshot(
     formatVersion: formatVersion,
@@ -152,37 +198,52 @@ Widget _app({
   DeleteTrackFile? deleteTrackFile,
   CreateBackup? createBackup,
   RestoreBackup? restoreBackup,
+  CreateDatabaseBackup? createDatabaseBackup,
+  RestoreDatabaseBackup? restoreDatabaseBackup,
   FakeDeviceFileService? deviceFileService,
   List<FolderUsage>? folderUsage,
 }) {
   final playerService = FakeAudioPlayerService();
-  return ProviderScope(
-    overrides: [
-      libraryRepositoryProvider.overrideWithValue(
-        libraryRepository ?? _FakeLibraryRepository(),
+  return RestartWidget(
+    child: ProviderScope(
+      overrides: [
+        libraryRepositoryProvider.overrideWithValue(
+          libraryRepository ?? _FakeLibraryRepository(),
+        ),
+        excludedFolderRepositoryProvider.overrideWithValue(
+          excludedFolderRepository ?? FakeExcludedFolderRepository(),
+        ),
+        if (folderUsage != null)
+          folderUsageProvider.overrideWithValue(folderUsage),
+        if (deleteTrackFile != null)
+          deleteTrackFileProvider.overrideWithValue(deleteTrackFile),
+        if (createBackup != null)
+          createBackupProvider.overrideWithValue(createBackup),
+        if (restoreBackup != null)
+          restoreBackupProvider.overrideWithValue(restoreBackup),
+        if (createDatabaseBackup != null)
+          createDatabaseBackupProvider.overrideWithValue(createDatabaseBackup),
+        if (restoreDatabaseBackup != null)
+          restoreDatabaseBackupProvider.overrideWithValue(
+            restoreDatabaseBackup,
+          ),
+        appDatabaseProvider.overrideWithValue(
+          AppDatabase(NativeDatabase.memory()),
+        ),
+        deviceFileServiceProvider.overrideWithValue(
+          deviceFileService ?? FakeDeviceFileService(),
+        ),
+        audioPlayerServiceProvider.overrideWithValue(playerService),
+        audioHandlerProvider.overrideWithValue(
+          MusicAudioHandler(playerService),
+        ),
+      ],
+      child: MaterialApp(
+        theme: AppTheme.light,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: const Scaffold(body: StorageScreen()),
       ),
-      excludedFolderRepositoryProvider.overrideWithValue(
-        excludedFolderRepository ?? FakeExcludedFolderRepository(),
-      ),
-      if (folderUsage != null)
-        folderUsageProvider.overrideWithValue(folderUsage),
-      if (deleteTrackFile != null)
-        deleteTrackFileProvider.overrideWithValue(deleteTrackFile),
-      if (createBackup != null)
-        createBackupProvider.overrideWithValue(createBackup),
-      if (restoreBackup != null)
-        restoreBackupProvider.overrideWithValue(restoreBackup),
-      deviceFileServiceProvider.overrideWithValue(
-        deviceFileService ?? FakeDeviceFileService(),
-      ),
-      audioPlayerServiceProvider.overrideWithValue(playerService),
-      audioHandlerProvider.overrideWithValue(MusicAudioHandler(playerService)),
-    ],
-    child: MaterialApp(
-      theme: AppTheme.light,
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-      home: const Scaffold(body: StorageScreen()),
     ),
   );
 }
@@ -574,6 +635,115 @@ void main() {
       ),
       findsOneWidget,
     );
+  });
+
+  testWidgets('exporting a database backup saves it and confirms', (
+    tester,
+  ) async {
+    final bytes = _sqliteBytes();
+    final deviceFileService = FakeDeviceFileService();
+    await tester.pumpWidget(
+      _app(
+        createDatabaseBackup: _FakeCreateDatabaseBackup(bytes),
+        deviceFileService: deviceFileService,
+      ),
+    );
+    await tester.pump();
+
+    await tester.tap(find.text('Export database'));
+    await tester.pumpAndSettle();
+
+    expect(deviceFileService.savedBytes, bytes);
+    expect(find.text('Database backup saved'), findsOneWidget);
+  });
+
+  testWidgets('cancelling the restore confirmation does nothing', (
+    tester,
+  ) async {
+    final deviceFileService = FakeDeviceFileService()
+      ..fileToPick = _sqliteBytes();
+    await tester.pumpWidget(_app(deviceFileService: deviceFileService));
+    await tester.pump();
+
+    await tester.tap(find.text('Restore database'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Cancel'));
+    await tester.pumpAndSettle();
+
+    expect(deviceFileService.savedBytes, isNull);
+    expect(find.text('Restore database?'), findsNothing);
+  });
+
+  testWidgets('rejects a file that is not a database backup', (tester) async {
+    final restoreDatabaseBackup = _FakeRestoreDatabaseBackup();
+    await tester.pumpWidget(
+      _app(
+        restoreDatabaseBackup: restoreDatabaseBackup,
+        deviceFileService: FakeDeviceFileService()
+          ..fileToPick = Uint8List.fromList(utf8.encode('not a database')),
+      ),
+    );
+    await tester.pump();
+
+    await tester.tap(find.text('Restore database'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Restore'));
+    await tester.pumpAndSettle();
+
+    expect(restoreDatabaseBackup.received, isNull);
+    expect(find.text("This file isn't a database backup."), findsOneWidget);
+  });
+
+  testWidgets('shows an error toast when the database restore fails', (
+    tester,
+  ) async {
+    final restoreDatabaseBackup = _FakeRestoreDatabaseBackup(
+      shouldThrow: true,
+    );
+    await tester.pumpWidget(
+      _app(
+        restoreDatabaseBackup: restoreDatabaseBackup,
+        deviceFileService: FakeDeviceFileService()..fileToPick = _sqliteBytes(),
+      ),
+    );
+    await tester.pump();
+
+    await tester.tap(find.text('Restore database'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Restore'));
+    await tester.pump();
+
+    expect(
+      find.text("Couldn't restore this database backup."),
+      findsOneWidget,
+    );
+    // Lets the toast's on-screen delay elapse before the test ends, so the
+    // pending restart timer doesn't fire after the widget tree is torn
+    // down.
+    await tester.pumpAndSettle(const Duration(seconds: 3));
+  });
+
+  testWidgets('restoring a valid database backup restarts the app', (
+    tester,
+  ) async {
+    final bytes = _sqliteBytes();
+    final restoreDatabaseBackup = _FakeRestoreDatabaseBackup();
+    await tester.pumpWidget(
+      _app(
+        restoreDatabaseBackup: restoreDatabaseBackup,
+        deviceFileService: FakeDeviceFileService()..fileToPick = bytes,
+      ),
+    );
+    await tester.pump();
+
+    await tester.tap(find.text('Restore database'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Restore'));
+    await tester.pumpAndSettle();
+
+    expect(restoreDatabaseBackup.received, bytes);
+    expect(find.text("This file isn't a database backup."), findsNothing);
+    expect(find.text("Couldn't restore this database backup."), findsNothing);
   });
 
   testWidgets('shows a progress bar while a rescan runs', (tester) async {

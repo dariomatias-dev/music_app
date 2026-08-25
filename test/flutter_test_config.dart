@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:ffi';
 import 'dart:io';
 
+import 'package:drift/drift.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -14,6 +15,10 @@ Future<void> testExecutable(FutureOr<void> Function() testMain) async {
   setUpAll(_overrideSqlite3ForLinux);
   setUpAll(_loadFontsForGoldens);
   setUpAll(_resetDebugPaintFlags);
+  // Many test files construct their own AppDatabase(NativeDatabase.memory())
+  // per test, each a genuinely separate connection over its own in-memory
+  // file — not the same-executor race this warning is meant to catch.
+  driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
   return testMain();
 }
 

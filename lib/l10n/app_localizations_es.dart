@@ -622,6 +622,41 @@ class AppLocalizationsEs extends AppLocalizations {
       'Esta copia de seguridad se creó con otra versión de la app y no se puede restaurar.';
 
   @override
+  String get databaseBackupSectionLabel => 'Copia completa de la base de datos';
+
+  @override
+  String get exportDatabaseBackupLabel => 'Exportar base de datos';
+
+  @override
+  String get importDatabaseBackupLabel => 'Restaurar base de datos';
+
+  @override
+  String get restoreDatabaseConfirmTitle => '¿Restaurar base de datos?';
+
+  @override
+  String get restoreDatabaseConfirmMessage =>
+      'Esto reemplaza toda tu biblioteca, listas, favoritos e historial con el contenido de la copia y reinicia la app. No se puede deshacer.';
+
+  @override
+  String get restoreLabel => 'Restaurar';
+
+  @override
+  String get databaseBackupExportedMessage =>
+      'Copia de la base de datos guardada';
+
+  @override
+  String get databaseBackupExportFailedMessage =>
+      'No se pudo crear la copia de la base de datos';
+
+  @override
+  String get invalidDatabaseBackupMessage =>
+      'Este archivo no es una copia de la base de datos.';
+
+  @override
+  String get databaseBackupImportFailedMessage =>
+      'No se pudo restaurar esta copia de la base de datos.';
+
+  @override
   String get deleteFileSemanticLabel => 'Eliminar archivo';
 
   @override

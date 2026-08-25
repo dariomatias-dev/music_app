@@ -27,6 +27,9 @@ import 'package:path_provider/path_provider.dart';
 
 part 'app_database.g.dart';
 
+/// The database file's name inside the app's documents directory.
+const appDatabaseFileName = 'music_app.sqlite';
+
 /// The local database storing the library index, playlists, favorites and
 /// playback history.
 @DriftDatabase(
@@ -77,7 +80,7 @@ class AppDatabase extends _$AppDatabase {
   static QueryExecutor _openConnection() {
     return LazyDatabase(() async {
       final directory = await getApplicationDocumentsDirectory();
-      final file = p.join(directory.path, 'music_app.sqlite');
+      final file = p.join(directory.path, appDatabaseFileName);
       return NativeDatabase.createInBackground(File(file));
     });
   }

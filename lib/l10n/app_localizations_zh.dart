@@ -587,6 +587,37 @@ class AppLocalizationsZh extends AppLocalizations {
   String get backupUnsupportedFormatMessage => '此备份由其他版本的应用创建，无法恢复。';
 
   @override
+  String get databaseBackupSectionLabel => '完整数据库备份';
+
+  @override
+  String get exportDatabaseBackupLabel => '导出数据库';
+
+  @override
+  String get importDatabaseBackupLabel => '恢复数据库';
+
+  @override
+  String get restoreDatabaseConfirmTitle => '恢复数据库？';
+
+  @override
+  String get restoreDatabaseConfirmMessage =>
+      '这会用备份内容替换整个音乐库、播放列表、收藏和历史记录，并重启应用。此操作无法撤销。';
+
+  @override
+  String get restoreLabel => '恢复';
+
+  @override
+  String get databaseBackupExportedMessage => '数据库备份已保存';
+
+  @override
+  String get databaseBackupExportFailedMessage => '无法创建数据库备份';
+
+  @override
+  String get invalidDatabaseBackupMessage => '此文件不是数据库备份。';
+
+  @override
+  String get databaseBackupImportFailedMessage => '无法恢复此数据库备份。';
+
+  @override
   String get deleteFileSemanticLabel => '删除文件';
 
   @override

@@ -621,6 +621,40 @@ class AppLocalizationsPt extends AppLocalizations {
       'Este backup foi criado em outra versão do app e não pode ser restaurado.';
 
   @override
+  String get databaseBackupSectionLabel => 'Backup completo do banco de dados';
+
+  @override
+  String get exportDatabaseBackupLabel => 'Exportar banco de dados';
+
+  @override
+  String get importDatabaseBackupLabel => 'Restaurar banco de dados';
+
+  @override
+  String get restoreDatabaseConfirmTitle => 'Restaurar banco de dados?';
+
+  @override
+  String get restoreDatabaseConfirmMessage =>
+      'Isso substitui toda sua biblioteca, playlists, favoritos e histórico pelo conteúdo do backup e reinicia o app. Não pode ser desfeito.';
+
+  @override
+  String get restoreLabel => 'Restaurar';
+
+  @override
+  String get databaseBackupExportedMessage => 'Backup do banco de dados salvo';
+
+  @override
+  String get databaseBackupExportFailedMessage =>
+      'Não foi possível criar o backup do banco de dados';
+
+  @override
+  String get invalidDatabaseBackupMessage =>
+      'Este arquivo não é um backup do banco de dados.';
+
+  @override
+  String get databaseBackupImportFailedMessage =>
+      'Não foi possível restaurar este backup do banco de dados.';
+
+  @override
   String get deleteFileSemanticLabel => 'Excluir arquivo';
 
   @override

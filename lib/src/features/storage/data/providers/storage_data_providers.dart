@@ -8,9 +8,11 @@ import 'package:music_app/src/features/playlist/data/providers/playlist_data_pro
 import 'package:music_app/src/features/search/data/providers/search_data_providers.dart';
 import 'package:music_app/src/features/storage/data/repositories/excluded_folder_repository_impl.dart';
 import 'package:music_app/src/features/storage/domain/create_backup.dart';
+import 'package:music_app/src/features/storage/domain/create_database_backup.dart';
 import 'package:music_app/src/features/storage/domain/delete_track_file.dart';
 import 'package:music_app/src/features/storage/domain/repositories/excluded_folder_repository.dart';
 import 'package:music_app/src/features/storage/domain/restore_backup.dart';
+import 'package:music_app/src/features/storage/domain/restore_database_backup.dart';
 
 /// Provides the [ExcludedFolderRepository] used across the app.
 final excludedFolderRepositoryProvider = Provider<ExcludedFolderRepository>(
@@ -51,4 +53,14 @@ final restoreBackupProvider = Provider<RestoreBackup>(
     libraryRepository: ref.watch(libraryRepositoryProvider),
     keyValueStorage: ref.watch(keyValueStorageProvider),
   ),
+);
+
+/// Provides the [CreateDatabaseBackup] use case.
+final createDatabaseBackupProvider = Provider<CreateDatabaseBackup>(
+  (ref) => CreateDatabaseBackup(ref.watch(appDatabaseProvider)),
+);
+
+/// Provides the [RestoreDatabaseBackup] use case.
+final restoreDatabaseBackupProvider = Provider<RestoreDatabaseBackup>(
+  (ref) => const RestoreDatabaseBackup(),
 );

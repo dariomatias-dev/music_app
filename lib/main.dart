@@ -8,6 +8,7 @@ import 'package:music_app/src/core/audio/just_audio_player_service.dart';
 import 'package:music_app/src/core/audio/music_audio_handler.dart';
 import 'package:music_app/src/core/storage/shared_preferences_storage.dart';
 import 'package:music_app/src/core/storage/storage_providers.dart';
+import 'package:music_app/src/core/widgets/restart_widget.dart';
 import 'package:music_app/src/music_app.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -30,18 +31,20 @@ Future<void> main() async {
   );
 
   runApp(
-    ProviderScope(
-      overrides: [
-        keyValueStorageProvider.overrideWithValue(
-          SharedPreferencesStorage(preferences),
-        ),
-        audioPlayerServiceProvider.overrideWithValue(audioPlayerService),
-        audioHandlerProvider.overrideWithValue(audioHandler),
-        audioSessionCoordinatorProvider.overrideWithValue(
-          audioSessionCoordinator,
-        ),
-      ],
-      child: const MusicApp(),
+    RestartWidget(
+      child: ProviderScope(
+        overrides: [
+          keyValueStorageProvider.overrideWithValue(
+            SharedPreferencesStorage(preferences),
+          ),
+          audioPlayerServiceProvider.overrideWithValue(audioPlayerService),
+          audioHandlerProvider.overrideWithValue(audioHandler),
+          audioSessionCoordinatorProvider.overrideWithValue(
+            audioSessionCoordinator,
+          ),
+        ],
+        child: const MusicApp(),
+      ),
     ),
   );
 }

@@ -1182,6 +1182,66 @@ abstract class AppLocalizations {
   /// **'This backup was made with a different app version and can\'t be restored.'**
   String get backupUnsupportedFormatMessage;
 
+  /// No description provided for @databaseBackupSectionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Full database backup'**
+  String get databaseBackupSectionLabel;
+
+  /// No description provided for @exportDatabaseBackupLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Export database'**
+  String get exportDatabaseBackupLabel;
+
+  /// No description provided for @importDatabaseBackupLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore database'**
+  String get importDatabaseBackupLabel;
+
+  /// No description provided for @restoreDatabaseConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore database?'**
+  String get restoreDatabaseConfirmTitle;
+
+  /// No description provided for @restoreDatabaseConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This replaces your entire library, playlists, favorites and history with the backup\'s contents, then restarts the app. This can\'t be undone.'**
+  String get restoreDatabaseConfirmMessage;
+
+  /// No description provided for @restoreLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore'**
+  String get restoreLabel;
+
+  /// No description provided for @databaseBackupExportedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Database backup saved'**
+  String get databaseBackupExportedMessage;
+
+  /// No description provided for @databaseBackupExportFailedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t create the database backup'**
+  String get databaseBackupExportFailedMessage;
+
+  /// No description provided for @invalidDatabaseBackupMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This file isn\'t a database backup.'**
+  String get invalidDatabaseBackupMessage;
+
+  /// No description provided for @databaseBackupImportFailedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t restore this database backup.'**
+  String get databaseBackupImportFailedMessage;
+
   /// No description provided for @deleteFileSemanticLabel.
   ///
   /// In en, this message translates to:

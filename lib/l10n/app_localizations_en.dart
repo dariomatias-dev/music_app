@@ -619,6 +619,40 @@ class AppLocalizationsEn extends AppLocalizations {
       'This backup was made with a different app version and can\'t be restored.';
 
   @override
+  String get databaseBackupSectionLabel => 'Full database backup';
+
+  @override
+  String get exportDatabaseBackupLabel => 'Export database';
+
+  @override
+  String get importDatabaseBackupLabel => 'Restore database';
+
+  @override
+  String get restoreDatabaseConfirmTitle => 'Restore database?';
+
+  @override
+  String get restoreDatabaseConfirmMessage =>
+      'This replaces your entire library, playlists, favorites and history with the backup\'s contents, then restarts the app. This can\'t be undone.';
+
+  @override
+  String get restoreLabel => 'Restore';
+
+  @override
+  String get databaseBackupExportedMessage => 'Database backup saved';
+
+  @override
+  String get databaseBackupExportFailedMessage =>
+      'Couldn\'t create the database backup';
+
+  @override
+  String get invalidDatabaseBackupMessage =>
+      'This file isn\'t a database backup.';
+
+  @override
+  String get databaseBackupImportFailedMessage =>
+      'Couldn\'t restore this database backup.';
+
+  @override
   String get deleteFileSemanticLabel => 'Delete file';
 
   @override
