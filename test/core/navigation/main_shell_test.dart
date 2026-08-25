@@ -140,4 +140,42 @@ void main() {
       lessThanOrEqualTo(tester.getTopLeft(find.byType(AppNavigationBar)).dy),
     );
   });
+
+  group('on a wide window', () {
+    Future<void> setWideSurface(WidgetTester tester) async {
+      tester.view.physicalSize = const Size(1200, 800);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+    }
+
+    testWidgets('shows a navigation rail instead of the bottom bar', (
+      tester,
+    ) async {
+      await setWideSurface(tester);
+      await _pumpShell(tester);
+
+      expect(find.byType(NavigationRail), findsOneWidget);
+      expect(find.byType(AppNavigationBar), findsNothing);
+      expect(find.byType(MiniPlayer), findsOneWidget);
+    });
+
+    testWidgets('tapping a rail destination switches to its branch', (
+      tester,
+    ) async {
+      await setWideSurface(tester);
+      await _pumpShell(tester);
+
+      await tester.tap(find.text('Library'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Library screen'), findsOneWidget);
+      expect(
+        tester
+            .widget<NavigationRail>(find.byType(NavigationRail))
+            .selectedIndex,
+        2,
+      );
+    });
+  });
 }

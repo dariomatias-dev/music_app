@@ -15,6 +15,7 @@ export 'src/components/sheets/sheets.dart';
 export 'src/components/states/states.dart';
 export 'src/theme/app_theme.dart';
 export 'src/theme/app_theme_extensions.dart';
+export 'src/tokens/app_breakpoints.dart';
 export 'src/tokens/app_curves.dart';
 export 'src/tokens/app_durations.dart';
 export 'src/tokens/app_elevations.dart';
