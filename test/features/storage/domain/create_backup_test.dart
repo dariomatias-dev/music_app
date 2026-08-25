@@ -7,6 +7,7 @@ import '../../../helpers/fake_excluded_folder_repository.dart';
 import '../../../helpers/fake_favorite_repository.dart';
 import '../../../helpers/fake_key_value_storage.dart';
 import '../../../helpers/fake_library_repository.dart';
+import '../../../helpers/fake_play_history_repository.dart';
 import '../../../helpers/fake_playlist_repository.dart';
 import '../../../helpers/fake_search_history_repository.dart';
 
@@ -31,6 +32,7 @@ Track _track(String id, String sourceId) {
 void main() {
   late FakePlaylistRepository playlistRepository;
   late FakeFavoriteRepository favoriteRepository;
+  late FakePlayHistoryRepository playHistoryRepository;
   late FakeSearchHistoryRepository searchHistoryRepository;
   late FakeExcludedFolderRepository excludedFolderRepository;
   late FakeKeyValueStorage keyValueStorage;
@@ -39,12 +41,14 @@ void main() {
   setUp(() {
     playlistRepository = FakePlaylistRepository();
     favoriteRepository = FakeFavoriteRepository();
+    playHistoryRepository = FakePlayHistoryRepository();
     searchHistoryRepository = FakeSearchHistoryRepository();
     excludedFolderRepository = FakeExcludedFolderRepository();
     keyValueStorage = FakeKeyValueStorage();
     createBackup = CreateBackup(
       playlistRepository: playlistRepository,
       favoriteRepository: favoriteRepository,
+      playHistoryRepository: playHistoryRepository,
       searchHistoryRepository: searchHistoryRepository,
       excludedFolderRepository: excludedFolderRepository,
       libraryRepository: FakeLibraryRepository([
@@ -90,6 +94,35 @@ void main() {
     final snapshot = await createBackup();
 
     expect(snapshot.favoriteTrackSourceIds, ['source-2']);
+  });
+
+  test('resolves play history to stable source ids', () async {
+    await playHistoryRepository.recordPlay(
+      trackId: 'track-2',
+      startedAt: DateTime(2026),
+      playedDuration: const Duration(minutes: 2),
+      completed: true,
+    );
+
+    final snapshot = await createBackup();
+
+    expect(snapshot.playHistory, hasLength(1));
+    expect(snapshot.playHistory.single.trackSourceId, 'source-2');
+    expect(snapshot.playHistory.single.playedDurationMs, 120000);
+    expect(snapshot.playHistory.single.completed, isTrue);
+  });
+
+  test('drops a history entry for a track no longer in the library', () async {
+    await playHistoryRepository.recordPlay(
+      trackId: 'deleted-track',
+      startedAt: DateTime(2026),
+      playedDuration: const Duration(minutes: 2),
+      completed: true,
+    );
+
+    final snapshot = await createBackup();
+
+    expect(snapshot.playHistory, isEmpty);
   });
 
   test('captures excluded folders and search history as-is', () async {

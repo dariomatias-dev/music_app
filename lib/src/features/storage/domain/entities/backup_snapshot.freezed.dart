@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$BackupSnapshot {
 
- int get formatVersion; DateTime get createdAt; List<BackupPlaylist> get playlists; List<String> get favoriteTrackSourceIds; List<String> get excludedFolders; List<String> get searchHistoryTerms; BackupSettings get settings;
+ int get formatVersion; DateTime get createdAt; List<BackupPlaylist> get playlists; List<String> get favoriteTrackSourceIds; List<BackupPlayEvent> get playHistory; List<String> get excludedFolders; List<String> get searchHistoryTerms; BackupSettings get settings;
 /// Create a copy of BackupSnapshot
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $BackupSnapshotCopyWith<BackupSnapshot> get copyWith => _$BackupSnapshotCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is BackupSnapshot&&(identical(other.formatVersion, formatVersion) || other.formatVersion == formatVersion)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&const DeepCollectionEquality().equals(other.playlists, playlists)&&const DeepCollectionEquality().equals(other.favoriteTrackSourceIds, favoriteTrackSourceIds)&&const DeepCollectionEquality().equals(other.excludedFolders, excludedFolders)&&const DeepCollectionEquality().equals(other.searchHistoryTerms, searchHistoryTerms)&&(identical(other.settings, settings) || other.settings == settings));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is BackupSnapshot&&(identical(other.formatVersion, formatVersion) || other.formatVersion == formatVersion)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&const DeepCollectionEquality().equals(other.playlists, playlists)&&const DeepCollectionEquality().equals(other.favoriteTrackSourceIds, favoriteTrackSourceIds)&&const DeepCollectionEquality().equals(other.playHistory, playHistory)&&const DeepCollectionEquality().equals(other.excludedFolders, excludedFolders)&&const DeepCollectionEquality().equals(other.searchHistoryTerms, searchHistoryTerms)&&(identical(other.settings, settings) || other.settings == settings));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,formatVersion,createdAt,const DeepCollectionEquality().hash(playlists),const DeepCollectionEquality().hash(favoriteTrackSourceIds),const DeepCollectionEquality().hash(excludedFolders),const DeepCollectionEquality().hash(searchHistoryTerms),settings);
+int get hashCode => Object.hash(runtimeType,formatVersion,createdAt,const DeepCollectionEquality().hash(playlists),const DeepCollectionEquality().hash(favoriteTrackSourceIds),const DeepCollectionEquality().hash(playHistory),const DeepCollectionEquality().hash(excludedFolders),const DeepCollectionEquality().hash(searchHistoryTerms),settings);
 
 @override
 String toString() {
-  return 'BackupSnapshot(formatVersion: $formatVersion, createdAt: $createdAt, playlists: $playlists, favoriteTrackSourceIds: $favoriteTrackSourceIds, excludedFolders: $excludedFolders, searchHistoryTerms: $searchHistoryTerms, settings: $settings)';
+  return 'BackupSnapshot(formatVersion: $formatVersion, createdAt: $createdAt, playlists: $playlists, favoriteTrackSourceIds: $favoriteTrackSourceIds, playHistory: $playHistory, excludedFolders: $excludedFolders, searchHistoryTerms: $searchHistoryTerms, settings: $settings)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $BackupSnapshotCopyWith<$Res>  {
   factory $BackupSnapshotCopyWith(BackupSnapshot value, $Res Function(BackupSnapshot) _then) = _$BackupSnapshotCopyWithImpl;
 @useResult
 $Res call({
- int formatVersion, DateTime createdAt, List<BackupPlaylist> playlists, List<String> favoriteTrackSourceIds, List<String> excludedFolders, List<String> searchHistoryTerms, BackupSettings settings
+ int formatVersion, DateTime createdAt, List<BackupPlaylist> playlists, List<String> favoriteTrackSourceIds, List<BackupPlayEvent> playHistory, List<String> excludedFolders, List<String> searchHistoryTerms, BackupSettings settings
 });
 
 
@@ -65,13 +65,14 @@ class _$BackupSnapshotCopyWithImpl<$Res>
 
 /// Create a copy of BackupSnapshot
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? formatVersion = null,Object? createdAt = null,Object? playlists = null,Object? favoriteTrackSourceIds = null,Object? excludedFolders = null,Object? searchHistoryTerms = null,Object? settings = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? formatVersion = null,Object? createdAt = null,Object? playlists = null,Object? favoriteTrackSourceIds = null,Object? playHistory = null,Object? excludedFolders = null,Object? searchHistoryTerms = null,Object? settings = null,}) {
   return _then(_self.copyWith(
 formatVersion: null == formatVersion ? _self.formatVersion : formatVersion // ignore: cast_nullable_to_non_nullable
 as int,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,playlists: null == playlists ? _self.playlists : playlists // ignore: cast_nullable_to_non_nullable
 as List<BackupPlaylist>,favoriteTrackSourceIds: null == favoriteTrackSourceIds ? _self.favoriteTrackSourceIds : favoriteTrackSourceIds // ignore: cast_nullable_to_non_nullable
-as List<String>,excludedFolders: null == excludedFolders ? _self.excludedFolders : excludedFolders // ignore: cast_nullable_to_non_nullable
+as List<String>,playHistory: null == playHistory ? _self.playHistory : playHistory // ignore: cast_nullable_to_non_nullable
+as List<BackupPlayEvent>,excludedFolders: null == excludedFolders ? _self.excludedFolders : excludedFolders // ignore: cast_nullable_to_non_nullable
 as List<String>,searchHistoryTerms: null == searchHistoryTerms ? _self.searchHistoryTerms : searchHistoryTerms // ignore: cast_nullable_to_non_nullable
 as List<String>,settings: null == settings ? _self.settings : settings // ignore: cast_nullable_to_non_nullable
 as BackupSettings,
@@ -168,10 +169,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int formatVersion,  DateTime createdAt,  List<BackupPlaylist> playlists,  List<String> favoriteTrackSourceIds,  List<String> excludedFolders,  List<String> searchHistoryTerms,  BackupSettings settings)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int formatVersion,  DateTime createdAt,  List<BackupPlaylist> playlists,  List<String> favoriteTrackSourceIds,  List<BackupPlayEvent> playHistory,  List<String> excludedFolders,  List<String> searchHistoryTerms,  BackupSettings settings)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _BackupSnapshot() when $default != null:
-return $default(_that.formatVersion,_that.createdAt,_that.playlists,_that.favoriteTrackSourceIds,_that.excludedFolders,_that.searchHistoryTerms,_that.settings);case _:
+return $default(_that.formatVersion,_that.createdAt,_that.playlists,_that.favoriteTrackSourceIds,_that.playHistory,_that.excludedFolders,_that.searchHistoryTerms,_that.settings);case _:
   return orElse();
 
 }
@@ -189,10 +190,10 @@ return $default(_that.formatVersion,_that.createdAt,_that.playlists,_that.favori
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int formatVersion,  DateTime createdAt,  List<BackupPlaylist> playlists,  List<String> favoriteTrackSourceIds,  List<String> excludedFolders,  List<String> searchHistoryTerms,  BackupSettings settings)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int formatVersion,  DateTime createdAt,  List<BackupPlaylist> playlists,  List<String> favoriteTrackSourceIds,  List<BackupPlayEvent> playHistory,  List<String> excludedFolders,  List<String> searchHistoryTerms,  BackupSettings settings)  $default,) {final _that = this;
 switch (_that) {
 case _BackupSnapshot():
-return $default(_that.formatVersion,_that.createdAt,_that.playlists,_that.favoriteTrackSourceIds,_that.excludedFolders,_that.searchHistoryTerms,_that.settings);case _:
+return $default(_that.formatVersion,_that.createdAt,_that.playlists,_that.favoriteTrackSourceIds,_that.playHistory,_that.excludedFolders,_that.searchHistoryTerms,_that.settings);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -209,10 +210,10 @@ return $default(_that.formatVersion,_that.createdAt,_that.playlists,_that.favori
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int formatVersion,  DateTime createdAt,  List<BackupPlaylist> playlists,  List<String> favoriteTrackSourceIds,  List<String> excludedFolders,  List<String> searchHistoryTerms,  BackupSettings settings)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int formatVersion,  DateTime createdAt,  List<BackupPlaylist> playlists,  List<String> favoriteTrackSourceIds,  List<BackupPlayEvent> playHistory,  List<String> excludedFolders,  List<String> searchHistoryTerms,  BackupSettings settings)?  $default,) {final _that = this;
 switch (_that) {
 case _BackupSnapshot() when $default != null:
-return $default(_that.formatVersion,_that.createdAt,_that.playlists,_that.favoriteTrackSourceIds,_that.excludedFolders,_that.searchHistoryTerms,_that.settings);case _:
+return $default(_that.formatVersion,_that.createdAt,_that.playlists,_that.favoriteTrackSourceIds,_that.playHistory,_that.excludedFolders,_that.searchHistoryTerms,_that.settings);case _:
   return null;
 
 }
@@ -224,7 +225,7 @@ return $default(_that.formatVersion,_that.createdAt,_that.playlists,_that.favori
 @JsonSerializable()
 
 class _BackupSnapshot implements BackupSnapshot {
-  const _BackupSnapshot({required this.formatVersion, required this.createdAt, required final  List<BackupPlaylist> playlists, required final  List<String> favoriteTrackSourceIds, required final  List<String> excludedFolders, required final  List<String> searchHistoryTerms, required this.settings}): _playlists = playlists,_favoriteTrackSourceIds = favoriteTrackSourceIds,_excludedFolders = excludedFolders,_searchHistoryTerms = searchHistoryTerms;
+  const _BackupSnapshot({required this.formatVersion, required this.createdAt, required final  List<BackupPlaylist> playlists, required final  List<String> favoriteTrackSourceIds, required final  List<BackupPlayEvent> playHistory, required final  List<String> excludedFolders, required final  List<String> searchHistoryTerms, required this.settings}): _playlists = playlists,_favoriteTrackSourceIds = favoriteTrackSourceIds,_playHistory = playHistory,_excludedFolders = excludedFolders,_searchHistoryTerms = searchHistoryTerms;
   factory _BackupSnapshot.fromJson(Map<String, dynamic> json) => _$BackupSnapshotFromJson(json);
 
 @override final  int formatVersion;
@@ -241,6 +242,13 @@ class _BackupSnapshot implements BackupSnapshot {
   if (_favoriteTrackSourceIds is EqualUnmodifiableListView) return _favoriteTrackSourceIds;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_favoriteTrackSourceIds);
+}
+
+ final  List<BackupPlayEvent> _playHistory;
+@override List<BackupPlayEvent> get playHistory {
+  if (_playHistory is EqualUnmodifiableListView) return _playHistory;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_playHistory);
 }
 
  final  List<String> _excludedFolders;
@@ -272,16 +280,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _BackupSnapshot&&(identical(other.formatVersion, formatVersion) || other.formatVersion == formatVersion)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&const DeepCollectionEquality().equals(other._playlists, _playlists)&&const DeepCollectionEquality().equals(other._favoriteTrackSourceIds, _favoriteTrackSourceIds)&&const DeepCollectionEquality().equals(other._excludedFolders, _excludedFolders)&&const DeepCollectionEquality().equals(other._searchHistoryTerms, _searchHistoryTerms)&&(identical(other.settings, settings) || other.settings == settings));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _BackupSnapshot&&(identical(other.formatVersion, formatVersion) || other.formatVersion == formatVersion)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&const DeepCollectionEquality().equals(other._playlists, _playlists)&&const DeepCollectionEquality().equals(other._favoriteTrackSourceIds, _favoriteTrackSourceIds)&&const DeepCollectionEquality().equals(other._playHistory, _playHistory)&&const DeepCollectionEquality().equals(other._excludedFolders, _excludedFolders)&&const DeepCollectionEquality().equals(other._searchHistoryTerms, _searchHistoryTerms)&&(identical(other.settings, settings) || other.settings == settings));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,formatVersion,createdAt,const DeepCollectionEquality().hash(_playlists),const DeepCollectionEquality().hash(_favoriteTrackSourceIds),const DeepCollectionEquality().hash(_excludedFolders),const DeepCollectionEquality().hash(_searchHistoryTerms),settings);
+int get hashCode => Object.hash(runtimeType,formatVersion,createdAt,const DeepCollectionEquality().hash(_playlists),const DeepCollectionEquality().hash(_favoriteTrackSourceIds),const DeepCollectionEquality().hash(_playHistory),const DeepCollectionEquality().hash(_excludedFolders),const DeepCollectionEquality().hash(_searchHistoryTerms),settings);
 
 @override
 String toString() {
-  return 'BackupSnapshot(formatVersion: $formatVersion, createdAt: $createdAt, playlists: $playlists, favoriteTrackSourceIds: $favoriteTrackSourceIds, excludedFolders: $excludedFolders, searchHistoryTerms: $searchHistoryTerms, settings: $settings)';
+  return 'BackupSnapshot(formatVersion: $formatVersion, createdAt: $createdAt, playlists: $playlists, favoriteTrackSourceIds: $favoriteTrackSourceIds, playHistory: $playHistory, excludedFolders: $excludedFolders, searchHistoryTerms: $searchHistoryTerms, settings: $settings)';
 }
 
 
@@ -292,7 +300,7 @@ abstract mixin class _$BackupSnapshotCopyWith<$Res> implements $BackupSnapshotCo
   factory _$BackupSnapshotCopyWith(_BackupSnapshot value, $Res Function(_BackupSnapshot) _then) = __$BackupSnapshotCopyWithImpl;
 @override @useResult
 $Res call({
- int formatVersion, DateTime createdAt, List<BackupPlaylist> playlists, List<String> favoriteTrackSourceIds, List<String> excludedFolders, List<String> searchHistoryTerms, BackupSettings settings
+ int formatVersion, DateTime createdAt, List<BackupPlaylist> playlists, List<String> favoriteTrackSourceIds, List<BackupPlayEvent> playHistory, List<String> excludedFolders, List<String> searchHistoryTerms, BackupSettings settings
 });
 
 
@@ -309,13 +317,14 @@ class __$BackupSnapshotCopyWithImpl<$Res>
 
 /// Create a copy of BackupSnapshot
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? formatVersion = null,Object? createdAt = null,Object? playlists = null,Object? favoriteTrackSourceIds = null,Object? excludedFolders = null,Object? searchHistoryTerms = null,Object? settings = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? formatVersion = null,Object? createdAt = null,Object? playlists = null,Object? favoriteTrackSourceIds = null,Object? playHistory = null,Object? excludedFolders = null,Object? searchHistoryTerms = null,Object? settings = null,}) {
   return _then(_BackupSnapshot(
 formatVersion: null == formatVersion ? _self.formatVersion : formatVersion // ignore: cast_nullable_to_non_nullable
 as int,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,playlists: null == playlists ? _self._playlists : playlists // ignore: cast_nullable_to_non_nullable
 as List<BackupPlaylist>,favoriteTrackSourceIds: null == favoriteTrackSourceIds ? _self._favoriteTrackSourceIds : favoriteTrackSourceIds // ignore: cast_nullable_to_non_nullable
-as List<String>,excludedFolders: null == excludedFolders ? _self._excludedFolders : excludedFolders // ignore: cast_nullable_to_non_nullable
+as List<String>,playHistory: null == playHistory ? _self._playHistory : playHistory // ignore: cast_nullable_to_non_nullable
+as List<BackupPlayEvent>,excludedFolders: null == excludedFolders ? _self._excludedFolders : excludedFolders // ignore: cast_nullable_to_non_nullable
 as List<String>,searchHistoryTerms: null == searchHistoryTerms ? _self._searchHistoryTerms : searchHistoryTerms // ignore: cast_nullable_to_non_nullable
 as List<String>,settings: null == settings ? _self.settings : settings // ignore: cast_nullable_to_non_nullable
 as BackupSettings,

@@ -113,6 +113,7 @@ BackupSnapshot _snapshot({int formatVersion = backupFormatVersion}) {
     createdAt: DateTime(2026),
     playlists: const [],
     favoriteTrackSourceIds: const [],
+    playHistory: const [],
     excludedFolders: const [],
     searchHistoryTerms: const [],
     settings: const BackupSettings(
@@ -461,6 +462,7 @@ void main() {
     final restoreBackup = _FakeRestoreBackup((
       restoredPlaylists: 1,
       restoredFavorites: 2,
+      restoredHistoryEntries: 0,
       skippedTracks: 0,
     ));
     final snapshot = _snapshot();
@@ -486,6 +488,7 @@ void main() {
     final restoreBackup = _FakeRestoreBackup((
       restoredPlaylists: 1,
       restoredFavorites: 0,
+      restoredHistoryEntries: 0,
       skippedTracks: 2,
     ));
     await tester.pumpWidget(
@@ -515,6 +518,7 @@ void main() {
     final restoreBackup = _FakeRestoreBackup((
       restoredPlaylists: 0,
       restoredFavorites: 0,
+      restoredHistoryEntries: 0,
       skippedTracks: 0,
     ));
     await tester.pumpWidget(_app(restoreBackup: restoreBackup));

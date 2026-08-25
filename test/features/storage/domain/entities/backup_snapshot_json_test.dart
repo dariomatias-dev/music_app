@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:music_app/src/features/storage/domain/entities/backup_play_event.dart';
 import 'package:music_app/src/features/storage/domain/entities/backup_playlist.dart';
 import 'package:music_app/src/features/storage/domain/entities/backup_settings.dart';
 import 'package:music_app/src/features/storage/domain/entities/backup_snapshot.dart';
@@ -27,6 +28,14 @@ void main() {
           ),
         ],
         favoriteTrackSourceIds: const ['charcoal'],
+        playHistory: [
+          BackupPlayEvent(
+            trackSourceId: 'charcoal',
+            startedAt: DateTime(2026, 3, 4, 9),
+            playedDurationMs: 180000,
+            completed: true,
+          ),
+        ],
         excludedFolders: const ['/music/podcasts'],
         searchHistoryTerms: const ['jazz'],
         settings: const BackupSettings(
@@ -51,6 +60,7 @@ void main() {
         'ember',
       ]);
       expect(restored.playlists.last.description, isNull);
+      expect(restored.playHistory.single.trackSourceId, 'charcoal');
     },
   );
 }

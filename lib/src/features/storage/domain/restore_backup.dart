@@ -1,5 +1,6 @@
 import 'package:music_app/src/core/constants/preference_keys.dart';
 import 'package:music_app/src/core/storage/key_value_storage.dart';
+import 'package:music_app/src/features/history/domain/repositories/play_history_repository.dart';
 import 'package:music_app/src/features/library/domain/repositories/favorite_repository.dart';
 import 'package:music_app/src/features/library/domain/repositories/library_repository.dart';
 import 'package:music_app/src/features/playlist/domain/repositories/playlist_repository.dart';
@@ -12,29 +13,33 @@ import 'package:music_app/src/features/storage/domain/repositories/excluded_fold
 typedef RestoreBackupResult = ({
   int restoredPlaylists,
   int restoredFavorites,
+  int restoredHistoryEntries,
   int skippedTracks,
 });
 
 /// Restores a [BackupSnapshot] into the current install.
 ///
 /// Merges into whatever is already there rather than replacing it: it
-/// creates playlists, adds favorites, excluded folders and search terms,
-/// and overwrites preferences, but never deletes existing data. A track
-/// referenced by [BackupSnapshot.playlists] or
-/// [BackupSnapshot.favoriteTrackSourceIds] that the current library
-/// doesn't have (not yet re-scanned, or no longer on disk) is skipped
+/// creates playlists, adds favorites and history entries, excluded folders
+/// and search terms, and overwrites preferences, but never deletes existing
+/// data. A track referenced by [BackupSnapshot.playlists],
+/// [BackupSnapshot.favoriteTrackSourceIds] or [BackupSnapshot.playHistory]
+/// that the current library doesn't have (not yet re-scanned, or no longer
+/// on disk) is skipped
 /// rather than failing the whole restore.
 class RestoreBackup {
   /// Creates a [RestoreBackup].
   const RestoreBackup({
     required PlaylistRepository playlistRepository,
     required FavoriteRepository favoriteRepository,
+    required PlayHistoryRepository playHistoryRepository,
     required SearchHistoryRepository searchHistoryRepository,
     required ExcludedFolderRepository excludedFolderRepository,
     required LibraryRepository libraryRepository,
     required KeyValueStorage keyValueStorage,
   }) : _playlistRepository = playlistRepository,
        _favoriteRepository = favoriteRepository,
+       _playHistoryRepository = playHistoryRepository,
        _searchHistoryRepository = searchHistoryRepository,
        _excludedFolderRepository = excludedFolderRepository,
        _libraryRepository = libraryRepository,
@@ -42,6 +47,7 @@ class RestoreBackup {
 
   final PlaylistRepository _playlistRepository;
   final FavoriteRepository _favoriteRepository;
+  final PlayHistoryRepository _playHistoryRepository;
   final SearchHistoryRepository _searchHistoryRepository;
   final ExcludedFolderRepository _excludedFolderRepository;
   final LibraryRepository _libraryRepository;
@@ -99,6 +105,22 @@ class RestoreBackup {
       }
     }
 
+    var restoredHistoryEntries = 0;
+    for (final event in snapshot.playHistory) {
+      final trackId = trackIdBySourceId[event.trackSourceId];
+      if (trackId == null) {
+        skippedTracks++;
+      } else {
+        await _playHistoryRepository.recordPlay(
+          trackId: trackId,
+          startedAt: event.startedAt,
+          playedDuration: Duration(milliseconds: event.playedDurationMs),
+          completed: event.completed,
+        );
+        restoredHistoryEntries++;
+      }
+    }
+
     for (final path in snapshot.excludedFolders) {
       await _excludedFolderRepository.exclude(path);
     }
@@ -114,6 +136,7 @@ class RestoreBackup {
     return (
       restoredPlaylists: snapshot.playlists.length,
       restoredFavorites: restoredFavorites,
+      restoredHistoryEntries: restoredHistoryEntries,
       skippedTracks: skippedTracks,
     );
   }

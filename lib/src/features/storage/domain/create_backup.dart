@@ -1,16 +1,18 @@
 import 'package:music_app/src/core/constants/preference_keys.dart';
 import 'package:music_app/src/core/storage/key_value_storage.dart';
+import 'package:music_app/src/features/history/domain/repositories/play_history_repository.dart';
 import 'package:music_app/src/features/library/domain/repositories/favorite_repository.dart';
 import 'package:music_app/src/features/library/domain/repositories/library_repository.dart';
 import 'package:music_app/src/features/playlist/domain/repositories/playlist_repository.dart';
 import 'package:music_app/src/features/search/domain/repositories/search_history_repository.dart';
+import 'package:music_app/src/features/storage/domain/entities/backup_play_event.dart';
 import 'package:music_app/src/features/storage/domain/entities/backup_playlist.dart';
 import 'package:music_app/src/features/storage/domain/entities/backup_settings.dart';
 import 'package:music_app/src/features/storage/domain/entities/backup_snapshot.dart';
 import 'package:music_app/src/features/storage/domain/repositories/excluded_folder_repository.dart';
 
 /// The [BackupSnapshot] format version this build writes.
-const backupFormatVersion = 1;
+const backupFormatVersion = 2;
 
 /// Builds a portable [BackupSnapshot] of every user-created piece of data,
 /// so it can be restored after a reinstall or on a different device.
@@ -19,12 +21,14 @@ class CreateBackup {
   const CreateBackup({
     required PlaylistRepository playlistRepository,
     required FavoriteRepository favoriteRepository,
+    required PlayHistoryRepository playHistoryRepository,
     required SearchHistoryRepository searchHistoryRepository,
     required ExcludedFolderRepository excludedFolderRepository,
     required LibraryRepository libraryRepository,
     required KeyValueStorage keyValueStorage,
   }) : _playlistRepository = playlistRepository,
        _favoriteRepository = favoriteRepository,
+       _playHistoryRepository = playHistoryRepository,
        _searchHistoryRepository = searchHistoryRepository,
        _excludedFolderRepository = excludedFolderRepository,
        _libraryRepository = libraryRepository,
@@ -32,6 +36,7 @@ class CreateBackup {
 
   final PlaylistRepository _playlistRepository;
   final FavoriteRepository _favoriteRepository;
+  final PlayHistoryRepository _playHistoryRepository;
   final SearchHistoryRepository _searchHistoryRepository;
   final ExcludedFolderRepository _excludedFolderRepository;
   final LibraryRepository _libraryRepository;
@@ -69,6 +74,18 @@ class CreateBackup {
       for (final trackId in favoriteTrackIds) ?sourceIdByTrackId[trackId],
     ];
 
+    final historyEntries = await _playHistoryRepository.getAllEntries();
+    final playHistory = [
+      for (final entry in historyEntries)
+        if (sourceIdByTrackId[entry.trackId] case final sourceId?)
+          BackupPlayEvent(
+            trackSourceId: sourceId,
+            startedAt: entry.startedAt,
+            playedDurationMs: entry.playedDuration.inMilliseconds,
+            completed: entry.completed,
+          ),
+    ];
+
     final excludedFolders = await _excludedFolderRepository
         .watchExcludedFolders()
         .first;
@@ -98,6 +115,7 @@ class CreateBackup {
       createdAt: DateTime.now(),
       playlists: backupPlaylists,
       favoriteTrackSourceIds: favoriteSourceIds,
+      playHistory: playHistory,
       excludedFolders: excludedFolders,
       searchHistoryTerms: searchHistoryTerms,
       settings: settings,

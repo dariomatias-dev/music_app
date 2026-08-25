@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:music_app/src/core/database/database_providers.dart';
 import 'package:music_app/src/core/services/media_scanner/media_scanner_providers.dart';
 import 'package:music_app/src/core/storage/storage_providers.dart';
+import 'package:music_app/src/features/history/data/providers/history_data_providers.dart';
 import 'package:music_app/src/features/library/data/providers/library_data_providers.dart';
 import 'package:music_app/src/features/playlist/data/providers/playlist_data_providers.dart';
 import 'package:music_app/src/features/search/data/providers/search_data_providers.dart';
@@ -31,6 +32,7 @@ final createBackupProvider = Provider<CreateBackup>(
   (ref) => CreateBackup(
     playlistRepository: ref.watch(playlistRepositoryProvider),
     favoriteRepository: ref.watch(favoriteRepositoryProvider),
+    playHistoryRepository: ref.watch(playHistoryRepositoryProvider),
     searchHistoryRepository: ref.watch(searchHistoryRepositoryProvider),
     excludedFolderRepository: ref.watch(excludedFolderRepositoryProvider),
     libraryRepository: ref.watch(libraryRepositoryProvider),
@@ -43,6 +45,7 @@ final restoreBackupProvider = Provider<RestoreBackup>(
   (ref) => RestoreBackup(
     playlistRepository: ref.watch(playlistRepositoryProvider),
     favoriteRepository: ref.watch(favoriteRepositoryProvider),
+    playHistoryRepository: ref.watch(playHistoryRepositoryProvider),
     searchHistoryRepository: ref.watch(searchHistoryRepositoryProvider),
     excludedFolderRepository: ref.watch(excludedFolderRepositoryProvider),
     libraryRepository: ref.watch(libraryRepositoryProvider),

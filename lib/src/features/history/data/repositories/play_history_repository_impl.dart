@@ -16,6 +16,20 @@ class PlayHistoryRepositoryImpl implements PlayHistoryRepository {
   }
 
   @override
+  Future<List<PlayHistoryEntry>> getAllEntries() async {
+    final rows = await _database.playEventDao.watchAll().first;
+    return [
+      for (final row in rows)
+        (
+          trackId: row.trackId,
+          startedAt: row.startedAt,
+          playedDuration: Duration(milliseconds: row.playedDuration),
+          completed: row.completed,
+        ),
+    ];
+  }
+
+  @override
   Future<void> recordPlay({
     required String trackId,
     required DateTime startedAt,

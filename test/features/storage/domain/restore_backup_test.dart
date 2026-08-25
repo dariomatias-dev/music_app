@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:music_app/src/core/constants/preference_keys.dart';
 import 'package:music_app/src/features/library/domain/entities/track.dart';
 import 'package:music_app/src/features/storage/domain/create_backup.dart';
+import 'package:music_app/src/features/storage/domain/entities/backup_play_event.dart';
 import 'package:music_app/src/features/storage/domain/entities/backup_playlist.dart';
 import 'package:music_app/src/features/storage/domain/entities/backup_settings.dart';
 import 'package:music_app/src/features/storage/domain/entities/backup_snapshot.dart';
@@ -11,6 +12,7 @@ import '../../../helpers/fake_excluded_folder_repository.dart';
 import '../../../helpers/fake_favorite_repository.dart';
 import '../../../helpers/fake_key_value_storage.dart';
 import '../../../helpers/fake_library_repository.dart';
+import '../../../helpers/fake_play_history_repository.dart';
 import '../../../helpers/fake_playlist_repository.dart';
 import '../../../helpers/fake_search_history_repository.dart';
 
@@ -53,6 +55,7 @@ BackupSettings _settings({
 BackupSnapshot _snapshot({
   List<BackupPlaylist> playlists = const [],
   List<String> favoriteTrackSourceIds = const [],
+  List<BackupPlayEvent> playHistory = const [],
   List<String> excludedFolders = const [],
   List<String> searchHistoryTerms = const [],
   BackupSettings? settings,
@@ -61,6 +64,7 @@ BackupSnapshot _snapshot({
   createdAt: DateTime(2026),
   playlists: playlists,
   favoriteTrackSourceIds: favoriteTrackSourceIds,
+  playHistory: playHistory,
   excludedFolders: excludedFolders,
   searchHistoryTerms: searchHistoryTerms,
   settings: settings ?? _settings(),
@@ -69,6 +73,7 @@ BackupSnapshot _snapshot({
 void main() {
   late FakePlaylistRepository playlistRepository;
   late FakeFavoriteRepository favoriteRepository;
+  late FakePlayHistoryRepository playHistoryRepository;
   late FakeSearchHistoryRepository searchHistoryRepository;
   late FakeExcludedFolderRepository excludedFolderRepository;
   late FakeKeyValueStorage keyValueStorage;
@@ -77,12 +82,14 @@ void main() {
   setUp(() {
     playlistRepository = FakePlaylistRepository();
     favoriteRepository = FakeFavoriteRepository();
+    playHistoryRepository = FakePlayHistoryRepository();
     searchHistoryRepository = FakeSearchHistoryRepository();
     excludedFolderRepository = FakeExcludedFolderRepository();
     keyValueStorage = FakeKeyValueStorage();
     restoreBackup = RestoreBackup(
       playlistRepository: playlistRepository,
       favoriteRepository: favoriteRepository,
+      playHistoryRepository: playHistoryRepository,
       searchHistoryRepository: searchHistoryRepository,
       excludedFolderRepository: excludedFolderRepository,
       libraryRepository: FakeLibraryRepository([
@@ -217,6 +224,45 @@ void main() {
       isNull,
     );
   });
+
+  test('restores play history resolved to current track ids', () async {
+    final result = await restoreBackup(
+      _snapshot(
+        playHistory: [
+          BackupPlayEvent(
+            trackSourceId: 'source-2',
+            startedAt: DateTime(2026),
+            playedDurationMs: 120000,
+            completed: true,
+          ),
+        ],
+      ),
+    );
+
+    expect(result.restoredHistoryEntries, 1);
+    expect(playHistoryRepository.recordedPlays, ['track-2']);
+  });
+
+  test(
+    'counts a history entry whose track left the library as skipped',
+    () async {
+      final result = await restoreBackup(
+        _snapshot(
+          playHistory: [
+            BackupPlayEvent(
+              trackSourceId: 'source-gone',
+              startedAt: DateTime(2026),
+              playedDurationMs: 120000,
+              completed: true,
+            ),
+          ],
+        ),
+      );
+
+      expect(result.restoredHistoryEntries, 0);
+      expect(result.skippedTracks, 1);
+    },
+  );
 
   test('counts a favorite whose track left the library as skipped', () async {
     final result = await restoreBackup(

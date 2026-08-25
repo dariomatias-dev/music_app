@@ -16,6 +16,9 @@ _BackupSnapshot _$BackupSnapshotFromJson(Map<String, dynamic> json) =>
       favoriteTrackSourceIds: (json['favoriteTrackSourceIds'] as List<dynamic>)
           .map((e) => e as String)
           .toList(),
+      playHistory: (json['playHistory'] as List<dynamic>)
+          .map((e) => BackupPlayEvent.fromJson(e as Map<String, dynamic>))
+          .toList(),
       excludedFolders: (json['excludedFolders'] as List<dynamic>)
           .map((e) => e as String)
           .toList(),
@@ -33,6 +36,7 @@ Map<String, dynamic> _$BackupSnapshotToJson(_BackupSnapshot instance) =>
       'createdAt': instance.createdAt.toIso8601String(),
       'playlists': instance.playlists,
       'favoriteTrackSourceIds': instance.favoriteTrackSourceIds,
+      'playHistory': instance.playHistory,
       'excludedFolders': instance.excludedFolders,
       'searchHistoryTerms': instance.searchHistoryTerms,
       'settings': instance.settings,

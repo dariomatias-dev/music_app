@@ -2,13 +2,20 @@ import 'package:music_app/src/features/history/domain/repositories/play_history_
 
 /// In-memory [PlayHistoryRepository] for tests.
 class FakePlayHistoryRepository implements PlayHistoryRepository {
-  FakePlayHistoryRepository([this.recentTrackIds = const []]);
+  FakePlayHistoryRepository([
+    this.recentTrackIds = const [],
+    List<PlayHistoryEntry> entries = const [],
+  ]) : entries = List.of(entries);
 
   final List<String> recentTrackIds;
+  final List<PlayHistoryEntry> entries;
 
   @override
   Stream<List<String>> watchRecentTrackIds({int limit = 20}) =>
       Stream.value(recentTrackIds.take(limit).toList());
+
+  @override
+  Future<List<PlayHistoryEntry>> getAllEntries() async => List.of(entries);
 
   final recordedPlays = <String>[];
 
@@ -20,6 +27,12 @@ class FakePlayHistoryRepository implements PlayHistoryRepository {
     required bool completed,
   }) async {
     recordedPlays.add(trackId);
+    entries.add((
+      trackId: trackId,
+      startedAt: startedAt,
+      playedDuration: playedDuration,
+      completed: completed,
+    ));
   }
 
   bool historyCleared = false;
