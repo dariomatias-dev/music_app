@@ -5,6 +5,7 @@ import 'package:music_app/src/core/services/artwork_cache/artwork_cache.dart';
 import 'package:music_app/src/core/services/id_generator/id_generator.dart';
 import 'package:music_app/src/core/services/media_scanner/media_scanner.dart';
 import 'package:music_app/src/core/services/metadata_reader/metadata_reader.dart';
+import 'package:music_app/src/core/services/metadata_reader/metadata_writer.dart';
 import 'package:music_app/src/features/library/data/data_sources/library_local_data_source.dart';
 import 'package:music_app/src/features/library/data/indexing/library_indexer.dart';
 import 'package:music_app/src/features/library/data/repositories/library_repository_impl.dart';
@@ -35,6 +36,20 @@ class _FakeMediaScanner implements MediaScanner {
 class _FakeMetadataReader implements MetadataReader {
   @override
   Future<TrackMetadata> read(String filePath) async => const TrackMetadata();
+}
+
+class _FakeMetadataWriter implements MetadataWriter {
+  final Map<String, ({String title, String artist, String album})> written = {};
+
+  @override
+  Future<void> writeTags(
+    String filePath, {
+    required String title,
+    required String artist,
+    required String album,
+  }) async {
+    written[filePath] = (title: title, artist: artist, album: album);
+  }
 }
 
 class _FakeArtworkCache implements ArtworkCache {
@@ -98,6 +113,9 @@ class _FakeLibraryLocalDataSource implements LibraryLocalDataSource {
   }
 
   @override
+  Future<Track?> findTrackById(String id) async => tracks[id];
+
+  @override
   Future<List<Track>> findAllTracks() async => tracks.values.toList();
 
   @override
@@ -133,11 +151,13 @@ void main() {
   late _FakeMediaScanner mediaScanner;
   late _FakeArtworkCache artworkCache;
   late FakeExcludedFolderRepository excludedFolderRepository;
+  late _FakeMetadataWriter metadataWriter;
   late LibraryRepositoryImpl repository;
 
   setUp(() {
     dataSource = _FakeLibraryLocalDataSource();
     mediaScanner = _FakeMediaScanner();
+    metadataWriter = _FakeMetadataWriter();
     artworkCache = _FakeArtworkCache();
     excludedFolderRepository = FakeExcludedFolderRepository();
     final indexer = LibraryIndexer(
@@ -156,6 +176,7 @@ void main() {
       reconcileLibrary: reconcile,
       artworkCache: artworkCache,
       excludedFolderRepository: excludedFolderRepository,
+      metadataWriter: metadataWriter,
     );
   });
 
@@ -261,5 +282,48 @@ void main() {
     await repository.purgeMissingTracks();
 
     expect(dataSource.deletedTrackIds, ['track-1']);
+  });
+
+  test('updateTrackTags writes the new tags to the track file', () async {
+    final track = Track(
+      id: 'track-1',
+      sourceId: '1',
+      filePath: '/music/a.mp3',
+      title: 'A',
+      artistId: 'artist-1',
+      albumId: 'album-1',
+      duration: const Duration(minutes: 3),
+      format: 'mp3',
+      fileSize: 1000,
+      hasEmbeddedArtwork: false,
+      dateAdded: DateTime(2026),
+      dateModified: DateTime(2026),
+    );
+    dataSource.tracks['track-1'] = track;
+
+    await repository.updateTrackTags(
+      'track-1',
+      title: 'New title',
+      artist: 'New artist',
+      album: 'New album',
+    );
+
+    expect(metadataWriter.written['/music/a.mp3'], (
+      title: 'New title',
+      artist: 'New artist',
+      album: 'New album',
+    ));
+  });
+
+  test('updateTrackTags throws for an unknown track id', () async {
+    await expectLater(
+      () => repository.updateTrackTags(
+        'missing',
+        title: 'Title',
+        artist: 'Artist',
+        album: 'Album',
+      ),
+      throwsStateError,
+    );
   });
 }

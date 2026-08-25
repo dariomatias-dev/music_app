@@ -35,6 +35,12 @@ final albumArtworkProvider = Provider<Map<String, String?>>((ref) {
   return {for (final album in albums) album.id: album.artworkPath};
 });
 
+/// Album id -> title, for resolving a track's album without a join query.
+final albumNamesProvider = Provider<Map<String, String>>((ref) {
+  final albums = ref.watch(albumsStreamProvider).value ?? const [];
+  return {for (final album in albums) album.id: album.title};
+});
+
 /// Every indexed album, ordered alphabetically by title.
 final sortedAlbumsProvider = Provider<List<Album>>((ref) {
   return [...ref.watch(albumsStreamProvider).value ?? const []]

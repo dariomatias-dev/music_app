@@ -21,6 +21,18 @@ abstract interface class LibraryRepository {
   /// Permanently deletes every track currently marked missing.
   Future<void> purgeMissingTracks();
 
+  /// Writes [title], [artist] and [album] as tags to the track's file, then
+  /// reconciles the local library so its artist/album grouping reflects the
+  /// change.
+  ///
+  /// Throws a [StateError] if no track with [trackId] is indexed.
+  Future<void> updateTrackTags(
+    String trackId, {
+    required String title,
+    required String artist,
+    required String album,
+  });
+
   /// Clears every cached album artwork file and its stored path, so the
   /// next scan re-extracts it.
   Future<void> clearArtworkCache();

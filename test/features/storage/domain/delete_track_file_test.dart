@@ -51,6 +51,9 @@ class _FakeLibraryLocalDataSource implements LibraryLocalDataSource {
   Future<Track?> findTrackBySourceId(String sourceId) async => null;
 
   @override
+  Future<Track?> findTrackById(String id) async => null;
+
+  @override
   Future<List<Track>> findAllTracks() async => const [];
 
   @override

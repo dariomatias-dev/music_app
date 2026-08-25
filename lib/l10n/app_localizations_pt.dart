@@ -339,6 +339,21 @@ class AppLocalizationsPt extends AppLocalizations {
   String get renamePlaylistLabel => 'Renomear';
 
   @override
+  String get editTagsLabel => 'Editar tags';
+
+  @override
+  String get editTagsSheetTitle => 'Editar tags';
+
+  @override
+  String get trackTitleHint => 'Título';
+
+  @override
+  String get trackArtistHint => 'Artista';
+
+  @override
+  String get trackAlbumHint => 'Álbum';
+
+  @override
   String get duplicatePlaylistLabel => 'Duplicar';
 
   @override

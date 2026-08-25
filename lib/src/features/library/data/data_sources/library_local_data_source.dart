@@ -19,6 +19,9 @@ abstract interface class LibraryLocalDataSource {
   /// Reads the track previously indexed from [sourceId], if any.
   Future<Track?> findTrackBySourceId(String sourceId);
 
+  /// Reads the track with [id], if any.
+  Future<Track?> findTrackById(String id);
+
   /// Reads every indexed track.
   Future<List<Track>> findAllTracks();
 

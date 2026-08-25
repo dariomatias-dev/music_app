@@ -50,6 +50,12 @@ class LibraryLocalDataSourceImpl implements LibraryLocalDataSource {
   }
 
   @override
+  Future<Track?> findTrackById(String id) async {
+    final row = await _database.trackDao.getById(id);
+    return row?.toEntity();
+  }
+
+  @override
   Future<List<Track>> findAllTracks() async {
     final rows = await _database.trackDao.getAll();
     return rows.map((row) => row.toEntity()).toList();

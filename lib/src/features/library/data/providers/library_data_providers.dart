@@ -45,6 +45,7 @@ final libraryRepositoryProvider = Provider<LibraryRepository>(
     reconcileLibrary: ref.watch(reconcileLibraryProvider),
     artworkCache: ref.watch(artworkCacheProvider),
     excludedFolderRepository: ref.watch(excludedFolderRepositoryProvider),
+    metadataWriter: ref.watch(metadataWriterProvider),
   ),
 );
 

@@ -9,6 +9,7 @@ import 'package:music_app/src/core/widgets/cached_square_image.dart';
 import 'package:music_app/src/features/library/domain/entities/track.dart';
 import 'package:music_app/src/features/library/presentation/providers/library_providers.dart';
 import 'package:music_app/src/features/library/presentation/view_models/track_sort_view_model.dart';
+import 'package:music_app/src/features/library/presentation/widgets/track_more_sheet.dart';
 import 'package:music_app/src/features/library/presentation/widgets/track_sort_sheet.dart';
 import 'package:music_app/src/features/player/presentation/view_models/playback_screen_view_model.dart';
 import 'package:music_app/src/features/player/presentation/view_models/playback_view_model.dart';
@@ -25,6 +26,7 @@ class TracksTab extends ConsumerWidget {
     final colors = context.colors;
     final tracks = ref.watch(sortedTracksProvider);
     final artistNames = ref.watch(artistNamesProvider);
+    final albumNames = ref.watch(albumNamesProvider);
     final albumArtwork = ref.watch(albumArtworkProvider);
     final sort = ref.watch(trackSortViewModelProvider);
     final currentTrackId = ref.watch(playbackScreenViewModelProvider)?.id;
@@ -106,6 +108,15 @@ class TracksTab extends ConsumerWidget {
                           .read(queueViewModelProvider.notifier)
                           .playFromSource(tracks, startIndex: index),
                     ),
+                    onLongPress: () => unawaited(
+                      showTrackMoreSheet(
+                        context,
+                        ref,
+                        track: tracks[index],
+                        artistName: artistNames[tracks[index].artistId],
+                        albumName: albumNames[tracks[index].albumId],
+                      ),
+                    ),
                   ),
                 ),
         ),
@@ -129,6 +140,7 @@ class _TrackRow extends StatelessWidget {
     required this.current,
     required this.playing,
     required this.onTap,
+    required this.onLongPress,
   });
 
   final Track track;
@@ -137,6 +149,7 @@ class _TrackRow extends StatelessWidget {
   final bool current;
   final bool playing;
   final VoidCallback onTap;
+  final VoidCallback onLongPress;
 
   @override
   Widget build(BuildContext context) {
@@ -146,6 +159,7 @@ class _TrackRow extends StatelessWidget {
     return Pressable(
       scale: 0.99,
       onTap: onTap,
+      onLongPress: onLongPress,
       child: Padding(
         padding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.smMd,

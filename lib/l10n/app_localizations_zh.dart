@@ -321,6 +321,21 @@ class AppLocalizationsZh extends AppLocalizations {
   String get renamePlaylistLabel => '重命名';
 
   @override
+  String get editTagsLabel => '编辑标签';
+
+  @override
+  String get editTagsSheetTitle => '编辑标签';
+
+  @override
+  String get trackTitleHint => '标题';
+
+  @override
+  String get trackArtistHint => '艺术家';
+
+  @override
+  String get trackAlbumHint => '专辑';
+
+  @override
   String get duplicatePlaylistLabel => '复制';
 
   @override

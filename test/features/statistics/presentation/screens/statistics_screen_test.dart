@@ -48,6 +48,14 @@ class _FakeLibraryRepository implements LibraryRepository {
   Future<void> purgeMissingTracks() async {}
 
   @override
+  Future<void> updateTrackTags(
+    String trackId, {
+    required String title,
+    required String artist,
+    required String album,
+  }) async {}
+
+  @override
   Future<void> clearArtworkCache() async {}
 }
 

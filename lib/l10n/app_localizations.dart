@@ -696,6 +696,36 @@ abstract class AppLocalizations {
   /// **'Rename'**
   String get renamePlaylistLabel;
 
+  /// No description provided for @editTagsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit tags'**
+  String get editTagsLabel;
+
+  /// No description provided for @editTagsSheetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit tags'**
+  String get editTagsSheetTitle;
+
+  /// No description provided for @trackTitleHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get trackTitleHint;
+
+  /// No description provided for @trackArtistHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Artist'**
+  String get trackArtistHint;
+
+  /// No description provided for @trackAlbumHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Album'**
+  String get trackAlbumHint;
+
   /// No description provided for @duplicatePlaylistLabel.
   ///
   /// In en, this message translates to:
