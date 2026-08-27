@@ -42,6 +42,10 @@ jobs:
           yes | "$sdkmanager" --licenses > /dev/null
           "$sdkmanager" "platforms;android-${{ env.ANDROID_COMPILE_SDK }}"
 
+      # WARNING: android/app/build.gradle.kts still signs the release build with
+      # the debug keystore. Wire a real keystore (secrets + key.properties) before
+      # pushing the first v*.*.* tag: a debug-signed APK can't be trusted, and
+      # switching keys later breaks in-place upgrades.
       - name: Build release APK
         run: flutter build apk --release
 
