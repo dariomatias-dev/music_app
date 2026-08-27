@@ -5,7 +5,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:music_app/l10n/app_localizations.dart';
 import 'package:music_app/src/core/constants/preference_keys.dart';
-import 'package:music_app/src/core/navigation/route_names.dart';
 import 'package:music_app/src/core/storage/storage_providers.dart';
 import 'package:music_app/src/features/onboarding/presentation/screens/onboarding_screen.dart';
 
@@ -42,7 +41,7 @@ Future<FakeKeyValueStorage> _pumpFlow(WidgetTester tester) async {
         builder: (context, state) => const OnboardingScreen(),
       ),
       GoRoute(
-        name: RouteNames.permissions,
+        name: 'permissions',
         path: '/permissions',
         builder: (context, state) =>
             const Scaffold(body: Text('Permission screen')),

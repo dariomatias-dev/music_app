@@ -9,7 +9,6 @@ import 'package:music_app/src/core/audio/audio_providers.dart';
 import 'package:music_app/src/core/audio/music_audio_handler.dart';
 import 'package:music_app/src/core/database/app_database.dart';
 import 'package:music_app/src/core/database/database_providers.dart';
-import 'package:music_app/src/core/navigation/route_names.dart';
 import 'package:music_app/src/core/storage/storage_providers.dart';
 import 'package:music_app/src/features/library/data/indexing/library_indexer.dart';
 import 'package:music_app/src/features/library/data/providers/library_data_providers.dart';
@@ -100,7 +99,7 @@ Future<ProviderContainer> _pumpSplash(
         builder: (context, state) => const SplashScreen(),
       ),
       GoRoute(
-        name: RouteNames.home,
+        name: 'home',
         path: '/home',
         builder: (context, state) => const Scaffold(body: Text('Home screen')),
       ),

@@ -5,7 +5,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:music_app/l10n/app_localizations.dart';
 import 'package:music_app/src/core/audio/queue_media_item.dart';
-import 'package:music_app/src/core/navigation/route_names.dart';
 import 'package:music_app/src/features/library/data/providers/library_data_providers.dart';
 import 'package:music_app/src/features/player/presentation/widgets/playback_track_info.dart';
 
@@ -30,14 +29,14 @@ Widget _routedApp(Widget child) {
         builder: (context, state) => Scaffold(body: child),
       ),
       GoRoute(
-        name: RouteNames.album,
+        name: 'album',
         path: '/albums/:albumId',
         builder: (context, state) => Scaffold(
           body: Text('Album ${state.pathParameters['albumId']}'),
         ),
       ),
       GoRoute(
-        name: RouteNames.artist,
+        name: 'artist',
         path: '/artists/:artistId',
         builder: (context, state) => Scaffold(
           body: Text('Artist ${state.pathParameters['artistId']}'),

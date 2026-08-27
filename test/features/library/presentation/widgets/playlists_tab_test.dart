@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:music_app/l10n/app_localizations.dart';
-import 'package:music_app/src/core/navigation/route_names.dart';
 import 'package:music_app/src/features/library/presentation/widgets/playlists_tab.dart';
 import 'package:music_app/src/features/playlist/data/providers/playlist_data_providers.dart';
 
@@ -44,7 +43,7 @@ Future<void> _pumpRoutedPlaylistsTab(
         builder: (context, state) => const Scaffold(body: PlaylistsTab()),
       ),
       GoRoute(
-        name: RouteNames.playlist,
+        name: 'playlist',
         path: '/playlists/:playlistId',
         builder: (context, state) => Scaffold(
           body: Text('Playlist ${state.pathParameters['playlistId']}'),
