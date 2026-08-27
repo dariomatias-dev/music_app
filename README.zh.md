@@ -37,7 +37,6 @@
 - [架构](#架构)
 - [测试](#测试)
 - [截图](#截图)
-- [下载应用](#下载应用)
 - [快速开始](#快速开始)
 - [脚本](#脚本)
 - [文档](#文档)
@@ -114,12 +113,6 @@ fvm flutter test
 <img src="screenshots/en/09_statistics.png" width="200" alt="统计"/>
 </div>
 
-## 下载应用
-
-**Music App** 并未上架 Play 商店。可以在项目的 **GitHub Releases** 页面下载最新的签名 APK：
-
-<a href="https://github.com/dariomatias-dev/music_app/releases/latest" target="_blank"><strong>下载最新版本 »</strong></a>
-
 ## 快速开始
 
 本项目通过 [FVM](https://fvm.app/) 固定 Flutter SDK 版本，因此以下所有命令都使用 `fvm flutter`，而不是直接安装的 `flutter`。
@@ -143,7 +136,7 @@ fvm flutter run
 
 | 脚本 | 命令 | 说明 |
 | ---------------- | ------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `screenshot`     | `scripts/screenshot.sh [device-id]`              | 在已连接的设备或模拟器上依次打开应用的主要界面，并将每个界面的截图保存到 `screenshots/` 中，用于 README、Play 商店页面和官方网站。运行 `fvm flutter devices` 可以列出可用的设备 id。 |
+| `screenshot`     | `scripts/screenshot.sh [device-id]`              | 在已连接的设备或模拟器上依次打开应用的主要界面，并将每个界面的截图保存到 `screenshots/` 中，用于 README。运行 `fvm flutter devices` 可以列出可用的设备 id。 |
 | `check_coverage` | `scripts/check_coverage.sh <lcov-file> <minimum>` | 如果 `lcov.info` 报告（由 `flutter test --coverage` 生成）中的行覆盖率低于 `<minimum>`，则该脚本会失败。CI 用它来强制执行上面的覆盖率门槛；生成覆盖率报告后，也可以在本地运行它，在推送前先自查。 |
 
 ## 文档

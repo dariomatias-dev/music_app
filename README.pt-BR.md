@@ -37,7 +37,6 @@ Um aplicativo Android para tocar a música que já está no seu dispositivo, tot
 - [Arquitetura](#arquitetura)
 - [Testes](#testes)
 - [Capturas de Tela](#capturas-de-tela)
-- [Baixar o App](#baixar-o-app)
 - [Começando](#começando)
 - [Scripts](#scripts)
 - [Documentação](#documentação)
@@ -128,13 +127,6 @@ fvm flutter test
 <img src="screenshots/pt-BR/09_statistics.png" width="200" alt="Estatísticas"/>
 </div>
 
-## Baixar o App
-
-O **Music App** não está disponível na Play Store. Baixe o APK assinado
-mais recente nas **GitHub Releases** do projeto:
-
-<a href="https://github.com/dariomatias-dev/music_app/releases/latest" target="_blank"><strong>Baixar a última versão »</strong></a>
-
 ## Começando
 
 O projeto fixa a versão do Flutter SDK via [FVM](https://fvm.app/), por isso todos os comandos abaixo usam `fvm flutter` em vez de um `flutter` instalado direto.
@@ -158,7 +150,7 @@ Scripts utilitários ficam em `scripts/`.
 
 | Script           | Comando                                          | Descrição                                                                                                                                                                                       |
 | ---------------- | ------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `screenshot`     | `scripts/screenshot.sh [device-id]`              | Percorre as principais telas do app em um dispositivo ou emulador conectado e salva uma captura de cada uma em `screenshots/`, usadas no README, na Play Store e no site oficial. Rode `fvm flutter devices` para listar os ids de dispositivos disponíveis. |
+| `screenshot`     | `scripts/screenshot.sh [device-id]`              | Percorre as principais telas do app em um dispositivo ou emulador conectado e salva uma captura de cada uma em `screenshots/`, usadas no README. Rode `fvm flutter devices` para listar os ids de dispositivos disponíveis. |
 | `check_coverage` | `scripts/check_coverage.sh <lcov-file> <minimum>` | Falha se a cobertura de linha de um relatório `lcov.info` (gerado com `flutter test --coverage`) ficar abaixo de `<minimum>`. Usado no CI para impor os limites acima; rode localmente após gerar a cobertura para checar antes de dar push. |
 
 ## Documentação
