@@ -37,7 +37,6 @@ An Android app for playing the music already on your device, fully offline, no a
 - [Architecture](#architecture)
 - [Testing](#testing)
 - [Screenshots](#screenshots)
-- [Download the App](#download-the-app)
 - [Getting Started](#getting-started)
 - [Scripts](#scripts)
 - [Documentation](#documentation)
@@ -127,13 +126,6 @@ fvm flutter test
 <img src="screenshots/en/09_statistics.png" width="200" alt="Statistics"/>
 </div>
 
-## Download the App
-
-**Music App** isn't on the Play Store. Get the latest signed APK from the
-project's **GitHub Releases**:
-
-<a href="https://github.com/dariomatias-dev/music_app/releases/latest" target="_blank"><strong>Download the latest release »</strong></a>
-
 ## Getting Started
 
 The project pins its Flutter SDK version via [FVM](https://fvm.app/), so all commands below use `fvm flutter` rather than a bare `flutter` install.
@@ -157,7 +149,7 @@ Utility scripts live under `scripts/`.
 
 | Script           | Command                                          | Description                                                                                                                                                                                       |
 | ---------------- | ------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `screenshot`     | `scripts/screenshot.sh [device-id]`              | Drives the app through its main screens on a connected device or emulator and saves a screenshot of each one into `screenshots/`, used for the README, Play Store listing, and official website. Run `fvm flutter devices` to list available device ids. |
+| `screenshot`     | `scripts/screenshot.sh [device-id]`              | Drives the app through its main screens on a connected device or emulator and saves a screenshot of each one into `screenshots/`, used in the README. Run `fvm flutter devices` to list available device ids. |
 | `check_coverage` | `scripts/check_coverage.sh <lcov-file> <minimum>` | Fails if line coverage in an `lcov.info` report (from `flutter test --coverage`) falls below `<minimum>`. Used in CI to enforce the thresholds above; run it locally after generating coverage to check before pushing. |
 
 ## Documentation

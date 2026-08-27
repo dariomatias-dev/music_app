@@ -6,20 +6,20 @@
 
 ## Versões Suportadas
 
-O **Music App** não está disponível na Play Store; ele é distribuído como um APK assinado pelas [GitHub Releases](https://github.com/dariomatias-dev/music_app/releases) do projeto. Só a última versão lançada recebe correções de segurança — não há versões antigas sendo mantidas.
+O **Music App** é mantido como código-fonte. A única versão suportada é a branch `main` atual: é nela que as correções de segurança são aplicadas, e elas não são retroportadas para commits anteriores.
 
 ## Reportando uma Vulnerabilidade
 
-Por favor, **não** abra uma issue pública no GitHub pra uma vulnerabilidade de segurança.
+Por favor, **não** abra uma issue pública no GitHub para relatar uma vulnerabilidade de segurança.
 
-Em vez disso, envie um e-mail pra [dariomatias.dev@gmail.com](mailto:dariomatias.dev@gmail.com) com:
+Em vez disso, envie um e-mail para [dariomatias.dev@gmail.com](mailto:dariomatias.dev@gmail.com) contendo:
 
 - Uma descrição da vulnerabilidade e seu impacto potencial.
-- Passos pra reproduzi-la (um exemplo mínimo ajuda bastante).
-- A versão do app e a versão do Android usadas no teste.
+- Passos para reproduzi-la (um exemplo mínimo é de grande ajuda).
+- O commit a partir do qual você compilou e a versão do Android utilizada no teste.
 
-Este é um projeto open-source que mantenho sozinho, no ritmo de um hobby — não tem uma equipe de segurança dedicada nem um SLA formal, mas todo relato é levado a sério e respondido o quanto antes. Assim que uma correção sair, quem reportou é creditado nas notas da versão, a menos que prefira ficar anônimo.
+Este é um projeto open-source mantido por uma única pessoa, em escala de hobby: não há equipe de segurança dedicada nem SLA formal, mas todo relato é levado a sério e respondido com a maior brevidade possível. Assim que uma correção for publicada, quem reportou será creditado, salvo se preferir permanecer anônimo.
 
 ## Escopo
 
-O app roda totalmente offline: ele toca arquivos de áudio que já estão no dispositivo, guarda tudo localmente (SQLite via `drift`, `shared_preferences`) e não faz nenhuma requisição de rede. Por isso, os riscos mais relevantes aqui são locais — como o app lida com entrada não confiável de arquivos (leitura de metadado de áudio, importação de backups em JSON/banco de dados) e como ele armazena dados no aparelho — e não algo ligado a servidor ou conta, já que não existe nem um nem outro.
+O aplicativo funciona totalmente offline: reproduz arquivos de áudio já presentes no dispositivo, armazena todos os dados localmente (SQLite via `drift`, `shared_preferences`) e não realiza nenhuma requisição de rede. Por isso, as classes de problema mais relevantes são locais: como o aplicativo trata entradas não confiáveis de arquivos (leitura de metadados de áudio, importação de backups em JSON e em banco de dados) e como ele armazena dados no dispositivo. Questões relacionadas a servidor ou conta não se aplicam, pois não existe servidor nem conta.
