@@ -6,7 +6,6 @@ import 'package:go_router/go_router.dart';
 import 'package:music_app/l10n/app_localizations.dart';
 import 'package:music_app/src/core/audio/audio_providers.dart';
 import 'package:music_app/src/core/audio/music_audio_handler.dart';
-import 'package:music_app/src/core/navigation/route_names.dart';
 import 'package:music_app/src/core/storage/storage_providers.dart';
 import 'package:music_app/src/features/library/data/indexing/library_indexer.dart';
 import 'package:music_app/src/features/library/data/providers/library_data_providers.dart';
@@ -112,19 +111,19 @@ GoRouter _router() {
         builder: (context, state) => const Scaffold(body: SearchResultsList()),
       ),
       GoRoute(
-        name: RouteNames.album,
+        name: 'album',
         path: '/albums/:albumId',
         builder: (context, state) =>
             Scaffold(body: Text('Album ${state.pathParameters['albumId']}')),
       ),
       GoRoute(
-        name: RouteNames.artist,
+        name: 'artist',
         path: '/artists/:artistId',
         builder: (context, state) =>
             Scaffold(body: Text('Artist ${state.pathParameters['artistId']}')),
       ),
       GoRoute(
-        name: RouteNames.playlist,
+        name: 'playlist',
         path: '/playlists/:playlistId',
         builder: (context, state) => Scaffold(
           body: Text('Playlist ${state.pathParameters['playlistId']}'),

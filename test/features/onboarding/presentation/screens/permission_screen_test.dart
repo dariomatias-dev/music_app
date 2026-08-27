@@ -6,8 +6,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:music_app/l10n/app_localizations.dart';
-import 'package:music_app/src/core/navigation/route_names.dart';
-import 'package:music_app/src/core/navigation/route_paths.dart';
 import 'package:music_app/src/core/permissions/media_permission_service.dart';
 import 'package:music_app/src/core/permissions/permission_providers.dart';
 import 'package:music_app/src/features/library/data/indexing/library_indexer.dart';
@@ -93,8 +91,8 @@ Widget _app({
         builder: (context, state) => const Scaffold(body: PermissionScreen()),
       ),
       GoRoute(
-        name: RouteNames.home,
-        path: RoutePaths.home,
+        name: 'home',
+        path: '/home',
         builder: (context, state) =>
             const Scaffold(body: Text('Home screen reached')),
       ),

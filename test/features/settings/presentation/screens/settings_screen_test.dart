@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:music_app/l10n/app_localizations.dart';
-import 'package:music_app/src/core/navigation/route_names.dart';
 import 'package:music_app/src/core/storage/storage_providers.dart';
 import 'package:music_app/src/features/library/data/indexing/library_indexer.dart';
 import 'package:music_app/src/features/library/data/providers/library_data_providers.dart';
@@ -66,25 +65,25 @@ Widget _app({
         builder: (context, state) => const Scaffold(body: SettingsScreen()),
       ),
       GoRoute(
-        name: RouteNames.onboarding,
+        name: 'onboarding',
         path: '/onboarding',
         builder: (context, state) =>
             const Scaffold(body: Text('Onboarding screen reached')),
       ),
       GoRoute(
-        name: RouteNames.storage,
+        name: 'storage',
         path: '/storage',
         builder: (context, state) =>
             const Scaffold(body: Text('Storage screen reached')),
       ),
       GoRoute(
-        name: RouteNames.statistics,
+        name: 'statistics',
         path: '/statistics',
         builder: (context, state) =>
             const Scaffold(body: Text('Statistics screen reached')),
       ),
       GoRoute(
-        name: RouteNames.about,
+        name: 'about',
         path: '/about',
         builder: (context, state) =>
             const Scaffold(body: Text('About screen reached')),

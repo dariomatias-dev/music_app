@@ -3,7 +3,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:music_app/src/core/constants/preference_keys.dart';
-import 'package:music_app/src/core/navigation/route_paths.dart';
 import 'package:music_app/src/core/navigation/route_redirect.dart';
 import 'package:music_app/src/core/permissions/media_permission_service.dart';
 import 'package:music_app/src/core/permissions/permission_providers.dart';
@@ -55,7 +54,7 @@ void main() {
   test('never redirects away from the splash route', () async {
     final result = await appRouteRedirect(
       ref: ref,
-      state: stateAt(RoutePaths.splash),
+      state: stateAt('/splash'),
     );
 
     expect(result, isNull);
@@ -64,16 +63,16 @@ void main() {
   test('redirects to onboarding when it has not been completed', () async {
     final result = await appRouteRedirect(
       ref: ref,
-      state: stateAt(RoutePaths.home),
+      state: stateAt('/home'),
     );
 
-    expect(result, RoutePaths.onboarding);
+    expect(result, '/onboarding');
   });
 
   test('stays on onboarding while it is incomplete', () async {
     final result = await appRouteRedirect(
       ref: ref,
-      state: stateAt(RoutePaths.onboarding),
+      state: stateAt('/onboarding'),
     );
 
     expect(result, isNull);
@@ -84,10 +83,10 @@ void main() {
 
     final result = await appRouteRedirect(
       ref: ref,
-      state: stateAt(RoutePaths.home),
+      state: stateAt('/home'),
     );
 
-    expect(result, RoutePaths.permissions);
+    expect(result, '/permissions');
   });
 
   test('stays on the permission screen while it is not granted', () async {
@@ -95,7 +94,7 @@ void main() {
 
     final result = await appRouteRedirect(
       ref: ref,
-      state: stateAt(RoutePaths.permissions),
+      state: stateAt('/permissions'),
     );
 
     expect(result, isNull);
@@ -106,15 +105,15 @@ void main() {
     permissionService.status = MediaPermissionStatus.granted;
 
     expect(
-      await appRouteRedirect(ref: ref, state: stateAt(RoutePaths.onboarding)),
-      RoutePaths.home,
+      await appRouteRedirect(ref: ref, state: stateAt('/onboarding')),
+      '/home',
     );
     expect(
       await appRouteRedirect(
         ref: ref,
-        state: stateAt(RoutePaths.permissions),
+        state: stateAt('/permissions'),
       ),
-      RoutePaths.home,
+      '/home',
     );
   });
 
@@ -124,7 +123,7 @@ void main() {
 
     final result = await appRouteRedirect(
       ref: ref,
-      state: stateAt(RoutePaths.home),
+      state: stateAt('/home'),
     );
 
     expect(result, isNull);
