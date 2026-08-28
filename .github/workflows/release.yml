@@ -37,16 +37,26 @@ jobs:
       - name: Generate localizations
         run: flutter gen-l10n
 
+      - name: Check formatting
+        run: dart format --output=none --set-exit-if-changed lib test
+
+      - name: Analyze
+        run: flutter analyze
+
+      - name: Test
+        run: flutter test --coverage
+
+      - name: Check coverage
+        run: ./scripts/check_coverage.sh coverage/lcov.info 97
+
       - name: Install the Android SDK platform the build targets
         run: |
           sdkmanager="${ANDROID_HOME:-$ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager"
           yes | "$sdkmanager" --licenses > /dev/null
           "$sdkmanager" "platforms;android-${{ env.ANDROID_COMPILE_SDK }}"
 
-      # WARNING: android/app/build.gradle.kts still signs the release build with
-      # the debug keystore. Wire a real keystore (secrets + key.properties) before
-      # pushing the first v*.*.* tag: a debug-signed APK can't be trusted, and
-      # switching keys later breaks in-place upgrades.
+      # NOTE: android/app/build.gradle.kts signs the release build with the
+      # debug keystore intentionally — no production signing for this app.
       - name: Build release APK
         run: flutter build apk --release
 
