@@ -132,6 +132,14 @@ class _PlaylistScreenState extends ConsumerState<PlaylistScreen> {
         ? null
         : PlaylistSortRow(trackCount: tracks.length, sort: sort);
 
+    // Built once per build rather than calling `indexOf` per row: the list
+    // renders a row's position and plays from it, and both lookups inside
+    // `itemBuilder` would each scan the list, making a long playlist
+    // quadratic to scroll.
+    final positionsById = {
+      for (var i = 0; i < tracks.length; i++) tracks[i].id: i,
+    };
+
     return MiniPlayerDock(
       child: AppScaffold(
         topBar: AppTopBar(
@@ -266,16 +274,15 @@ class _PlaylistScreenState extends ConsumerState<PlaylistScreen> {
                         final trackIndex =
                             index - 1 - (sortRow == null ? 0 : 1);
                         final track = visibleTracks[trackIndex];
+                        final position = positionsById[track.id] ?? 0;
                         return PlaylistTrackRow(
                           key: ValueKey('${track.id}-$trackIndex'),
                           track: track,
-                          index: tracks.indexOf(track),
+                          index: position,
                           editing: false,
                           current: track.id == currentTrackId,
                           playing: playing,
-                          onTap: () => unawaited(
-                            playFrom(tracks, tracks.indexOf(track)),
-                          ),
+                          onTap: () => unawaited(playFrom(tracks, position)),
                           onRemove: () {},
                           onMore: () => unawaited(
                             showPlaylistTrackMoreSheet(
