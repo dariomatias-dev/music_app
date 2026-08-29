@@ -6,7 +6,7 @@
 </div>
 <br>
 <div align="center">
-<a href="https://github.com/dariomatias-dev/music_app/actions/workflows/ci.yml"><img src="https://github.com/dariomatias-dev/music_app/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+<a href="https://github.com/dariomatias-dev/music_app/actions/workflows/ci.yaml"><img src="https://github.com/dariomatias-dev/music_app/actions/workflows/ci.yaml/badge.svg" alt="CI"></a>
 <img src="https://img.shields.io/badge/lints-very__good__analysis-blueviolet?style=flat" alt="very_good_analysis">
 <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="Licença MIT"></a>
 </div>
@@ -96,15 +96,17 @@ por `drift` (SQLite) e `shared_preferences`. O design system
 compartilhado, cada componente com tema, dos botões ao bottom sheet
 usado em todo o app, vive em seu próprio pacote local,
 `packages/app_ui`; responsabilidades transversais (navegação, banco de
-dados, áudio, permissões) ficam em `lib/src/core`.
+dados, áudio, permissões) ficam em `lib/src/core`. As telas são enxutas:
+cada uma compõe componentes mantidos em
+`presentation/widgets/<nome_da_tela>/`, em vez de defini-los inline.
 
 ## Testes
 
-O projeto tem 177 arquivos de teste (120 no app, 57 em
-`packages/app_ui`), cobrindo repositórios, view models e widgets, além de
-40 arquivos de testes golden para o design system e as telas principais,
-e testes de integração para os fluxos de onboarding, reprodução e
-persistência. O CI exige cobertura mínima de linha de 97% no app e 98% em
+O projeto tem 181 arquivos de teste (124 no app, 57 em
+`packages/app_ui`), cobrindo repositórios, view models e widgets — 40
+deles são testes golden, que renderizam 86 imagens de referência do design
+system e das telas principais — além das suítes em `integration_test/`
+para os fluxos de onboarding, reprodução e persistência. O CI exige cobertura mínima de linha de 97% no app e 98% em
 `packages/app_ui`, junto do conjunto rigoroso de lints
 `very_good_analysis` e `dart format`.
 

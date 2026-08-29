@@ -6,7 +6,7 @@
 </div>
 <br>
 <div align="center">
-<a href="https://github.com/dariomatias-dev/music_app/actions/workflows/ci.yml"><img src="https://github.com/dariomatias-dev/music_app/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+<a href="https://github.com/dariomatias-dev/music_app/actions/workflows/ci.yaml"><img src="https://github.com/dariomatias-dev/music_app/actions/workflows/ci.yaml/badge.svg" alt="CI"></a>
 <img src="https://img.shields.io/badge/lints-very__good__analysis-blueviolet?style=flat" alt="very_good_analysis">
 <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="MIT 许可证"></a>
 </div>
@@ -88,11 +88,11 @@
 - **storage**：按文件夹统计的空间占用，以及扫描的纳入/排除设置。
 - **search**、**home**、**settings**、**onboarding**、**splash**：其余的顶层界面。
 
-状态通过 Riverpod 管理（通过 provider 暴露的 `ViewModel`/`Notifier` 类），路由使用 `go_router`，持久化通过 `drift`（SQLite）和 `shared_preferences` 实现。共享的设计系统——从按钮到全应用通用的底部弹窗等所有带主题的组件——都放在独立的本地包 `packages/app_ui` 中；横切关注点（导航、数据库、音频、权限）则位于 `lib/src/core`。
+状态通过 Riverpod 管理（通过 provider 暴露的 `ViewModel`/`Notifier` 类），路由使用 `go_router`，持久化通过 `drift`（SQLite）和 `shared_preferences` 实现。共享的设计系统——从按钮到全应用通用的底部弹窗等所有带主题的组件——都放在独立的本地包 `packages/app_ui` 中；横切关注点（导航、数据库、音频、权限）则位于 `lib/src/core`。界面文件保持精简：每个界面只负责组合放在 `presentation/widgets/<界面名>/` 下的组件，而不是在界面文件内内联定义。
 
 ## 测试
 
-项目共有 177 个测试文件（应用本体 120 个，`packages/app_ui` 中 57 个），覆盖仓库、view model 和组件，另外还有 40 个针对设计系统和关键界面的 golden 测试文件，以及覆盖引导、播放和数据持久化流程的集成测试。CI 强制要求应用本体的行覆盖率不低于 97%，`packages/app_ui` 不低于 98%，并配合严格的 `very_good_analysis` lint 规则集和 `dart format` 检查。
+项目共有 181 个测试文件（应用本体 124 个，`packages/app_ui` 中 57 个），覆盖仓库、view model 和组件——其中 40 个是 golden 测试，为设计系统和关键界面渲染 86 张参考图——此外还有 `integration_test/` 中覆盖引导、播放和数据持久化流程的集成测试。CI 强制要求应用本体的行覆盖率不低于 97%，`packages/app_ui` 不低于 98%，并配合严格的 `very_good_analysis` lint 规则集和 `dart format` 检查。
 
 ```sh
 fvm flutter analyze

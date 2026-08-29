@@ -6,7 +6,7 @@
 </div>
 <br>
 <div align="center">
-<a href="https://github.com/dariomatias-dev/music_app/actions/workflows/ci.yml"><img src="https://github.com/dariomatias-dev/music_app/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+<a href="https://github.com/dariomatias-dev/music_app/actions/workflows/ci.yaml"><img src="https://github.com/dariomatias-dev/music_app/actions/workflows/ci.yaml/badge.svg" alt="CI"></a>
 <img src="https://img.shields.io/badge/lints-very__good__analysis-blueviolet?style=flat" alt="very_good_analysis">
 <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="MIT License"></a>
 </div>
@@ -96,16 +96,18 @@ through providers), routing with `go_router`, and persistence through
 every themed component from buttons to the bottom sheet used across the
 app, lives in its own local package, `packages/app_ui`; cross-cutting
 concerns (navigation, the database, audio, permissions) live under
-`lib/src/core`.
+`lib/src/core`. Screens stay thin: each one composes components kept in
+`presentation/widgets/<screen_name>/` rather than defining them inline.
 
 ## Testing
 
-The project has 177 test files (120 in the app, 57 in `packages/app_ui`),
-covering repositories, view models, and widgets, plus 40 golden test files
-for the design system and key screens, and integration tests for the
-onboarding, playback, and persistence flows. CI enforces a minimum line
-coverage of 97% for the app and 98% for `packages/app_ui`, alongside the
-strict `very_good_analysis` lint set and `dart format`.
+The project has 181 test files (124 in the app, 57 in `packages/app_ui`)
+covering repositories, view models, and widgets — 40 of them golden tests,
+rendering 86 reference images across the design system and key screens —
+plus `integration_test/` suites for the onboarding, playback, and
+persistence flows. CI enforces a minimum line coverage of 97% for the app
+and 98% for `packages/app_ui`, alongside the strict `very_good_analysis`
+lint set and `dart format`.
 
 ```sh
 fvm flutter analyze
