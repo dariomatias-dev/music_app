@@ -6,7 +6,7 @@
 </div>
 <br>
 <div align="center">
-<a href="https://github.com/dariomatias-dev/music_app/actions/workflows/ci.yml"><img src="https://github.com/dariomatias-dev/music_app/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+<a href="https://github.com/dariomatias-dev/music_app/actions/workflows/ci.yaml"><img src="https://github.com/dariomatias-dev/music_app/actions/workflows/ci.yaml/badge.svg" alt="CI"></a>
 <img src="https://img.shields.io/badge/lints-very__good__analysis-blueviolet?style=flat" alt="very_good_analysis">
 <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="Licencia MIT"></a>
 </div>
@@ -96,15 +96,18 @@ persistencia mediante `drift` (SQLite) y `shared_preferences`. El sistema
 de diseño compartido, cada componente con tema, desde los botones hasta
 el bottom sheet usado en toda la app, vive en su propio paquete local,
 `packages/app_ui`; las responsabilidades transversales (enrutamiento,
-base de datos, audio, permisos) están en `lib/src/core`.
+base de datos, audio, permisos) están en `lib/src/core`. Las pantallas se
+mantienen ligeras: cada una compone componentes ubicados en
+`presentation/widgets/<nombre_de_pantalla>/` en lugar de definirlos inline.
 
 ## Pruebas
 
-El proyecto tiene 177 archivos de prueba (120 en la app, 57 en
-`packages/app_ui`), cubriendo repositorios, view models y widgets, más 40
-archivos de pruebas golden para el sistema de diseño y las pantallas
-principales, y pruebas de integración para los flujos de onboarding,
-reproducción y persistencia. La CI exige una cobertura de línea mínima del
+El proyecto tiene 181 archivos de prueba (124 en la app, 57 en
+`packages/app_ui`), cubriendo repositorios, view models y widgets — 40 de
+ellos son pruebas golden, que renderizan 86 imágenes de referencia del
+sistema de diseño y las pantallas principales — más las suites de
+`integration_test/` para los flujos de onboarding, reproducción y
+persistencia. La CI exige una cobertura de línea mínima del
 97% en la app y del 98% en `packages/app_ui`, además del conjunto estricto
 de lints `very_good_analysis` y `dart format`.
 
