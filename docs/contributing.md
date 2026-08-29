@@ -37,25 +37,32 @@ Run the app on a connected device or emulator with `fvm flutter run`.
 - **Run the full check locally** before pushing:
 
   ```sh
+  ./scripts/verify.sh
+  ```
+
+  It runs what CI runs, scoped to the packages you changed: formatting, analysis, tests, and the coverage threshold (97% for the app, 98% for `packages/app_ui`). Add `--gen` when the change touched anything `build_runner` or `gen-l10n` reads, `--all` to check both packages regardless of what changed, or `--skip-tests` for a quick formatting and analysis pass mid-change.
+
+  The same checks by hand, run inside the package being changed:
+
+  ```sh
   fvm flutter analyze
   fvm dart format --output=none --set-exit-if-changed lib test
   fvm flutter test --coverage
   ./scripts/check_coverage.sh coverage/lcov.info 97
   ```
 
-  (Run the same four commands inside `packages/app_ui/` for changes there; its coverage threshold is 98.)
-
 - **Commit messages** follow [Conventional Commits](https://www.conventionalcommits.org/): `feat:`, `fix:`, `docs:`, `refactor:`, `test:`, `ci:`, etc., with a short imperative subject. Look at `git log` for examples already in the repo.
 
 ## What CI checks
 
-Every push and pull request runs [`.github/workflows/ci.yaml`](../.github/workflows/ci.yaml), in three jobs:
+Every push and pull request runs [`.github/workflows/ci.yaml`](../.github/workflows/ci.yaml), in four jobs:
 
 | Job | What it does |
 | --- | --- |
 | `music_app` | Installs dependencies, regenerates code and localizations, then **fails if that regeneration produced a diff** — generated files must be committed and up to date. Then formatting, analysis, tests, and the 97% coverage gate. |
 | `Build APK` | Runs after `music_app` passes, and builds a release APK, uploaded as a workflow artifact kept for 14 days. |
 | `packages/app_ui` | Formatting, analysis, tests, and the 98% coverage gate for the design-system package, independently of the app. |
+| `Integration tests` | Runs after `music_app` passes, boots an Android emulator and runs every `integration_test/` suite on it in one session, since booting is by far the slowest step. These need a device: the flows read through drift's stream queries, which never emit under the fake async a plain `flutter test` run uses. The job enables KVM first, without which the emulator falls back to software rendering and times out, and gets a 45-minute budget for the same reason. |
 
 Pushing a `v*.*.*` tag runs [`.github/workflows/release.yml`](../.github/workflows/release.yml) instead: the same checks, then a release APK published to a GitHub release with generated notes. Note that the release build is signed with the **debug keystore** on purpose — this app has no production signing config.
 
@@ -70,7 +77,18 @@ act pull_request -j app               # one job, by its id
 act pull_request -j app --dryrun      # print the steps without running them
 ```
 
-`-j` takes the job **id** (`app`, `build_apk`, `app_ui`, `release`), not the display name in the table above; `act -l` prints both. The first real run pulls a multi-gigabyte runner image, and `act` approximates GitHub's runners rather than reproducing them exactly — a green `act` run is a good signal, not a guarantee.
+`-j` takes the job **id** (`app`, `build_apk`, `integration`, `app_ui`, `release`), not the display name in the table above; `act -l` prints both. The first real run pulls a multi-gigabyte runner image, and `act` approximates GitHub's runners rather than reproducing them exactly — a green `act` run is a good signal, not a guarantee.
+
+## Working with an AI agent
+
+The repo carries its own agent configuration, so an assistant follows the same process a contributor does instead of improvising one per prompt:
+
+- [`CLAUDE.md`](../CLAUDE.md) is the working agreement, read on every turn: where code belongs, what each kind of change obliges you to test, and which documents a change invalidates.
+- [`.claude/skills/ship-change/SKILL.md`](../.claude/skills/ship-change/SKILL.md) holds the per-change recipes: a core service, a feature slice, an `app_ui` component, a schema change with its migration, a localized string, a dependency bump.
+- [`.claude/settings.json`](../.claude/settings.json) wires two hooks. Every Dart file written is formatted immediately, and a `Stop` hook refuses to end a turn while code changes have not passed `./scripts/verify.sh`.
+- [`.github/pull_request_template.md`](../.github/pull_request_template.md) puts the same checklist in front of the reviewer.
+
+None of it replaces CI, which stays the authority. It exists so the local pass matches what CI will say. Changing the agreement, the recipes or the hooks is a normal change: update this section along with it.
 
 ## Dependency updates
 
