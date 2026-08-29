@@ -7,6 +7,7 @@
 <br>
 <div align="center">
 <a href="https://github.com/dariomatias-dev/music_app/actions/workflows/ci.yaml"><img src="https://github.com/dariomatias-dev/music_app/actions/workflows/ci.yaml/badge.svg" alt="CI"></a>
+<a href="https://codecov.io/gh/dariomatias-dev/music_app"><img src="https://codecov.io/gh/dariomatias-dev/music_app/branch/main/graph/badge.svg" alt="Coverage"></a>
 <img src="https://img.shields.io/badge/lints-very__good__analysis-blueviolet?style=flat" alt="very_good_analysis">
 <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="Licencia MIT"></a>
 </div>
@@ -112,9 +113,15 @@ copia de seguridad/restauración. La CI exige una cobertura de línea mínima de
 97% en la app y del 98% en `packages/app_ui`, además del conjunto estricto
 de lints `very_good_analysis` y `dart format`.
 
+Cada ejecución de la CI sube su informe `lcov` a
+[Codecov](https://codecov.io/gh/dariomatias-dev/music_app), que sigue los dos
+paquetes como flags separados y comenta la diferencia de cobertura en cada pull
+request. Para un informe línea a línea en local, genera uno del mismo archivo:
+
 ```sh
 fvm flutter analyze
-fvm flutter test
+fvm flutter test --coverage
+genhtml coverage/lcov.info -o coverage/html   # requiere lcov instalado
 ```
 
 ## Capturas de Pantalla

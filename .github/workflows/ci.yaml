@@ -60,6 +60,17 @@ jobs:
       - name: Check coverage
         run: ./scripts/check_coverage.sh coverage/lcov.info 97
 
+      # Reporting only: check_coverage.sh above is what fails the build. Forks
+      # cannot read the token, so an upload failure must not fail the job.
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: coverage/lcov.info
+          flags: app
+          name: music_app
+          fail_ci_if_error: false
+
   build_apk:
     name: Build APK
     needs: app
@@ -169,3 +180,17 @@ jobs:
 
       - name: Check coverage
         run: ../../scripts/check_coverage.sh coverage/lcov.info 98
+
+      # lcov paths are relative to the package root; Codecov matches them
+      # against the repository, so they need the package prefix.
+      - name: Rewrite coverage paths to be repository-relative
+        run: sed -i 's|^SF:|SF:packages/app_ui/|' coverage/lcov.info
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: packages/app_ui/coverage/lcov.info
+          flags: app_ui
+          name: app_ui
+          fail_ci_if_error: false

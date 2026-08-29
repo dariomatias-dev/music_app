@@ -7,6 +7,7 @@
 <br>
 <div align="center">
 <a href="https://github.com/dariomatias-dev/music_app/actions/workflows/ci.yaml"><img src="https://github.com/dariomatias-dev/music_app/actions/workflows/ci.yaml/badge.svg" alt="CI"></a>
+<a href="https://codecov.io/gh/dariomatias-dev/music_app"><img src="https://codecov.io/gh/dariomatias-dev/music_app/branch/main/graph/badge.svg" alt="Coverage"></a>
 <img src="https://img.shields.io/badge/lints-very__good__analysis-blueviolet?style=flat" alt="very_good_analysis">
 <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="MIT 许可证"></a>
 </div>
@@ -94,9 +95,12 @@
 
 项目共有 181 个测试文件（应用本体 124 个，`packages/app_ui` 中 57 个），覆盖仓库、view model 和组件——其中 40 个是 golden 测试，为设计系统和关键界面渲染 86 张参考图——此外还有 `integration_test/` 中的集成测试，覆盖引导、播放、数据持久化、播放列表、收藏、搜索、语言切换以及备份/恢复流程。CI 强制要求应用本体的行覆盖率不低于 97%，`packages/app_ui` 不低于 98%，并配合严格的 `very_good_analysis` lint 规则集和 `dart format` 检查。
 
+每次 CI 运行都会将 `lcov` 报告上传到 [Codecov](https://codecov.io/gh/dariomatias-dev/music_app)，它将两个包作为独立的 flag 跟踪，并在每个 pull request 上评论覆盖率变化。如需在本地查看逐行报告，可以用同一份文件生成：
+
 ```sh
 fvm flutter analyze
-fvm flutter test
+fvm flutter test --coverage
+genhtml coverage/lcov.info -o coverage/html   # 需要先安装 lcov
 ```
 
 ## 截图

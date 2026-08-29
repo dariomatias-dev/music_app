@@ -59,12 +59,26 @@ Cada push y pull request ejecuta [`.github/workflows/ci.yaml`](../.github/workfl
 
 | Job | Qué hace |
 | --- | --- |
-| `music_app` | Instala dependencias, regenera código y localizaciones, y luego **falla si esa regeneración produce un diff** — los archivos generados deben estar commiteados y actualizados. Después: formato, análisis, pruebas y el umbral del 97% de cobertura. |
+| `music_app` | Instala dependencias, regenera código y localizaciones, y luego **falla si esa regeneración produce un diff** — los archivos generados deben estar commiteados y actualizados. Después: formato, análisis, pruebas y el umbral del 97% de cobertura, y sube el informe a Codecov bajo el flag `app`. |
 | `Build APK` | Se ejecuta tras aprobar `music_app`, y compila una APK de release, publicada como artefacto del workflow y conservada durante 14 días. |
-| `packages/app_ui` | Formato, análisis, pruebas y el umbral del 98% de cobertura del paquete del sistema de diseño, de forma independiente de la app. |
+| `packages/app_ui` | Formato, análisis, pruebas y el umbral del 98% de cobertura del paquete del sistema de diseño, de forma independiente de la app, subido a Codecov bajo el flag `app_ui`. |
 | `Integration tests` | Se ejecuta tras aprobar `music_app`, arranca un emulador de Android y ejecuta en él todas las suites de `integration_test/` en una misma sesión, ya que arrancarlo es con diferencia el paso más lento. Necesitan un dispositivo: los flujos leen a través de las stream queries de drift, que nunca emiten bajo el fake async de un `flutter test` normal. El job habilita KVM primero — sin él el emulador cae en renderizado por software y agota el tiempo — y por eso dispone de 45 minutos. |
 
 Hacer push de una etiqueta `v*.*.*` ejecuta [`.github/workflows/release.yml`](../.github/workflows/release.yml): las mismas verificaciones, y luego una APK de release publicada en un release de GitHub con notas generadas automáticamente. Ten en cuenta que la compilación de release se firma con la **keystore de debug** a propósito — esta app no tiene configuración de firma de producción.
+
+### Informes de cobertura
+
+[`scripts/check_coverage.sh`](../scripts/check_coverage.sh) es lo que hace fallar una compilación; [Codecov](https://codecov.io/gh/dariomatias-dev/music_app) es lo que hace legible el número. Cada paquete sube su `lcov.info` bajo su propio flag, así los dos umbrales se siguen por separado, y cada pull request recibe un comentario con la diferencia por flag y anotaciones en línea sobre las líneas nuevas sin cubrir. [`codecov.yml`](../codecov.yml) contiene los objetivos y repite las exclusiones del script: fuentes generadas, `lib/l10n/` y las declaraciones de tablas de drift.
+
+Las subidas se autentican con un secreto del repositorio `CODECOV_TOKEN`. Los pull requests desde forks no pueden leerlo y recurren a la subida sin token de Codecov, por eso el paso está configurado a propósito con `fail_ci_if_error: false`: una subida fallida es un informe que falta, nunca una compilación fallida.
+
+Para lo mismo en local, sin cuenta, renderiza el archivo `lcov` a HTML:
+
+```sh
+fvm flutter test --coverage
+genhtml coverage/lcov.info -o coverage/html   # apt install lcov
+xdg-open coverage/html/index.html
+```
 
 ### Ejecutar los workflows localmente
 

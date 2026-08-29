@@ -7,6 +7,7 @@
 <br>
 <div align="center">
 <a href="https://github.com/dariomatias-dev/music_app/actions/workflows/ci.yaml"><img src="https://github.com/dariomatias-dev/music_app/actions/workflows/ci.yaml/badge.svg" alt="CI"></a>
+<a href="https://codecov.io/gh/dariomatias-dev/music_app"><img src="https://codecov.io/gh/dariomatias-dev/music_app/branch/main/graph/badge.svg" alt="Coverage"></a>
 <img src="https://img.shields.io/badge/lints-very__good__analysis-blueviolet?style=flat" alt="very_good_analysis">
 <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="MIT License"></a>
 </div>
@@ -110,9 +111,15 @@ enforces a minimum line coverage of 97% for the app
 and 98% for `packages/app_ui`, alongside the strict `very_good_analysis`
 lint set and `dart format`.
 
+Every CI run uploads its `lcov` report to
+[Codecov](https://codecov.io/gh/dariomatias-dev/music_app), which tracks the two
+packages as separate flags and comments the coverage delta on each pull request.
+For a line-by-line report locally, generate one from the same file:
+
 ```sh
 fvm flutter analyze
-fvm flutter test
+fvm flutter test --coverage
+genhtml coverage/lcov.info -o coverage/html   # needs lcov installed
 ```
 
 ## Screenshots
