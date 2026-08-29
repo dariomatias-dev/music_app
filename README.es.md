@@ -106,8 +106,9 @@ El proyecto tiene 181 archivos de prueba (124 en la app, 57 en
 `packages/app_ui`), cubriendo repositorios, view models y widgets — 40 de
 ellos son pruebas golden, que renderizan 86 imágenes de referencia del
 sistema de diseño y las pantallas principales — más las suites de
-`integration_test/` para los flujos de onboarding, reproducción y
-persistencia. La CI exige una cobertura de línea mínima del
+`integration_test/` que cubren onboarding, reproducción, persistencia,
+listas de reproducción, favoritos, búsqueda, cambio de idioma y
+copia de seguridad/restauración. La CI exige una cobertura de línea mínima del
 97% en la app y del 98% en `packages/app_ui`, además del conjunto estricto
 de lints `very_good_analysis` y `dart format`.
 
@@ -151,10 +152,12 @@ fvm flutter run
 
 Los scripts utilitarios están en `scripts/`.
 
-| Script           | Comando                                          | Descripción                                                                                                                                                                                       |
-| ---------------- | ------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `screenshot`     | `scripts/screenshot.sh [device-id]`              | Recorre las pantallas principales de la app en un dispositivo o emulador conectado y guarda una captura de cada una en `screenshots/`, usadas en este README. Ejecuta `fvm flutter devices` para listar los ids de dispositivos disponibles. |
-| `check_coverage` | `scripts/check_coverage.sh <lcov-file> <minimum>` | Falla si la cobertura de línea de un reporte `lcov.info` (generado con `flutter test --coverage`) cae por debajo de `<minimum>`. Se usa en CI para exigir los umbrales de arriba; ejecútalo localmente tras generar la cobertura para verificar antes de hacer push. |
+| Script           | Comando                                            | Descripción                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| ---------------- | -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `verify`         | `scripts/verify.sh [--all] [--gen] [--skip-tests]` | Ejecuta las mismas verificaciones que CI (formato, análisis, pruebas, cobertura), limitadas a los paquetes con cambios pendientes. `--all` verifica ambos de todos modos, `--gen` regenera código y localizaciones antes, `--skip-tests` lo restringe a formato y análisis. Guarda una marca al pasar, que el flujo de agente del repositorio lee para saber si el árbol de trabajo sigue correspondiendo a una ejecución aprobada. |
+| `workspace_hash` | `scripts/workspace_hash.sh`                        | Imprime un hash de los archivos fuente que cubre el control de calidad. Lo usan `verify.sh` y el flujo de agente para detectar si el código cambió desde la última ejecución aprobada; rara vez se ejecuta a mano.                                                                                                                                                                                                                  |
+| `screenshot`     | `scripts/screenshot.sh [device-id]`                | Recorre las pantallas principales de la app en un dispositivo o emulador conectado y guarda una captura de cada una en `screenshots/`, usadas en este README. Ejecuta `fvm flutter devices` para listar los ids de dispositivos disponibles.                                                                                                                                                                                        |
+| `check_coverage` | `scripts/check_coverage.sh <lcov-file> <minimum>`  | Falla si la cobertura de línea de un reporte `lcov.info` (generado con `flutter test --coverage`) cae por debajo de `<minimum>`. Se usa en CI para exigir los umbrales de arriba; ejecútalo localmente tras generar la cobertura para verificar antes de hacer push.                                                                                                                                                                |
 
 ## Documentación
 

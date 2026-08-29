@@ -37,25 +37,32 @@ Ejecuta la app en un dispositivo conectado o emulador con `fvm flutter run`.
 - **Ejecuta la verificación completa localmente** antes de hacer push:
 
   ```sh
+  ./scripts/verify.sh
+  ```
+
+  Ejecuta lo mismo que CI, limitado a los paquetes que cambiaste: formato, análisis, pruebas y el umbral de cobertura (97% para la app, 98% para `packages/app_ui`). Agrega `--gen` cuando el cambio tocó algo que leen `build_runner` o `gen-l10n`, `--all` para verificar ambos paquetes sin importar qué cambió, o `--skip-tests` para una pasada rápida de formato y análisis a mitad del trabajo.
+
+  Las mismas verificaciones a mano, ejecutadas dentro del paquete que estás cambiando:
+
+  ```sh
   fvm flutter analyze
   fvm dart format --output=none --set-exit-if-changed lib test
   fvm flutter test --coverage
   ./scripts/check_coverage.sh coverage/lcov.info 97
   ```
 
-  (Ejecuta los mismos cuatro comandos dentro de `packages/app_ui/` para cambios ahí; su umbral de cobertura es 98.)
-
 - **Los mensajes de commit** siguen [Conventional Commits](https://www.conventionalcommits.org/): `feat:`, `fix:`, `docs:`, `refactor:`, `test:`, `ci:`, etc., con un asunto corto en imperativo. Revisa el `git log` para ver ejemplos ya presentes en el repositorio.
 
 ## Qué verifica el CI
 
-Cada push y pull request ejecuta [`.github/workflows/ci.yaml`](../.github/workflows/ci.yaml), en tres jobs:
+Cada push y pull request ejecuta [`.github/workflows/ci.yaml`](../.github/workflows/ci.yaml), en cuatro jobs:
 
 | Job | Qué hace |
 | --- | --- |
 | `music_app` | Instala dependencias, regenera código y localizaciones, y luego **falla si esa regeneración produce un diff** — los archivos generados deben estar commiteados y actualizados. Después: formato, análisis, pruebas y el umbral del 97% de cobertura. |
 | `Build APK` | Se ejecuta tras aprobar `music_app`, y compila una APK de release, publicada como artefacto del workflow y conservada durante 14 días. |
 | `packages/app_ui` | Formato, análisis, pruebas y el umbral del 98% de cobertura del paquete del sistema de diseño, de forma independiente de la app. |
+| `Integration tests` | Se ejecuta tras aprobar `music_app`, arranca un emulador de Android y ejecuta en él todas las suites de `integration_test/` en una misma sesión, ya que arrancarlo es con diferencia el paso más lento. Necesitan un dispositivo: los flujos leen a través de las stream queries de drift, que nunca emiten bajo el fake async de un `flutter test` normal. El job habilita KVM primero — sin él el emulador cae en renderizado por software y agota el tiempo — y por eso dispone de 45 minutos. |
 
 Hacer push de una etiqueta `v*.*.*` ejecuta [`.github/workflows/release.yml`](../.github/workflows/release.yml): las mismas verificaciones, y luego una APK de release publicada en un release de GitHub con notas generadas automáticamente. Ten en cuenta que la compilación de release se firma con la **keystore de debug** a propósito — esta app no tiene configuración de firma de producción.
 
@@ -70,7 +77,18 @@ act pull_request -j app               # un solo job, por su id
 act pull_request -j app --dryrun      # imprime los pasos sin ejecutarlos
 ```
 
-`-j` recibe el **id** del job (`app`, `build_apk`, `app_ui`, `release`), no el nombre visible de la tabla de arriba; `act -l` muestra ambos. La primera ejecución real descarga una imagen de runner de varios gigabytes, y `act` aproxima los runners de GitHub en lugar de reproducirlos exactamente — un `act` en verde es una buena señal, no una garantía.
+`-j` recibe el **id** del job (`app`, `build_apk`, `integration`, `app_ui`, `release`), no el nombre visible de la tabla de arriba; `act -l` muestra ambos. La primera ejecución real descarga una imagen de runner de varios gigabytes, y `act` aproxima los runners de GitHub en lugar de reproducirlos exactamente — un `act` en verde es una buena señal, no una garantía.
+
+## Trabajar con un agente de IA
+
+El repositorio lleva su propia configuración de agente, para que un asistente siga el mismo proceso que un colaborador en lugar de improvisar uno por cada prompt:
+
+- [`CLAUDE.md`](../CLAUDE.md) es el acuerdo de trabajo, leído en cada turno: dónde va el código, qué debe probar cada tipo de cambio y qué documentos invalida un cambio.
+- [`.claude/skills/ship-change/SKILL.md`](../.claude/skills/ship-change/SKILL.md) contiene las recetas por tipo de cambio: un servicio de `core`, una feature, un componente de `app_ui`, un cambio de esquema con su migración, un texto localizado, una actualización de dependencia.
+- [`.claude/settings.json`](../.claude/settings.json) conecta dos hooks. Cada archivo Dart escrito se formatea de inmediato, y un hook `Stop` se niega a terminar el turno mientras haya cambios de código que no pasaron `./scripts/verify.sh`.
+- [`.github/pull_request_template.md`](../.github/pull_request_template.md) pone la misma lista de verificación frente a quien revisa.
+
+Nada de esto reemplaza al CI, que sigue siendo la autoridad. Existe para que la verificación local coincida con lo que dirá el CI. Cambiar el acuerdo, las recetas o los hooks es un cambio normal: actualiza esta sección junto con ellos.
 
 ## Actualizaciones de dependencias
 

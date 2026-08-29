@@ -37,25 +37,32 @@ fvm flutter gen-l10n
 - **提交前在本地跑完整检查**：
 
   ```sh
+  ./scripts/verify.sh
+  ```
+
+  它运行的就是 CI 运行的内容，范围限定为你改动过的包：格式化、静态分析、测试和覆盖率门槛（应用 97%，`packages/app_ui` 98%）。如果改动涉及 `build_runner` 或 `gen-l10n` 读取的文件，加上 `--gen`；`--all` 会不管改了什么都检查两个包；`--skip-tests` 用于开发过程中只做格式化和分析的快速检查。
+
+  手动执行同样的检查时，在被改动的包目录下运行：
+
+  ```sh
   fvm flutter analyze
   fvm dart format --output=none --set-exit-if-changed lib test
   fvm flutter test --coverage
   ./scripts/check_coverage.sh coverage/lcov.info 97
   ```
 
-  （对 `packages/app_ui/` 的改动，在该目录下运行同样的四个命令；那里的覆盖率门槛是 98。）
-
 - **提交信息**遵循 [Conventional Commits](https://www.conventionalcommits.org/) 规范：`feat:`、`fix:`、`docs:`、`refactor:`、`test:`、`ci:` 等，配一句简短的祈使句主题。可以看 `git log` 里已有的例子。
 
 ## CI 检查什么
 
-每次 push 和 pull request 都会运行 [`.github/workflows/ci.yaml`](../.github/workflows/ci.yaml)，共三个 job：
+每次 push 和 pull request 都会运行 [`.github/workflows/ci.yaml`](../.github/workflows/ci.yaml)，共四个 job：
 
 | Job | 具体做什么 |
 | --- | --- |
 | `music_app` | 安装依赖，重新生成代码和本地化文件，**如果这一步产生了 diff 就直接失败**——生成的文件必须已提交且是最新的。随后是格式检查、静态分析、测试，以及 97% 的覆盖率门槛。 |
 | `Build APK` | 在 `music_app` 通过后运行，构建 release APK，作为 workflow 产物上传并保留 14 天。 |
 | `packages/app_ui` | 独立于应用本体，对设计系统包执行格式检查、静态分析、测试，以及 98% 的覆盖率门槛。 |
+| `Integration tests` | 在 `music_app` 通过后运行，启动一个 Android 模拟器，并在同一个会话中运行 `integration_test/` 下的所有测试套件——启动模拟器是其中最慢的一步。这些测试必须有设备：相关流程会读取 drift 的 stream query，而它们在普通 `flutter test` 的 fake async 下永远不会发出事件。该 job 会先启用 KVM，否则模拟器会退回软件渲染并超时；也正因如此它的超时预算是 45 分钟。 |
 
 推送 `v*.*.*` 形式的 tag 则会运行 [`.github/workflows/release.yml`](../.github/workflows/release.yml)：执行同样的检查，然后把 release APK 发布到 GitHub release，并自动生成发布说明。注意 release 构建是**有意**使用 debug keystore 签名的——本应用没有生产环境的签名配置。
 
@@ -70,7 +77,18 @@ act pull_request -j app               # 只运行某一个 job，按 id 指定
 act pull_request -j app --dryrun      # 只打印步骤，不实际执行
 ```
 
-`-j` 接收的是 job 的 **id**（`app`、`build_apk`、`app_ui`、`release`），而不是上表中的显示名称；`act -l` 会同时列出两者。首次真正运行会拉取数 GB 的 runner 镜像，而且 `act` 只是近似模拟 GitHub 的 runner，并非完全一致——`act` 跑通是一个好信号，但不能作为保证。
+`-j` 接收的是 job 的 **id**（`app`、`build_apk`、`integration`、`app_ui`、`release`），而不是上表中的显示名称；`act -l` 会同时列出两者。首次真正运行会拉取数 GB 的 runner 镜像，而且 `act` 只是近似模拟 GitHub 的 runner，并非完全一致——`act` 跑通是一个好信号，但不能作为保证。
+
+## 与 AI agent 协作
+
+仓库自带 agent 配置，让助手遵循与贡献者相同的流程，而不是每次提示都临时发挥：
+
+- [`CLAUDE.md`](../CLAUDE.md) 是工作约定，每一轮都会读取：代码放在哪里、每类改动必须测试什么、一次改动会让哪些文档失效。
+- [`.claude/skills/ship-change/SKILL.md`](../.claude/skills/ship-change/SKILL.md) 收录按改动类型划分的操作步骤：`core` 服务、功能切片、`app_ui` 组件、带迁移的数据库结构改动、本地化文案、依赖升级。
+- [`.claude/settings.json`](../.claude/settings.json) 配置了两个 hook。每次写入的 Dart 文件会立即格式化；`Stop` hook 在代码改动尚未通过 `./scripts/verify.sh` 时拒绝结束当前回合。
+- [`.github/pull_request_template.md`](../.github/pull_request_template.md) 把同一份检查清单摆在评审者面前。
+
+这些都不能替代 CI，CI 仍然是最终标准。它们的作用是让本地检查的结果与 CI 一致。修改这份约定、操作步骤或 hook 属于普通改动：请同时更新本节。
 
 ## 依赖更新
 
