@@ -24,7 +24,11 @@ lib/
       <feature>/
         data/                # repositories implementations, data sources, DTOs/mappers
         domain/              # entities, repository interfaces, use cases
-        presentation/        # screens, widgets, view models (providers)
+        presentation/
+          providers/         # derived/presentation state
+          screens/           # one file per route
+          view_models/       # Notifier/AsyncNotifier classes
+          widgets/           # feature-wide widgets, plus one folder per screen
 packages/
   app_ui/                    # standalone design-system package (see below)
 ```
@@ -40,6 +44,20 @@ Every feature that touches persisted state follows the same three layers:
 - **`presentation`** — screens and widgets, plus `ViewModel`s: Riverpod `Notifier`/`AsyncNotifier` classes exposed through generated (`riverpod_generator`) providers. A screen watches providers; it never talks to a repository directly for anything beyond a `ref.read(...)` one-off call triggered by a user action.
 
 A feature only depends on another feature's `domain` layer (entities, repository interfaces), never its `data` or `presentation`. Providers wire the concrete implementation in per-feature `*_data_providers.dart` files.
+
+## Widget organization
+
+Screens stay thin. A screen file watches the providers it needs, owns the callbacks a user action triggers, and composes widgets — nothing it renders is defined inline. Those widgets live under the feature's `presentation/widgets/`, split two ways:
+
+- `widgets/<name>.dart` — shared within the feature: used by more than one screen, or by a sheet or dialog the feature exposes (`media_row.dart`, `playlist_cover_art.dart`, `track_more_sheet.dart`).
+- `widgets/<screen_name>/<component>.dart` — owned by a single screen, one public class per file, named for what it renders (`widgets/album_screen/album_header.dart`, `widgets/storage_screen/storage_folder_header.dart`).
+
+Two conventions follow from this:
+
+- **No private widget classes trailing a screen file, and no `_buildX()` helper methods.** Both keep a component from rebuilding independently, and a `_buildX()` method can never be `const`. A component gets a real class in its own file instead.
+- **Per-screen components are public** (`AlbumHeader`, not `_AlbumHeader`), since they now cross a file boundary. They stay feature-internal by convention: nothing outside the owning feature imports them. A component that a second feature genuinely needs belongs in `app_ui` if it's presentation-only, or in `lib/src/core/widgets/` if it depends on app state.
+
+A screen file growing past roughly 300–400 lines is the signal that a component is still inlined and should be pulled out.
 
 ## State management
 
@@ -73,7 +91,7 @@ Two independent backup mechanisms exist, both reachable from Settings → Storag
 
 [just_audio](https://pub.dev/packages/just_audio) drives actual playback; [audio_service](https://pub.dev/packages/audio_service) exposes it to the OS (lock screen, notification, Bluetooth controls) through `MusicAudioHandler`. Both the OS-facing metadata and the app's own crossfade effect key off the same upstream signal — `just_audio`'s native `currentIndex` change on a track boundary — so they never drift out of sync with each other.
 
-Crossfade, as implemented today, is a single-player volume ramp: the native engine performs its own instant gapless switch from track A to B, and `PlaybackTransitionEffects` only fades B in from silence afterward — it is not two overlapping audible sources. This is a known simplification, not a bug (see `ROADMAP.md`).
+Crossfade, as implemented today, is a single-player volume ramp: the native engine performs its own instant gapless switch from track A to B, and `PlaybackTransitionEffects` only fades B in from silence afterward — it is not two overlapping audible sources. This is a known simplification, not a bug.
 
 ## Design system (`packages/app_ui`)
 

@@ -24,7 +24,11 @@ lib/
       <feature>/
         data/                # implementações de repositório, data sources, DTOs/mappers
         domain/              # entidades, interfaces de repositório, casos de uso
-        presentation/        # telas, widgets, view models (providers)
+        presentation/
+          providers/         # estado derivado/de apresentação
+          screens/           # um arquivo por rota
+          view_models/       # classes Notifier/AsyncNotifier
+          widgets/           # widgets da feature, mais uma pasta por tela
 packages/
   app_ui/                    # pacote independente do design system (veja abaixo)
 ```
@@ -40,6 +44,20 @@ Toda feature que toca em estado persistido segue as mesmas três camadas:
 - **`presentation`** — telas e widgets, mais `ViewModel`s: classes `Notifier`/`AsyncNotifier` do Riverpod expostas por providers gerados (`riverpod_generator`). Uma tela observa providers; ela nunca fala direto com um repositório, exceto por uma chamada pontual via `ref.read(...)` disparada por uma ação do usuário.
 
 Uma feature só depende da camada `domain` de outra feature (entidades, interfaces de repositório), nunca de sua `data` ou `presentation`. Providers ligam a implementação concreta em arquivos `*_data_providers.dart` por feature.
+
+## Organização dos widgets
+
+As telas são enxutas. Um arquivo de tela observa os providers que precisa, cuida dos callbacks disparados por ações do usuário e compõe widgets — nada do que ela renderiza é definido inline. Esses widgets ficam em `presentation/widgets/`, divididos em dois grupos:
+
+- `widgets/<nome>.dart` — compartilhados dentro da feature: usados por mais de uma tela, ou por um sheet ou diálogo que a feature expõe (`media_row.dart`, `playlist_cover_art.dart`, `track_more_sheet.dart`).
+- `widgets/<nome_da_tela>/<componente>.dart` — pertencem a uma única tela, uma classe pública por arquivo, nomeada pelo que renderiza (`widgets/album_screen/album_header.dart`, `widgets/storage_screen/storage_folder_header.dart`).
+
+Duas convenções decorrem disso:
+
+- **Nada de classes de widget privadas no fim do arquivo da tela, nem de métodos auxiliares `_buildX()`.** Os dois impedem que um componente seja reconstruído de forma independente, e um método `_buildX()` nunca pode ser `const`. Em vez disso, o componente vira uma classe de verdade no seu próprio arquivo.
+- **Componentes de tela são públicos** (`AlbumHeader`, não `_AlbumHeader`), já que agora cruzam a fronteira de um arquivo. Eles continuam internos à feature por convenção: nada fora da feature dona deles os importa. Um componente que uma segunda feature realmente precise pertence ao `app_ui`, se for só apresentação, ou a `lib/src/core/widgets/`, se depender do estado do app.
+
+Um arquivo de tela passando de mais ou menos 300–400 linhas é o sinal de que ainda há um componente inline esperando ser extraído.
 
 ## Gerenciamento de estado
 
@@ -73,7 +91,7 @@ Existem dois mecanismos de backup independentes, ambos acessíveis em Configura�
 
 [just_audio](https://pub.dev/packages/just_audio) conduz a reprodução em si; [audio_service](https://pub.dev/packages/audio_service) a expõe pro sistema operacional (tela de bloqueio, notificação, controles Bluetooth) através do `MusicAudioHandler`. Tanto o metadado voltado pro sistema quanto o efeito de crossfade do próprio app disparam a partir do mesmo sinal — a mudança nativa de `currentIndex` do `just_audio` numa transição de faixa — então nunca ficam dessincronizados entre si.
 
-O crossfade, como implementado hoje, é uma rampa de volume de um único player: o engine nativo faz sua própria troca gapless instantânea da faixa A pra B, e o `PlaybackTransitionEffects` só faz o fade-in de B a partir do silêncio depois disso — não são duas fontes audíveis se sobrepondo de fato. É uma simplificação conhecida, não um bug (veja o `ROADMAP.md`).
+O crossfade, como implementado hoje, é uma rampa de volume de um único player: o engine nativo faz sua própria troca gapless instantânea da faixa A pra B, e o `PlaybackTransitionEffects` só faz o fade-in de B a partir do silêncio depois disso — não são duas fontes audíveis se sobrepondo de fato. É uma simplificação conhecida, não um bug.
 
 ## Design system (`packages/app_ui`)
 
