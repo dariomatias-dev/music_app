@@ -62,7 +62,7 @@ fvm flutter gen-l10n
 | `music_app` | 安装依赖，重新生成代码和本地化文件，**如果这一步产生了 diff 就直接失败**——生成的文件必须已提交且是最新的。随后是格式检查、静态分析、测试，以及 97% 的覆盖率门槛，并以 `app` flag 将报告上传到 Codecov。 |
 | `Build APK` | 在 `music_app` 通过后运行，构建 release APK，作为 workflow 产物上传并保留 14 天。 |
 | `packages/app_ui` | 独立于应用本体，对设计系统包执行格式检查、静态分析、测试，以及 98% 的覆盖率门槛，并以 `app_ui` flag 上传到 Codecov。 |
-| `Integration tests` | 在 `music_app` 通过后运行，启动一个 Android 模拟器，并在同一个会话中运行 `integration_test/` 下的所有测试套件——启动模拟器是其中最慢的一步。这些测试必须有设备：相关流程会读取 drift 的 stream query，而它们在普通 `flutter test` 的 fake async 下永远不会发出事件。该 job 会先启用 KVM，否则模拟器会退回软件渲染并超时；也正因如此它的超时预算是 45 分钟。 |
+| `Integration tests` | 在 `music_app` 通过后运行，启动一个 Android 模拟器，并在同一个会话中运行 `integration_test/` 下的所有测试套件——启动模拟器是其中最慢的一步。这些测试必须有设备：相关流程会读取 drift 的 stream query，而它们在普通 `flutter test` 的 fake async 下永远不会发出事件。该 job 会先启用 KVM，否则模拟器会退回软件渲染并超时。它还会在启动模拟器**之前**构建一个 debug APK：冷启动的 Android 构建需要下载额外的 SDK platform 和 CMake 并编译原生源码，仅这一步就会超过每个套件 8 分钟的时限。两者相加，该 job 的超时预算为 40 分钟。 |
 
 推送 `v*.*.*` 形式的 tag 则会运行 [`.github/workflows/release.yml`](../.github/workflows/release.yml)：执行同样的检查，然后把 release APK 发布到 GitHub release，并自动生成发布说明。注意 release 构建是**有意**使用 debug keystore 签名的——本应用没有生产环境的签名配置。
 
