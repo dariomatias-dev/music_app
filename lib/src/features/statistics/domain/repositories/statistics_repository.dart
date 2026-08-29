@@ -22,4 +22,10 @@ abstract interface class StatisticsRepository {
   /// The user's current and longest streaks of consecutive days with at
   /// least one play, across all time.
   Stream<ListeningStreak> watchListeningStreak();
+
+  /// Whether any play has been recorded at all.
+  ///
+  /// Separate from the counts above because the statistics screen gates its
+  /// whole body on this: answering it does not need the events themselves.
+  Stream<bool> watchHasAnyPlay();
 }

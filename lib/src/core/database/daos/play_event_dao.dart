@@ -14,6 +14,29 @@ class PlayEventDao extends DatabaseAccessor<AppDatabase>
   /// Watches all play events.
   Stream<List<PlayEventRow>> watchAll() => select(playEventTable).watch();
 
+  /// Every play event started at or after [from], newest first.
+  ///
+  /// Filtering in SQL rather than over [watchAll]'s result: the history
+  /// grows without bound, and the statistics screen's shorter periods
+  /// otherwise pay to ship years of rows across just to discard them.
+  Stream<List<PlayEventRow>> watchSince(DateTime from) {
+    return (select(
+      playEventTable,
+    )..where((t) => t.startedAt.isBiggerOrEqualValue(from))).watch();
+  }
+
+  /// Whether any play event exists at all.
+  ///
+  /// Answers the "is there history?" question the statistics screen gates
+  /// on without reading the rows themselves.
+  Stream<bool> watchHasAny() {
+    final query = selectOnly(playEventTable)
+      ..addColumns([playEventTable.id.count()]);
+    return query
+        .map((row) => (row.read(playEventTable.id.count()) ?? 0) > 0)
+        .watchSingle();
+  }
+
   /// Watches up to [limit] distinct track ids, most recently played first.
   Stream<List<String>> watchRecentTrackIds({int limit = 20}) {
     final query = select(playEventTable)
