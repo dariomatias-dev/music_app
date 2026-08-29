@@ -30,6 +30,7 @@ fvm flutter gen-l10n
 
 - **先开一个 issue** 讨论这个改动，除非它是一个很小且明显的修复。
 - **遵循现有结构**：功能优先（feature-first）、`data`/`domain`/`presentation` 分层、状态用 Riverpod，不要在未讨论的情况下引入新模式。参见 [`architecture.md`](architecture.zh.md)。
+- **保持界面文件精简**：界面只负责组合组件、连接 provider。组件要放进 `presentation/widgets/<界面名>/` 下各自的文件，而不是写成界面文件末尾的私有类，也不是写成 `_buildX()` 辅助方法。参见[组件组织方式](architecture.zh.md#组件组织方式)。
 - **符合设计系统**：不要内联写颜色、间距或动画时长——使用 `packages/app_ui` 中的 token 和组件。
 - **为带逻辑的内容编写测试**：仓库方法、用例、`ViewModel`、组件行为等。`packages/app_ui` 是独立的包，有自己的测试套件；对它的改动也需要相应的测试。
 - **每一份文档、字符串和本地化资源都要覆盖所有支持的语言**（英语、西班牙语、葡萄牙语、中文）——包括 `lib/l10n/*.arb` 文件，以及 `docs/` 下的任何文档。
@@ -48,7 +49,34 @@ fvm flutter gen-l10n
 
 ## CI 检查什么
 
-每次 push 和 pull request 都会运行上面描述的相同检查，另外还会验证生成的文件（build_runner 输出、本地化文件）是否已提交且是最新的，并构建一个 release APK。具体步骤见 `.github/workflows/ci.yml`。
+每次 push 和 pull request 都会运行 [`.github/workflows/ci.yaml`](../.github/workflows/ci.yaml)，共三个 job：
+
+| Job | 具体做什么 |
+| --- | --- |
+| `music_app` | 安装依赖，重新生成代码和本地化文件，**如果这一步产生了 diff 就直接失败**——生成的文件必须已提交且是最新的。随后是格式检查、静态分析、测试，以及 97% 的覆盖率门槛。 |
+| `Build APK` | 在 `music_app` 通过后运行，构建 release APK，作为 workflow 产物上传并保留 14 天。 |
+| `packages/app_ui` | 独立于应用本体，对设计系统包执行格式检查、静态分析、测试，以及 98% 的覆盖率门槛。 |
+
+推送 `v*.*.*` 形式的 tag 则会运行 [`.github/workflows/release.yml`](../.github/workflows/release.yml)：执行同样的检查，然后把 release APK 发布到 GitHub release，并自动生成发布说明。注意 release 构建是**有意**使用 debug keystore 签名的——本应用没有生产环境的签名配置。
+
+### 在本地运行工作流
+
+[`act`](https://github.com/nektos/act) 可以在 Docker 中运行这些工作流；在推送任何对 `.github/workflows/` 的改动之前，值得先跑一遍。仓库的 `.actrc` 已经固定了 runner 镜像，因此不需要额外参数：
+
+```sh
+act -l                                # 列出所有 job 及其 id 和 stage
+act pull_request                      # 运行 CI 在 PR 上会执行的全部内容
+act pull_request -j app               # 只运行某一个 job，按 id 指定
+act pull_request -j app --dryrun      # 只打印步骤，不实际执行
+```
+
+`-j` 接收的是 job 的 **id**（`app`、`build_apk`、`app_ui`、`release`），而不是上表中的显示名称；`act -l` 会同时列出两者。首次真正运行会拉取数 GB 的 runner 镜像，而且 `act` 只是近似模拟 GitHub 的 runner，并非完全一致——`act` 跑通是一个好信号，但不能作为保证。
+
+## 依赖更新
+
+Dependabot 的配置在 [`.github/dependabot.yml`](../.github/dependabot.yml)，每周为四个生态开启更新 pull request：pub（应用本体）、pub（`packages/app_ui`）、Gradle（`android/`）和 GitHub Actions。
+
+这些 pull request 与其他 PR 一样要通过同样的 CI。在批准之前，请先查看 [`dependencies.md`](dependencies.zh.md)：有几个包是被刻意限制在最新版本之下的，如果 Dependabot 的 PR 想升级这些依赖链中的某一个，应当关闭而不是合并。
 
 ## 行为准则
 
