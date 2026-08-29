@@ -24,7 +24,11 @@ lib/
       <feature>/
         data/                # implementaciones de repositorio, data sources, DTOs/mappers
         domain/              # entidades, interfaces de repositorio, casos de uso
-        presentation/        # pantallas, widgets, view models (providers)
+        presentation/
+          providers/         # estado derivado/de presentación
+          screens/           # un archivo por ruta
+          view_models/       # clases Notifier/AsyncNotifier
+          widgets/           # widgets de la feature, más una carpeta por pantalla
 packages/
   app_ui/                    # paquete independiente del sistema de diseño (ver abajo)
 ```
@@ -40,6 +44,20 @@ Toda feature que toca estado persistido sigue las mismas tres capas:
 - **`presentation`** — pantallas y widgets, más `ViewModel`s: clases `Notifier`/`AsyncNotifier` de Riverpod expuestas mediante providers generados (`riverpod_generator`). Una pantalla observa providers; nunca habla directamente con un repositorio salvo por una llamada puntual vía `ref.read(...)` disparada por una acción del usuario.
 
 Una feature solo depende de la capa `domain` de otra feature (entidades, interfaces de repositorio), nunca de su `data` o `presentation`. Los providers conectan la implementación concreta en archivos `*_data_providers.dart` por feature.
+
+## Organización de los widgets
+
+Las pantallas se mantienen ligeras. Un archivo de pantalla observa los providers que necesita, se encarga de los callbacks que dispara una acción del usuario y compone widgets — nada de lo que renderiza se define inline. Esos widgets viven en `presentation/widgets/`, divididos en dos grupos:
+
+- `widgets/<nombre>.dart` — compartidos dentro de la feature: usados por más de una pantalla, o por un sheet o diálogo que la feature expone (`media_row.dart`, `playlist_cover_art.dart`, `track_more_sheet.dart`).
+- `widgets/<nombre_de_pantalla>/<componente>.dart` — pertenecen a una sola pantalla, una clase pública por archivo, nombrada por lo que renderiza (`widgets/album_screen/album_header.dart`, `widgets/storage_screen/storage_folder_header.dart`).
+
+De esto se derivan dos convenciones:
+
+- **Nada de clases de widget privadas al final del archivo de la pantalla, ni de métodos auxiliares `_buildX()`.** Ambos impiden que un componente se reconstruya de forma independiente, y un método `_buildX()` nunca puede ser `const`. En su lugar, el componente pasa a ser una clase real en su propio archivo.
+- **Los componentes de pantalla son públicos** (`AlbumHeader`, no `_AlbumHeader`), ya que ahora cruzan la frontera de un archivo. Siguen siendo internos a la feature por convención: nada fuera de la feature dueña los importa. Un componente que una segunda feature realmente necesite pertenece a `app_ui` si es solo presentación, o a `lib/src/core/widgets/` si depende del estado de la app.
+
+Un archivo de pantalla que supera las 300–400 líneas aproximadamente es la señal de que aún queda un componente inline por extraer.
 
 ## Gestión de estado
 
@@ -73,7 +91,7 @@ Existen dos mecanismos de respaldo independientes, ambos accesibles desde Config
 
 [just_audio](https://pub.dev/packages/just_audio) maneja la reproducción en sí; [audio_service](https://pub.dev/packages/audio_service) la expone al sistema operativo (pantalla de bloqueo, notificación, controles Bluetooth) a través de `MusicAudioHandler`. Tanto los metadatos que ve el sistema como el efecto de crossfade propio de la app se disparan a partir de la misma señal — el cambio nativo de `currentIndex` de `just_audio` en un límite de pista — así que nunca se desincronizan entre sí.
 
-El crossfade, tal como está implementado hoy, es una rampa de volumen de un solo reproductor: el motor nativo hace su propio cambio gapless instantáneo de la pista A a la B, y `PlaybackTransitionEffects` solo hace un fade-in de B desde el silencio después de eso — no son dos fuentes audibles superponiéndose de verdad. Es una simplificación conocida, no un error (ver `ROADMAP.md`).
+El crossfade, tal como está implementado hoy, es una rampa de volumen de un solo reproductor: el motor nativo hace su propio cambio gapless instantáneo de la pista A a la B, y `PlaybackTransitionEffects` solo hace un fade-in de B desde el silencio después de eso — no son dos fuentes audibles superponiéndose de verdad. Es una simplificación conocida, no un error.
 
 ## Sistema de diseño (`packages/app_ui`)
 
