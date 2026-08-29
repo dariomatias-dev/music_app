@@ -67,6 +67,7 @@ class LibraryIndexer {
     final files = await _mediaScanner.scan(excludedFolders: excludedFolders);
     final artistsBySourceId = <String, Artist>{};
     final albumsBySourceId = <String, Album>{};
+    final writtenArtists = <String>{};
 
     var processed = 0;
     for (final file in files) {
@@ -100,14 +101,25 @@ class LibraryIndexer {
         totalDuration: album.totalDuration + duration,
       );
       albumsBySourceId[album.sourceId] = album;
-      await _dataSource.upsertAlbum(album);
 
       artist = artist.copyWith(
         trackCount: artist.trackCount + 1,
         albumCount: artist.albumCount + (albumResolution.isNew ? 1 : 0),
       );
       artistsBySourceId[artist.sourceId] = artist;
-      await _dataSource.upsertArtist(artist);
+
+      // Only the first file of each artist and album writes a row here,
+      // because the track inserted below references both by id and they
+      // have to exist for it. Their running totals are flushed once after
+      // the loop instead of rewritten per file, which on a large library
+      // is thousands of writes that each also invalidate every query
+      // stream watching these tables.
+      if (writtenArtists.add(artist.sourceId)) {
+        await _dataSource.upsertArtist(artist);
+      }
+      if (albumResolution.isNew) {
+        await _dataSource.upsertAlbum(album);
+      }
 
       final trackSourceId = file.mediaStoreId.toString();
       final existingTrack = await _dataSource.findTrackBySourceId(
@@ -139,6 +151,13 @@ class LibraryIndexer {
         total: files.length,
         trackSourceId: trackSourceId,
       );
+    }
+
+    for (final artist in artistsBySourceId.values) {
+      await _dataSource.upsertArtist(artist);
+    }
+    for (final album in albumsBySourceId.values) {
+      await _dataSource.upsertAlbum(album);
     }
   }
 

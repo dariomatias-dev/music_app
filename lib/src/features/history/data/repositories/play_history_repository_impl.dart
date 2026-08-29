@@ -17,7 +17,7 @@ class PlayHistoryRepositoryImpl implements PlayHistoryRepository {
 
   @override
   Future<List<PlayHistoryEntry>> getAllEntries() async {
-    final rows = await _database.playEventDao.watchAll().first;
+    final rows = await _database.playEventDao.getAll();
     return [
       for (final row in rows)
         (
