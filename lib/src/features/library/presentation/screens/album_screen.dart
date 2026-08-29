@@ -4,12 +4,9 @@ import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:music_app/l10n/app_localizations.dart';
-import 'package:music_app/src/core/navigation/navigators/library_navigator.dart';
-import 'package:music_app/src/core/utils/duration_formatter.dart';
-import 'package:music_app/src/core/widgets/cached_square_image.dart';
-import 'package:music_app/src/features/library/domain/entities/album.dart';
-import 'package:music_app/src/features/library/domain/entities/track.dart';
 import 'package:music_app/src/features/library/presentation/providers/library_providers.dart';
+import 'package:music_app/src/features/library/presentation/widgets/album_screen/album_header.dart';
+import 'package:music_app/src/features/library/presentation/widgets/album_screen/album_track_row.dart';
 import 'package:music_app/src/features/player/presentation/view_models/playback_screen_view_model.dart';
 import 'package:music_app/src/features/player/presentation/view_models/playback_view_model.dart';
 import 'package:music_app/src/features/queue/presentation/view_models/queue_view_model.dart';
@@ -59,7 +56,7 @@ class AlbumScreen extends ConsumerWidget {
         itemCount: tracks.length + 2,
         itemBuilder: (context, index) {
           if (index == 0) {
-            return _AlbumHeader(album: album, artistName: artistName);
+            return AlbumHeader(album: album, artistName: artistName);
           }
           if (index == 1) {
             return Padding(
@@ -84,7 +81,7 @@ class AlbumScreen extends ConsumerWidget {
           }
           final trackIndex = index - 2;
           final track = tracks[trackIndex];
-          return _AlbumTrackRow(
+          return AlbumTrackRow(
             track: track,
             number: trackIndex + 1,
             current: track.id == currentTrackId,
@@ -96,138 +93,6 @@ class AlbumScreen extends ConsumerWidget {
             ),
           );
         },
-      ),
-    );
-  }
-}
-
-class _AlbumHeader extends StatelessWidget {
-  const _AlbumHeader({required this.album, required this.artistName});
-
-  final Album album;
-  final String? artistName;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    final colors = context.colors;
-
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        AppSpacing.lg,
-        AppSpacing.md,
-        AppSpacing.lg,
-        AppSpacing.sm,
-      ),
-      child: Column(
-        children: [
-          _artwork(),
-          const SizedBox(height: AppSpacing.md),
-          Text(
-            album.title,
-            textAlign: TextAlign.center,
-            style: AppTypography.header.copyWith(color: colors.textPrimary),
-          ),
-          if (artistName != null) ...[
-            const SizedBox(height: 4),
-            Pressable(
-              onTap: () => LibraryNavigator.openArtist(
-                context,
-                artistId: album.artistId,
-              ),
-              child: Text(
-                artistName!,
-                style: AppTypography.rowSubtitle.copyWith(
-                  color: colors.textSecondary,
-                ),
-              ),
-            ),
-          ],
-          const SizedBox(height: 4),
-          Text(
-            '${l10n.trackCountLabel(album.trackCount)} · '
-            '${formatDuration(album.totalDuration)}',
-            style: AppTypography.caption.copyWith(color: colors.textTertiary),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _artwork() {
-    final artworkPath = album.artworkPath;
-    if (artworkPath == null) {
-      return AppArtwork(seed: album.id, size: 160, radius: AppRadius.large);
-    }
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(AppRadius.large),
-      child: CachedSquareImage(path: artworkPath, size: 160),
-    );
-  }
-}
-
-class _AlbumTrackRow extends StatelessWidget {
-  const _AlbumTrackRow({
-    required this.track,
-    required this.number,
-    required this.current,
-    required this.playing,
-    required this.onTap,
-  });
-
-  final Track track;
-  final int number;
-  final bool current;
-  final bool playing;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = context.colors;
-
-    return Pressable(
-      scale: 0.99,
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.lg,
-          vertical: AppSpacing.sm,
-        ),
-        child: Row(
-          children: [
-            SizedBox(
-              width: 24,
-              child: Text(
-                '$number',
-                style: AppTypography.caption.copyWith(
-                  color: colors.textTertiary,
-                  fontFeatures: const [FontFeature.tabularFigures()],
-                ),
-              ),
-            ),
-            const SizedBox(width: AppSpacing.smMd),
-            Expanded(
-              child: Text(
-                track.title,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: AppTypography.rowTitle.copyWith(
-                  color: current ? colors.accent : colors.textPrimary,
-                ),
-              ),
-            ),
-            const SizedBox(width: AppSpacing.sm),
-            if (current)
-              AppPlaybackIndicator(playing: playing, color: colors.accent)
-            else
-              Text(
-                formatDuration(track.duration),
-                style: AppTypography.meta.copyWith(
-                  color: colors.textTertiary,
-                ),
-              ),
-          ],
-        ),
       ),
     );
   }
