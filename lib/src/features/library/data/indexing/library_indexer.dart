@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:music_app/src/core/services/artwork_cache/artwork_cache.dart';
 import 'package:music_app/src/core/services/id_generator/id_generator.dart';
 import 'package:music_app/src/core/services/media_scanner/media_scanner.dart';
@@ -9,6 +11,14 @@ import 'package:music_app/src/features/library/domain/entities/track.dart';
 
 const _unknownArtist = 'Unknown Artist';
 const _unknownAlbum = 'Unknown Album';
+
+/// How many files each transaction covers.
+///
+/// Every commit costs a disk sync, so batching is what makes a large scan
+/// fast; the size is a balance against progress, which can only be
+/// reported once a batch has committed and so advances in steps this
+/// wide.
+const _commitBatchSize = 25;
 
 /// Progress of an in-flight [LibraryIndexer.indexLibrary] run.
 class IndexingProgress {
@@ -70,95 +80,109 @@ class LibraryIndexer {
     final writtenArtists = <String>{};
 
     var processed = 0;
-    for (final file in files) {
-      final metadata = await _metadataReader.read(file.filePath);
+    for (var start = 0; start < files.length; start += _commitBatchSize) {
+      final end = math.min(start + _commitBatchSize, files.length);
+      final batch = files.sublist(start, end);
+      final batchProgress = <IndexingProgress>[];
 
-      var artist = await _resolveArtist(
-        name: metadata.artist ?? file.artist ?? _unknownArtist,
-        cache: artistsBySourceId,
-      );
+      await _dataSource.runInTransaction(() async {
+        for (final file in batch) {
+          final metadata = await _metadataReader.read(file.filePath);
 
-      final albumResolution = await _resolveAlbum(
-        title: metadata.album ?? file.album ?? _unknownAlbum,
-        artist: artist,
-        cache: albumsBySourceId,
-      );
-      var album = albumResolution.album;
+          var artist = await _resolveArtist(
+            name: metadata.artist ?? file.artist ?? _unknownArtist,
+            cache: artistsBySourceId,
+          );
 
-      final artwork = metadata.artwork;
-      if (artwork != null && album.artworkPath == null) {
-        final artworkPath = await _artworkCache.save(
-          id: album.id,
-          data: artwork.data,
-          mimeType: artwork.mimeType,
-        );
-        album = album.copyWith(artworkPath: artworkPath);
-      }
+          final albumResolution = await _resolveAlbum(
+            title: metadata.album ?? file.album ?? _unknownAlbum,
+            artist: artist,
+            cache: albumsBySourceId,
+          );
+          var album = albumResolution.album;
 
-      final duration = metadata.duration ?? file.duration;
-      album = album.copyWith(
-        trackCount: album.trackCount + 1,
-        totalDuration: album.totalDuration + duration,
-      );
-      albumsBySourceId[album.sourceId] = album;
+          final artwork = metadata.artwork;
+          if (artwork != null && album.artworkPath == null) {
+            final artworkPath = await _artworkCache.save(
+              id: album.id,
+              data: artwork.data,
+              mimeType: artwork.mimeType,
+            );
+            album = album.copyWith(artworkPath: artworkPath);
+          }
 
-      artist = artist.copyWith(
-        trackCount: artist.trackCount + 1,
-        albumCount: artist.albumCount + (albumResolution.isNew ? 1 : 0),
-      );
-      artistsBySourceId[artist.sourceId] = artist;
+          final duration = metadata.duration ?? file.duration;
+          album = album.copyWith(
+            trackCount: album.trackCount + 1,
+            totalDuration: album.totalDuration + duration,
+          );
+          albumsBySourceId[album.sourceId] = album;
 
-      // Only the first file of each artist and album writes a row here,
-      // because the track inserted below references both by id and they
-      // have to exist for it. Their running totals are flushed once after
-      // the loop instead of rewritten per file, which on a large library
-      // is thousands of writes that each also invalidate every query
-      // stream watching these tables.
-      if (writtenArtists.add(artist.sourceId)) {
+          artist = artist.copyWith(
+            trackCount: artist.trackCount + 1,
+            albumCount: artist.albumCount + (albumResolution.isNew ? 1 : 0),
+          );
+          artistsBySourceId[artist.sourceId] = artist;
+
+          // Only the first file of each artist and album writes a row here,
+          // because the track inserted below references both by id and they
+          // have to exist for it. Their running totals are flushed once after
+          // the loop instead of rewritten per file, which on a large library
+          // is thousands of writes that each also invalidate every query
+          // stream watching these tables.
+          if (writtenArtists.add(artist.sourceId)) {
+            await _dataSource.upsertArtist(artist);
+          }
+          if (albumResolution.isNew) {
+            await _dataSource.upsertAlbum(album);
+          }
+
+          final trackSourceId = file.mediaStoreId.toString();
+          final existingTrack = await _dataSource.findTrackBySourceId(
+            trackSourceId,
+          );
+          final track = Track(
+            id: existingTrack?.id ?? _idGenerator.generate(),
+            sourceId: trackSourceId,
+            filePath: file.filePath,
+            title: metadata.title ?? file.title,
+            artistId: artist.id,
+            albumId: album.id,
+            duration: duration,
+            format: file.fileExtension,
+            fileSize: file.fileSize,
+            hasEmbeddedArtwork: artwork != null,
+            dateAdded: file.dateAdded,
+            dateModified: file.dateModified,
+            trackNumber: metadata.trackNumber,
+            discNumber: metadata.discNumber,
+            year: metadata.year,
+            genre: metadata.genre,
+          );
+          await _dataSource.upsertTrack(track);
+
+          processed++;
+          batchProgress.add(
+            IndexingProgress(
+              processed: processed,
+              total: files.length,
+              trackSourceId: trackSourceId,
+            ),
+          );
+        }
+      });
+
+      yield* Stream.fromIterable(batchProgress);
+    }
+
+    await _dataSource.runInTransaction(() async {
+      for (final artist in artistsBySourceId.values) {
         await _dataSource.upsertArtist(artist);
       }
-      if (albumResolution.isNew) {
+      for (final album in albumsBySourceId.values) {
         await _dataSource.upsertAlbum(album);
       }
-
-      final trackSourceId = file.mediaStoreId.toString();
-      final existingTrack = await _dataSource.findTrackBySourceId(
-        trackSourceId,
-      );
-      final track = Track(
-        id: existingTrack?.id ?? _idGenerator.generate(),
-        sourceId: trackSourceId,
-        filePath: file.filePath,
-        title: metadata.title ?? file.title,
-        artistId: artist.id,
-        albumId: album.id,
-        duration: duration,
-        format: file.fileExtension,
-        fileSize: file.fileSize,
-        hasEmbeddedArtwork: artwork != null,
-        dateAdded: file.dateAdded,
-        dateModified: file.dateModified,
-        trackNumber: metadata.trackNumber,
-        discNumber: metadata.discNumber,
-        year: metadata.year,
-        genre: metadata.genre,
-      );
-      await _dataSource.upsertTrack(track);
-
-      processed++;
-      yield IndexingProgress(
-        processed: processed,
-        total: files.length,
-        trackSourceId: trackSourceId,
-      );
-    }
-
-    for (final artist in artistsBySourceId.values) {
-      await _dataSource.upsertArtist(artist);
-    }
-    for (final album in albumsBySourceId.values) {
-      await _dataSource.upsertAlbum(album);
-    }
+    });
   }
 
   Future<Artist> _resolveArtist({
