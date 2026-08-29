@@ -4,7 +4,7 @@
 <a href="dependencies.md">English</a> · <a href="dependencies.es.md">Español</a> · <a href="dependencies.pt-BR.md">Português (BR)</a> · <strong>中文</strong>
 </p>
 
-`pubspec.yaml` 中的大多数依赖都使用宽松的版本约束（`^x.y.z`），可以自由升级。但有几个被固定在某个具体版本，或者被限制在低于最新版本，原因单看约束本身并不明显。本文档记录这些原因，避免有人重新从头排查（或更糟——在不明白原因的情况下"修复"这个 pin）。
+`pubspec.yaml` 中的大多数依赖都使用宽松的版本约束（`^x.y.z`），可以自由升级。但有几个——包括这里以及 Android 构建文件中的依赖——被固定在某个具体版本，或者被限制在低于最新版本，原因单看约束本身并不明显。本文档记录这些原因，避免有人重新从头排查（或更糟——在不明白原因的情况下"修复"这个 pin）。
 
 ## `intl: 0.20.2`（精确固定）
 
@@ -21,6 +21,12 @@
 该包的最新版本（`0.6.0+eol`）是一次有意为之的"墓碑"发布——一个空包，其描述写着 *"Not used anymore, update to version 3.x of package:sqlite3 instead"*（不再使用，请改用 package:sqlite3 的 3.x 版本）。一旦 `sqlite3`（Dart 绑定层）迁移到其 3.x 系列（该系列自行承担原生库的职责），就不再需要这个包的原生二进制文件。
 
 这次迁移**和上面 `drift` 的固定是同一个阻塞点**，不是另一个独立问题：`sqlite3` 3.x 需要 `drift ^2.34`，而被固定的 `drift` 2.31.0 只接受 `sqlite3 ^2.6`。解决了 `drift`/Riverpod 那条依赖链，这个问题也就一并解决了——不要试图单独升级 `sqlite3_flutter_libs` 或 `sqlite3`。
+
+## `gradle-wrapper: 8.12`、`com.android.application: 8.9.1`（限制在低于最新版本）
+
+`metadata_god` 内置了 CargoKit，其 Gradle 脚本调用了 `exec()`——这个方法已被 Gradle 9 移除。任何升级到 Gradle 9.x 的尝试都会让 APK 构建失败并报 `Could not find method exec() ... on project ':metadata_god'`，因此 wrapper 保持在 8.12，直到 `metadata_god` 发布能在 Gradle 9 下构建的 CargoKit。
+
+Android Gradle Plugin 是**同一个阻塞的另一面**，而不是另一个独立问题：AGP 9.x 拒绝在低于 Gradle 9.5.0 的环境下运行，会以 `Minimum supported Gradle version is 9.5.0` 失败。解决了 CargoKit 的阻塞，这个问题也就一并解决了——不要试图单独升级 AGP 或 wrapper。
 
 ## 如何检查可用更新
 

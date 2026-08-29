@@ -4,7 +4,7 @@
 <a href="dependencies.md">English</a> · <a href="dependencies.es.md">Español</a> · <strong>Português (BR)</strong> · <a href="dependencies.zh.md">中文</a>
 </p>
 
-A maioria das dependências no `pubspec.yaml` usa uma faixa flexível (`^x.y.z`) e é atualizada livremente. Algumas ficam presas numa versão exata, ou limitadas abaixo da última disponível, por motivos que não são óbvios só olhando o `pubspec.yaml`. Este documento é esse contexto, pra ninguém precisar redescobrir do zero (ou pior, "corrigir" o pin sem entender por que ele existe).
+A maioria das dependências no `pubspec.yaml` usa uma faixa flexível (`^x.y.z`) e é atualizada livremente. Algumas — ali, e nos arquivos de build do Android — ficam presas numa versão exata, ou limitadas abaixo da última disponível, por motivos que não são óbvios só olhando a constraint. Este documento é esse contexto, pra ninguém precisar redescobrir do zero (ou pior, "corrigir" o pin sem entender por que ele existe).
 
 ## `intl: 0.20.2` (pin exato)
 
@@ -21,6 +21,12 @@ Forçado pelo `flutter_localizations`, que vem do próprio SDK do Flutter, não 
 A última versão do pacote (`0.6.0+eol`) é um tombstone intencional — um pacote vazio cuja descrição diz *"Not used anymore, update to version 3.x of package:sqlite3 instead"* (não é mais usado, atualize pra versão 3.x do package:sqlite3). Os binários nativos dele deixam de ser necessários quando o `sqlite3` (os bindings Dart) migra pra sua linha 3.x, que passa a cuidar disso sozinho.
 
 Essa migração é **o mesmo bloqueio do pin do `drift` acima**, não um separado: `sqlite3` 3.x exige `drift ^2.34`, e o `drift` 2.31.0 (travado pelo motivo acima) só aceita `sqlite3 ^2.6`. Resolver a cadeia `drift`/Riverpod resolve esse também — não tente atualizar `sqlite3_flutter_libs` ou `sqlite3` isoladamente.
+
+## `gradle-wrapper: 8.12`, `com.android.application: 8.9.1` (limitados abaixo da última versão)
+
+O `metadata_god` embute o CargoKit, cujo script Gradle chama `exec()`, método que o Gradle 9 removeu. Qualquer bump pro Gradle 9.x quebra o build da APK com `Could not find method exec() ... on project ':metadata_god'`, então o wrapper fica no 8.12 até o `metadata_god` publicar um CargoKit que compile sob o Gradle 9.
+
+O Android Gradle Plugin é **o mesmo bloqueio visto do outro lado**, não um separado: o AGP 9.x se recusa a rodar abaixo do Gradle 9.5.0, falhando com `Minimum supported Gradle version is 9.5.0`. Resolver o bloqueio do CargoKit resolve esse também — não tente atualizar o AGP ou o wrapper isoladamente.
 
 ## Como checar atualizações
 
