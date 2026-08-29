@@ -39,98 +39,110 @@ import 'helpers/app_harness.dart';
 /// `fvm flutter devices` lists the ids. A device is required: these flows
 /// read through drift's stream queries, which never emit under the fake
 /// async a plain `flutter test` run uses.
+/// Bounds each test so a stall is reported as a named failure rather than
+/// silently consuming the CI job's own timeout with no output.
+const _suiteTimeout = Timeout(Duration(seconds: 120));
+
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('a backup restores onto an install with different track ids', (
-    tester,
-  ) async {
-    final original = await openSeededDatabase();
-    const idGenerator = UuidV7Generator();
-    final playlists = PlaylistRepositoryImpl(original, idGenerator);
-    final favorites = FavoriteRepositoryImpl(original, idGenerator);
-
-    final playlistId = await playlists.createPlaylist('Road Trip');
-    await playlists.setPlaylistTracks(playlistId, ['track-1']);
-    await favorites.setFavorite('track-2', isFavorite: true);
-
-    final app = await launchSeededApp(tester, database: original);
-    await openStorageScreen(tester, app.l10n);
-
-    await tester.tap(find.text(app.l10n.exportBackupLabel));
-    await settleUntil(tester, find.text(app.l10n.backupExportedMessage));
-
-    final exported = app.deviceFiles.savedBytes;
-    expect(exported, isNotNull, reason: 'export should have written bytes');
-    expect(app.deviceFiles.savedFileName, contains('music_app_backup_'));
-
-    final reinstall = await openSeededDatabase(idPrefix: 'reinstalled-');
-    final files = FakeDeviceFileService()..fileToPick = exported;
-
-    final restored = await launchSeededApp(
+  testWidgets(
+    'a backup restores onto an install with different track ids',
+    (
       tester,
-      database: reinstall,
-      deviceFiles: files,
-    );
-    await openStorageScreen(tester, restored.l10n);
+    ) async {
+      final original = await openSeededDatabase();
+      const idGenerator = UuidV7Generator();
+      final playlists = PlaylistRepositoryImpl(original, idGenerator);
+      final favorites = FavoriteRepositoryImpl(original, idGenerator);
 
-    await tester.tap(find.text(restored.l10n.importBackupLabel));
-    await settleUntil(tester, find.text(restored.l10n.backupImportedMessage));
+      final playlistId = await playlists.createPlaylist('Road Trip');
+      await playlists.setPlaylistTracks(playlistId, ['track-1']);
+      await favorites.setFavorite('track-2', isFavorite: true);
 
-    final restoredPlaylists = await firstValue(
-      PlaylistRepositoryImpl(reinstall, idGenerator).watchPlaylists(),
-      describe: "the reinstalled library's playlists",
-    );
-    expect(restoredPlaylists.map((p) => p.name), contains('Road Trip'));
+      final app = await launchSeededApp(tester, database: original);
+      await openStorageScreen(tester, app.l10n);
 
-    final restoredTrackIds = await firstValue(
-      PlaylistRepositoryImpl(
-        reinstall,
-        idGenerator,
-      ).watchPlaylistTrackIds(restoredPlaylists.first.id),
-      describe: "the restored playlist's track ids",
-    );
-    expect(restoredTrackIds, ['reinstalled-track-1']);
+      await tester.tap(find.text(app.l10n.exportBackupLabel));
+      await settleUntil(tester, find.text(app.l10n.backupExportedMessage));
 
-    final restoredFavorites = await firstValue(
-      FavoriteRepositoryImpl(reinstall, idGenerator).watchFavoriteTrackIds(),
-      describe: 'the restored favorite track ids',
-    );
-    expect(restoredFavorites, contains('reinstalled-track-2'));
-  });
+      final exported = app.deviceFiles.savedBytes;
+      expect(exported, isNotNull, reason: 'export should have written bytes');
+      expect(app.deviceFiles.savedFileName, contains('music_app_backup_'));
 
-  testWidgets('a backup from an unsupported format version is refused', (
-    tester,
-  ) async {
-    final database = await openSeededDatabase();
-    final files = FakeDeviceFileService();
-    final app = await launchSeededApp(
+      final reinstall = await openSeededDatabase(idPrefix: 'reinstalled-');
+      final files = FakeDeviceFileService()..fileToPick = exported;
+
+      final restored = await launchSeededApp(
+        tester,
+        database: reinstall,
+        deviceFiles: files,
+      );
+      await openStorageScreen(tester, restored.l10n);
+
+      await tester.tap(find.text(restored.l10n.importBackupLabel));
+      await settleUntil(tester, find.text(restored.l10n.backupImportedMessage));
+
+      final restoredPlaylists = await firstValue(
+        PlaylistRepositoryImpl(reinstall, idGenerator).watchPlaylists(),
+        describe: "the reinstalled library's playlists",
+      );
+      expect(restoredPlaylists.map((p) => p.name), contains('Road Trip'));
+
+      final restoredTrackIds = await firstValue(
+        PlaylistRepositoryImpl(
+          reinstall,
+          idGenerator,
+        ).watchPlaylistTrackIds(restoredPlaylists.first.id),
+        describe: "the restored playlist's track ids",
+      );
+      expect(restoredTrackIds, ['reinstalled-track-1']);
+
+      final restoredFavorites = await firstValue(
+        FavoriteRepositoryImpl(reinstall, idGenerator).watchFavoriteTrackIds(),
+        describe: 'the restored favorite track ids',
+      );
+      expect(restoredFavorites, contains('reinstalled-track-2'));
+    },
+    timeout: _suiteTimeout,
+  );
+
+  testWidgets(
+    'a backup from an unsupported format version is refused',
+    (
       tester,
-      database: database,
-      deviceFiles: files,
-    );
-    await openStorageScreen(tester, app.l10n);
+    ) async {
+      final database = await openSeededDatabase();
+      final files = FakeDeviceFileService();
+      final app = await launchSeededApp(
+        tester,
+        database: database,
+        deviceFiles: files,
+      );
+      await openStorageScreen(tester, app.l10n);
 
-    await tester.tap(find.text(app.l10n.exportBackupLabel));
-    await settleUntil(tester, find.text(app.l10n.backupExportedMessage));
+      await tester.tap(find.text(app.l10n.exportBackupLabel));
+      await settleUntil(tester, find.text(app.l10n.backupExportedMessage));
 
-    final json =
-        jsonDecode(utf8.decode(files.savedBytes!)) as Map<String, dynamic>;
-    json['formatVersion'] = backupFormatVersion + 999;
-    files.fileToPick = Uint8List.fromList(utf8.encode(jsonEncode(json)));
+      final json =
+          jsonDecode(utf8.decode(files.savedBytes!)) as Map<String, dynamic>;
+      json['formatVersion'] = backupFormatVersion + 999;
+      files.fileToPick = Uint8List.fromList(utf8.encode(jsonEncode(json)));
 
-    await tester.tap(find.text(app.l10n.importBackupLabel));
-    await settle(tester, frames: 30);
+      await tester.tap(find.text(app.l10n.importBackupLabel));
+      await settle(tester, frames: 30);
 
-    final playlists = await firstValue(
-      PlaylistRepositoryImpl(
-        database,
-        const UuidV7Generator(),
-      ).watchPlaylists(),
-      describe: "the library's playlists after a refused restore",
-    );
-    expect(playlists, isEmpty);
-  });
+      final playlists = await firstValue(
+        PlaylistRepositoryImpl(
+          database,
+          const UuidV7Generator(),
+        ).watchPlaylists(),
+        describe: "the library's playlists after a refused restore",
+      );
+      expect(playlists, isEmpty);
+    },
+    timeout: _suiteTimeout,
+  );
 
   testWidgets('the database export writes a real SQLite file', (tester) async {
     final app = await launchSeededApp(tester);
@@ -147,5 +159,5 @@ void main() {
     expect(exported, isNotNull);
     expect(app.deviceFiles.savedFileName, contains('music_app_db_'));
     expect(isSqliteDatabase(exported!), isTrue);
-  });
+  }, timeout: _suiteTimeout);
 }
