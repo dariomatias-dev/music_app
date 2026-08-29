@@ -50,7 +50,7 @@ dependencies:
 
   # Internationalization
   # Pinned: version forced by flutter_localizations from the Flutter SDK.
-  intl: 0.20.2
+  intl: 0.20.3
 
   # Identifiers
   uuid: ^4.6.0
