@@ -265,6 +265,25 @@ Future<void> openStorageScreen(
   await settleUntil(tester, find.text(l10n.exportBackupLabel));
 }
 
+/// Reads the first value [stream] emits, failing with [describe] rather
+/// than waiting forever if it emits nothing.
+///
+/// A bare `.first` on a drift stream query has no upper bound: if the query
+/// never emits, the test hangs until the CI job's own timeout kills it,
+/// with no output naming the read that stalled.
+Future<T> firstValue<T>(
+  Stream<T> stream, {
+  required String describe,
+  Duration timeout = const Duration(seconds: 20),
+}) {
+  return stream.first.timeout(
+    timeout,
+    onTimeout: () => throw StateError(
+      'Timed out after $timeout waiting for the first value of: $describe',
+    ),
+  );
+}
+
 /// Loads the app's strings for [locale], for tests that assert against a
 /// language other than the one they launched in.
 Future<AppLocalizations> appLocalizations(String locale) =>

@@ -96,7 +96,7 @@ jobs:
     name: Integration tests
     needs: app
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v7
 
@@ -135,9 +135,9 @@ jobs:
           arch: x86_64
           disable-animations: true
           script: |
-            flutter test integration_test/app_flows_test.dart -d emulator-5554
-            flutter test integration_test/user_flows_test.dart -d emulator-5554
-            flutter test integration_test/backup_flows_test.dart -d emulator-5554
+            for suite in app_flows user_flows backup_flows; do
+              timeout 360 flutter test "integration_test/${suite}_test.dart" -d emulator-5554 || exit 1
+            done
 
   app_ui:
     name: packages/app_ui

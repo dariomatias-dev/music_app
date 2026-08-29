@@ -77,22 +77,25 @@ void main() {
     await tester.tap(find.text(restored.l10n.importBackupLabel));
     await settleUntil(tester, find.text(restored.l10n.backupImportedMessage));
 
-    final restoredPlaylists = await PlaylistRepositoryImpl(
-      reinstall,
-      idGenerator,
-    ).watchPlaylists().first;
+    final restoredPlaylists = await firstValue(
+      PlaylistRepositoryImpl(reinstall, idGenerator).watchPlaylists(),
+      describe: "the reinstalled library's playlists",
+    );
     expect(restoredPlaylists.map((p) => p.name), contains('Road Trip'));
 
-    final restoredTrackIds = await PlaylistRepositoryImpl(
-      reinstall,
-      idGenerator,
-    ).watchPlaylistTrackIds(restoredPlaylists.first.id).first;
+    final restoredTrackIds = await firstValue(
+      PlaylistRepositoryImpl(
+        reinstall,
+        idGenerator,
+      ).watchPlaylistTrackIds(restoredPlaylists.first.id),
+      describe: "the restored playlist's track ids",
+    );
     expect(restoredTrackIds, ['reinstalled-track-1']);
 
-    final restoredFavorites = await FavoriteRepositoryImpl(
-      reinstall,
-      idGenerator,
-    ).watchFavoriteTrackIds().first;
+    final restoredFavorites = await firstValue(
+      FavoriteRepositoryImpl(reinstall, idGenerator).watchFavoriteTrackIds(),
+      describe: 'the restored favorite track ids',
+    );
     expect(restoredFavorites, contains('reinstalled-track-2'));
   });
 
@@ -119,10 +122,13 @@ void main() {
     await tester.tap(find.text(app.l10n.importBackupLabel));
     await settle(tester, frames: 30);
 
-    final playlists = await PlaylistRepositoryImpl(
-      database,
-      const UuidV7Generator(),
-    ).watchPlaylists().first;
+    final playlists = await firstValue(
+      PlaylistRepositoryImpl(
+        database,
+        const UuidV7Generator(),
+      ).watchPlaylists(),
+      describe: "the library's playlists after a refused restore",
+    );
     expect(playlists, isEmpty);
   });
 
