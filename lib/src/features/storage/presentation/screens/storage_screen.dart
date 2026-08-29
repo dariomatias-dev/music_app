@@ -8,7 +8,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:music_app/l10n/app_localizations.dart';
 import 'package:music_app/src/core/database/database_providers.dart';
 import 'package:music_app/src/core/services/device_file/device_file_service_provider.dart';
-import 'package:music_app/src/core/utils/file_size_formatter.dart';
 import 'package:music_app/src/core/widgets/restart_widget.dart';
 import 'package:music_app/src/features/library/data/providers/library_data_providers.dart';
 import 'package:music_app/src/features/library/domain/entities/track.dart';
@@ -20,7 +19,11 @@ import 'package:music_app/src/features/storage/domain/entities/backup_snapshot.d
 import 'package:music_app/src/features/storage/domain/entities/folder_usage.dart';
 import 'package:music_app/src/features/storage/domain/restore_database_backup.dart';
 import 'package:music_app/src/features/storage/presentation/providers/storage_providers.dart';
-import 'package:path/path.dart' as p;
+import 'package:music_app/src/features/storage/presentation/widgets/storage_screen/storage_backup_actions.dart';
+import 'package:music_app/src/features/storage/presentation/widgets/storage_screen/storage_folder_header.dart';
+import 'package:music_app/src/features/storage/presentation/widgets/storage_screen/storage_section_label.dart';
+import 'package:music_app/src/features/storage/presentation/widgets/storage_screen/storage_summary_tile.dart';
+import 'package:music_app/src/features/storage/presentation/widgets/storage_screen/storage_track_tile.dart';
 
 /// The storage screen: total space used, indexed folders (include/exclude
 /// from the scan, with their files listed), and artwork cache clearing.
@@ -137,8 +140,8 @@ class _StorageScreenState extends ConsumerState<StorageScreen> {
                 ),
                 itemCount: rows.length,
                 itemBuilder: (context, index) => switch (rows[index]) {
-                  _SummaryRow() => _SummaryTile(totalUsed: totalUsed),
-                  _SectionLabelRow(:final label) => _SectionLabel(
+                  _SummaryRow() => StorageSummaryTile(totalUsed: totalUsed),
+                  _SectionLabelRow(:final label) => StorageSectionLabel(
                     label: label,
                   ),
                   _EmptyFoldersRow() => Padding(
@@ -151,7 +154,7 @@ class _StorageScreenState extends ConsumerState<StorageScreen> {
                       message: l10n.storageEmptyMessage,
                     ),
                   ),
-                  _FolderHeaderRow(:final folder) => _FolderHeader(
+                  _FolderHeaderRow(:final folder) => StorageFolderHeader(
                     folder: folder,
                     expanded: _expandedFolders.contains(folder.path),
                     enabled: !_busy,
@@ -160,7 +163,7 @@ class _StorageScreenState extends ConsumerState<StorageScreen> {
                       _toggleFolder(folder.path, included),
                     ),
                   ),
-                  _TrackRow(:final track) => _TrackTile(
+                  _TrackRow(:final track) => StorageTrackTile(
                     track: track,
                     enabled: !_busy,
                     onDelete: () => unawaited(_confirmDeleteTrack(track)),
@@ -174,12 +177,12 @@ class _StorageScreenState extends ConsumerState<StorageScreen> {
                           : () => unawaited(_confirmClearArtworkCache()),
                     ),
                   ),
-                  _BackupActionsRow() => _BackupActions(
+                  _BackupActionsRow() => StorageBackupActions(
                     enabled: !_busy,
                     onExport: () => unawaited(_exportBackup()),
                     onImport: () => unawaited(_importBackup()),
                   ),
-                  _DatabaseBackupActionsRow() => _BackupActions(
+                  _DatabaseBackupActionsRow() => StorageBackupActions(
                     enabled: !_busy,
                     exportLabel: l10n.exportDatabaseBackupLabel,
                     importLabel: l10n.importDatabaseBackupLabel,
@@ -419,241 +422,5 @@ class _StorageScreenState extends ConsumerState<StorageScreen> {
     }
     if (!mounted) return;
     RestartWidget.restartApp(context);
-  }
-}
-
-class _SummaryTile extends StatelessWidget {
-  const _SummaryTile({required this.totalUsed});
-
-  final int totalUsed;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    final colors = context.colors;
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.lg,
-        vertical: AppSpacing.sm,
-      ),
-      child: Row(
-        children: [
-          Icon(
-            Icons.sd_storage_outlined,
-            size: 20,
-            color: colors.textSecondary,
-          ),
-          const SizedBox(width: AppSpacing.sm),
-          Text(
-            l10n.storageTotalUsedLabel,
-            style: AppTypography.rowTitle.copyWith(color: colors.textPrimary),
-          ),
-          const Spacer(),
-          Text(
-            formatFileSize(totalUsed),
-            style: AppTypography.rowTitle.copyWith(color: colors.textPrimary),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _SectionLabel extends StatelessWidget {
-  const _SectionLabel({required this.label});
-
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        AppSpacing.lg,
-        AppSpacing.md,
-        AppSpacing.lg,
-        AppSpacing.xs,
-      ),
-      child: Text(
-        label,
-        style: AppTypography.section.copyWith(
-          color: context.colors.textPrimary,
-        ),
-      ),
-    );
-  }
-}
-
-class _FolderHeader extends StatelessWidget {
-  const _FolderHeader({
-    required this.folder,
-    required this.expanded,
-    required this.enabled,
-    required this.onExpandToggle,
-    required this.onToggleIncluded,
-  });
-
-  final FolderUsage folder;
-  final bool expanded;
-  final bool enabled;
-  final VoidCallback onExpandToggle;
-  final ValueChanged<bool> onToggleIncluded;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    final colors = context.colors;
-
-    return Pressable(
-      onTap: folder.trackCount == 0 ? null : onExpandToggle,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.lg,
-          vertical: AppSpacing.sm,
-        ),
-        child: Row(
-          children: [
-            AnimatedRotation(
-              turns: expanded ? 0.25 : 0,
-              duration: AppDurations.resolve(context, AppDurations.fast),
-              child: Icon(
-                Icons.chevron_right_rounded,
-                color: folder.trackCount == 0
-                    ? colors.textTertiary.withValues(alpha: 0.4)
-                    : colors.textTertiary,
-              ),
-            ),
-            const SizedBox(width: AppSpacing.xs),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    p.basename(folder.path),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: AppTypography.rowTitle.copyWith(
-                      color: colors.textPrimary,
-                    ),
-                  ),
-                  Text(
-                    '${l10n.trackCountLabel(folder.trackCount)} · '
-                    '${formatFileSize(folder.sizeBytes)}',
-                    style: AppTypography.caption.copyWith(
-                      color: colors.textSecondary,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: AppSpacing.sm),
-            AppSwitch(
-              value: folder.isIncluded,
-              onChanged: enabled ? onToggleIncluded : null,
-              semanticLabel: l10n.includeInScanSemanticLabel,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _TrackTile extends StatelessWidget {
-  const _TrackTile({
-    required this.track,
-    required this.enabled,
-    required this.onDelete,
-  });
-
-  final Track track;
-  final bool enabled;
-  final VoidCallback onDelete;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    final colors = context.colors;
-
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        AppSpacing.xl,
-        AppSpacing.xxs,
-        AppSpacing.smMd,
-        AppSpacing.xxs,
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              track.title,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: AppTypography.rowSubtitle.copyWith(
-                color: colors.textPrimary,
-              ),
-            ),
-          ),
-          const SizedBox(width: AppSpacing.sm),
-          Text(
-            formatFileSize(track.fileSize),
-            style: AppTypography.meta.copyWith(color: colors.textTertiary),
-          ),
-          AppIconButton(
-            icon: Icons.delete_outline_rounded,
-            semanticLabel: l10n.deleteFileSemanticLabel,
-            size: 36,
-            iconSize: AppSizes.iconSmall,
-            onPressed: enabled ? onDelete : null,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _BackupActions extends StatelessWidget {
-  const _BackupActions({
-    required this.enabled,
-    required this.onExport,
-    required this.onImport,
-    this.exportLabel,
-    this.importLabel,
-  });
-
-  final bool enabled;
-  final VoidCallback onExport;
-  final VoidCallback onImport;
-  final String? exportLabel;
-  final String? importLabel;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.lg,
-        vertical: AppSpacing.sm,
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: AppTextButton(
-              label: exportLabel ?? l10n.exportBackupLabel,
-              onPressed: enabled ? onExport : null,
-            ),
-          ),
-          const SizedBox(width: AppSpacing.sm),
-          Expanded(
-            child: AppTextButton(
-              label: importLabel ?? l10n.importBackupLabel,
-              onPressed: enabled ? onImport : null,
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }

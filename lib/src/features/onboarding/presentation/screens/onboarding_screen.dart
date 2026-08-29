@@ -6,27 +6,21 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:music_app/l10n/app_localizations.dart';
 import 'package:music_app/src/core/navigation/navigators/onboarding_navigator.dart';
 import 'package:music_app/src/features/onboarding/presentation/view_models/onboarding_view_model.dart';
+import 'package:music_app/src/features/onboarding/presentation/widgets/onboarding_screen/onboarding_page.dart';
+import 'package:music_app/src/features/onboarding/presentation/widgets/onboarding_screen/onboarding_page_data.dart';
 
-class _Page {
-  const _Page(this.artworkSeed, this.title, this.body);
-
-  final String artworkSeed;
-  final String Function(AppLocalizations) title;
-  final String Function(AppLocalizations) body;
-}
-
-final _pages = <_Page>[
-  _Page(
+final _pages = <OnboardingPageData>[
+  OnboardingPageData(
     'onboarding-1',
     (l10n) => l10n.onboarding1Title,
     (l10n) => l10n.onboarding1Body,
   ),
-  _Page(
+  OnboardingPageData(
     'onboarding-2',
     (l10n) => l10n.onboarding2Title,
     (l10n) => l10n.onboarding2Body,
   ),
-  _Page(
+  OnboardingPageData(
     'onboarding-3',
     (l10n) => l10n.onboarding3Title,
     (l10n) => l10n.onboarding3Body,
@@ -102,7 +96,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 onPageChanged: (page) => setState(() => _page = page),
                 itemCount: _pages.length,
                 itemBuilder: (context, index) =>
-                    _OnboardingPage(page: _pages[index], l10n: l10n),
+                    OnboardingPage(page: _pages[index], l10n: l10n),
               ),
             ),
             Row(
@@ -146,78 +140,6 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class _OnboardingPage extends StatelessWidget {
-  const _OnboardingPage({required this.page, required this.l10n});
-
-  final _Page page;
-  final AppLocalizations l10n;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = context.colors;
-    final width = MediaQuery.sizeOf(context).width;
-    final artworkSize = (width - 140).clamp(140.0, 260.0);
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 32),
-      // On short screens the artwork, title and body together can exceed
-      // the space PageView gives this page; scroll instead of overflowing,
-      // while still centering when everything already fits.
-      child: LayoutBuilder(
-        builder: (context, constraints) => SingleChildScrollView(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(minHeight: constraints.maxHeight),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(
-                      AppRadius.extraLarge,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: colors.shadow,
-                        blurRadius: 40,
-                        spreadRadius: -8,
-                        offset: const Offset(0, 18),
-                      ),
-                    ],
-                  ),
-                  child: AppArtwork(
-                    seed: page.artworkSeed,
-                    size: artworkSize,
-                    radius: AppRadius.extraLarge,
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.xxl),
-                Text(
-                  page.title(l10n),
-                  textAlign: TextAlign.center,
-                  style: AppTypography.display.copyWith(
-                    fontSize: 25,
-                    color: colors.textPrimary,
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.smMd),
-                Text(
-                  page.body(l10n),
-                  textAlign: TextAlign.center,
-                  style: AppTypography.rowSubtitle.copyWith(
-                    fontSize: 14,
-                    height: 1.55,
-                    color: colors.textSecondary,
-                  ),
-                ),
-              ],
-            ),
-          ),
         ),
       ),
     );

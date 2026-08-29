@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:music_app/l10n/app_localizations.dart';
 import 'package:music_app/src/core/navigation/navigators/player_navigator.dart';
-import 'package:music_app/src/core/utils/duration_formatter.dart';
 import 'package:music_app/src/features/library/domain/entities/track.dart';
 import 'package:music_app/src/features/library/presentation/providers/library_providers.dart';
 import 'package:music_app/src/features/player/presentation/view_models/playback_screen_view_model.dart';
@@ -14,10 +13,11 @@ import 'package:music_app/src/features/player/presentation/widgets/mini_player.d
 import 'package:music_app/src/features/playlist/data/providers/playlist_data_providers.dart';
 import 'package:music_app/src/features/playlist/presentation/providers/playlist_providers.dart';
 import 'package:music_app/src/features/playlist/presentation/view_models/playlist_track_sort_view_model.dart';
-import 'package:music_app/src/features/playlist/presentation/widgets/playlist_cover_art.dart';
 import 'package:music_app/src/features/playlist/presentation/widgets/playlist_more_sheet.dart';
+import 'package:music_app/src/features/playlist/presentation/widgets/playlist_screen/playlist_header.dart';
+import 'package:music_app/src/features/playlist/presentation/widgets/playlist_screen/playlist_sort_row.dart';
+import 'package:music_app/src/features/playlist/presentation/widgets/playlist_screen/playlist_track_row.dart';
 import 'package:music_app/src/features/playlist/presentation/widgets/playlist_track_more_sheet.dart';
-import 'package:music_app/src/features/playlist/presentation/widgets/playlist_track_sort_sheet.dart';
 import 'package:music_app/src/features/queue/presentation/view_models/queue_view_model.dart';
 
 /// A playlist's details: composed cover, description, favorite, search,
@@ -118,7 +118,7 @@ class _PlaylistScreenState extends ConsumerState<PlaylistScreen> {
       await PlayerNavigator.openPlayer(context);
     }
 
-    final header = _PlaylistHeader(
+    final header = PlaylistHeader(
       playlistId: widget.playlistId,
       playlistName: playlist?.name,
       description: playlist?.description,
@@ -130,7 +130,7 @@ class _PlaylistScreenState extends ConsumerState<PlaylistScreen> {
 
     final sortRow = tracks.isEmpty
         ? null
-        : _SortRow(trackCount: tracks.length, sort: sort);
+        : PlaylistSortRow(trackCount: tracks.length, sort: sort);
 
     return MiniPlayerDock(
       child: AppScaffold(
@@ -238,7 +238,7 @@ class _PlaylistScreenState extends ConsumerState<PlaylistScreen> {
                       itemCount: visibleTracks.length,
                       onReorderItem: (oldIndex, newIndex) =>
                           unawaited(_reorder(tracks, oldIndex, newIndex)),
-                      itemBuilder: (context, index) => _PlaylistTrackRow(
+                      itemBuilder: (context, index) => PlaylistTrackRow(
                         key: ValueKey('${visibleTracks[index].id}-$index'),
                         track: visibleTracks[index],
                         index: index,
@@ -266,7 +266,7 @@ class _PlaylistScreenState extends ConsumerState<PlaylistScreen> {
                         final trackIndex =
                             index - 1 - (sortRow == null ? 0 : 1);
                         final track = visibleTracks[trackIndex];
-                        return _PlaylistTrackRow(
+                        return PlaylistTrackRow(
                           key: ValueKey('${track.id}-$trackIndex'),
                           track: track,
                           index: tracks.indexOf(track),
@@ -337,300 +337,5 @@ class _PlaylistScreenState extends ConsumerState<PlaylistScreen> {
     await ref
         .read(playlistRepositoryProvider)
         .setPlaylistTracks(widget.playlistId, ids);
-  }
-}
-
-class _PlaylistHeader extends StatelessWidget {
-  const _PlaylistHeader({
-    required this.playlistId,
-    required this.playlistName,
-    required this.description,
-    required this.tracks,
-    required this.albumArtwork,
-    required this.onPlay,
-    required this.onShuffle,
-  });
-
-  final String playlistId;
-  final String? playlistName;
-  final String? description;
-  final List<Track> tracks;
-  final Map<String, String?> albumArtwork;
-  final VoidCallback? onPlay;
-  final VoidCallback? onShuffle;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    final colors = context.colors;
-    final totalDuration = tracks.fold(
-      Duration.zero,
-      (total, track) => total + track.duration,
-    );
-    final coverTracks = tracks
-        .take(4)
-        .map<PlaylistCoverTrack>(
-          (track) => (seed: track.id, artworkPath: albumArtwork[track.albumId]),
-        )
-        .toList();
-
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        AppSpacing.lg,
-        AppSpacing.md,
-        AppSpacing.lg,
-        AppSpacing.sm,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              PlaylistCoverArt(
-                playlistId: playlistId,
-                tracks: coverTracks,
-                size: 140,
-              ),
-              const SizedBox(width: AppSpacing.md),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (playlistName != null)
-                      Text(
-                        playlistName!,
-                        style: AppTypography.header.copyWith(
-                          color: colors.textPrimary,
-                        ),
-                      ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '${l10n.trackCountLabel(tracks.length)} · '
-                      '${formatDuration(totalDuration)}',
-                      style: AppTypography.caption.copyWith(
-                        color: colors.textTertiary,
-                      ),
-                    ),
-                    if (description != null && description!.isNotEmpty) ...[
-                      const SizedBox(height: AppSpacing.xs),
-                      Text(
-                        description!,
-                        maxLines: 3,
-                        overflow: TextOverflow.ellipsis,
-                        style: AppTypography.rowSubtitle.copyWith(
-                          color: colors.textSecondary,
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-            ],
-          ),
-          if (tracks.isNotEmpty) ...[
-            const SizedBox(height: AppSpacing.lgXl),
-            Row(
-              children: [
-                Expanded(
-                  child: AppPrimaryButton(
-                    label: l10n.playLabel,
-                    icon: Icons.play_arrow_rounded,
-                    onPressed: onPlay,
-                  ),
-                ),
-                const SizedBox(width: AppSpacing.smMd),
-                Expanded(
-                  child: AppSecondaryButton(
-                    label: l10n.shuffleButtonSemanticLabel,
-                    icon: Icons.shuffle_rounded,
-                    onPressed: onShuffle,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: AppSpacing.lgXl),
-          ],
-        ],
-      ),
-    );
-  }
-}
-
-class _SortRow extends ConsumerWidget {
-  const _SortRow({required this.trackCount, required this.sort});
-
-  final int trackCount;
-  final PlaylistTrackSort sort;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
-    final colors = context.colors;
-
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        AppSpacing.lg,
-        0,
-        AppSpacing.smMd,
-        AppSpacing.sm,
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            l10n.trackCountLabel(trackCount),
-            style: AppTypography.caption.copyWith(color: colors.textTertiary),
-          ),
-          Pressable(
-            scale: 0.97,
-            onTap: () => unawaited(showPlaylistTrackSortSheet(context, ref)),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.xs,
-                vertical: AppSpacing.xxs,
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.swap_vert_rounded,
-                    size: 17,
-                    color: colors.textSecondary,
-                  ),
-                  const SizedBox(width: AppSpacing.xxs),
-                  Text(
-                    playlistTrackSortLabel(l10n, sort),
-                    style: AppTypography.meta.copyWith(
-                      color: colors.textSecondary,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _PlaylistTrackRow extends ConsumerWidget {
-  const _PlaylistTrackRow({
-    required this.track,
-    required this.index,
-    required this.editing,
-    required this.current,
-    required this.playing,
-    required this.onTap,
-    required this.onRemove,
-    required this.onMore,
-    super.key,
-  });
-
-  final Track track;
-  final int index;
-  final bool editing;
-  final bool current;
-  final bool playing;
-  final VoidCallback onTap;
-  final VoidCallback onRemove;
-  final VoidCallback onMore;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
-    final colors = context.colors;
-    final artistName = ref.watch(artistNamesProvider)[track.artistId];
-
-    return Pressable(
-      scale: 0.99,
-      onTap: editing ? null : onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.smMd,
-          vertical: AppSpacing.sm,
-        ),
-        child: Row(
-          children: [
-            if (editing)
-              AppIconButton(
-                icon: Icons.remove_circle_outline,
-                semanticLabel: l10n.removeFromPlaylistSemanticLabel,
-                onPressed: onRemove,
-              )
-            else
-              SizedBox(
-                width: 22,
-                child: Text(
-                  '${index + 1}',
-                  style: AppTypography.caption.copyWith(
-                    color: colors.textTertiary,
-                    fontFeatures: const [FontFeature.tabularFigures()],
-                  ),
-                ),
-              ),
-            const SizedBox(width: AppSpacing.smMd),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    track.title,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: AppTypography.rowTitle.copyWith(
-                      color: current ? colors.accent : colors.textPrimary,
-                    ),
-                  ),
-                  if (artistName != null) ...[
-                    const SizedBox(height: 2),
-                    Text(
-                      artistName,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: AppTypography.rowSubtitle.copyWith(
-                        color: colors.textSecondary,
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-            ),
-            const SizedBox(width: AppSpacing.sm),
-            if (editing)
-              ReorderableDragStartListener(
-                index: index,
-                child: Semantics(
-                  label: l10n.dragToReorderSemanticLabel,
-                  child: Icon(
-                    Icons.drag_handle_rounded,
-                    color: colors.textTertiary,
-                  ),
-                ),
-              )
-            else ...[
-              if (current)
-                AppPlaybackIndicator(playing: playing, color: colors.accent)
-              else
-                Text(
-                  formatDuration(track.duration),
-                  style: AppTypography.meta.copyWith(
-                    color: colors.textTertiary,
-                  ),
-                ),
-              AppIconButton(
-                icon: Icons.more_vert,
-                semanticLabel: l10n.playlistOptionsSemanticLabel,
-                size: 36,
-                iconSize: AppSizes.iconSmall,
-                onPressed: onMore,
-              ),
-            ],
-          ],
-        ),
-      ),
-    );
   }
 }

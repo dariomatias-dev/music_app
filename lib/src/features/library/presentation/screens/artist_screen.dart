@@ -4,13 +4,10 @@ import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:music_app/l10n/app_localizations.dart';
-import 'package:music_app/src/core/navigation/navigators/library_navigator.dart';
-import 'package:music_app/src/core/utils/duration_formatter.dart';
-import 'package:music_app/src/features/library/domain/entities/album.dart';
-import 'package:music_app/src/features/library/domain/entities/artist.dart';
-import 'package:music_app/src/features/library/domain/entities/track.dart';
 import 'package:music_app/src/features/library/presentation/providers/library_providers.dart';
-import 'package:music_app/src/features/library/presentation/widgets/media_card.dart';
+import 'package:music_app/src/features/library/presentation/widgets/artist_screen/artist_album_card.dart';
+import 'package:music_app/src/features/library/presentation/widgets/artist_screen/artist_header.dart';
+import 'package:music_app/src/features/library/presentation/widgets/artist_screen/artist_track_row.dart';
 import 'package:music_app/src/features/player/presentation/view_models/playback_screen_view_model.dart';
 import 'package:music_app/src/features/player/presentation/view_models/playback_view_model.dart';
 import 'package:music_app/src/features/queue/presentation/view_models/queue_view_model.dart';
@@ -67,7 +64,7 @@ class ArtistScreen extends ConsumerWidget {
         itemCount: fixedRowCount + tracks.length,
         itemBuilder: (context, index) {
           if (index == 0) {
-            return _ArtistHeader(artist: artist, albumCount: albums.length);
+            return ArtistHeader(artist: artist, albumCount: albums.length);
           }
           if (index == 1) {
             return Padding(
@@ -118,13 +115,13 @@ class ArtistScreen extends ConsumerWidget {
                 separatorBuilder: (context, index) =>
                     const SizedBox(width: AppSpacing.smMd),
                 itemBuilder: (context, index) =>
-                    _ArtistAlbumCard(album: albums[index]),
+                    ArtistAlbumCard(album: albums[index]),
               ),
             );
           }
           final trackIndex = index - fixedRowCount;
           final track = tracks[trackIndex];
-          return _ArtistTrackRow(
+          return ArtistTrackRow(
             track: track,
             current: track.id == currentTrackId,
             playing: playing,
@@ -135,115 +132,6 @@ class ArtistScreen extends ConsumerWidget {
             ),
           );
         },
-      ),
-    );
-  }
-}
-
-class _ArtistHeader extends StatelessWidget {
-  const _ArtistHeader({required this.artist, required this.albumCount});
-
-  final Artist artist;
-  final int albumCount;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    final colors = context.colors;
-
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        AppSpacing.lg,
-        AppSpacing.md,
-        AppSpacing.lg,
-        AppSpacing.sm,
-      ),
-      child: Column(
-        children: [
-          AppArtwork(seed: artist.id, size: 140, circle: true),
-          const SizedBox(height: AppSpacing.md),
-          Text(
-            artist.name,
-            textAlign: TextAlign.center,
-            style: AppTypography.header.copyWith(color: colors.textPrimary),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            '${l10n.trackCountLabel(artist.trackCount)} · '
-            '${l10n.albumCountLabel(albumCount)}',
-            style: AppTypography.caption.copyWith(color: colors.textTertiary),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ArtistAlbumCard extends StatelessWidget {
-  const _ArtistAlbumCard({required this.album});
-
-  final Album album;
-
-  @override
-  Widget build(BuildContext context) {
-    return MediaCard(
-      seed: album.id,
-      title: album.title,
-      artworkPath: album.artworkPath,
-      onTap: () => LibraryNavigator.openAlbum(context, albumId: album.id),
-    );
-  }
-}
-
-class _ArtistTrackRow extends StatelessWidget {
-  const _ArtistTrackRow({
-    required this.track,
-    required this.current,
-    required this.playing,
-    required this.onTap,
-  });
-
-  final Track track;
-  final bool current;
-  final bool playing;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = context.colors;
-
-    return Pressable(
-      scale: 0.99,
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.lg,
-          vertical: AppSpacing.sm,
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: Text(
-                track.title,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: AppTypography.rowTitle.copyWith(
-                  color: current ? colors.accent : colors.textPrimary,
-                ),
-              ),
-            ),
-            const SizedBox(width: AppSpacing.sm),
-            if (current)
-              AppPlaybackIndicator(playing: playing, color: colors.accent)
-            else
-              Text(
-                formatDuration(track.duration),
-                style: AppTypography.meta.copyWith(
-                  color: colors.textTertiary,
-                ),
-              ),
-          ],
-        ),
       ),
     );
   }
