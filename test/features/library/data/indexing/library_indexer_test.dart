@@ -66,12 +66,20 @@ class _FakeLibraryLocalDataSource implements LibraryLocalDataSource {
   final Map<String, Album> albums = {};
   final Map<String, Track> tracks = {};
 
+  /// Every write in the order it happened, as `'kind:id'`.
+  ///
+  /// Tracks reference an album and an artist by id, so the rows they point
+  /// at have to exist first. Only the order reveals that, not the final
+  /// contents.
+  final List<String> writes = [];
+
   @override
   Future<Artist?> findArtistBySourceId(String sourceId) async =>
       artists[sourceId];
 
   @override
   Future<void> upsertArtist(Artist artist) async {
+    writes.add('artist:${artist.id}');
     artists[artist.sourceId] = artist;
   }
 
@@ -80,6 +88,7 @@ class _FakeLibraryLocalDataSource implements LibraryLocalDataSource {
 
   @override
   Future<void> upsertAlbum(Album album) async {
+    writes.add('album:${album.id}');
     albums[album.sourceId] = album;
   }
 
@@ -99,6 +108,7 @@ class _FakeLibraryLocalDataSource implements LibraryLocalDataSource {
 
   @override
   Future<void> upsertTrack(Track track) async {
+    writes.add('track:${track.id}');
     tracks[track.id] = track;
   }
 
@@ -121,6 +131,20 @@ class _FakeLibraryLocalDataSource implements LibraryLocalDataSource {
     for (final entry in albums.entries.toList()) {
       albums[entry.key] = entry.value.copyWith(artworkPath: null);
     }
+  }
+}
+
+class _CountingArtworkCache extends _FakeArtworkCache {
+  int saveCalls = 0;
+
+  @override
+  Future<String> save({
+    required String id,
+    required Uint8List data,
+    required String mimeType,
+  }) {
+    saveCalls++;
+    return super.save(id: id, data: data, mimeType: mimeType);
   }
 }
 
@@ -252,5 +276,214 @@ void main() {
 
     expect(dataSource.artists.values.single.name, 'Unknown Artist');
     expect(dataSource.albums.values.single.title, 'Unknown Album');
+  });
+
+  test(
+    'writes an album and its artist before any track pointing at them',
+    () async {
+      final files = [
+        _file(
+          mediaStoreId: 1,
+          filePath: '/music/a.mp3',
+          title: 'A',
+          duration: const Duration(minutes: 3),
+        ),
+        _file(
+          mediaStoreId: 2,
+          filePath: '/music/b.mp3',
+          title: 'B',
+          duration: const Duration(minutes: 4),
+          album: 'Afterglow',
+        ),
+      ];
+
+      final dataSource = _FakeLibraryLocalDataSource();
+      final indexer = LibraryIndexer(
+        mediaScanner: _FakeMediaScanner(files),
+        metadataReader: _FakeMetadataReader(const {}),
+        artworkCache: _FakeArtworkCache(),
+        dataSource: dataSource,
+        idGenerator: _FakeIdGenerator(),
+      );
+
+      await indexer.indexLibrary().toList();
+
+      for (final track in dataSource.tracks.values) {
+        final trackAt = dataSource.writes.indexOf('track:${track.id}');
+        final albumAt = dataSource.writes.indexOf('album:${track.albumId}');
+        final artistAt = dataSource.writes.indexOf('artist:${track.artistId}');
+
+        expect(albumAt, isNonNegative, reason: 'album row never written');
+        expect(artistAt, isNonNegative, reason: 'artist row never written');
+        expect(albumAt, lessThan(trackAt), reason: 'album written after track');
+        expect(
+          artistAt,
+          lessThan(trackAt),
+          reason: 'artist written after track',
+        );
+      }
+    },
+  );
+
+  test(
+    're-indexing keeps each track id and does not double aggregates',
+    () async {
+      final files = [
+        _file(
+          mediaStoreId: 1,
+          filePath: '/music/a.mp3',
+          title: 'A',
+          duration: const Duration(minutes: 3),
+        ),
+        _file(
+          mediaStoreId: 2,
+          filePath: '/music/b.mp3',
+          title: 'B',
+          duration: const Duration(minutes: 4),
+        ),
+      ];
+
+      final dataSource = _FakeLibraryLocalDataSource();
+      LibraryIndexer buildIndexer() => LibraryIndexer(
+        mediaScanner: _FakeMediaScanner(files),
+        metadataReader: _FakeMetadataReader(const {}),
+        artworkCache: _FakeArtworkCache(),
+        dataSource: dataSource,
+        idGenerator: _FakeIdGenerator(),
+      );
+
+      await buildIndexer().indexLibrary().toList();
+      final idsAfterFirst = dataSource.tracks.values
+          .map((t) => '${t.sourceId}:${t.id}')
+          .toSet();
+
+      await buildIndexer().indexLibrary().toList();
+
+      expect(
+        dataSource.tracks.values.map((t) => '${t.sourceId}:${t.id}').toSet(),
+        idsAfterFirst,
+        reason: 'a re-scan must not churn ids other rows point at',
+      );
+      expect(dataSource.tracks, hasLength(2));
+      expect(dataSource.albums.values.single.trackCount, 2);
+      expect(
+        dataSource.albums.values.single.totalDuration,
+        const Duration(minutes: 7),
+      );
+      expect(dataSource.artists.values.single.trackCount, 2);
+      expect(dataSource.artists.values.single.albumCount, 1);
+    },
+  );
+
+  test('counts one album per distinct album of the same artist', () async {
+    final files = [
+      _file(
+        mediaStoreId: 1,
+        filePath: '/music/a.mp3',
+        title: 'A',
+        duration: const Duration(minutes: 3),
+      ),
+      _file(
+        mediaStoreId: 2,
+        filePath: '/music/b.mp3',
+        title: 'B',
+        duration: const Duration(minutes: 3),
+        album: 'Afterglow',
+      ),
+    ];
+
+    final dataSource = _FakeLibraryLocalDataSource();
+    await LibraryIndexer(
+      mediaScanner: _FakeMediaScanner(files),
+      metadataReader: _FakeMetadataReader(const {}),
+      artworkCache: _FakeArtworkCache(),
+      dataSource: dataSource,
+      idGenerator: _FakeIdGenerator(),
+    ).indexLibrary().toList();
+
+    expect(dataSource.albums, hasLength(2));
+    expect(dataSource.artists.values.single.albumCount, 2);
+    expect(dataSource.artists.values.single.trackCount, 2);
+  });
+
+  test('saves an album cover once, not once per track on it', () async {
+    final files = [
+      _file(
+        mediaStoreId: 1,
+        filePath: '/music/a.mp3',
+        title: 'A',
+        duration: const Duration(minutes: 3),
+      ),
+      _file(
+        mediaStoreId: 2,
+        filePath: '/music/b.mp3',
+        title: 'B',
+        duration: const Duration(minutes: 3),
+      ),
+    ];
+    final artwork = EmbeddedArtwork(
+      data: Uint8List.fromList([1, 2, 3]),
+      mimeType: 'image/jpeg',
+    );
+
+    final artworkCache = _CountingArtworkCache();
+    final dataSource = _FakeLibraryLocalDataSource();
+    await LibraryIndexer(
+      mediaScanner: _FakeMediaScanner(files),
+      metadataReader: _FakeMetadataReader({
+        '/music/a.mp3': TrackMetadata(artwork: artwork),
+        '/music/b.mp3': TrackMetadata(artwork: artwork),
+      }),
+      artworkCache: artworkCache,
+      dataSource: dataSource,
+      idGenerator: _FakeIdGenerator(),
+    ).indexLibrary().toList();
+
+    expect(artworkCache.saveCalls, 1);
+  });
+
+  test('does not write an album or artist row per track', () async {
+    const trackCount = 600;
+    const albumCount = 40;
+    const artistCount = 8;
+    final files = [
+      for (var i = 0; i < trackCount; i++)
+        _file(
+          mediaStoreId: i,
+          filePath: '/music/$i.mp3',
+          title: 'T$i',
+          duration: const Duration(minutes: 3),
+          artist: 'Artist ${i % artistCount}',
+          album: 'Album ${i % albumCount}',
+        ),
+    ];
+
+    final dataSource = _FakeLibraryLocalDataSource();
+    await LibraryIndexer(
+      mediaScanner: _FakeMediaScanner(files),
+      metadataReader: _FakeMetadataReader(const {}),
+      artworkCache: _FakeArtworkCache(),
+      dataSource: dataSource,
+      idGenerator: _FakeIdGenerator(),
+    ).indexLibrary().toList();
+
+    int writesOf(String kind) =>
+        dataSource.writes.where((w) => w.startsWith('$kind:')).length;
+
+    // Two per album and per artist: the row the tracks reference, then the
+    // final totals. Anything approaching `trackCount` means the per-file
+    // upserts are back.
+    expect(writesOf('album'), albumCount * 2);
+    expect(writesOf('artist'), artistCount * 2);
+    expect(writesOf('track'), trackCount);
+
+    expect(dataSource.albums, hasLength(albumCount));
+    expect(dataSource.artists, hasLength(artistCount));
+    for (final album in dataSource.albums.values) {
+      expect(album.trackCount, trackCount ~/ albumCount);
+    }
+    for (final artist in dataSource.artists.values) {
+      expect(artist.trackCount, trackCount ~/ artistCount);
+    }
   });
 }

@@ -14,6 +14,12 @@ class PlayEventDao extends DatabaseAccessor<AppDatabase>
   /// Watches all play events.
   Stream<List<PlayEventRow>> watchAll() => select(playEventTable).watch();
 
+  /// Every play event, read once.
+  ///
+  /// Distinct from [watchAll] so a one-shot read does not register a query
+  /// stream, run it, emit and immediately cancel just to get one value.
+  Future<List<PlayEventRow>> getAll() => select(playEventTable).get();
+
   /// Every play event started at or after [from], newest first.
   ///
   /// Filtering in SQL rather than over [watchAll]'s result: the history
