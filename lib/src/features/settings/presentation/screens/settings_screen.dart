@@ -18,6 +18,7 @@ import 'package:music_app/src/features/settings/presentation/view_models/user_pr
 import 'package:music_app/src/features/settings/presentation/widgets/edit_name_sheet.dart';
 import 'package:music_app/src/features/settings/presentation/widgets/language_sheet.dart';
 import 'package:music_app/src/features/settings/presentation/widgets/playback_sheet.dart';
+import 'package:music_app/src/features/settings/presentation/widgets/settings_screen/settings_group_label.dart';
 
 /// The Settings tab: a flat list of rows grouped under section labels,
 /// each leading to a sheet, a screen, or acting immediately in place.
@@ -69,7 +70,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       topBar: AppTopBar(title: l10n.settingsTabLabel, showBack: false),
       body: ListView(
         children: [
-          _GroupLabel(l10n.settingsSectionProfileLabel),
+          SettingsGroupLabel(l10n.settingsSectionProfileLabel),
           AppSettingsRow(
             icon: Icons.person_outline_rounded,
             label: l10n.settingsNameLabel,
@@ -101,7 +102,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             label: l10n.settingsPlaybackRowLabel,
             onTap: () => unawaited(showPlaybackSheet(context, ref)),
           ),
-          _GroupLabel(l10n.settingsSectionLibraryLabel),
+          SettingsGroupLabel(l10n.settingsSectionLibraryLabel),
           AppSettingsRow(
             icon: Icons.sd_storage_outlined,
             label: l10n.storageLabel,
@@ -124,7 +125,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 : null,
             onTap: _rescanning ? null : () => unawaited(_rescan()),
           ),
-          _GroupLabel(l10n.settingsSectionAboutLabel),
+          SettingsGroupLabel(l10n.settingsSectionAboutLabel),
           AppSettingsRow(
             icon: Icons.restart_alt_rounded,
             label: l10n.settingsReplayOnboardingLabel,
@@ -174,29 +175,5 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     await ref.read(onboardingViewModelProvider.notifier).reset();
     if (!context.mounted) return;
     OnboardingNavigator.goToOnboarding(context);
-  }
-}
-
-class _GroupLabel extends StatelessWidget {
-  const _GroupLabel(this.text);
-
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        AppSpacing.lg,
-        AppSpacing.lg,
-        AppSpacing.lg,
-        AppSpacing.sm,
-      ),
-      child: Text(
-        text,
-        style: AppTypography.section.copyWith(
-          color: context.colors.textSecondary,
-        ),
-      ),
-    );
   }
 }
