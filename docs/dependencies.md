@@ -28,4 +28,6 @@ That migration is **the same blocker as the `drift` pin above**, not a separate 
 fvm flutter pub outdated
 ```
 
-Run this occasionally to see what's actually resolvable versus what's blocked by the chains above. `ROADMAP.md`'s "Débito técnico" (technical debt) section tracks the open items from this file that still need action.
+Run this occasionally to see what's actually resolvable versus what's blocked by the chains above.
+
+Dependabot also opens weekly update pull requests (see [`contributing.md`](contributing.md#dependency-updates)). It reads version constraints, not this document, so it will periodically propose bumps that the chains above block. Close those rather than merging them — the pins are load-bearing, and each one is only removable together with the chain it belongs to.
