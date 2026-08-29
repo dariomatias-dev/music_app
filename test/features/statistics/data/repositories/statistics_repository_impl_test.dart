@@ -229,4 +229,38 @@ void main() {
       },
     );
   });
+
+  group('watchHasAnyPlay', () {
+    test('is false on an empty history', () async {
+      expect(await repository.watchHasAnyPlay().first, isFalse);
+    });
+
+    test('is true once a play exists', () async {
+      await seedPlay(id: '1', trackId: 'a', startedAt: DateTime(2026));
+
+      expect(await repository.watchHasAnyPlay().first, isTrue);
+    });
+  });
+
+  group('the period cutoff', () {
+    test('excludes events older than it, and keeps the boundary', () async {
+      final cutoff = DateTime(2026, 1, 10);
+      await seedPlay(id: 'old', trackId: 'a', startedAt: DateTime(2026, 1, 9));
+      await seedPlay(id: 'edge', trackId: 'b', startedAt: cutoff);
+      await seedPlay(id: 'new', trackId: 'c', startedAt: DateTime(2026, 1, 11));
+
+      final counts = await repository.watchTrackPlayCounts(from: cutoff).first;
+
+      expect(counts.map((c) => c.trackId), unorderedEquals(['b', 'c']));
+    });
+
+    test('omitting it counts the whole history', () async {
+      await seedPlay(id: 'old', trackId: 'a', startedAt: DateTime(2020));
+      await seedPlay(id: 'new', trackId: 'b', startedAt: DateTime(2026));
+
+      final counts = await repository.watchTrackPlayCounts().first;
+
+      expect(counts.map((c) => c.trackId), unorderedEquals(['a', 'b']));
+    });
+  });
 }

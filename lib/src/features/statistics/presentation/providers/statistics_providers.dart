@@ -48,10 +48,7 @@ final dailyPlayCountsProvider = StreamProvider<List<DailyPlayCount>>(
 /// Whether any play has ever been recorded, regardless of the selected
 /// period; drives the screen's empty state.
 final hasPlayHistoryProvider = StreamProvider<bool>(
-  (ref) => ref
-      .watch(statisticsRepositoryProvider)
-      .watchTrackPlayCounts()
-      .map((counts) => counts.isNotEmpty),
+  (ref) => ref.watch(statisticsRepositoryProvider).watchHasAnyPlay(),
 );
 
 /// The user's current and longest streaks of consecutive days with at least

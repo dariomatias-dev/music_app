@@ -18,11 +18,13 @@ class StatisticsRepositoryImpl implements StatisticsRepository {
   DateTime Function() clock = DateTime.now;
 
   Stream<List<PlayEventRow>> _events({DateTime? from}) {
-    return _database.playEventDao.watchAll().map((events) {
-      if (from == null) return events;
-      return events.where((event) => !event.startedAt.isBefore(from)).toList();
-    });
+    return from == null
+        ? _database.playEventDao.watchAll()
+        : _database.playEventDao.watchSince(from);
   }
+
+  @override
+  Stream<bool> watchHasAnyPlay() => _database.playEventDao.watchHasAny();
 
   @override
   Stream<List<TrackPlayCount>> watchTrackPlayCounts({DateTime? from}) {

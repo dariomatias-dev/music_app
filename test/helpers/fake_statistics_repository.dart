@@ -14,7 +14,9 @@ class FakeStatisticsRepository implements StatisticsRepository {
       currentDays: 0,
       longestDays: 0,
     ),
+    bool? hasAnyPlay,
   }) : _trackPlayCounts = trackPlayCounts,
+       _hasAnyPlay = hasAnyPlay,
        _totalListenedDuration = totalListenedDuration,
        _hourlyDistribution = hourlyDistribution ?? List.filled(24, 0),
        _dailyPlayCounts = dailyPlayCounts,
@@ -25,6 +27,7 @@ class FakeStatisticsRepository implements StatisticsRepository {
   final List<int> _hourlyDistribution;
   final List<DailyPlayCount> _dailyPlayCounts;
   final ListeningStreak _listeningStreak;
+  final bool? _hasAnyPlay;
 
   @override
   Stream<List<TrackPlayCount>> watchTrackPlayCounts({DateTime? from}) =>
@@ -45,4 +48,12 @@ class FakeStatisticsRepository implements StatisticsRepository {
   @override
   Stream<ListeningStreak> watchListeningStreak() =>
       Stream.value(_listeningStreak);
+
+  /// Defaults to whether the seeded track play counts are non-empty, which
+  /// is how the statistics screen used to derive "has history" before the
+  /// repository answered it directly. Pass `hasAnyPlay` to drive the two
+  /// apart.
+  @override
+  Stream<bool> watchHasAnyPlay() =>
+      Stream.value(_hasAnyPlay ?? _trackPlayCounts.isNotEmpty);
 }
