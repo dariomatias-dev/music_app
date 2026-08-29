@@ -59,12 +59,26 @@ fvm flutter gen-l10n
 
 | Job | 具体做什么 |
 | --- | --- |
-| `music_app` | 安装依赖，重新生成代码和本地化文件，**如果这一步产生了 diff 就直接失败**——生成的文件必须已提交且是最新的。随后是格式检查、静态分析、测试，以及 97% 的覆盖率门槛。 |
+| `music_app` | 安装依赖，重新生成代码和本地化文件，**如果这一步产生了 diff 就直接失败**——生成的文件必须已提交且是最新的。随后是格式检查、静态分析、测试，以及 97% 的覆盖率门槛，并以 `app` flag 将报告上传到 Codecov。 |
 | `Build APK` | 在 `music_app` 通过后运行，构建 release APK，作为 workflow 产物上传并保留 14 天。 |
-| `packages/app_ui` | 独立于应用本体，对设计系统包执行格式检查、静态分析、测试，以及 98% 的覆盖率门槛。 |
+| `packages/app_ui` | 独立于应用本体，对设计系统包执行格式检查、静态分析、测试，以及 98% 的覆盖率门槛，并以 `app_ui` flag 上传到 Codecov。 |
 | `Integration tests` | 在 `music_app` 通过后运行，启动一个 Android 模拟器，并在同一个会话中运行 `integration_test/` 下的所有测试套件——启动模拟器是其中最慢的一步。这些测试必须有设备：相关流程会读取 drift 的 stream query，而它们在普通 `flutter test` 的 fake async 下永远不会发出事件。该 job 会先启用 KVM，否则模拟器会退回软件渲染并超时；也正因如此它的超时预算是 45 分钟。 |
 
 推送 `v*.*.*` 形式的 tag 则会运行 [`.github/workflows/release.yml`](../.github/workflows/release.yml)：执行同样的检查，然后把 release APK 发布到 GitHub release，并自动生成发布说明。注意 release 构建是**有意**使用 debug keystore 签名的——本应用没有生产环境的签名配置。
+
+### 覆盖率报告
+
+让构建失败的是 [`scripts/check_coverage.sh`](../scripts/check_coverage.sh)；让这个数字变得可读的是 [Codecov](https://codecov.io/gh/dariomatias-dev/music_app)。每个包用各自的 flag 上传自己的 `lcov.info`，因此两个门槛是分开跟踪的；每个 pull request 都会收到一条按 flag 列出覆盖率变化的评论，并在未覆盖的新增行上给出行内标注。[`codecov.yml`](../codecov.yml) 保存这些目标，并重复了脚本中的排除项：生成的源文件、`lib/l10n/` 以及 drift 的表声明。
+
+上传使用仓库 secret `CODECOV_TOKEN` 认证。来自 fork 的 pull request 读不到它，会退回 Codecov 的免 token 上传，因此这一步特意设为 `fail_ci_if_error: false`——上传失败只意味着少了一份报告，绝不该让构建失败。
+
+若想在本地得到同样的东西（无需账号），把 `lcov` 文件渲染成 HTML：
+
+```sh
+fvm flutter test --coverage
+genhtml coverage/lcov.info -o coverage/html   # apt install lcov
+xdg-open coverage/html/index.html
+```
 
 ### 在本地运行工作流
 

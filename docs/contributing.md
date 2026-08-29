@@ -59,12 +59,26 @@ Every push and pull request runs [`.github/workflows/ci.yaml`](../.github/workfl
 
 | Job | What it does |
 | --- | --- |
-| `music_app` | Installs dependencies, regenerates code and localizations, then **fails if that regeneration produced a diff** — generated files must be committed and up to date. Then formatting, analysis, tests, and the 97% coverage gate. |
+| `music_app` | Installs dependencies, regenerates code and localizations, then **fails if that regeneration produced a diff** — generated files must be committed and up to date. Then formatting, analysis, tests, and the 97% coverage gate, and uploads the report to Codecov under the `app` flag. |
 | `Build APK` | Runs after `music_app` passes, and builds a release APK, uploaded as a workflow artifact kept for 14 days. |
-| `packages/app_ui` | Formatting, analysis, tests, and the 98% coverage gate for the design-system package, independently of the app. |
+| `packages/app_ui` | Formatting, analysis, tests, and the 98% coverage gate for the design-system package, independently of the app, uploaded to Codecov under the `app_ui` flag. |
 | `Integration tests` | Runs after `music_app` passes, boots an Android emulator and runs every `integration_test/` suite on it in one session, since booting is by far the slowest step. These need a device: the flows read through drift's stream queries, which never emit under the fake async a plain `flutter test` run uses. The job enables KVM first, without which the emulator falls back to software rendering and times out, and gets a 45-minute budget for the same reason. |
 
 Pushing a `v*.*.*` tag runs [`.github/workflows/release.yml`](../.github/workflows/release.yml) instead: the same checks, then a release APK published to a GitHub release with generated notes. Note that the release build is signed with the **debug keystore** on purpose — this app has no production signing config.
+
+### Coverage reports
+
+[`scripts/check_coverage.sh`](../scripts/check_coverage.sh) is what fails a build; [Codecov](https://codecov.io/gh/dariomatias-dev/music_app) is what makes the number readable. Each package uploads its `lcov.info` under its own flag, so the two thresholds are tracked separately, and a pull request gets a comment with the per-flag delta and inline annotations on uncovered new lines. [`codecov.yml`](../codecov.yml) holds the targets and repeats the script's exclusions: generated sources, `lib/l10n/`, and the drift table declarations.
+
+Uploads authenticate with a `CODECOV_TOKEN` repository secret. Pull requests from forks cannot read it and fall back to Codecov's tokenless upload, so the step is deliberately set to `fail_ci_if_error: false` — a failed upload is a missing report, never a failed build.
+
+For the same thing locally, without an account, render the `lcov` file to HTML:
+
+```sh
+fvm flutter test --coverage
+genhtml coverage/lcov.info -o coverage/html   # apt install lcov
+xdg-open coverage/html/index.html
+```
 
 ### Running the workflows locally
 
