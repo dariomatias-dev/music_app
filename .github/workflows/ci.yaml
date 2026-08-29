@@ -155,7 +155,9 @@ jobs:
           disable-animations: true
           script: |
             timeout 480 flutter test integration_test/app_flows_test.dart -d emulator-5554
+            adb -s emulator-5554 shell am force-stop br.com.dariomatias.music_app
             timeout 480 flutter test integration_test/user_flows_test.dart -d emulator-5554
+            adb -s emulator-5554 shell am force-stop br.com.dariomatias.music_app
             timeout 480 flutter test integration_test/backup_flows_test.dart -d emulator-5554
 
   app_ui:
