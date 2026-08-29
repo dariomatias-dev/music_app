@@ -28,4 +28,6 @@ Esa migración es **el mismo bloqueo que el pin de `drift` de arriba**, no uno s
 fvm flutter pub outdated
 ```
 
-Ejecuta esto de vez en cuando para ver qué es realmente resoluble frente a lo que está bloqueado por las cadenas de arriba. La sección "Débito técnico" del `ROADMAP.md` rastrea los puntos abiertos de este documento que aún necesitan acción.
+Ejecuta esto de vez en cuando para ver qué es realmente resoluble frente a lo que está bloqueado por las cadenas de arriba.
+
+Dependabot también abre pull requests de actualización semanales (consulta [`contributing.md`](contributing.es.md#actualizaciones-de-dependencias)). Lee las restricciones de versión, no este documento, así que periódicamente propondrá subidas que las cadenas de arriba bloquean. Cierra esos PR en lugar de fusionarlos — los pines cumplen una función, y cada uno solo se puede quitar junto con la cadena a la que pertenece.
