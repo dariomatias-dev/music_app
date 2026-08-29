@@ -106,4 +106,8 @@ class LibraryLocalDataSourceImpl implements LibraryLocalDataSource {
       trackCount: row.trackCount,
     );
   }
+
+  @override
+  Future<T> runInTransaction<T>(Future<T> Function() action) =>
+      _database.transaction(action);
 }

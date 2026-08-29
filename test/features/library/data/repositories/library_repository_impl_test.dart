@@ -82,6 +82,9 @@ class _FakeIdGenerator implements IdGenerator {
 }
 
 class _FakeLibraryLocalDataSource implements LibraryLocalDataSource {
+  @override
+  Future<T> runInTransaction<T>(Future<T> Function() action) => action();
+
   final Map<String, Artist> artists = {};
   final Map<String, Album> albums = {};
   final Map<String, Track> tracks = {};

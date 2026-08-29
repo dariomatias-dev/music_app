@@ -80,6 +80,9 @@ class _FakeLibraryLocalDataSource implements LibraryLocalDataSource {
   @override
   Future<void> upsertArtist(Artist artist) async {
     writes.add('artist:${artist.id}');
+    if (_transactionDepth == 0) {
+      writesOutsideTransaction.add('artist:${artist.id}');
+    }
     artists[artist.sourceId] = artist;
   }
 
@@ -89,6 +92,9 @@ class _FakeLibraryLocalDataSource implements LibraryLocalDataSource {
   @override
   Future<void> upsertAlbum(Album album) async {
     writes.add('album:${album.id}');
+    if (_transactionDepth == 0) {
+      writesOutsideTransaction.add('album:${album.id}');
+    }
     albums[album.sourceId] = album;
   }
 
@@ -109,6 +115,9 @@ class _FakeLibraryLocalDataSource implements LibraryLocalDataSource {
   @override
   Future<void> upsertTrack(Track track) async {
     writes.add('track:${track.id}');
+    if (_transactionDepth == 0) {
+      writesOutsideTransaction.add('track:${track.id}');
+    }
     tracks[track.id] = track;
   }
 
@@ -125,6 +134,25 @@ class _FakeLibraryLocalDataSource implements LibraryLocalDataSource {
 
   @override
   Stream<List<Artist>> watchArtists() => Stream.value(artists.values.toList());
+
+  var _transactionDepth = 0;
+
+  /// How many transactions the run opened.
+  int transactions = 0;
+
+  /// Writes that happened with no transaction open.
+  final List<String> writesOutsideTransaction = [];
+
+  @override
+  Future<T> runInTransaction<T>(Future<T> Function() action) async {
+    transactions++;
+    _transactionDepth++;
+    try {
+      return await action();
+    } finally {
+      _transactionDepth--;
+    }
+  }
 
   @override
   Future<void> clearAlbumArtworkPaths() async {
@@ -485,5 +513,36 @@ void main() {
     for (final artist in dataSource.artists.values) {
       expect(artist.trackCount, trackCount ~/ artistCount);
     }
+  });
+
+  test('commits in batches rather than once per write', () async {
+    const trackCount = 120;
+    final files = [
+      for (var i = 0; i < trackCount; i++)
+        _file(
+          mediaStoreId: i,
+          filePath: '/music/$i.mp3',
+          title: 'T$i',
+          duration: const Duration(minutes: 3),
+        ),
+    ];
+
+    final dataSource = _FakeLibraryLocalDataSource();
+    await LibraryIndexer(
+      mediaScanner: _FakeMediaScanner(files),
+      metadataReader: _FakeMetadataReader(const {}),
+      artworkCache: _FakeArtworkCache(),
+      dataSource: dataSource,
+      idGenerator: _FakeIdGenerator(),
+    ).indexLibrary().toList();
+
+    expect(
+      dataSource.writesOutsideTransaction,
+      isEmpty,
+      reason: 'every write should be inside a transaction',
+    );
+    // Batches of 25 over 120 files, plus the closing totals.
+    expect(dataSource.transactions, 6);
+    expect(dataSource.writes.length, greaterThan(trackCount));
   });
 }

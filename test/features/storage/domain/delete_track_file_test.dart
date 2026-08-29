@@ -28,6 +28,9 @@ class _FakeMediaScanner implements MediaScanner {
 }
 
 class _FakeLibraryLocalDataSource implements LibraryLocalDataSource {
+  @override
+  Future<T> runInTransaction<T>(Future<T> Function() action) => action();
+
   final List<String> deletedTrackIds = [];
 
   @override

@@ -43,4 +43,11 @@ abstract interface class LibraryLocalDataSource {
   /// Clears every album's cached artwork path, so a future scan re-extracts
   /// it.
   Future<void> clearAlbumArtworkPaths();
+
+  /// Runs [action] as a single unit of work.
+  ///
+  /// Every write outside one of these is its own transaction, and each
+  /// commit costs a disk sync; a scan that writes per file pays that
+  /// thousands of times over.
+  Future<T> runInTransaction<T>(Future<T> Function() action);
 }
