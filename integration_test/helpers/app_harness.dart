@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:drift/drift.dart' show driftRuntimeOptions;
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
@@ -242,14 +244,14 @@ Future<void> settleUntil(
 /// is neither reliable nor the actual thing under test.
 Future<void> pumpUntil(
   WidgetTester tester,
-  bool Function() condition, {
+  FutureOr<bool> Function() condition, {
   required String describe,
   Duration timeout = const Duration(seconds: 15),
 }) async {
   final deadline = DateTime.now().add(timeout);
   while (DateTime.now().isBefore(deadline)) {
     await tester.pump(const Duration(milliseconds: 100));
-    if (condition()) return;
+    if (await condition()) return;
   }
   throw StateError('Timed out after $timeout waiting for: $describe');
 }
