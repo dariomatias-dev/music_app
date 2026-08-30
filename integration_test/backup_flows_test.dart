@@ -64,7 +64,11 @@ void main() {
       await openStorageScreen(tester, app.l10n);
 
       await tester.tap(find.text(app.l10n.exportBackupLabel));
-      await settleUntil(tester, find.text(app.l10n.backupExportedMessage));
+      await pumpUntil(
+        tester,
+        () => app.deviceFiles.savedBytes != null,
+        describe: 'the export to hand bytes to the file service',
+      );
 
       final exported = app.deviceFiles.savedBytes;
       expect(exported, isNotNull, reason: 'export should have written bytes');
@@ -81,7 +85,12 @@ void main() {
       await openStorageScreen(tester, restored.l10n);
 
       await tester.tap(find.text(restored.l10n.importBackupLabel));
-      await settleUntil(tester, find.text(restored.l10n.backupImportedMessage));
+      await pumpUntil(
+        tester,
+        () async =>
+            (await reinstall.select(reinstall.playlistTable).get()).isNotEmpty,
+        describe: 'the restore to write the backed-up playlist',
+      );
 
       final restoredPlaylists = await firstValue(
         PlaylistRepositoryImpl(reinstall, idGenerator).watchPlaylists(),
@@ -122,7 +131,11 @@ void main() {
       await openStorageScreen(tester, app.l10n);
 
       await tester.tap(find.text(app.l10n.exportBackupLabel));
-      await settleUntil(tester, find.text(app.l10n.backupExportedMessage));
+      await pumpUntil(
+        tester,
+        () => files.savedBytes != null,
+        describe: 'the export to hand bytes to the file service',
+      );
 
       final json =
           jsonDecode(utf8.decode(files.savedBytes!)) as Map<String, dynamic>;
