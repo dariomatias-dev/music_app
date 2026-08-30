@@ -20,10 +20,20 @@ class TrackDao extends DatabaseAccessor<AppDatabase> with _$TrackDaoMixin {
   Future<TrackRow?> getById(String id) =>
       (select(trackTable)..where((t) => t.id.equals(id))).getSingleOrNull();
 
-  /// Reads a single track by its [sourceId].
-  Future<TrackRow?> getBySourceId(String sourceId) => (select(
-    trackTable,
-  )..where((t) => t.sourceId.equals(sourceId))).getSingleOrNull();
+  /// Reads every track's id, keyed by its `sourceId`.
+  ///
+  /// A scan needs nothing but the id to keep a known track's identity, so
+  /// this reads the two columns for the whole table once instead of
+  /// selecting whole rows one file at a time.
+  Future<Map<String, String>> getIdsBySourceId() async {
+    final query = selectOnly(trackTable)
+      ..addColumns([trackTable.sourceId, trackTable.id]);
+    final rows = await query.get();
+    return {
+      for (final row in rows)
+        row.read(trackTable.sourceId)!: row.read(trackTable.id)!,
+    };
+  }
 
   /// Inserts or updates [entry].
   Future<void> upsertOne(Insertable<TrackRow> entry) =>

@@ -93,12 +93,9 @@ class _FakeLibraryLocalDataSource implements LibraryLocalDataSource {
   }
 
   @override
-  Future<Track?> findTrackBySourceId(String sourceId) async {
-    for (final track in tracks.values) {
-      if (track.sourceId == sourceId) return track;
-    }
-    return null;
-  }
+  Future<Map<String, String>> findTrackIdsBySourceId() async => {
+    for (final track in tracks.values) track.sourceId: track.id,
+  };
 
   @override
   Future<Track?> findTrackById(String id) async => tracks[id];
