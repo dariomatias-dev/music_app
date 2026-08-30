@@ -35,6 +35,23 @@ void main() {
 
   tearDown(() => directory.delete(recursive: true));
 
+  /// Removes every index drift created, leaving the file as an install
+  /// predating schema v3, which is where the indexes were introduced.
+  void dropIndexes() {
+    final raw = sqlite3.open(databasePath);
+    final indexes = raw
+        .select("SELECT name FROM sqlite_master WHERE type = 'index'")
+        .map((row) => row['name'] as String?)
+        .whereType<String>()
+        // Indexes SQLite creates for UNIQUE constraints cannot be dropped,
+        // and are not the ones v3 adds.
+        .where((name) => !name.startsWith('sqlite_autoindex'));
+    for (final name in indexes) {
+      raw.execute('DROP INDEX "$name"');
+    }
+    raw.dispose();
+  }
+
   /// Writes a database file carrying the v1 schema and the rows an existing
   /// install would already hold.
   ///
@@ -45,6 +62,7 @@ void main() {
     await current.customSelect('SELECT 1').getSingle();
     await current.close();
 
+    dropIndexes();
     sqlite3.open(databasePath)
       ..execute('DROP TABLE playlist_table')
       ..execute(_playlistTableV1)
@@ -63,6 +81,25 @@ void main() {
       ..execute('PRAGMA user_version = 1')
       ..dispose();
   }
+
+  /// Writes a database file carrying the v2 schema: identical to v3 except
+  /// that none of the indexes v3 adds exist yet.
+  Future<void> seedSchemaV2() async {
+    final current = AppDatabase(NativeDatabase(File(databasePath)));
+    await current.customSelect('SELECT 1').getSingle();
+    await current.close();
+
+    dropIndexes();
+    sqlite3.open(databasePath)
+      ..execute('PRAGMA user_version = 2')
+      ..dispose();
+  }
+
+  /// The names of every index the database file at [databasePath] holds.
+  Future<List<String>> indexNames(AppDatabase database) => database
+      .customSelect("SELECT name FROM sqlite_master WHERE type = 'index'")
+      .map((row) => row.read<String>('name'))
+      .get();
 
   /// Opens the database at [databasePath], forcing the lazy connection open
   /// so the migration runs before the returned instance is used.
@@ -180,9 +217,70 @@ void main() {
     });
   });
 
-  test('schemaVersion is 2, and a bump needs a migration and a test', () async {
+  group('upgrading from schema v2', () {
+    test('moves the database to the current schema version', () async {
+      await seedSchemaV2();
+
+      final database = await openDatabase();
+      final version = await database
+          .customSelect('PRAGMA user_version')
+          .getSingle();
+
+      expect(version.data['user_version'], database.schemaVersion);
+    });
+
+    test('creates the indexes v3 added', () async {
+      await seedSchemaV2();
+
+      final database = await openDatabase();
+
+      expect(
+        await indexNames(database),
+        containsAll(
+          database.allSchemaEntities.whereType<Index>().map(
+            (index) => index.entityName,
+          ),
+        ),
+      );
+    });
+
+    test('keeps rows an existing install already holds', () async {
+      await seedSchemaV2();
+
+      final seeded = await openDatabase();
+      await seeded
+          .into(seeded.playlistTable)
+          .insert(
+            PlaylistTableCompanion.insert(
+              id: 'playlist-1',
+              name: 'Road Trip',
+              createdAt: DateTime.utc(2024),
+              updatedAt: DateTime.utc(2024),
+            ),
+          );
+
+      final playlists = await seeded.select(seeded.playlistTable).get();
+
+      expect(playlists.single.name, 'Road Trip');
+    });
+  });
+
+  test('a fresh install has every index the app relies on', () async {
     final database = await openDatabase();
 
-    expect(database.schemaVersion, 2);
+    expect(
+      await indexNames(database),
+      containsAll(
+        database.allSchemaEntities.whereType<Index>().map(
+          (index) => index.entityName,
+        ),
+      ),
+    );
+  });
+
+  test('schemaVersion is 3, and a bump needs a migration and a test', () async {
+    final database = await openDatabase();
+
+    expect(database.schemaVersion, 3);
   });
 }

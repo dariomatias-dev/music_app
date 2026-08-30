@@ -2,6 +2,8 @@ import 'package:drift/drift.dart';
 import 'package:music_app/src/core/database/tables/artist_table.dart';
 
 /// Indexed albums.
+// Looked up by source id once per distinct album during a scan.
+@TableIndex(name: 'album_source_id', columns: {#sourceId})
 @DataClassName('AlbumRow')
 class AlbumTable extends Table {
   /// Primary key (UUID v7).

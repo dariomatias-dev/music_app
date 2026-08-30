@@ -4308,6 +4308,30 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       $SearchHistoryTableTable(this);
   late final $ExcludedFolderTableTable excludedFolderTable =
       $ExcludedFolderTableTable(this);
+  late final Index artistSourceId = Index(
+    'artist_source_id',
+    'CREATE INDEX artist_source_id ON artist_table (source_id)',
+  );
+  late final Index albumSourceId = Index(
+    'album_source_id',
+    'CREATE INDEX album_source_id ON album_table (source_id)',
+  );
+  late final Index trackSourceId = Index(
+    'track_source_id',
+    'CREATE INDEX track_source_id ON track_table (source_id)',
+  );
+  late final Index playlistTrackPlaylist = Index(
+    'playlist_track_playlist',
+    'CREATE INDEX playlist_track_playlist ON playlist_track_table (playlist_id, position)',
+  );
+  late final Index playlistTrackTrack = Index(
+    'playlist_track_track',
+    'CREATE INDEX playlist_track_track ON playlist_track_table (track_id)',
+  );
+  late final Index playEventStartedAt = Index(
+    'play_event_started_at',
+    'CREATE INDEX play_event_started_at ON play_event_table (started_at)',
+  );
   late final ArtistDao artistDao = ArtistDao(this as AppDatabase);
   late final AlbumDao albumDao = AlbumDao(this as AppDatabase);
   late final TrackDao trackDao = TrackDao(this as AppDatabase);
@@ -4339,6 +4363,12 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     lyricsTable,
     searchHistoryTable,
     excludedFolderTable,
+    artistSourceId,
+    albumSourceId,
+    trackSourceId,
+    playlistTrackPlaylist,
+    playlistTrackTrack,
+    playEventStartedAt,
   ];
 }
 

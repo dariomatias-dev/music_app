@@ -6,6 +6,10 @@ import 'package:music_app/src/core/database/tables/track_table.dart';
 ///
 /// Implements [PlaylistTable]'s `trackIds`, which SQLite cannot represent
 /// as a native column, and is what enables reordering.
+// Every read and rewrite of a playlist filters on `playlistId` and
+// orders by `position`; deleting a track filters on `trackId`.
+@TableIndex(name: 'playlist_track_playlist', columns: {#playlistId, #position})
+@TableIndex(name: 'playlist_track_track', columns: {#trackId})
 @DataClassName('PlaylistTrackRow')
 class PlaylistTrackTable extends Table {
   /// Primary key.
