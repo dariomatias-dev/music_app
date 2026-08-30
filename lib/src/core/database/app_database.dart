@@ -65,7 +65,7 @@ class AppDatabase extends _$AppDatabase {
     : super(connection ?? _openConnection());
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -73,6 +73,18 @@ class AppDatabase extends _$AppDatabase {
       if (from < 2) {
         await m.addColumn(playlistTable, playlistTable.description);
         await m.addColumn(playlistTable, playlistTable.isFavorite);
+      }
+      if (from < 3) {
+        for (final index in [
+          trackSourceId,
+          albumSourceId,
+          artistSourceId,
+          playEventStartedAt,
+          playlistTrackPlaylist,
+          playlistTrackTrack,
+        ]) {
+          await m.createIndex(index);
+        }
       }
     },
   );

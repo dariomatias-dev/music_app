@@ -1,6 +1,8 @@
 import 'package:drift/drift.dart';
 
 /// Indexed artists.
+// Looked up by source id once per distinct artist during a scan.
+@TableIndex(name: 'artist_source_id', columns: {#sourceId})
 @DataClassName('ArtistRow')
 class ArtistTable extends Table {
   /// Primary key (UUID v7).

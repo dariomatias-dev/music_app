@@ -2,6 +2,10 @@ import 'package:drift/drift.dart';
 import 'package:music_app/src/core/database/tables/track_table.dart';
 
 /// Playback history entries used for listening statistics.
+// The table only ever grows, and both the statistics screen (events
+// since a date) and the recently played row (newest first) read it
+// through `startedAt`.
+@TableIndex(name: 'play_event_started_at', columns: {#startedAt})
 @DataClassName('PlayEventRow')
 class PlayEventTable extends Table {
   /// Primary key (UUID v7).

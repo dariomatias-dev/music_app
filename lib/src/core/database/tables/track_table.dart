@@ -3,6 +3,10 @@ import 'package:music_app/src/core/database/tables/album_table.dart';
 import 'package:music_app/src/core/database/tables/artist_table.dart';
 
 /// Indexed tracks.
+// A scan looks every file up by its source id before writing it, so
+// without this index each of those lookups is a full table scan of a
+// library that grows with every file.
+@TableIndex(name: 'track_source_id', columns: {#sourceId})
 @DataClassName('TrackRow')
 class TrackTable extends Table {
   /// Primary key (UUID v7).
