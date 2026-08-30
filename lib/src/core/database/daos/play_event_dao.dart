@@ -43,6 +43,50 @@ class PlayEventDao extends DatabaseAccessor<AppDatabase>
         .watchSingle();
   }
 
+  /// Watches how many times each track was played, most played first,
+  /// counting only events started at or after [from] when given.
+  ///
+  /// Counted by SQLite rather than over [watchAll]'s rows: the history has
+  /// one row per play and this needs one per track, so aggregating here
+  /// keeps the rest from crossing into Dart at all.
+  Stream<List<({String trackId, int playCount})>> watchPlayCountsByTrack({
+    DateTime? from,
+  }) {
+    final playCount = playEventTable.id.count();
+    final query = selectOnly(playEventTable)
+      ..addColumns([playEventTable.trackId, playCount])
+      ..groupBy([playEventTable.trackId])
+      ..orderBy([OrderingTerm.desc(playCount)]);
+    if (from != null) {
+      query.where(playEventTable.startedAt.isBiggerOrEqualValue(from));
+    }
+
+    return query.watch().map(
+      (rows) => [
+        for (final row in rows)
+          (
+            trackId: row.read(playEventTable.trackId)!,
+            playCount: row.read(playCount) ?? 0,
+          ),
+      ],
+    );
+  }
+
+  /// Watches the total played time in milliseconds, counting only events
+  /// started at or after [from] when given.
+  ///
+  /// Summed by SQLite for the same reason as [watchPlayCountsByTrack]:
+  /// the answer is a single number.
+  Stream<int> watchTotalPlayedMilliseconds({DateTime? from}) {
+    final total = playEventTable.playedDuration.sum();
+    final query = selectOnly(playEventTable)..addColumns([total]);
+    if (from != null) {
+      query.where(playEventTable.startedAt.isBiggerOrEqualValue(from));
+    }
+
+    return query.map((row) => row.read(total) ?? 0).watchSingle();
+  }
+
   /// Watches up to [limit] distinct track ids, most recently played first.
   Stream<List<String>> watchRecentTrackIds({int limit = 20}) {
     final query = select(playEventTable)
