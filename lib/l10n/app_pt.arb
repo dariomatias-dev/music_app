@@ -202,6 +202,7 @@
   "clearArtworkCacheConfirmMessage": "Isso apaga as capas em cache. Elas serão extraídas novamente na próxima varredura da sua biblioteca.",
   "clearArtworkCacheConfirmAction": "Limpar",
   "artworkCacheClearedMessage": "Cache de capas limpo",
+  "artworkCacheClearFailedMessage": "Não foi possível limpar o cache de capas.",
   "backupSectionLabel": "Backup",
   "exportBackupLabel": "Exportar backup",
   "importBackupLabel": "Restaurar backup",

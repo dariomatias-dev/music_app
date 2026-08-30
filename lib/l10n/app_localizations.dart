@@ -1164,6 +1164,12 @@ abstract class AppLocalizations {
   /// **'Artwork cache cleared'**
   String get artworkCacheClearedMessage;
 
+  /// No description provided for @artworkCacheClearFailedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t clear the artwork cache.'**
+  String get artworkCacheClearFailedMessage;
+
   /// No description provided for @backupSectionLabel.
   ///
   /// In en, this message translates to:

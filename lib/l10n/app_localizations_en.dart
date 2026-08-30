@@ -601,6 +601,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get artworkCacheClearedMessage => 'Artwork cache cleared';
 
   @override
+  String get artworkCacheClearFailedMessage =>
+      'Couldn\'t clear the artwork cache.';
+
+  @override
   String get backupSectionLabel => 'Backup';
 
   @override

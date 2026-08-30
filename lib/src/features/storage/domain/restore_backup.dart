@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:music_app/src/core/constants/preference_keys.dart';
 import 'package:music_app/src/core/storage/key_value_storage.dart';
 import 'package:music_app/src/features/history/domain/repositories/play_history_repository.dart';
@@ -5,9 +8,35 @@ import 'package:music_app/src/features/library/domain/repositories/favorite_repo
 import 'package:music_app/src/features/library/domain/repositories/library_repository.dart';
 import 'package:music_app/src/features/playlist/domain/repositories/playlist_repository.dart';
 import 'package:music_app/src/features/search/domain/repositories/search_history_repository.dart';
+import 'package:music_app/src/features/storage/domain/create_backup.dart';
 import 'package:music_app/src/features/storage/domain/entities/backup_settings.dart';
 import 'package:music_app/src/features/storage/domain/entities/backup_snapshot.dart';
 import 'package:music_app/src/features/storage/domain/repositories/excluded_folder_repository.dart';
+
+/// Thrown when a backup file parses but was written with a
+/// [backupFormatVersion] this build doesn't support, distinct from a file
+/// that isn't a backup at all.
+class UnsupportedBackupFormatVersion implements Exception {
+  /// Creates an [UnsupportedBackupFormatVersion].
+  const UnsupportedBackupFormatVersion();
+}
+
+/// Decodes [bytes] as the JSON snapshot a backup export writes.
+///
+/// Throws an [UnsupportedBackupFormatVersion] when the file is a backup
+/// this build can't read, and a [FormatException] when it isn't a backup
+/// at all.
+BackupSnapshot readBackupSnapshot(Uint8List bytes) {
+  final json = jsonDecode(utf8.decode(bytes)) as Map<String, dynamic>;
+  // Read before parsing: the version exists precisely because the rest of
+  // the shape can change with it, and a version this build can't read
+  // would otherwise fail as an unparseable file rather than as the older
+  // backup it is.
+  if (json['formatVersion'] != backupFormatVersion) {
+    throw const UnsupportedBackupFormatVersion();
+  }
+  return BackupSnapshot.fromJson(json);
+}
 
 /// How many entries a [RestoreBackup] call restored or had to skip.
 typedef RestoreBackupResult = ({

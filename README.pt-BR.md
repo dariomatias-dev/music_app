@@ -103,7 +103,7 @@ cada uma compõe componentes mantidos em
 
 ## Testes
 
-O projeto tem 185 arquivos de teste (128 no app, 57 em
+O projeto tem 186 arquivos de teste (129 no app, 57 em
 `packages/app_ui`), cobrindo repositórios, view models e widgets — 40
 deles são testes golden, que renderizam 86 imagens de referência do design
 system e das telas principais — além das suítes em `integration_test/`

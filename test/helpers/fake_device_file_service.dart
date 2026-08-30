@@ -11,6 +11,10 @@ class FakeDeviceFileService implements DeviceFileService {
   /// Whether [saveFile] should throw, simulating a platform failure.
   bool saveShouldThrow = false;
 
+  /// Whether [pickFile] should throw, simulating a picker the platform
+  /// could not open or read from.
+  bool pickShouldThrow = false;
+
   /// The file name passed to the most recent [saveFile] call.
   String? savedFileName;
 
@@ -29,6 +33,7 @@ class FakeDeviceFileService implements DeviceFileService {
 
   @override
   Future<Uint8List?> pickFile({List<String>? allowedExtensions}) async {
+    if (pickShouldThrow) throw Exception('pick failed');
     return fileToPick;
   }
 }
