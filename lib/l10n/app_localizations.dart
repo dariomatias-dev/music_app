@@ -234,6 +234,12 @@ abstract class AppLocalizations {
   /// **'Something went wrong while scanning your music library.'**
   String get scanErrorMessage;
 
+  /// No description provided for @folderUpdateFailedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t update that folder.'**
+  String get folderUpdateFailedMessage;
+
   /// No description provided for @retryLabel.
   ///
   /// In en, this message translates to:

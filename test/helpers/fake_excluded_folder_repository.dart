@@ -10,6 +10,14 @@ class FakeExcludedFolderRepository implements ExcludedFolderRepository {
   final List<String> _excludedFolders;
   final _controller = StreamController<List<String>>.broadcast();
 
+  /// Whether [exclude] and [include] should throw, simulating a failed
+  /// write.
+  bool writeShouldThrow = false;
+
+  /// How many times [exclude] or [include] has been called, including the
+  /// calls [writeShouldThrow] made fail.
+  int writeCalls = 0;
+
   void _emit() => _controller.add(List.of(_excludedFolders));
 
   @override
@@ -20,6 +28,8 @@ class FakeExcludedFolderRepository implements ExcludedFolderRepository {
 
   @override
   Future<void> exclude(String path) async {
+    writeCalls++;
+    if (writeShouldThrow) throw Exception('exclude failed');
     if (_excludedFolders.contains(path)) return;
     _excludedFolders.add(path);
     _emit();
@@ -27,6 +37,8 @@ class FakeExcludedFolderRepository implements ExcludedFolderRepository {
 
   @override
   Future<void> include(String path) async {
+    writeCalls++;
+    if (writeShouldThrow) throw Exception('include failed');
     _excludedFolders.remove(path);
     _emit();
   }

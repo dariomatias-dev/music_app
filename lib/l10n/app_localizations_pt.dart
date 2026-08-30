@@ -81,6 +81,10 @@ class AppLocalizationsPt extends AppLocalizations {
       'Algo deu errado ao escanear sua biblioteca de música.';
 
   @override
+  String get folderUpdateFailedMessage =>
+      'Não foi possível atualizar essa pasta.';
+
+  @override
   String get retryLabel => 'Tentar novamente';
 
   @override

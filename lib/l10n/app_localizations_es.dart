@@ -81,6 +81,9 @@ class AppLocalizationsEs extends AppLocalizations {
       'Algo salió mal al escanear tu biblioteca de música.';
 
   @override
+  String get folderUpdateFailedMessage => 'No se pudo actualizar esa carpeta.';
+
+  @override
   String get retryLabel => 'Intentar de nuevo';
 
   @override

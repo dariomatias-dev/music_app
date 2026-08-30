@@ -22,6 +22,7 @@
   "permissionScanningFolderTip": "Dica: você pode excluir pastas da sua biblioteca a qualquer momento em Configurações > Armazenamento.",
   "scanErrorTitle": "Falha ao escanear",
   "scanErrorMessage": "Algo deu errado ao escanear sua biblioteca de música.",
+  "folderUpdateFailedMessage": "Não foi possível atualizar essa pasta.",
   "retryLabel": "Tentar novamente",
   "startupErrorTitle": "Não foi possível iniciar",
   "startupErrorMessage": "Algo deu errado ao iniciar o Music App. Tente novamente e reabra o app se continuar falhando.",

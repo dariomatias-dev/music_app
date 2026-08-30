@@ -22,6 +22,7 @@
   "permissionScanningFolderTip": "Consejo: puedes excluir carpetas de tu biblioteca en cualquier momento en Configuración > Almacenamiento.",
   "scanErrorTitle": "Error al escanear",
   "scanErrorMessage": "Algo salió mal al escanear tu biblioteca de música.",
+  "folderUpdateFailedMessage": "No se pudo actualizar esa carpeta.",
   "retryLabel": "Intentar de nuevo",
   "startupErrorTitle": "No se pudo iniciar",
   "startupErrorMessage": "Algo salió mal al iniciar Music App. Inténtalo de nuevo y vuelve a abrir la app si sigue fallando.",
