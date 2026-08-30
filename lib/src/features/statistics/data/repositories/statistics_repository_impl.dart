@@ -28,30 +28,24 @@ class StatisticsRepositoryImpl implements StatisticsRepository {
 
   @override
   Stream<List<TrackPlayCount>> watchTrackPlayCounts({DateTime? from}) {
-    return _events(from: from).map((events) {
-      final counts = <String, int>{};
-      for (final event in events) {
-        counts[event.trackId] = (counts[event.trackId] ?? 0) + 1;
-      }
-      return counts.entries
-          .map(
-            (entry) =>
-                TrackPlayCount(trackId: entry.key, playCount: entry.value),
-          )
-          .toList()
-        ..sort((a, b) => b.playCount.compareTo(a.playCount));
-    });
+    return _database.playEventDao
+        .watchPlayCountsByTrack(from: from)
+        .map(
+          (counts) => [
+            for (final count in counts)
+              TrackPlayCount(
+                trackId: count.trackId,
+                playCount: count.playCount,
+              ),
+          ],
+        );
   }
 
   @override
   Stream<Duration> watchTotalListenedDuration({DateTime? from}) {
-    return _events(from: from).map((events) {
-      var totalMilliseconds = 0;
-      for (final event in events) {
-        totalMilliseconds += event.playedDuration;
-      }
-      return Duration(milliseconds: totalMilliseconds);
-    });
+    return _database.playEventDao
+        .watchTotalPlayedMilliseconds(from: from)
+        .map((milliseconds) => Duration(milliseconds: milliseconds));
   }
 
   @override
