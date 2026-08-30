@@ -99,7 +99,9 @@ Crossfade, as implemented today, is a single-player volume ramp: the native engi
 
 Two paths surface a failure the user cannot be shielded from, both through `AppFailureScreen` (`lib/src/core/widgets/`): `ErrorWidget.builder`, when a part of a running app fails to build, and the startup fallback, when the platform setup in `main.dart` throws before there is an app at all — the latter offering to run the whole sequence again. Both can be invoked with no `Theme`, `Directionality` or `Localizations` above them, so `AppFailureScreen` resolves all three from the platform rather than from its `BuildContext`; reading a missing ancestor would throw from inside the screen that exists to report the throw.
 
-Within the app, a failure a specific screen can explain stays that screen's business: it catches, shows an `AppToast` or an `AppErrorState`, and does not reach this boundary.
+Below that boundary, `AppException` (`lib/src/core/errors/`) is the app's own failure vocabulary: `PermissionException`, `FileException` and `PlaybackException`. Third-party failures are converted before they leave the layer that caused them, so upper layers have one type to reason about instead of whatever `dart:io`, drift or a plugin happens to throw. `FileException.guard` wraps the disk and file-picker calls in the data layer and the storage use cases, keeping the message and the original `cause` together.
+
+Within the app, a failure a specific screen can explain stays that screen's business: it catches, shows an `AppToast` or an `AppErrorState`, and does not reach this boundary. Those catches stay deliberately broad, since one operation can span SQLite, the file system and the file picker at once, so they hand the caught error to the `ErrorReporter` as well: the toast says one sentence, the report keeps the cause.
 
 ## Design system (`packages/app_ui`)
 

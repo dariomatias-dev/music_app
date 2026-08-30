@@ -99,7 +99,9 @@ Provider 按角色分组存放，而不是一个 provider 一个文件：例如 
 
 有两条路径会把无法对用户隐藏的失败呈现出来，都经由 `AppFailureScreen`（`lib/src/core/widgets/`）：一是 `ErrorWidget.builder`，用于运行中的应用某一部分构建失败时；二是启动兜底，用于 `main.dart` 的平台初始化在应用尚不存在时就抛出异常，此时会提供重跑整个初始化流程的入口。两者都可能在上方没有 `Theme`、`Directionality` 或 `Localizations` 的情况下被调用，因此 `AppFailureScreen` 从平台而非自身的 `BuildContext` 解析这三者；读取一个不存在的祖先，会让这块专门用来上报异常的界面自己抛出异常。
 
-在应用内部，某个界面能够解释清楚的失败仍归该界面处理：它自行捕获，展示 `AppToast` 或 `AppErrorState`，不会走到这道边界。
+在这道边界之下，`AppException`（`lib/src/core/errors/`）是应用自己的失败词汇表：`PermissionException`、`FileException` 和 `PlaybackException`。第三方的失败在离开引发它的那一层之前就完成转换，这样上层只需面对一种类型，而不是 `dart:io`、drift 或某个插件各自抛出的东西。`FileException.guard` 包裹数据层与存储用例中的磁盘和文件选择器调用，把消息与原始 `cause` 保留在一起。
+
+在应用内部，某个界面能够解释清楚的失败仍归该界面处理：它自行捕获，展示 `AppToast` 或 `AppErrorState`，不会走到这道边界。这些捕获刻意保持宽泛，因为单个操作可能同时涉及 SQLite、文件系统和文件选择器，所以它们也会把捕获到的错误交给 `ErrorReporter`：toast 说一句话，报告留住原因。
 
 ## 设计系统（`packages/app_ui`）
 

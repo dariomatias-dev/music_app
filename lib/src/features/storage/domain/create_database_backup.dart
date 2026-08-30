@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:music_app/src/core/database/app_database.dart';
+import 'package:music_app/src/core/errors/app_exception.dart';
 import 'package:music_app/src/features/storage/domain/create_backup.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
@@ -30,19 +31,24 @@ class CreateDatabaseBackup {
   /// Uses `VACUUM INTO` rather than copying the file directly, so the
   /// result is complete and consistent even while the app keeps writing to
   /// the database (journal-mode changes, in-flight transactions, ...).
-  Future<Uint8List> call() async {
-    final tempDir = await _tempDirectory();
-    final tempFile = File(
-      p.join(
-        tempDir.path,
-        'music_app_db_export_${DateTime.now().microsecondsSinceEpoch}.sqlite',
-      ),
-    );
-    await _database.customStatement("VACUUM INTO '${tempFile.path}'");
-    try {
-      return await tempFile.readAsBytes();
-    } finally {
-      await tempFile.delete();
-    }
+  ///
+  /// Throws a [FileException] if the snapshot cannot be written or read
+  /// back.
+  Future<Uint8List> call() {
+    return FileException.guard('Could not export the database.', () async {
+      final tempDir = await _tempDirectory();
+      final tempFile = File(
+        p.join(
+          tempDir.path,
+          'music_app_db_export_${DateTime.now().microsecondsSinceEpoch}.sqlite',
+        ),
+      );
+      await _database.customStatement("VACUUM INTO '${tempFile.path}'");
+      try {
+        return await tempFile.readAsBytes();
+      } finally {
+        await tempFile.delete();
+      }
+    });
   }
 }

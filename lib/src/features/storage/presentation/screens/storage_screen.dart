@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:music_app/l10n/app_localizations.dart';
 import 'package:music_app/src/core/database/database_providers.dart';
+import 'package:music_app/src/core/errors/error_reporter_provider.dart';
 import 'package:music_app/src/core/services/device_file/device_file_service_provider.dart';
 import 'package:music_app/src/core/widgets/restart_widget.dart';
 import 'package:music_app/src/features/library/data/providers/library_data_providers.dart';
@@ -209,14 +210,16 @@ class _StorageScreenState extends ConsumerState<StorageScreen> {
       } else {
         await repository.exclude(path);
       }
-    } on Object catch (_) {
+    } on Object catch (error, stackTrace) {
+      _report('Updating an excluded folder', error, stackTrace);
       _reportToggleFailure(l10n.folderUpdateFailedMessage);
       return;
     }
 
     try {
       await ref.read(libraryRepositoryProvider).reindex().drain<void>();
-    } on Object catch (_) {
+    } on Object catch (error, stackTrace) {
+      _report('Rescanning after a folder toggle', error, stackTrace);
       _reportToggleFailure(l10n.scanErrorMessage);
       return;
     }
@@ -236,6 +239,18 @@ class _StorageScreenState extends ConsumerState<StorageScreen> {
     if (!mounted) return;
     setState(() => _busy = false);
     AppToast.show(context, message: message, variant: AppToastVariant.error);
+  }
+
+  /// Records [error] as a failure of [operation].
+  ///
+  /// The catches on this screen are deliberately broad: each operation
+  /// spans SQLite, the file system and the platform's file picker, and the
+  /// screen has one sentence to say about any of them. Reporting keeps the
+  /// cause the toast leaves out from vanishing with it.
+  void _report(String operation, Object error, StackTrace stackTrace) {
+    ref
+        .read(errorReporterProvider)
+        .report(error, stackTrace, context: operation);
   }
 
   Future<void> _confirmClearArtworkCache() async {
@@ -272,7 +287,8 @@ class _StorageScreenState extends ConsumerState<StorageScreen> {
           .removeTrackFromQueue(track.id);
       if (!mounted) return;
       AppToast.show(context, message: l10n.fileDeletedMessage);
-    } on Exception {
+    } on Exception catch (error, stackTrace) {
+      _report('Deleting a track file', error, stackTrace);
       if (!mounted) return;
       AppToast.show(
         context,
@@ -302,7 +318,8 @@ class _StorageScreenState extends ConsumerState<StorageScreen> {
           );
       if (!mounted) return;
       AppToast.show(context, message: l10n.backupExportedMessage);
-    } on Object catch (_) {
+    } on Object catch (error, stackTrace) {
+      _report('Exporting a backup', error, stackTrace);
       if (!mounted) return;
       AppToast.show(
         context,
@@ -346,7 +363,8 @@ class _StorageScreenState extends ConsumerState<StorageScreen> {
         message: l10n.backupUnsupportedFormatMessage,
         variant: AppToastVariant.error,
       );
-    } on Object catch (_) {
+    } on Object catch (error, stackTrace) {
+      _report('Importing a backup', error, stackTrace);
       if (!mounted) return;
       AppToast.show(
         context,
@@ -372,7 +390,8 @@ class _StorageScreenState extends ConsumerState<StorageScreen> {
           .saveFile(fileName: 'music_app_db_$timestamp.sqlite', bytes: bytes);
       if (!mounted) return;
       AppToast.show(context, message: l10n.databaseBackupExportedMessage);
-    } on Object catch (_) {
+    } on Object catch (error, stackTrace) {
+      _report('Exporting a database backup', error, stackTrace);
       if (!mounted) return;
       AppToast.show(
         context,
@@ -421,7 +440,8 @@ class _StorageScreenState extends ConsumerState<StorageScreen> {
       // be recovered from this screen.
       await ref.read(appDatabaseProvider).close();
       await ref.read(restoreDatabaseBackupProvider)(bytes);
-    } on Object catch (_) {
+    } on Object catch (error, stackTrace) {
+      _report('Restoring a database backup', error, stackTrace);
       if (mounted) {
         AppToast.show(
           context,

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:music_app/src/core/errors/app_exception.dart';
 import 'package:music_app/src/core/services/media_scanner/media_scanner.dart';
 import 'package:music_app/src/features/library/data/data_sources/library_local_data_source.dart';
 import 'package:music_app/src/features/library/domain/entities/track.dart';
@@ -31,11 +32,13 @@ class DeleteTrackFile {
   /// Deletes [track]'s file and every reference to it.
   ///
   /// The file is deleted first; if that fails (e.g. the platform denies
-  /// the delete under scoped storage), nothing else is touched and the
-  /// track stays intact.
+  /// the delete under scoped storage) this throws a [FileException],
+  /// nothing else is touched, and the track stays intact.
   Future<void> call(Track track) async {
-    final file = File(track.filePath);
-    if (file.existsSync()) await file.delete();
+    await FileException.guard('Could not delete ${track.filePath}.', () async {
+      final file = File(track.filePath);
+      if (file.existsSync()) await file.delete();
+    });
     await _mediaScanner.notifyFileRemoved(track.filePath);
 
     await _playlistRepository.removeTrackFromAllPlaylists(track.id);

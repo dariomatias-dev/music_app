@@ -99,7 +99,9 @@ El crossfade, tal como está implementado hoy, es una rampa de volumen de un sol
 
 Dos caminos muestran un fallo del que no se puede proteger al usuario, ambos a través de `AppFailureScreen` (`lib/src/core/widgets/`): `ErrorWidget.builder`, cuando una parte de la app en marcha falla al construirse, y el respaldo de arranque, cuando la configuración de plataforma de `main.dart` lanza antes de que exista app alguna, ofreciendo entonces repetir toda la secuencia. Ambos pueden invocarse sin `Theme`, `Directionality` ni `Localizations` por encima, así que `AppFailureScreen` resuelve los tres desde la plataforma y no desde su `BuildContext`; leer un ancestro ausente lanzaría desde dentro de la pantalla que existe para reportar el lanzamiento.
 
-Dentro de la app, un fallo que una pantalla concreta puede explicar sigue siendo asunto de esa pantalla: lo captura, muestra un `AppToast` o un `AppErrorState`, y no llega a este límite.
+Por debajo de ese límite, `AppException` (`lib/src/core/errors/`) es el vocabulario de fallos propio de la app: `PermissionException`, `FileException` y `PlaybackException`. Los fallos de terceros se convierten antes de salir de la capa que los provocó, para que las capas superiores razonen sobre un solo tipo en vez de sobre lo que `dart:io`, drift o un plugin lancen. `FileException.guard` envuelve las llamadas a disco y al selector de archivos en la capa de datos y en los casos de uso de almacenamiento, manteniendo juntos el mensaje y el `cause` original.
+
+Dentro de la app, un fallo que una pantalla concreta puede explicar sigue siendo asunto de esa pantalla: lo captura, muestra un `AppToast` o un `AppErrorState`, y no llega a este límite. Esas capturas se mantienen deliberadamente amplias, ya que una sola operación puede abarcar SQLite, el sistema de archivos y el selector a la vez, así que también entregan el error capturado al `ErrorReporter`: el toast dice una frase, el reporte conserva la causa.
 
 ## Sistema de diseño (`packages/app_ui`)
 

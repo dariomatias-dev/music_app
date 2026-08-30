@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:music_app/src/core/database/app_database.dart';
+import 'package:music_app/src/core/errors/app_exception.dart';
 import 'package:music_app/src/features/storage/domain/create_database_backup.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
@@ -58,24 +59,27 @@ class RestoreDatabaseBackup {
   /// Restores [bytes] as the app's database file.
   ///
   /// Throws [InvalidDatabaseBackupFile] if [bytes] isn't a SQLite database,
-  /// leaving the current database file untouched.
+  /// leaving the current database file untouched, and a [FileException] if
+  /// writing over the database file fails.
   Future<void> call(Uint8List bytes) async {
     if (!isSqliteDatabase(bytes)) {
       throw const InvalidDatabaseBackupFile();
     }
 
-    final directory = await _documentsDirectory();
-    final dbFile = File(p.join(directory.path, appDatabaseFileName));
-    await dbFile.writeAsBytes(bytes, flush: true);
+    await FileException.guard('Could not restore the database file.', () async {
+      final directory = await _documentsDirectory();
+      final dbFile = File(p.join(directory.path, appDatabaseFileName));
+      await dbFile.writeAsBytes(bytes, flush: true);
 
-    // A restored file starts with no journal of its own; clear out any
-    // sidecar files left by the connection this replaces, so SQLite doesn't
-    // try to replay a journal that no longer matches the new content.
-    for (final suffix in ['-wal', '-shm', '-journal']) {
-      final sidecar = File('${dbFile.path}$suffix');
-      if (sidecar.existsSync()) {
-        await sidecar.delete();
+      // A restored file starts with no journal of its own; clear out any
+      // sidecar files left by the connection this replaces, so SQLite doesn't
+      // try to replay a journal that no longer matches the new content.
+      for (final suffix in ['-wal', '-shm', '-journal']) {
+        final sidecar = File('${dbFile.path}$suffix');
+        if (sidecar.existsSync()) {
+          await sidecar.delete();
+        }
       }
-    }
+    });
   }
 }
