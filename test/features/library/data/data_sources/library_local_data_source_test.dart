@@ -143,12 +143,14 @@ void main() {
       await dataSource.upsertTrack(track);
     });
 
-    test('findTrackBySourceId finds the track', () async {
-      expect(await dataSource.findTrackBySourceId('42'), track);
+    test('findTrackIdsBySourceId keys track ids by sourceId', () async {
+      expect(await dataSource.findTrackIdsBySourceId(), {'42': 'track-1'});
     });
 
-    test('findTrackBySourceId returns null for an unknown sourceId', () async {
-      expect(await dataSource.findTrackBySourceId('missing'), isNull);
+    test('findTrackIdsBySourceId is empty without tracks', () async {
+      await dataSource.deleteTrack('track-1');
+
+      expect(await dataSource.findTrackIdsBySourceId(), isEmpty);
     });
 
     test('findAllTracks returns every indexed track', () async {

@@ -78,6 +78,10 @@ class LibraryIndexer {
     final artistsBySourceId = <String, Artist>{};
     final albumsBySourceId = <String, Album>{};
     final writtenArtists = <String>{};
+    // Read once for the whole run: every file needs to know whether it is
+    // already indexed, and asking per file is one query per file on a table
+    // as large as the library.
+    final trackIdsBySourceId = await _dataSource.findTrackIdsBySourceId();
 
     var processed = 0;
     for (var start = 0; start < files.length; start += _commitBatchSize) {
@@ -138,11 +142,8 @@ class LibraryIndexer {
           }
 
           final trackSourceId = file.mediaStoreId.toString();
-          final existingTrack = await _dataSource.findTrackBySourceId(
-            trackSourceId,
-          );
           final track = Track(
-            id: existingTrack?.id ?? _idGenerator.generate(),
+            id: trackIdsBySourceId[trackSourceId] ?? _idGenerator.generate(),
             sourceId: trackSourceId,
             filePath: file.filePath,
             title: metadata.title ?? file.title,
