@@ -240,6 +240,30 @@ abstract class AppLocalizations {
   /// **'Try again'**
   String get retryLabel;
 
+  /// No description provided for @startupErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t start'**
+  String get startupErrorTitle;
+
+  /// No description provided for @startupErrorMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong while starting Music App. Try again, and reopen the app if it keeps failing.'**
+  String get startupErrorMessage;
+
+  /// No description provided for @unexpectedErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong'**
+  String get unexpectedErrorTitle;
+
+  /// No description provided for @unexpectedErrorMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This part of the app couldn\'t be shown.'**
+  String get unexpectedErrorMessage;
+
   /// No description provided for @backButtonSemanticLabel.
   ///
   /// In en, this message translates to:

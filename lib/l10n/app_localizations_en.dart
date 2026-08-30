@@ -84,6 +84,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get retryLabel => 'Try again';
 
   @override
+  String get startupErrorTitle => 'Couldn\'t start';
+
+  @override
+  String get startupErrorMessage =>
+      'Something went wrong while starting Music App. Try again, and reopen the app if it keeps failing.';
+
+  @override
+  String get unexpectedErrorTitle => 'Something went wrong';
+
+  @override
+  String get unexpectedErrorMessage =>
+      'This part of the app couldn\'t be shown.';
+
+  @override
   String get backButtonSemanticLabel => 'Back';
 
   @override
