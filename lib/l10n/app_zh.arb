@@ -22,6 +22,7 @@
   "permissionScanningFolderTip": "提示：你可以随时在 设置 > 存储空间 中排除某些文件夹。",
   "scanErrorTitle": "扫描失败",
   "scanErrorMessage": "扫描音乐库时出现问题。",
+  "folderUpdateFailedMessage": "无法更新该文件夹。",
   "retryLabel": "重试",
   "startupErrorTitle": "无法启动",
   "startupErrorMessage": "启动 Music App 时出现问题。请重试，如果仍然失败，请重新打开应用。",

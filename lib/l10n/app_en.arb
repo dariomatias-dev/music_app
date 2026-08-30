@@ -22,6 +22,7 @@
   "permissionScanningFolderTip": "Tip: you can exclude folders from your library anytime in Settings > Storage.",
   "scanErrorTitle": "Scan failed",
   "scanErrorMessage": "Something went wrong while scanning your music library.",
+  "folderUpdateFailedMessage": "Couldn't update that folder.",
   "retryLabel": "Try again",
   "startupErrorTitle": "Couldn't start",
   "startupErrorMessage": "Something went wrong while starting Music App. Try again, and reopen the app if it keeps failing.",

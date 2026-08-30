@@ -37,6 +37,16 @@ import '../../../../helpers/fake_audio_player_service.dart';
 import '../../../../helpers/fake_device_file_service.dart';
 import '../../../../helpers/fake_excluded_folder_repository.dart';
 
+/// An [AppDatabase] whose connection refuses to close, standing in for a
+/// database still held by a pending write when a restore asks to replace
+/// the file underneath it.
+class _UnclosableDatabase extends AppDatabase {
+  _UnclosableDatabase() : super(NativeDatabase.memory());
+
+  @override
+  Future<void> close() async => throw Exception('close failed');
+}
+
 class _FakeLibraryRepository implements LibraryRepository {
   _FakeLibraryRepository({this.tracks = const []});
 
@@ -202,6 +212,7 @@ Widget _app({
   RestoreDatabaseBackup? restoreDatabaseBackup,
   FakeDeviceFileService? deviceFileService,
   List<FolderUsage>? folderUsage,
+  AppDatabase? database,
 }) {
   final playerService = FakeAudioPlayerService();
   return RestartWidget(
@@ -228,7 +239,7 @@ Widget _app({
             restoreDatabaseBackup,
           ),
         appDatabaseProvider.overrideWithValue(
-          AppDatabase(NativeDatabase.memory()),
+          database ?? AppDatabase(NativeDatabase.memory()),
         ),
         deviceFileServiceProvider.overrideWithValue(
           deviceFileService ?? FakeDeviceFileService(),
@@ -402,6 +413,37 @@ void main() {
     await tester.tap(find.byType(AppSwitch));
     await tester.pumpAndSettle();
     expect(libraryRepository.reindexCalls, 2);
+  });
+
+  testWidgets('shows an error toast and clears busy when the write fails', (
+    tester,
+  ) async {
+    final libraryRepository = _FakeLibraryRepository(
+      tracks: [_track('a', filePath: '/music/rock/a.mp3')],
+    );
+    final excludedFolderRepository = FakeExcludedFolderRepository()
+      ..writeShouldThrow = true;
+    await tester.pumpWidget(
+      _app(
+        libraryRepository: libraryRepository,
+        excludedFolderRepository: excludedFolderRepository,
+      ),
+    );
+    await tester.pump();
+
+    await tester.tap(find.byType(AppSwitch));
+    await tester.pumpAndSettle();
+
+    expect(find.text("Couldn't update that folder."), findsOneWidget);
+    expect(libraryRepository.reindexCalls, 0);
+    expect(find.byType(LinearProgressIndicator), findsNothing);
+
+    excludedFolderRepository.writeShouldThrow = false;
+    await tester.tap(find.byType(AppSwitch));
+    await tester.pumpAndSettle();
+
+    expect(excludedFolderRepository.writeCalls, 2);
+    expect(libraryRepository.reindexCalls, 1);
   });
 
   testWidgets('clearing artwork cache calls it after confirming', (
@@ -744,6 +786,31 @@ void main() {
     expect(restoreDatabaseBackup.received, bytes);
     expect(find.text("This file isn't a database backup."), findsNothing);
     expect(find.text("Couldn't restore this database backup."), findsNothing);
+  });
+
+  testWidgets('reports a database restore whose close fails', (tester) async {
+    final restoreDatabaseBackup = _FakeRestoreDatabaseBackup();
+    await tester.pumpWidget(
+      _app(
+        database: _UnclosableDatabase(),
+        restoreDatabaseBackup: restoreDatabaseBackup,
+        deviceFileService: FakeDeviceFileService()..fileToPick = _sqliteBytes(),
+      ),
+    );
+    await tester.pump();
+
+    await tester.tap(find.text('Restore database'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Restore'));
+    await tester.pump();
+
+    expect(
+      find.text("Couldn't restore this database backup."),
+      findsOneWidget,
+    );
+    expect(restoreDatabaseBackup.received, isNull);
+
+    await tester.pumpAndSettle();
   });
 
   testWidgets('shows a progress bar while a rescan runs', (tester) async {

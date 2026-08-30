@@ -199,30 +199,43 @@ class _StorageScreenState extends ConsumerState<StorageScreen> {
   }
 
   Future<void> _toggleFolder(String path, bool included) async {
+    final l10n = AppLocalizations.of(context)!;
     setState(() => _busy = true);
-    final repository = ref.read(excludedFolderRepositoryProvider);
-    if (included) {
-      await repository.include(path);
-    } else {
-      await repository.exclude(path);
-    }
+
     try {
-      await ref.read(libraryRepositoryProvider).reindex().drain<void>();
-      // The scan touches device files and metadata parsing outside our
-      // control; any failure here should reset the busy state and tell the
-      // user, not leave the screen spinning forever.
+      final repository = ref.read(excludedFolderRepositoryProvider);
+      if (included) {
+        await repository.include(path);
+      } else {
+        await repository.exclude(path);
+      }
     } on Object catch (_) {
-      if (!mounted) return;
-      final l10n = AppLocalizations.of(context)!;
-      setState(() => _busy = false);
-      AppToast.show(
-        context,
-        message: l10n.scanErrorMessage,
-        variant: AppToastVariant.error,
-      );
+      _reportToggleFailure(l10n.folderUpdateFailedMessage);
       return;
     }
+
+    try {
+      await ref.read(libraryRepositoryProvider).reindex().drain<void>();
+    } on Object catch (_) {
+      _reportToggleFailure(l10n.scanErrorMessage);
+      return;
+    }
+
     if (mounted) setState(() => _busy = false);
+  }
+
+  /// Clears the busy state and tells the user that toggling a folder
+  /// failed with [message].
+  ///
+  /// Both steps a toggle runs are outside this screen's control: the write
+  /// goes to SQLite, and the rescan reads device files and parses their
+  /// metadata. Either failing has to release the screen, which stays
+  /// spinning with every control disabled for as long as it believes the
+  /// toggle is still running.
+  void _reportToggleFailure(String message) {
+    if (!mounted) return;
+    setState(() => _busy = false);
+    AppToast.show(context, message: message, variant: AppToastVariant.error);
   }
 
   Future<void> _confirmClearArtworkCache() async {
@@ -399,14 +412,14 @@ class _StorageScreenState extends ConsumerState<StorageScreen> {
     }
 
     setState(() => _busy = true);
-    // The database file is about to be overwritten on disk, so the live
-    // connection is closed first: writing under an open SQLite connection
-    // can corrupt it. Past this point there's no state worth resetting to
-    // if the write below fails — the app restarts either way, reopening
-    // whatever ends up on disk, since a closed connection can't otherwise
-    // be recovered from this screen.
-    await ref.read(appDatabaseProvider).close();
     try {
+      // The database file is about to be overwritten on disk, so the live
+      // connection is closed first: writing under an open SQLite connection
+      // can corrupt it. Past this point there's no state worth resetting to
+      // if either step fails — the app restarts either way, reopening
+      // whatever ends up on disk, since a closed connection can't otherwise
+      // be recovered from this screen.
+      await ref.read(appDatabaseProvider).close();
       await ref.read(restoreDatabaseBackupProvider)(bytes);
     } on Object catch (_) {
       if (mounted) {

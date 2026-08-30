@@ -76,6 +76,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get scanErrorMessage => '扫描音乐库时出现问题。';
 
   @override
+  String get folderUpdateFailedMessage => '无法更新该文件夹。';
+
+  @override
   String get retryLabel => '重试';
 
   @override

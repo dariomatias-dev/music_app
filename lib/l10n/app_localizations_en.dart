@@ -81,6 +81,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Something went wrong while scanning your music library.';
 
   @override
+  String get folderUpdateFailedMessage => 'Couldn\'t update that folder.';
+
+  @override
   String get retryLabel => 'Try again';
 
   @override

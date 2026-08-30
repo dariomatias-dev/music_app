@@ -8,18 +8,18 @@ part of 'search_view_model.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-/// The search screen's current term, debounced so results (built in
-/// Etapa 82) aren't recomputed on every keystroke.
+/// The search screen's current term, debounced so results aren't
+/// recomputed on every keystroke.
 
 @ProviderFor(SearchViewModel)
 const searchViewModelProvider = SearchViewModelProvider._();
 
-/// The search screen's current term, debounced so results (built in
-/// Etapa 82) aren't recomputed on every keystroke.
+/// The search screen's current term, debounced so results aren't
+/// recomputed on every keystroke.
 final class SearchViewModelProvider
     extends $NotifierProvider<SearchViewModel, String> {
-  /// The search screen's current term, debounced so results (built in
-  /// Etapa 82) aren't recomputed on every keystroke.
+  /// The search screen's current term, debounced so results aren't
+  /// recomputed on every keystroke.
   const SearchViewModelProvider._()
     : super(
         from: null,
@@ -49,8 +49,8 @@ final class SearchViewModelProvider
 
 String _$searchViewModelHash() => r'8952680146db623cd72f4841a8c5dd0c2855a488';
 
-/// The search screen's current term, debounced so results (built in
-/// Etapa 82) aren't recomputed on every keystroke.
+/// The search screen's current term, debounced so results aren't
+/// recomputed on every keystroke.
 
 abstract class _$SearchViewModel extends $Notifier<String> {
   String build();
