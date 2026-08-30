@@ -25,6 +25,27 @@ final class PermissionException extends AppException {
 final class FileException extends AppException {
   /// Creates a [FileException].
   const FileException(super.message, {super.cause});
+
+  /// Runs [operation], converting any failure into a [FileException]
+  /// carrying [message].
+  ///
+  /// Disk and file-picker failures arrive as whatever `dart:io` or the
+  /// plugin happens to throw, which upper layers would otherwise have to
+  /// catch as bare [Object] to be sure of catching at all. Converting at
+  /// the point of the call keeps that knowledge in the data layer and
+  /// leaves callers one type to handle.
+  static Future<T> guard<T>(
+    String message,
+    Future<T> Function() operation,
+  ) async {
+    try {
+      return await operation();
+    } on FileException {
+      rethrow;
+    } on Object catch (error) {
+      throw FileException(message, cause: error);
+    }
+  }
 }
 
 /// Thrown when audio playback fails.

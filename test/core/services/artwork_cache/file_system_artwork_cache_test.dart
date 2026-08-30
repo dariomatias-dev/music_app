@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:music_app/src/core/errors/app_exception.dart';
 import 'package:music_app/src/core/services/artwork_cache/file_system_artwork_cache.dart';
 
 void main() {
@@ -72,5 +73,44 @@ void main() {
 
     expect(await cache.pathFor('track-4'), isNull);
     expect(await cache.pathFor('track-5'), isNull);
+  });
+
+  group('failures', () {
+    late FileSystemArtworkCache failing;
+
+    setUp(() {
+      failing = FileSystemArtworkCache(
+        root: () async => throw const FileSystemException('no cache dir'),
+      );
+    });
+
+    test('save reports a FileException', () async {
+      await expectLater(
+        () => failing.save(
+          id: 'track-1',
+          data: Uint8List.fromList([1]),
+          mimeType: 'image/jpeg',
+        ),
+        throwsA(isA<FileException>()),
+      );
+    });
+
+    test('pathFor reports a FileException', () async {
+      await expectLater(
+        () => failing.pathFor('track-1'),
+        throwsA(isA<FileException>()),
+      );
+    });
+
+    test('delete reports a FileException', () async {
+      await expectLater(
+        () => failing.delete('track-1'),
+        throwsA(isA<FileException>()),
+      );
+    });
+
+    test('clear reports a FileException', () async {
+      await expectLater(failing.clear, throwsA(isA<FileException>()));
+    });
   });
 }

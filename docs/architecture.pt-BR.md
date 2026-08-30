@@ -99,7 +99,9 @@ O `main.dart` instala a fronteira mais externa do app antes de qualquer outra co
 
 Dois caminhos mostram uma falha da qual não dá pra proteger o usuário, ambos via `AppFailureScreen` (`lib/src/core/widgets/`): o `ErrorWidget.builder`, quando uma parte do app em execução falha ao construir, e o fallback de inicialização, quando o setup de plataforma do `main.dart` lança antes de existir app algum — esse oferecendo rodar a sequência inteira de novo. Os dois podem ser invocados sem `Theme`, `Directionality` ou `Localizations` acima, então o `AppFailureScreen` resolve os três a partir da plataforma, não do seu `BuildContext`; ler um ancestral ausente lançaria de dentro da própria tela que existe pra reportar o lançamento.
 
-Dentro do app, uma falha que uma tela específica consegue explicar continua sendo assunto daquela tela: ela captura, mostra um `AppToast` ou um `AppErrorState`, e não chega nessa fronteira.
+Abaixo dessa fronteira, `AppException` (`lib/src/core/errors/`) é o vocabulário de falhas do próprio app: `PermissionException`, `FileException` e `PlaybackException`. Falhas de terceiros são convertidas antes de sair da camada que as causou, pra que as camadas superiores lidem com um tipo só em vez do que `dart:io`, o drift ou um plugin resolverem lançar. O `FileException.guard` envolve as chamadas de disco e do seletor de arquivos na camada de dados e nos casos de uso de armazenamento, mantendo a mensagem e o `cause` original juntos.
+
+Dentro do app, uma falha que uma tela específica consegue explicar continua sendo assunto daquela tela: ela captura, mostra um `AppToast` ou um `AppErrorState`, e não chega nessa fronteira. Esses catches são deliberadamente amplos, já que uma única operação pode passar por SQLite, sistema de arquivos e seletor de arquivos ao mesmo tempo, então eles também entregam o erro capturado ao `ErrorReporter`: o toast diz uma frase, o report guarda a causa.
 
 ## Design system (`packages/app_ui`)
 

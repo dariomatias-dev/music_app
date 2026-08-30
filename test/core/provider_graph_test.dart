@@ -5,6 +5,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:music_app/src/core/audio/audio_providers.dart';
 import 'package:music_app/src/core/database/app_database.dart';
 import 'package:music_app/src/core/database/database_providers.dart';
+import 'package:music_app/src/core/errors/error_reporter.dart';
+import 'package:music_app/src/core/errors/error_reporter_provider.dart';
 import 'package:music_app/src/core/permissions/media_permission_service_impl.dart';
 import 'package:music_app/src/core/permissions/permission_providers.dart';
 import 'package:music_app/src/core/services/artwork_cache/artwork_cache_providers.dart';
@@ -86,6 +88,7 @@ void main() {
         container.read(deviceFileServiceProvider),
         isA<FilePickerDeviceFileService>(),
       );
+      expect(container.read(errorReporterProvider), isA<LogErrorReporter>());
     });
 
     test('clock reports the current time by default', () {

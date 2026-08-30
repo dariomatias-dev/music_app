@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:music_app/src/core/errors/app_exception.dart';
 import 'package:music_app/src/core/services/artwork_cache/artwork_cache.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
@@ -26,36 +27,50 @@ class FileSystemArtworkCache implements ArtworkCache {
     required Uint8List data,
     required String mimeType,
   }) async {
-    final directory = await _cacheDirectory();
-    final extension = _extensionsByMimeType[mimeType] ?? _fallbackExtension;
-    final file = File(p.join(directory.path, '$id.$extension'));
-    await file.writeAsBytes(data);
-    return file.path;
+    return FileException.guard('Could not cache artwork for $id.', () async {
+      final directory = await _cacheDirectory();
+      final extension = _extensionsByMimeType[mimeType] ?? _fallbackExtension;
+      final file = File(p.join(directory.path, '$id.$extension'));
+      await file.writeAsBytes(data);
+      return file.path;
+    });
   }
 
   @override
   Future<String?> pathFor(String id) async {
-    final directory = await _cacheDirectory();
-    for (final extension in _knownExtensions) {
-      final file = File(p.join(directory.path, '$id.$extension'));
-      if (file.existsSync()) return file.path;
-    }
-    return null;
+    return FileException.guard(
+      'Could not read cached artwork for $id.',
+      () async {
+        final directory = await _cacheDirectory();
+        for (final extension in _knownExtensions) {
+          final file = File(p.join(directory.path, '$id.$extension'));
+          if (file.existsSync()) return file.path;
+        }
+        return null;
+      },
+    );
   }
 
   @override
   Future<void> delete(String id) async {
-    final directory = await _cacheDirectory();
-    for (final extension in _knownExtensions) {
-      final file = File(p.join(directory.path, '$id.$extension'));
-      if (file.existsSync()) await file.delete();
-    }
+    return FileException.guard(
+      'Could not delete cached artwork for $id.',
+      () async {
+        final directory = await _cacheDirectory();
+        for (final extension in _knownExtensions) {
+          final file = File(p.join(directory.path, '$id.$extension'));
+          if (file.existsSync()) await file.delete();
+        }
+      },
+    );
   }
 
   @override
   Future<void> clear() async {
-    final directory = await _cacheDirectory();
-    if (directory.existsSync()) await directory.delete(recursive: true);
+    return FileException.guard('Could not clear the artwork cache.', () async {
+      final directory = await _cacheDirectory();
+      if (directory.existsSync()) await directory.delete(recursive: true);
+    });
   }
 
   Future<Directory> _cacheDirectory() async {

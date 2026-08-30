@@ -38,4 +38,43 @@ void main() {
     expect(exception.message, 'Playback failed.');
     expect(exception.cause, 'boom');
   });
+
+  group('FileException.guard', () {
+    test("returns the operation's value when it succeeds", () async {
+      expect(await FileException.guard('unused', () async => 42), 42);
+    });
+
+    test('wraps a thrown exception, keeping it as the cause', () async {
+      final exception = Exception('disk full');
+
+      await expectLater(
+        () => FileException.guard('Could not write.', () async {
+          throw exception;
+        }),
+        throwsA(
+          isA<FileException>()
+              .having((e) => e.message, 'message', 'Could not write.')
+              .having((e) => e.cause, 'cause', exception),
+        ),
+      );
+    });
+
+    test('wraps an Error, not just an Exception', () async {
+      await expectLater(
+        () => FileException.guard('Could not write.', () async {
+          throw ArgumentError('bad path');
+        }),
+        throwsA(isA<FileException>()),
+      );
+    });
+
+    test('rethrows a FileException rather than wrapping it twice', () async {
+      const inner = FileException('inner failure');
+
+      await expectLater(
+        () => FileException.guard('outer', () async => throw inner),
+        throwsA(same(inner)),
+      );
+    });
+  });
 }

@@ -4,6 +4,7 @@ import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:music_app/l10n/app_localizations.dart';
+import 'package:music_app/src/core/errors/error_reporter_provider.dart';
 import 'package:music_app/src/core/navigation/navigators/onboarding_navigator.dart';
 import 'package:music_app/src/core/navigation/navigators/settings_navigator.dart';
 import 'package:music_app/src/core/navigation/navigators/statistics_navigator.dart';
@@ -40,7 +41,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       // The scan touches device files and metadata parsing outside our
       // control; any failure here should reset the busy state and tell the
       // user, not leave the row spinning forever.
-    } on Object catch (_) {
+    } on Object catch (error, stackTrace) {
+      ref
+          .read(errorReporterProvider)
+          .report(error, stackTrace, context: 'Rescanning the library');
       if (!mounted) return;
       final l10n = AppLocalizations.of(context)!;
       setState(() => _rescanning = false);

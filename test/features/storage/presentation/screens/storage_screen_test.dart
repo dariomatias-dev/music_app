@@ -13,6 +13,7 @@ import 'package:music_app/src/core/audio/audio_providers.dart';
 import 'package:music_app/src/core/audio/music_audio_handler.dart';
 import 'package:music_app/src/core/database/app_database.dart';
 import 'package:music_app/src/core/database/database_providers.dart';
+import 'package:music_app/src/core/errors/error_reporter_provider.dart';
 import 'package:music_app/src/core/services/device_file/device_file_service_provider.dart';
 import 'package:music_app/src/core/widgets/restart_widget.dart';
 import 'package:music_app/src/features/library/data/indexing/library_indexer.dart';
@@ -35,6 +36,7 @@ import 'package:music_app/src/features/storage/presentation/screens/storage_scre
 
 import '../../../../helpers/fake_audio_player_service.dart';
 import '../../../../helpers/fake_device_file_service.dart';
+import '../../../../helpers/fake_error_reporter.dart';
 import '../../../../helpers/fake_excluded_folder_repository.dart';
 
 /// An [AppDatabase] whose connection refuses to close, standing in for a
@@ -213,6 +215,7 @@ Widget _app({
   FakeDeviceFileService? deviceFileService,
   List<FolderUsage>? folderUsage,
   AppDatabase? database,
+  FakeErrorReporter? errorReporter,
 }) {
   final playerService = FakeAudioPlayerService();
   return RestartWidget(
@@ -240,6 +243,9 @@ Widget _app({
           ),
         appDatabaseProvider.overrideWithValue(
           database ?? AppDatabase(NativeDatabase.memory()),
+        ),
+        errorReporterProvider.overrideWithValue(
+          errorReporter ?? FakeErrorReporter(),
         ),
         deviceFileServiceProvider.overrideWithValue(
           deviceFileService ?? FakeDeviceFileService(),
@@ -444,6 +450,34 @@ void main() {
 
     expect(excludedFolderRepository.writeCalls, 2);
     expect(libraryRepository.reindexCalls, 1);
+  });
+
+  testWidgets('records the cause of a failure the toast only summarizes', (
+    tester,
+  ) async {
+    final errorReporter = FakeErrorReporter();
+    final excludedFolderRepository = FakeExcludedFolderRepository()
+      ..writeShouldThrow = true;
+    await tester.pumpWidget(
+      _app(
+        libraryRepository: _FakeLibraryRepository(
+          tracks: [_track('a', filePath: '/music/rock/a.mp3')],
+        ),
+        excludedFolderRepository: excludedFolderRepository,
+        errorReporter: errorReporter,
+      ),
+    );
+    await tester.pump();
+
+    await tester.tap(find.byType(AppSwitch));
+    await tester.pumpAndSettle();
+
+    expect(errorReporter.reports, hasLength(1));
+    expect(
+      errorReporter.reports.single.context,
+      'Updating an excluded folder',
+    );
+    expect(errorReporter.reports.single.error, isA<Exception>());
   });
 
   testWidgets('clearing artwork cache calls it after confirming', (
