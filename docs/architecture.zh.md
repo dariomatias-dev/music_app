@@ -10,7 +10,7 @@
 
 ```
 lib/
-  main.dart                 # 组合根：平台初始化、ProviderScope、RestartWidget
+  main.dart                 # 组合根：错误边界、平台初始化、ProviderScope、RestartWidget
   src/
     core/                   # 横切关注点，被所有功能模块共享
       audio/                # just_audio + audio_service 集成
@@ -92,6 +92,14 @@ Provider 按角色分组存放，而不是一个 provider 一个文件：例如 
 [just_audio](https://pub.dev/packages/just_audio) 负责实际播放；[audio_service](https://pub.dev/packages/audio_service) 通过 `MusicAudioHandler` 将其暴露给操作系统（锁屏界面、通知栏、蓝牙控制）。系统侧的元数据更新和应用自身的交叉淡入淡出效果都基于同一个上游信号——`just_audio` 在曲目切换边界触发的原生 `currentIndex` 变化——因此两者永远不会失去同步。
 
 目前实现的交叉淡入淡出，本质上是单一播放器的音量渐变：原生引擎自身完成从曲目 A 到 B 的瞬时无缝切换，`PlaybackTransitionEffects` 只是随后让 B 从静音状态淡入——并不是两路音频真正地相互叠加。这是已知的简化实现，不是缺陷。
+
+## 错误处理
+
+`main.dart` 在其他任何代码运行之前先装好应用最外层的错误边界。`FlutterError.onError` 与 `PlatformDispatcher.onError` 都汇入一个 `ErrorReporter`（`lib/src/core/errors/`），因为这两者的默认行为是在 debug 下打印、在 release 下什么都不做——没有它们，构建期抛异常的组件只会留下一个错误框而不留任何线索，从游离的异步回调中逃逸的错误则会彻底消失。平台处理器在上报后将错误标记为已处理，这样插件通道或无监听者的 stream 里的失败就不会拖垮 isolate、把播放一起带走。
+
+有两条路径会把无法对用户隐藏的失败呈现出来，都经由 `AppFailureScreen`（`lib/src/core/widgets/`）：一是 `ErrorWidget.builder`，用于运行中的应用某一部分构建失败时；二是启动兜底，用于 `main.dart` 的平台初始化在应用尚不存在时就抛出异常，此时会提供重跑整个初始化流程的入口。两者都可能在上方没有 `Theme`、`Directionality` 或 `Localizations` 的情况下被调用，因此 `AppFailureScreen` 从平台而非自身的 `BuildContext` 解析这三者；读取一个不存在的祖先，会让这块专门用来上报异常的界面自己抛出异常。
+
+在应用内部，某个界面能够解释清楚的失败仍归该界面处理：它自行捕获，展示 `AppToast` 或 `AppErrorState`，不会走到这道边界。
 
 ## 设计系统（`packages/app_ui`）
 

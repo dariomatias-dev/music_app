@@ -84,6 +84,20 @@ class AppLocalizationsPt extends AppLocalizations {
   String get retryLabel => 'Tentar novamente';
 
   @override
+  String get startupErrorTitle => 'Não foi possível iniciar';
+
+  @override
+  String get startupErrorMessage =>
+      'Algo deu errado ao iniciar o Music App. Tente novamente e reabra o app se continuar falhando.';
+
+  @override
+  String get unexpectedErrorTitle => 'Algo deu errado';
+
+  @override
+  String get unexpectedErrorMessage =>
+      'Não foi possível exibir esta parte do app.';
+
+  @override
   String get backButtonSemanticLabel => 'Voltar';
 
   @override

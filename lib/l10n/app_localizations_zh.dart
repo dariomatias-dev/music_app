@@ -79,6 +79,18 @@ class AppLocalizationsZh extends AppLocalizations {
   String get retryLabel => '重试';
 
   @override
+  String get startupErrorTitle => '无法启动';
+
+  @override
+  String get startupErrorMessage => '启动 Music App 时出现问题。请重试，如果仍然失败，请重新打开应用。';
+
+  @override
+  String get unexpectedErrorTitle => '出现问题';
+
+  @override
+  String get unexpectedErrorMessage => '无法显示应用的这一部分。';
+
+  @override
   String get backButtonSemanticLabel => '返回';
 
   @override

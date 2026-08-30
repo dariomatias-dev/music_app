@@ -10,7 +10,7 @@ This document goes one level deeper than the README's overview. It's aimed at an
 
 ```
 lib/
-  main.dart                 # composition root: platform setup, ProviderScope, RestartWidget
+  main.dart                 # composition root: error boundary, platform setup, ProviderScope, RestartWidget
   src/
     core/                   # cross-cutting concerns, shared by every feature
       audio/                # just_audio + audio_service integration
@@ -92,6 +92,14 @@ Two independent backup mechanisms exist, both reachable from Settings → Storag
 [just_audio](https://pub.dev/packages/just_audio) drives actual playback; [audio_service](https://pub.dev/packages/audio_service) exposes it to the OS (lock screen, notification, Bluetooth controls) through `MusicAudioHandler`. Both the OS-facing metadata and the app's own crossfade effect key off the same upstream signal — `just_audio`'s native `currentIndex` change on a track boundary — so they never drift out of sync with each other.
 
 Crossfade, as implemented today, is a single-player volume ramp: the native engine performs its own instant gapless switch from track A to B, and `PlaybackTransitionEffects` only fades B in from silence afterward — it is not two overlapping audible sources. This is a known simplification, not a bug.
+
+## Error handling
+
+`main.dart` installs the app's outermost boundary before anything else runs. `FlutterError.onError` and `PlatformDispatcher.onError` both route into an `ErrorReporter` (`lib/src/core/errors/`), because both default to printing in debug and doing nothing in release — without them, a widget that throws during build leaves an error box and no trace, and an error escaping a detached async callback disappears outright. The platform handler reports and marks the error handled, so a failure in a plugin's channel or an unlistened stream cannot tear the isolate down and take playback with it.
+
+Two paths surface a failure the user cannot be shielded from, both through `AppFailureScreen` (`lib/src/core/widgets/`): `ErrorWidget.builder`, when a part of a running app fails to build, and the startup fallback, when the platform setup in `main.dart` throws before there is an app at all — the latter offering to run the whole sequence again. Both can be invoked with no `Theme`, `Directionality` or `Localizations` above them, so `AppFailureScreen` resolves all three from the platform rather than from its `BuildContext`; reading a missing ancestor would throw from inside the screen that exists to report the throw.
+
+Within the app, a failure a specific screen can explain stays that screen's business: it catches, shows an `AppToast` or an `AppErrorState`, and does not reach this boundary.
 
 ## Design system (`packages/app_ui`)
 
