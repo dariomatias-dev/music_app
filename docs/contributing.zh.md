@@ -91,6 +91,8 @@ act pull_request -j app               # 只运行某一个 job，按 id 指定
 act pull_request -j app --dryrun      # 只打印步骤，不实际执行
 ```
 
+`act` 无法运行模拟器 job 所使用的 action，因此它的两条限制只会在 CI 上暴露。该 action 会按换行拆分 `script`，并把**每一行作为独立的 `sh -c` 执行**，所以循环或任何跨行的 shell 结构都会在缺少结束关键字的情况下被送进 shell；请每行写一条自成一体的命令。另外，当运行因无法启动 Dart Development Service 而失败时，最容易想到的 `--no-dds` 会破坏 `flutter_tools` 为集成测试注册的 golden 比较器——即使所有测试都通过，测试套件也会在加载阶段失败。
+
 `-j` 接收的是 job 的 **id**（`app`、`build_apk`、`integration`、`app_ui`、`release`），而不是上表中的显示名称；`act -l` 会同时列出两者。首次真正运行会拉取数 GB 的 runner 镜像，而且 `act` 只是近似模拟 GitHub 的 runner，并非完全一致——`act` 跑通是一个好信号，但不能作为保证。
 
 ## 与 AI agent 协作

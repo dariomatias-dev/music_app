@@ -239,9 +239,12 @@ Future<void> settleUntil(
 /// Pumps until [condition] holds, or gives up after [timeout].
 ///
 /// The counterpart to [settleUntil] for work that finishes somewhere other
-/// than the widget tree — bytes handed to the device file service, say —
-/// where a transient toast is the only on-screen trace and waiting on one
-/// is neither reliable nor the actual thing under test.
+/// than the widget tree — bytes handed to the device file service, or rows
+/// written to the database.
+///
+/// Prefer this over waiting on a toast. A toast is transient, and CI runs
+/// the emulator with animations disabled, so a wait on one passes on a
+/// device and times out there. Wait on what the action produced instead.
 Future<void> pumpUntil(
   WidgetTester tester,
   FutureOr<bool> Function() condition, {
