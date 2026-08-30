@@ -604,6 +604,10 @@ class AppLocalizationsPt extends AppLocalizations {
   String get artworkCacheClearedMessage => 'Cache de capas limpo';
 
   @override
+  String get artworkCacheClearFailedMessage =>
+      'Não foi possível limpar o cache de capas.';
+
+  @override
   String get backupSectionLabel => 'Backup';
 
   @override

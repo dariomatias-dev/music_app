@@ -603,6 +603,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get artworkCacheClearedMessage => 'Caché de carátulas borrada';
 
   @override
+  String get artworkCacheClearFailedMessage =>
+      'No se pudo vaciar la caché de carátulas.';
+
+  @override
   String get backupSectionLabel => 'Copia de seguridad';
 
   @override

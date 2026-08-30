@@ -571,6 +571,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get artworkCacheClearedMessage => '封面缓存已清除';
 
   @override
+  String get artworkCacheClearFailedMessage => '无法清除封面缓存。';
+
+  @override
   String get backupSectionLabel => '备份';
 
   @override

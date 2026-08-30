@@ -844,7 +844,10 @@ void main() {
     );
     expect(restoreDatabaseBackup.received, isNull);
 
-    await tester.pumpAndSettle();
+    // Lets the toast's on-screen delay elapse before the test ends, so the
+    // pending restart timer doesn't fire after the widget tree is torn
+    // down.
+    await tester.pumpAndSettle(const Duration(seconds: 3));
   });
 
   testWidgets('shows a progress bar while a rescan runs', (tester) async {

@@ -102,7 +102,7 @@ concerns (navigation, the database, audio, permissions) live under
 
 ## Testing
 
-The project has 185 test files (128 in the app, 57 in `packages/app_ui`)
+The project has 186 test files (129 in the app, 57 in `packages/app_ui`)
 covering repositories, view models, and widgets — 40 of them golden tests,
 rendering 86 reference images across the design system and key screens —
 plus `integration_test/` suites covering onboarding, playback, persistence,
