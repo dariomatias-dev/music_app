@@ -7,6 +7,7 @@ import 'package:music_app/l10n/app_localizations.dart';
 import 'package:music_app/src/core/audio/audio_providers.dart';
 import 'package:music_app/src/core/audio/queue_media_item.dart';
 import 'package:music_app/src/core/utils/duration_formatter.dart';
+import 'package:music_app/src/core/widgets/playback_state_indicator.dart';
 import 'package:music_app/src/features/player/presentation/widgets/track_artwork.dart';
 import 'package:music_app/src/features/queue/presentation/view_models/queue_view_model.dart';
 
@@ -18,7 +19,6 @@ class QueueRow extends ConsumerWidget {
     required this.item,
     required this.index,
     required this.current,
-    required this.playing,
     required this.editing,
     super.key,
   });
@@ -31,9 +31,6 @@ class QueueRow extends ConsumerWidget {
 
   /// Whether this item is the one currently loaded in the player.
   final bool current;
-
-  /// Whether playback is active, used for the current-track indicator.
-  final bool playing;
 
   /// Whether the row is shown in reorder-editing state.
   final bool editing;
@@ -120,7 +117,7 @@ class QueueRow extends ConsumerWidget {
                   ),
                 )
               else if (current)
-                AppPlaybackIndicator(playing: playing, color: colors.accent)
+                PlaybackStateIndicator(color: colors.accent)
               else if (item.duration != null)
                 Text(
                   formatDuration(item.duration!),

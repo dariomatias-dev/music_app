@@ -7,8 +7,8 @@ part 'search_view_model.g.dart';
 /// How long typing pauses before the search term updates.
 const _debounceDuration = Duration(milliseconds: 350);
 
-/// The search screen's current term, debounced so results (built in
-/// Etapa 82) aren't recomputed on every keystroke.
+/// The search screen's current term, debounced so results aren't
+/// recomputed on every keystroke.
 @riverpod
 class SearchViewModel extends _$SearchViewModel {
   Timer? _debounce;

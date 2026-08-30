@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:music_app/l10n/app_localizations.dart';
 import 'package:music_app/src/core/utils/duration_formatter.dart';
+import 'package:music_app/src/core/widgets/playback_state_indicator.dart';
 import 'package:music_app/src/features/library/domain/entities/track.dart';
 import 'package:music_app/src/features/library/presentation/providers/library_providers.dart';
 
@@ -15,7 +16,6 @@ class PlaylistTrackRow extends ConsumerWidget {
     required this.index,
     required this.editing,
     required this.current,
-    required this.playing,
     required this.onTap,
     required this.onRemove,
     required this.onMore,
@@ -34,9 +34,6 @@ class PlaylistTrackRow extends ConsumerWidget {
 
   /// Whether this track is the one currently loaded in the player.
   final bool current;
-
-  /// Whether playback is active, used for the current-track indicator.
-  final bool playing;
 
   /// Called when the row is tapped to start playback, ignored while editing.
   final VoidCallback onTap;
@@ -122,7 +119,7 @@ class PlaylistTrackRow extends ConsumerWidget {
               )
             else ...[
               if (current)
-                AppPlaybackIndicator(playing: playing, color: colors.accent)
+                PlaybackStateIndicator(color: colors.accent)
               else
                 Text(
                   formatDuration(track.duration),

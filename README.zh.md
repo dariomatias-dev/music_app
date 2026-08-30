@@ -93,7 +93,7 @@
 
 ## 测试
 
-项目共有 181 个测试文件（应用本体 124 个，`packages/app_ui` 中 57 个），覆盖仓库、view model 和组件——其中 40 个是 golden 测试，为设计系统和关键界面渲染 86 张参考图——此外还有 `integration_test/` 中的集成测试，覆盖引导、播放、数据持久化、播放列表、收藏、搜索、语言切换以及备份/恢复流程。CI 强制要求应用本体的行覆盖率不低于 97%，`packages/app_ui` 不低于 98%，并配合严格的 `very_good_analysis` lint 规则集和 `dart format` 检查。
+项目共有 182 个测试文件（应用本体 125 个，`packages/app_ui` 中 57 个），覆盖仓库、view model 和组件——其中 40 个是 golden 测试，为设计系统和关键界面渲染 86 张参考图——此外还有 `integration_test/` 中的集成测试，覆盖引导、播放、数据持久化、播放列表、收藏、搜索、语言切换以及备份/恢复流程。CI 强制要求应用本体的行覆盖率不低于 97%，`packages/app_ui` 不低于 98%，并配合严格的 `very_good_analysis` lint 规则集和 `dart format` 检查。
 
 每次 CI 运行都会将 `lcov` 报告上传到 [Codecov](https://codecov.io/gh/dariomatias-dev/music_app)，它将两个包作为独立的 flag 跟踪，并在每个 pull request 上评论覆盖率变化。如需在本地查看逐行报告，可以用同一份文件生成：
 

@@ -70,7 +70,7 @@ final class ArtistByIdProvider
   }
 }
 
-String _$artistByIdHash() => r'e07c9abcf65c3fedc15fbeea292fd8b9e00a49ff';
+String _$artistByIdHash() => r'6cd8a4cdd91775901a1ef9f0265cd50779c86716';
 
 /// The artist with the given id, or `null` if it isn't indexed.
 
@@ -245,7 +245,7 @@ final class ArtistTracksProvider
   }
 }
 
-String _$artistTracksHash() => r'a1546c713f7b7faad4a18a3a538b5e8092e49bba';
+String _$artistTracksHash() => r'34fbaf77381f2f976a5ad130bf0a8b41628d6baa';
 
 /// Every non-missing track by the artist with the given id (their whole
 /// discography), ordered by album title, then disc and track number.
@@ -333,7 +333,7 @@ final class AlbumByIdProvider
   }
 }
 
-String _$albumByIdHash() => r'614bd694beb16b94e6a992f49cd5e30469bee041';
+String _$albumByIdHash() => r'ead620ba95ed0a9f46090dbecfd2b2ce33e31cf6';
 
 /// The album with the given id, or `null` if it isn't indexed.
 
@@ -422,7 +422,7 @@ final class AlbumTracksProvider
   }
 }
 
-String _$albumTracksHash() => r'ec8945c381a3d8df86e68c92b4b3fd7c392c34d3';
+String _$albumTracksHash() => r'5c9b8fceab575568e9a8e50c44ef8cac13e73be2';
 
 /// Every non-missing track on the album with the given id, ordered by disc
 /// and track number.
@@ -495,4 +495,4 @@ final class SortedTracksProvider
   }
 }
 
-String _$sortedTracksHash() => r'df176ec64ada595520a98e0c3b336591a1a12461';
+String _$sortedTracksHash() => r'450ff79c2f78d092f3d91a63c8c5752477f784de';

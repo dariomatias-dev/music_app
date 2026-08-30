@@ -8,7 +8,6 @@ import 'package:music_app/src/core/navigation/navigators/player_navigator.dart';
 import 'package:music_app/src/features/library/domain/entities/track.dart';
 import 'package:music_app/src/features/library/presentation/providers/library_providers.dart';
 import 'package:music_app/src/features/player/presentation/view_models/playback_screen_view_model.dart';
-import 'package:music_app/src/features/player/presentation/view_models/playback_view_model.dart';
 import 'package:music_app/src/features/player/presentation/widgets/mini_player.dart';
 import 'package:music_app/src/features/playlist/data/providers/playlist_data_providers.dart';
 import 'package:music_app/src/features/playlist/presentation/providers/playlist_providers.dart';
@@ -87,11 +86,6 @@ class _PlaylistScreenState extends ConsumerState<PlaylistScreen> {
     final artistNames = ref.watch(artistNamesProvider);
     final sort = ref.watch(playlistTrackSortViewModelProvider);
     final currentTrackId = ref.watch(playbackScreenViewModelProvider)?.id;
-    final playing =
-        ref.watch(
-          playbackViewModelProvider.select((state) => state.value?.playing),
-        ) ??
-        false;
 
     if (rawTracks.isEmpty && _editing) _editing = false;
 
@@ -252,7 +246,6 @@ class _PlaylistScreenState extends ConsumerState<PlaylistScreen> {
                         index: index,
                         editing: true,
                         current: visibleTracks[index].id == currentTrackId,
-                        playing: playing,
                         onTap: () {},
                         onRemove: () => unawaited(
                           _confirmRemove(context, tracks, index),
@@ -281,7 +274,6 @@ class _PlaylistScreenState extends ConsumerState<PlaylistScreen> {
                           index: position,
                           editing: false,
                           current: track.id == currentTrackId,
-                          playing: playing,
                           onTap: () => unawaited(playFrom(tracks, position)),
                           onRemove: () {},
                           onMore: () => unawaited(
