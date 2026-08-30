@@ -1,6 +1,7 @@
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:music_app/src/core/utils/duration_formatter.dart';
+import 'package:music_app/src/core/widgets/playback_state_indicator.dart';
 import 'package:music_app/src/features/library/domain/entities/track.dart';
 
 /// One numbered track row in the album screen's track list.
@@ -10,7 +11,6 @@ class AlbumTrackRow extends StatelessWidget {
     required this.track,
     required this.number,
     required this.current,
-    required this.playing,
     required this.onTap,
     super.key,
   });
@@ -23,9 +23,6 @@ class AlbumTrackRow extends StatelessWidget {
 
   /// Whether this track is the one currently loaded in the player.
   final bool current;
-
-  /// Whether playback is active, used for the current-track indicator.
-  final bool playing;
 
   /// Called when the row is tapped to start playback from here.
   final VoidCallback onTap;
@@ -67,7 +64,7 @@ class AlbumTrackRow extends StatelessWidget {
             ),
             const SizedBox(width: AppSpacing.sm),
             if (current)
-              AppPlaybackIndicator(playing: playing, color: colors.accent)
+              PlaybackStateIndicator(color: colors.accent)
             else
               Text(
                 formatDuration(track.duration),

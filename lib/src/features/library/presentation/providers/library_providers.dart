@@ -41,27 +41,67 @@ final albumNamesProvider = Provider<Map<String, String>>((ref) {
   return {for (final album in albums) album.id: album.title};
 });
 
+/// Album id -> album, for looking one up without scanning the list.
+final albumsByIdProvider = Provider<Map<String, Album>>((ref) {
+  final albums = ref.watch(albumsStreamProvider).value ?? const [];
+  return {for (final album in albums) album.id: album};
+});
+
+/// Artist id -> artist, for looking one up without scanning the list.
+final artistsByIdProvider = Provider<Map<String, Artist>>((ref) {
+  final artists = ref.watch(artistsStreamProvider).value ?? const [];
+  return {for (final artist in artists) artist.id: artist};
+});
+
 /// Every indexed album, ordered alphabetically by title.
 final sortedAlbumsProvider = Provider<List<Album>>((ref) {
-  return [...ref.watch(albumsStreamProvider).value ?? const []]
-    ..sort((a, b) => a.title.toLowerCase().compareTo(b.title.toLowerCase()));
+  final albums = ref.watch(albumsStreamProvider).value ?? const [];
+  return _sortedByKey(albums, (album) => album.title.toLowerCase());
 });
 
 /// Every indexed artist, ordered alphabetically by name.
 final sortedArtistsProvider = Provider<List<Artist>>((ref) {
-  return [...ref.watch(artistsStreamProvider).value ?? const []]
-    ..sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+  final artists = ref.watch(artistsStreamProvider).value ?? const [];
+  return _sortedByKey(artists, (artist) => artist.name.toLowerCase());
+});
+
+/// Album id -> its non-missing tracks, ordered by disc and track number.
+///
+/// Grouped once for the whole library rather than per album screen, which
+/// would otherwise filter and sort every indexed track again each time one
+/// is opened.
+final tracksByAlbumProvider = Provider<Map<String, List<Track>>>((ref) {
+  final grouped = _groupVisibleTracks(
+    ref.watch(tracksStreamProvider).value ?? const [],
+    (track) => track.albumId,
+  );
+  for (final tracks in grouped.values) {
+    tracks.sort(_byDiscAndTrackNumber);
+  }
+  return grouped;
+});
+
+/// Artist id -> their non-missing tracks, ordered by album title, then disc
+/// and track number.
+///
+/// Grouped once for the whole library, for the same reason as
+/// [tracksByAlbumProvider].
+final tracksByArtistProvider = Provider<Map<String, List<Track>>>((ref) {
+  final albumTitles = ref.watch(albumNamesProvider);
+  final grouped = _groupVisibleTracks(
+    ref.watch(tracksStreamProvider).value ?? const [],
+    (track) => track.artistId,
+  );
+  return {
+    for (final entry in grouped.entries)
+      entry.key: _sortedByAlbumThenNumber(entry.value, albumTitles),
+  };
 });
 
 /// The artist with the given id, or `null` if it isn't indexed.
 @riverpod
-Artist? artistById(Ref ref, String artistId) {
-  final artists = ref.watch(artistsStreamProvider).value ?? const [];
-  for (final artist in artists) {
-    if (artist.id == artistId) return artist;
-  }
-  return null;
-}
+Artist? artistById(Ref ref, String artistId) =>
+    ref.watch(artistsByIdProvider)[artistId];
 
 /// Every album by the artist with the given id, ordered alphabetically.
 @riverpod
@@ -75,49 +115,19 @@ List<Album> artistAlbums(Ref ref, String artistId) {
 /// Every non-missing track by the artist with the given id (their whole
 /// discography), ordered by album title, then disc and track number.
 @riverpod
-List<Track> artistTracks(Ref ref, String artistId) {
-  final tracks = ref.watch(tracksStreamProvider).value ?? const [];
-  final albums = ref.watch(albumsStreamProvider).value ?? const [];
-  final albumTitles = {for (final album in albums) album.id: album.title};
-
-  return tracks
-      .where((track) => track.artistId == artistId && !track.isMissing)
-      .toList()
-    ..sort((a, b) {
-      final albumCompare = (albumTitles[a.albumId] ?? '')
-          .toLowerCase()
-          .compareTo((albumTitles[b.albumId] ?? '').toLowerCase());
-      if (albumCompare != 0) return albumCompare;
-      final discCompare = (a.discNumber ?? 0).compareTo(b.discNumber ?? 0);
-      if (discCompare != 0) return discCompare;
-      return (a.trackNumber ?? 0).compareTo(b.trackNumber ?? 0);
-    });
-}
+List<Track> artistTracks(Ref ref, String artistId) =>
+    ref.watch(tracksByArtistProvider)[artistId] ?? const [];
 
 /// The album with the given id, or `null` if it isn't indexed.
 @riverpod
-Album? albumById(Ref ref, String albumId) {
-  final albums = ref.watch(albumsStreamProvider).value ?? const [];
-  for (final album in albums) {
-    if (album.id == albumId) return album;
-  }
-  return null;
-}
+Album? albumById(Ref ref, String albumId) =>
+    ref.watch(albumsByIdProvider)[albumId];
 
 /// Every non-missing track on the album with the given id, ordered by disc
 /// and track number.
 @riverpod
-List<Track> albumTracks(Ref ref, String albumId) {
-  final tracks = ref.watch(tracksStreamProvider).value ?? const [];
-  return tracks
-      .where((track) => track.albumId == albumId && !track.isMissing)
-      .toList()
-    ..sort((a, b) {
-      final discCompare = (a.discNumber ?? 0).compareTo(b.discNumber ?? 0);
-      if (discCompare != 0) return discCompare;
-      return (a.trackNumber ?? 0).compareTo(b.trackNumber ?? 0);
-    });
-}
+List<Track> albumTracks(Ref ref, String albumId) =>
+    ref.watch(tracksByAlbumProvider)[albumId] ?? const [];
 
 /// Ids of every favorited track, most recently favorited first.
 final favoriteTrackIdsProvider = StreamProvider<List<String>>(
@@ -146,19 +156,73 @@ List<Track> sortedTracks(Ref ref) {
   final sort = ref.watch(trackSortViewModelProvider);
   final artistNames = ref.watch(artistNamesProvider);
 
-  final visible = tracks.where((track) => !track.isMissing).toList()
-    ..sort(
-      (a, b) => switch (sort) {
-        TrackSort.title => a.title.toLowerCase().compareTo(
-          b.title.toLowerCase(),
-        ),
-        TrackSort.artist =>
-          (artistNames[a.artistId] ?? '').toLowerCase().compareTo(
-            (artistNames[b.artistId] ?? '').toLowerCase(),
+  final visible = tracks.where((track) => !track.isMissing).toList();
+
+  // The text sorts read their key through a map lookup and a lowercasing
+  // that a comparator would otherwise redo on both sides of every one of
+  // the n log n comparisons.
+  return switch (sort) {
+    TrackSort.title => _sortedByKey(
+      visible,
+      (track) => track.title.toLowerCase(),
+    ),
+    TrackSort.artist => _sortedByKey(
+      visible,
+      (track) => (artistNames[track.artistId] ?? '').toLowerCase(),
+    ),
+    TrackSort.dateAdded =>
+      visible..sort((a, b) => b.dateAdded.compareTo(a.dateAdded)),
+    TrackSort.duration =>
+      visible..sort((a, b) => b.duration.compareTo(a.duration)),
+  };
+}
+
+/// [items] ordered by [key], which is computed once per item instead of
+/// once per comparison.
+List<T> _sortedByKey<T, K extends Comparable<K>>(
+  Iterable<T> items,
+  K Function(T item) key,
+) {
+  final decorated = [for (final item in items) (key: key(item), item: item)]
+    ..sort((a, b) => a.key.compareTo(b.key));
+  return [for (final entry in decorated) entry.item];
+}
+
+/// [tracks] that are still on disk, grouped by [keyOf].
+Map<String, List<Track>> _groupVisibleTracks(
+  List<Track> tracks,
+  String Function(Track track) keyOf,
+) {
+  final grouped = <String, List<Track>>{};
+  for (final track in tracks) {
+    if (track.isMissing) continue;
+    (grouped[keyOf(track)] ??= []).add(track);
+  }
+  return grouped;
+}
+
+int _byDiscAndTrackNumber(Track a, Track b) {
+  final discCompare = (a.discNumber ?? 0).compareTo(b.discNumber ?? 0);
+  if (discCompare != 0) return discCompare;
+  return (a.trackNumber ?? 0).compareTo(b.trackNumber ?? 0);
+}
+
+/// [tracks] ordered by their album's title, then by disc and track number.
+List<Track> _sortedByAlbumThenNumber(
+  List<Track> tracks,
+  Map<String, String> albumTitles,
+) {
+  final decorated =
+      [
+        for (final track in tracks)
+          (
+            title: (albumTitles[track.albumId] ?? '').toLowerCase(),
+            track: track,
           ),
-        TrackSort.dateAdded => b.dateAdded.compareTo(a.dateAdded),
-        TrackSort.duration => b.duration.compareTo(a.duration),
-      },
-    );
-  return visible;
+      ]..sort((a, b) {
+        final titleCompare = a.title.compareTo(b.title);
+        if (titleCompare != 0) return titleCompare;
+        return _byDiscAndTrackNumber(a.track, b.track);
+      });
+  return [for (final entry in decorated) entry.track];
 }

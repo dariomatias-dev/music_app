@@ -9,7 +9,6 @@ import 'package:music_app/src/features/library/presentation/widgets/artist_scree
 import 'package:music_app/src/features/library/presentation/widgets/artist_screen/artist_header.dart';
 import 'package:music_app/src/features/library/presentation/widgets/artist_screen/artist_track_row.dart';
 import 'package:music_app/src/features/player/presentation/view_models/playback_screen_view_model.dart';
-import 'package:music_app/src/features/player/presentation/view_models/playback_view_model.dart';
 import 'package:music_app/src/features/queue/presentation/view_models/queue_view_model.dart';
 
 /// An artist's details: albums and their full discography, with a
@@ -42,11 +41,6 @@ class ArtistScreen extends ConsumerWidget {
     final albums = ref.watch(artistAlbumsProvider(artistId));
     final tracks = ref.watch(artistTracksProvider(artistId));
     final currentTrackId = ref.watch(playbackScreenViewModelProvider)?.id;
-    final playing =
-        ref.watch(
-          playbackViewModelProvider.select((state) => state.value?.playing),
-        ) ??
-        false;
 
     // Fixed rows (header, play button, and the horizontal albums strip
     // when there are any) come before the track list; offsetting by their
@@ -124,7 +118,6 @@ class ArtistScreen extends ConsumerWidget {
           return ArtistTrackRow(
             track: track,
             current: track.id == currentTrackId,
-            playing: playing,
             onTap: () => unawaited(
               ref
                   .read(queueViewModelProvider.notifier)

@@ -202,6 +202,9 @@ void main() {
 
     await tester.tap(find.text('Zebra'));
     await tester.pump();
+    // A second frame: the indicator subscribes to the playback state
+    // itself, one level below the row that mounts it.
+    await tester.pump();
 
     expect(find.byType(AppPlaybackIndicator), findsOneWidget);
   });
