@@ -45,18 +45,26 @@ class ReconcileLibrary {
   /// happen automatically as part of [call].
   Future<void> purgeMissingTracks() async {
     final tracks = await _dataSource.findAllTracks();
-    for (final track in tracks) {
-      if (track.isMissing) await _dataSource.deleteTrack(track.id);
-    }
+    await _dataSource.runInTransaction(() async {
+      for (final track in tracks) {
+        if (track.isMissing) await _dataSource.deleteTrack(track.id);
+      }
+    });
   }
 
   Future<void> _updateMissingTracks(Set<String> seenSourceIds) async {
     final tracks = await _dataSource.findAllTracks();
-    for (final track in tracks) {
-      final isMissingNow = !seenSourceIds.contains(track.sourceId);
-      if (isMissingNow != track.isMissing) {
-        await _dataSource.upsertTrack(track.copyWith(isMissing: isMissingNow));
+    final changed = [
+      for (final track in tracks)
+        if (!seenSourceIds.contains(track.sourceId) != track.isMissing)
+          track.copyWith(isMissing: !seenSourceIds.contains(track.sourceId)),
+    ];
+    if (changed.isEmpty) return;
+
+    await _dataSource.runInTransaction(() async {
+      for (final track in changed) {
+        await _dataSource.upsertTrack(track);
       }
-    }
+    });
   }
 }

@@ -56,8 +56,20 @@ class _FakeArtworkCache implements ArtworkCache {
 }
 
 class _FakeLibraryLocalDataSource implements LibraryLocalDataSource {
+  var _transactionDepth = 0;
+
+  /// Writes that happened with no transaction open.
+  final List<String> writesOutsideTransaction = [];
+
   @override
-  Future<T> runInTransaction<T>(Future<T> Function() action) => action();
+  Future<T> runInTransaction<T>(Future<T> Function() action) async {
+    _transactionDepth++;
+    try {
+      return await action();
+    } finally {
+      _transactionDepth--;
+    }
+  }
 
   final Map<String, Artist> artists = {};
   final Map<String, Album> albums = {};
@@ -96,11 +108,17 @@ class _FakeLibraryLocalDataSource implements LibraryLocalDataSource {
 
   @override
   Future<void> upsertTrack(Track track) async {
+    if (_transactionDepth == 0) {
+      writesOutsideTransaction.add('upsert:${track.id}');
+    }
     tracks[track.id] = track;
   }
 
   @override
   Future<void> deleteTrack(String id) async {
+    if (_transactionDepth == 0) {
+      writesOutsideTransaction.add('delete:$id');
+    }
     tracks.remove(id);
   }
 
@@ -274,5 +292,50 @@ void main() {
     await reconcile(excludedFolders: ['/music/skip']).toList();
 
     expect(scanner.lastExcludedFolders, ['/music/skip']);
+  });
+
+  test('marks tracks missing and purges them inside a transaction', () async {
+    final scanner = _FakeMediaScanner([
+      _file(1, '/music/a.mp3'),
+      _file(2, '/music/b.mp3'),
+    ]);
+    final dataSource = _FakeLibraryLocalDataSource();
+    ReconcileLibrary buildReconcile() => ReconcileLibrary(
+      indexer: LibraryIndexer(
+        mediaScanner: scanner,
+        metadataReader: _FakeMetadataReader(),
+        artworkCache: _FakeArtworkCache(),
+        dataSource: dataSource,
+        idGenerator: _FakeIdGenerator(),
+      ),
+      dataSource: dataSource,
+    );
+
+    await buildReconcile()().toList();
+    scanner.files = [];
+    dataSource.writesOutsideTransaction.clear();
+
+    await buildReconcile()().toList();
+
+    expect(
+      dataSource.tracks.values.every((t) => t.isMissing),
+      isTrue,
+      reason: 'a track no longer scanned should be marked missing',
+    );
+    expect(
+      dataSource.writesOutsideTransaction,
+      isEmpty,
+      reason: 'marking tracks missing should not commit one row at a time',
+    );
+
+    dataSource.writesOutsideTransaction.clear();
+    await buildReconcile().purgeMissingTracks();
+
+    expect(dataSource.tracks, isEmpty);
+    expect(
+      dataSource.writesOutsideTransaction,
+      isEmpty,
+      reason: 'purging should not commit one row at a time',
+    );
   });
 }
