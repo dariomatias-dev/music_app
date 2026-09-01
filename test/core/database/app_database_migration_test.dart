@@ -20,6 +20,43 @@ const _playlistTableV1 =
     '"updated_at" INTEGER NOT NULL, '
     'PRIMARY KEY ("id"))';
 
+/// The four tables that referenced a track or a playlist without a cascade,
+/// as they shipped through schema v3: identical to v4 but for the missing
+/// `ON DELETE CASCADE`.
+const _favoriteTableV3 =
+    'CREATE TABLE "favorite_table" ("id" TEXT NOT NULL, '
+    '"track_id" TEXT NOT NULL REFERENCES track_table (id), '
+    '"created_at" INTEGER NOT NULL, PRIMARY KEY ("id"), '
+    'UNIQUE ("track_id"))';
+
+const _lyricsTableV3 =
+    'CREATE TABLE "lyrics_table" ("id" TEXT NOT NULL, '
+    '"track_id" TEXT NOT NULL REFERENCES track_table (id), '
+    '"content" TEXT NULL, "source" TEXT NOT NULL, '
+    '"fetched_at" INTEGER NOT NULL, PRIMARY KEY ("id"), '
+    'UNIQUE ("track_id"))';
+
+const _playEventTableV3 =
+    'CREATE TABLE "play_event_table" ("id" TEXT NOT NULL, '
+    '"track_id" TEXT NOT NULL REFERENCES track_table (id), '
+    '"started_at" INTEGER NOT NULL, "played_duration" INTEGER NOT NULL, '
+    '"completed" INTEGER NOT NULL CHECK ("completed" IN (0, 1)), '
+    'PRIMARY KEY ("id"))';
+
+const _playlistTrackTableV3 =
+    'CREATE TABLE "playlist_track_table" '
+    '("id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, '
+    '"playlist_id" TEXT NOT NULL REFERENCES playlist_table (id), '
+    '"track_id" TEXT NOT NULL REFERENCES track_table (id), '
+    '"position" INTEGER NOT NULL)';
+
+const _tablesV3 = <String>[
+  _favoriteTableV3,
+  _lyricsTableV3,
+  _playEventTableV3,
+  _playlistTrackTableV3,
+];
+
 /// Seconds since epoch, the encoding drift uses for `DateTimeColumn`.
 int _epochSeconds(DateTime value) =>
     value.millisecondsSinceEpoch ~/ Duration.millisecondsPerSecond;
@@ -278,9 +315,229 @@ void main() {
     );
   });
 
-  test('schemaVersion is 3, and a bump needs a migration and a test', () async {
+  test('schemaVersion is 4, and a bump needs a migration and a test', () async {
     final database = await openDatabase();
 
-    expect(database.schemaVersion, 3);
+    expect(database.schemaVersion, 4);
+  });
+
+  group('upgrading from schema v3', () {
+    /// Writes a database file carrying the v3 schema, with the rows a real
+    /// install would hold plus the orphans deletes left behind while no
+    /// cascade was enforcing anything.
+    Future<void> seedSchemaV3() async {
+      final current = AppDatabase(NativeDatabase(File(databasePath)));
+      await current.customSelect('SELECT 1').getSingle();
+      await current.close();
+
+      final raw = sqlite3.open(databasePath);
+      for (final table in [
+        'favorite_table',
+        'lyrics_table',
+        'play_event_table',
+        'playlist_track_table',
+      ]) {
+        raw.execute('DROP TABLE "$table"');
+      }
+      _tablesV3.forEach(raw.execute);
+      // The indexes v3 attached to the tables just recreated above.
+      raw
+        ..execute(
+          'CREATE INDEX playlist_track_playlist ON playlist_track_table '
+          '(playlist_id, position)',
+        )
+        ..execute(
+          'CREATE INDEX playlist_track_track ON playlist_track_table '
+          '(track_id)',
+        )
+        ..execute(
+          'CREATE INDEX play_event_started_at ON play_event_table '
+          '(started_at)',
+        )
+        ..execute(
+          'INSERT INTO artist_table (id, source_id, name, album_count, '
+          'track_count) VALUES (?, ?, ?, ?, ?)',
+          ['artist-1', 'artist-1', 'Nina Simone', 1, 1],
+        )
+        ..execute(
+          'INSERT INTO album_table (id, source_id, title, artist_id, '
+          'track_count, total_duration) VALUES (?, ?, ?, ?, ?, ?)',
+          ['album-1', 'album-1', 'Pastel Blues', 'artist-1', 1, 1000],
+        )
+        ..execute(
+          'INSERT INTO track_table (id, source_id, file_path, title, '
+          'artist_id, album_id, duration, format, file_size, '
+          'has_embedded_artwork, date_added, date_modified) '
+          'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+          [
+            'track-1',
+            'track-1',
+            '/music/sinnerman.mp3',
+            'Sinnerman',
+            'artist-1',
+            'album-1',
+            1000,
+            'mp3',
+            2048,
+            0,
+            _epochSeconds(DateTime.utc(2024)),
+            _epochSeconds(DateTime.utc(2024)),
+          ],
+        )
+        ..execute(
+          'INSERT INTO playlist_table (id, name, is_favorite, '
+          'is_favorites_playlist, created_at, updated_at) '
+          'VALUES (?, ?, ?, ?, ?, ?)',
+          [
+            'playlist-1',
+            'Road Trip',
+            0,
+            0,
+            _epochSeconds(DateTime.utc(2024)),
+            _epochSeconds(DateTime.utc(2024)),
+          ],
+        );
+
+      for (final trackId in ['track-1', 'ghost-track']) {
+        raw
+          ..execute(
+            'INSERT INTO favorite_table (id, track_id, created_at) '
+            'VALUES (?, ?, ?)',
+            ['fav-$trackId', trackId, _epochSeconds(DateTime.utc(2024))],
+          )
+          ..execute(
+            'INSERT INTO lyrics_table (id, track_id, content, source, '
+            'fetched_at) VALUES (?, ?, ?, ?, ?)',
+            [
+              'lyr-$trackId',
+              trackId,
+              'oh sinnerman',
+              'embedded',
+              _epochSeconds(DateTime.utc(2024)),
+            ],
+          )
+          ..execute(
+            'INSERT INTO play_event_table (id, track_id, started_at, '
+            'played_duration, completed) VALUES (?, ?, ?, ?, ?)',
+            [
+              'evt-$trackId',
+              trackId,
+              _epochSeconds(DateTime.utc(2024)),
+              1000,
+              1,
+            ],
+          )
+          ..execute(
+            'INSERT INTO playlist_track_table (playlist_id, track_id, '
+            'position) VALUES (?, ?, ?)',
+            ['playlist-1', trackId, 0],
+          );
+      }
+
+      raw
+        ..execute(
+          'INSERT INTO playlist_track_table (playlist_id, track_id, position) '
+          'VALUES (?, ?, ?)',
+          ['ghost-playlist', 'track-1', 1],
+        )
+        ..execute('PRAGMA user_version = 3')
+        ..dispose();
+    }
+
+    test('moves the database to the current schema version', () async {
+      await seedSchemaV3();
+
+      final database = await openDatabase();
+      final version = await database
+          .customSelect('PRAGMA user_version')
+          .getSingle();
+
+      expect(version.data['user_version'], database.schemaVersion);
+    });
+
+    test('keeps the rows that point at something that exists', () async {
+      await seedSchemaV3();
+
+      final database = await openDatabase();
+
+      expect(
+        (await database.select(database.favoriteTable).get()).single.trackId,
+        'track-1',
+      );
+      expect(
+        (await database.select(database.lyricsTable).get()).single.trackId,
+        'track-1',
+      );
+      expect(
+        (await database.select(database.playEventTable).get()).single.trackId,
+        'track-1',
+      );
+      expect(
+        (await database.select(database.playlistTrackTable).get())
+            .single
+            .playlistId,
+        'playlist-1',
+      );
+    });
+
+    test('enforces foreign keys once the upgrade is done', () async {
+      await seedSchemaV3();
+
+      final database = await openDatabase();
+      final pragma = await database
+          .customSelect('PRAGMA foreign_keys')
+          .getSingle();
+
+      expect(pragma.data['foreign_keys'], 1);
+      await expectLater(
+        database.customStatement(
+          'INSERT INTO favorite_table (id, track_id, created_at) '
+          "VALUES ('f2', 'ghost-track', 0)",
+        ),
+        throwsA(anything),
+      );
+    });
+
+    test('cascades a deleted track to everything referencing it', () async {
+      await seedSchemaV3();
+
+      final database = await openDatabase();
+      await database.trackDao.deleteById('track-1');
+
+      expect(await database.select(database.favoriteTable).get(), isEmpty);
+      expect(await database.select(database.lyricsTable).get(), isEmpty);
+      expect(await database.select(database.playEventTable).get(), isEmpty);
+      expect(
+        await database.select(database.playlistTrackTable).get(),
+        isEmpty,
+      );
+    });
+
+    test('cascades a deleted playlist to its entries', () async {
+      await seedSchemaV3();
+
+      final database = await openDatabase();
+      await database.playlistDao.deleteById('playlist-1');
+
+      expect(
+        await database.select(database.playlistTrackTable).get(),
+        isEmpty,
+      );
+    });
+
+    test('keeps the indexes the recreated tables carry', () async {
+      await seedSchemaV3();
+
+      final database = await openDatabase();
+
+      expect(
+        await indexNames(database),
+        containsAll(
+          database.allSchemaEntities.whereType<Index>().map(
+            (index) => index.entityName,
+          ),
+        ),
+      );
+    });
   });
 }

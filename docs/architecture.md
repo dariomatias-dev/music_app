@@ -82,6 +82,8 @@ Detail routes (album, artist, playlist, player, ...) are pushed on top of the ac
 
 [drift](https://pub.dev/packages/drift) (a type-safe SQLite layer) backs everything durable: the indexed library (tracks/albums/artists), playlists, favorites, playback history, lyrics cache, search history, and excluded folders. `AppDatabase` (`lib/src/core/database/app_database.dart`) declares the schema and migration strategy; each table has its own `*Table`/`*Dao` pair. User preferences that don't need querying (theme, locale, crossfade duration, ...) go through `shared_preferences` behind a small `KeyValueStorage` abstraction instead.
 
+SQLite leaves foreign keys off unless a connection asks for them, so `beforeOpen` turns enforcement on, and the rows that belong to a track or a playlist (favorites, cached lyrics, play events, playlist entries) cascade with it. Before that, deleting a track left them behind: they vanished from anything that resolved a track id, but the statistics that aggregate play events on their own kept counting them, so the totals stopped matching the tracks listed under them.
+
 Two independent backup mechanisms exist, both reachable from Settings → Storage:
 
 - A portable **JSON export** (`CreateBackup`/`RestoreBackup`) of user-created data only — playlists, favorites, history, excluded folders, search history, and preferences — keyed by each track's stable `sourceId` rather than its install-specific internal id, and merged (not replaced) on restore.

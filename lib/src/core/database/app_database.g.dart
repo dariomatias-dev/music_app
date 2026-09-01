@@ -2541,7 +2541,7 @@ class $PlaylistTrackTableTable extends PlaylistTrackTable
     type: DriftSqlType.string,
     requiredDuringInsert: true,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES playlist_table (id)',
+      'REFERENCES playlist_table (id) ON DELETE CASCADE',
     ),
   );
   static const VerificationMeta _trackIdMeta = const VerificationMeta(
@@ -2555,7 +2555,7 @@ class $PlaylistTrackTableTable extends PlaylistTrackTable
     type: DriftSqlType.string,
     requiredDuringInsert: true,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES track_table (id)',
+      'REFERENCES track_table (id) ON DELETE CASCADE',
     ),
   );
   static const VerificationMeta _positionMeta = const VerificationMeta(
@@ -2853,7 +2853,7 @@ class $FavoriteTableTable extends FavoriteTable
     type: DriftSqlType.string,
     requiredDuringInsert: true,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES track_table (id)',
+      'REFERENCES track_table (id) ON DELETE CASCADE',
     ),
   );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
@@ -3126,7 +3126,7 @@ class $PlayEventTableTable extends PlayEventTable
     type: DriftSqlType.string,
     requiredDuringInsert: true,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES track_table (id)',
+      'REFERENCES track_table (id) ON DELETE CASCADE',
     ),
   );
   static const VerificationMeta _startedAtMeta = const VerificationMeta(
@@ -3509,7 +3509,7 @@ class $LyricsTableTable extends LyricsTable
     type: DriftSqlType.string,
     requiredDuringInsert: true,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES track_table (id)',
+      'REFERENCES track_table (id) ON DELETE CASCADE',
     ),
   );
   static const VerificationMeta _contentMeta = const VerificationMeta(
@@ -4370,6 +4370,44 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     playlistTrackTrack,
     playEventStartedAt,
   ];
+  @override
+  StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'playlist_table',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('playlist_track_table', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'track_table',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('playlist_track_table', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'track_table',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('favorite_table', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'track_table',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('play_event_table', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'track_table',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('lyrics_table', kind: UpdateKind.delete)],
+    ),
+  ]);
 }
 
 typedef $$ArtistTableTableCreateCompanionBuilder =

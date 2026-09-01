@@ -3,6 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:music_app/src/core/database/app_database.dart';
 import 'package:music_app/src/features/statistics/data/repositories/statistics_repository_impl.dart';
 
+import '../../../../helpers/seed_library.dart';
+
 void main() {
   late AppDatabase database;
   late StatisticsRepositoryImpl repository;
@@ -12,8 +14,9 @@ void main() {
     required String trackId,
     required DateTime startedAt,
     int playedDurationMs = 60000,
-  }) {
-    return database
+  }) async {
+    await seedTrack(database, trackId);
+    await database
         .into(database.playEventTable)
         .insert(
           PlayEventTableCompanion.insert(
