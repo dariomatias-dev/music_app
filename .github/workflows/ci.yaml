@@ -29,8 +29,13 @@ jobs:
       # Reads pubspec.lock against the OSV database, which carries pub
       # advisories. The lockfile is what matters here: the caret ranges in
       # pubspec.yaml say what could resolve, not what actually ships.
+      #
+      # The action is used directly, not through the reusable workflow
+      # upstream suggests: that one reports into the Security tab, and this
+      # repository gates rather than reports. Pinned to an exact version,
+      # since upstream reserves the right to change behaviour in a patch.
       - name: Scan the lockfiles
-        uses: google/osv-scanner-action/osv-scanner-action@v2.2.4
+        uses: google/osv-scanner-action/osv-scanner-action@v2.5.1
         with:
           scan-args: |-
             --lockfile=pubspec.lock
