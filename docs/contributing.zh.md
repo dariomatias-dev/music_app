@@ -42,7 +42,7 @@ fvm dart run flutter_launcher_icons
 - **保持界面文件精简**：界面只负责组合组件、连接 provider。组件要放进 `presentation/widgets/<界面名>/` 下各自的文件，而不是写成界面文件末尾的私有类，也不是写成 `_buildX()` 辅助方法。参见[组件组织方式](architecture.zh.md#组件组织方式)。
 - **符合设计系统**：不要内联写颜色、间距或动画时长。请使用 `packages/app_ui` 中的 token 和组件。
 - **为带逻辑的内容编写测试**：仓库方法、用例、`ViewModel`、组件行为等。`packages/app_ui` 是独立的包，有自己的测试套件；对它的改动也需要相应的测试。
-- **每一份文档、字符串和本地化资源都要覆盖所有支持的语言**（英语、西班牙语、葡萄牙语、中文）：包括 `lib/l10n/*.arb` 文件，以及 `docs/` 下的任何文档。
+- **每一份文档、字符串和本地化资源都要覆盖所有支持的语言**（英语、西班牙语、葡萄牙语、中文）：包括 `lib/l10n/*.arb` 文件，以及 `docs/` 下的任何文档。[`scripts/check_l10n.sh`](../scripts/check_l10n.sh) 会在 `verify.sh` 和 CI 中校验 ARB 这一部分。
 - **提交前在本地跑完整检查**：
 
   ```sh

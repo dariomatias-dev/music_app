@@ -42,7 +42,7 @@ Execute o app em um dispositivo conectado ou emulador com `fvm flutter run`.
 - **Mantenha as telas enxutas**: uma tela compõe widgets e liga providers. Componentes vão para o próprio arquivo em `presentation/widgets/<nome_da_tela>/`, não como classes privadas no fim do arquivo da tela, nem como métodos auxiliares `_buildX()`. Veja [Organização dos widgets](architecture.pt-BR.md#organização-dos-widgets).
 - **Combine com o design system**: nada de cor, espaçamento ou duração inline. Use os tokens e componentes do `packages/app_ui`.
 - **Adicione testes** para qualquer coisa com lógica: um método de repositório, um caso de uso, um `ViewModel`, o comportamento de um widget. O `packages/app_ui` é um pacote separado com sua própria suíte de testes; mudanças ali também precisam dos próprios testes.
-- **Todo documento, string e recurso localizado sai em todo idioma suportado** (inglês, espanhol, português, chinês): os arquivos `lib/l10n/*.arb`, e qualquer documentação em `docs/`.
+- **Todo documento, string e recurso localizado sai em todo idioma suportado** (inglês, espanhol, português, chinês): os arquivos `lib/l10n/*.arb`, e qualquer documentação em `docs/`. O [`scripts/check_l10n.sh`](../scripts/check_l10n.sh) garante a parte dos ARB, no `verify.sh` e no CI.
 - **Execute a checagem completa localmente** antes do push:
 
   ```sh

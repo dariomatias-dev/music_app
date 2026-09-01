@@ -130,6 +130,9 @@ if "$check_app_ui"; then
 fi
 
 if "$check_app"; then
+  step "music_app: localizations"
+  "$root/scripts/check_l10n.sh"
+
   verify_package . 97 "music_app"
 fi
 

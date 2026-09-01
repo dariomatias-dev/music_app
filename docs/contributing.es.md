@@ -42,7 +42,7 @@ Ejecuta la app en un dispositivo conectado o emulador con `fvm flutter run`.
 - **Mantén las pantallas ligeras**: una pantalla compone widgets y conecta providers. Los componentes van en su propio archivo bajo `presentation/widgets/<nombre_de_pantalla>/`, no como clases privadas al final del archivo de la pantalla, ni como métodos auxiliares `_buildX()`. Consulta [Organización de los widgets](architecture.es.md#organización-de-los-widgets).
 - **Respeta el sistema de diseño**: nada de colores, espaciados o duraciones en línea. Usa los tokens y componentes de `packages/app_ui`.
 - **Agrega pruebas** para todo lo que tenga lógica: un método de repositorio, un caso de uso, un `ViewModel`, el comportamiento de un widget. `packages/app_ui` es un paquete separado con su propia suite de pruebas; los cambios ahí también necesitan sus propias pruebas.
-- **Todo documento, cadena de texto y recurso localizado se publica en todos los idiomas soportados** (inglés, español, portugués, chino): los archivos `lib/l10n/*.arb`, y cualquier documentación en `docs/`.
+- **Todo documento, cadena de texto y recurso localizado se publica en todos los idiomas soportados** (inglés, español, portugués, chino): los archivos `lib/l10n/*.arb`, y cualquier documentación en `docs/`. [`scripts/check_l10n.sh`](../scripts/check_l10n.sh) verifica la parte de los ARB, en `verify.sh` y en CI.
 - **Ejecuta la verificación completa localmente** antes de hacer push:
 
   ```sh
