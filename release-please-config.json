@@ -1,11 +1,11 @@
 {
   "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "last-release-sha": "f73457c43c34946acdda755ff0c0781db8068714",
   "packages": {
     ".": {
       "release-type": "dart",
       "package-name": "music_app",
-      "changelog-path": "CHANGELOG.md",
-      "last-release-sha": "f73457c43c34946acdda755ff0c0781db8068714"
+      "changelog-path": "CHANGELOG.md"
     }
   }
 }
