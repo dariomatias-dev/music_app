@@ -38,4 +38,4 @@ fvm flutter pub outdated
 
 偶尔运行一下，看看哪些依赖真正可以解析升级、哪些仍被上面提到的依赖链阻塞。
 
-Dependabot 也会每周开启依赖更新 pull request（参见 [`contributing.md`](contributing.zh.md#依赖更新)）。它读取的是版本约束，而不是本文档，因此会时不时提出被上述依赖链阻塞的升级。遇到这类 PR 应当关闭而不是合并：这些版本锁定各有其必要性，只能连同其所属的整条依赖链一起解除。
+Renovate 读取的是版本约束，而不是本文档，因此上述每条依赖链也都写进了 [`renovate.json`](../renovate.json)：`drift`、`sqlite3`、`intl` 和 `flutter_rust_bridge` 被禁用，Gradle 与 Android Gradle Plugin 被限制在 9.x 之下。解除某个锁定时，需要在更新本文件的同一次改动中删除那里的对应规则，以免两者互相矛盾。Renovate 的 Dependency Dashboard issue 会列出当前所有被拦下的升级。

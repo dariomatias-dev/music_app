@@ -1,0 +1,51 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended", ":semanticCommits"],
+  "timezone": "America/Sao_Paulo",
+  "schedule": ["before 9am on monday"],
+  "labels": ["dependencies"],
+  "dependencyDashboard": true,
+  "commitMessagePrefix": "build(deps):",
+  "packageRules": [
+    {
+      "description": "Riverpod only moves as a set: the generator, the annotation and the runtime share an analyzer constraint.",
+      "groupName": "riverpod",
+      "matchPackageNames": [
+        "flutter_riverpod",
+        "riverpod_annotation",
+        "riverpod_generator"
+      ]
+    },
+    {
+      "description": "drift and drift_dev are pinned together to the last version whose analyzer range overlaps riverpod_generator. See docs/dependencies.md.",
+      "matchPackageNames": ["drift", "drift_dev"],
+      "enabled": false
+    },
+    {
+      "description": "sqlite3 3.x requires drift 2.34, which the pin above blocks, and sqlite3_flutter_libs 0.6.0 is an empty tombstone release. See docs/dependencies.md.",
+      "matchPackageNames": ["sqlite3", "sqlite3_flutter_libs"],
+      "enabled": false
+    },
+    {
+      "description": "intl is dictated by the flutter_localizations that ships with the pinned SDK, so it moves with the SDK and not on its own.",
+      "matchPackageNames": ["intl"],
+      "enabled": false
+    },
+    {
+      "description": "flutter_rust_bridge is held at the version metadata_god was generated against; anything newer fails its own runtime check.",
+      "matchPackageNames": ["flutter_rust_bridge"],
+      "enabled": false
+    },
+    {
+      "description": "Gradle and AGP 9.x need a CargoKit that builds without the exec() Gradle 9 removed. See docs/dependencies.md.",
+      "matchManagers": ["gradle", "gradle-wrapper"],
+      "allowedVersions": "<9"
+    },
+    {
+      "description": "Actions and lint rules are safe to take without review noise.",
+      "matchManagers": ["github-actions"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "github actions"
+    }
+  ]
+}
