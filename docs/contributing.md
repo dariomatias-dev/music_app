@@ -20,7 +20,7 @@ git config core.hooksPath .githooks
 
 That last line points git at [`.githooks/`](../.githooks), where a `commit-msg` hook rejects a subject line that doesn't follow the convention below. Git does not share hooks through a clone, so it is one command per checkout.
 
-Generated code (freezed, json_serializable, drift, riverpod_generator, go_router_builder) and localizations aren't committed pre-built for every change — regenerate them after pulling or editing anything they depend on:
+Generated code (freezed, json_serializable, drift, riverpod_generator, go_router_builder) and localizations aren't committed pre-built for every change. Regenerate them after pulling or editing anything they depend on:
 
 ```sh
 fvm dart run build_runner build --delete-conflicting-outputs
@@ -39,10 +39,10 @@ Run the app on a connected device or emulator with `fvm flutter run`.
 
 - **Open an issue first** to discuss the change, unless it's a small, obvious fix.
 - **Follow the existing structure**: feature-first, `data`/`domain`/`presentation` layers, Riverpod for state, no new patterns introduced without discussion. See [`architecture.md`](architecture.md).
-- **Keep screens thin**: a screen composes widgets and wires providers. Components go in their own file under `presentation/widgets/<screen_name>/` — not as private classes trailing the screen file, and not as `_buildX()` helper methods. See [Widget organization](architecture.md#widget-organization).
-- **Match the design system**: no inline colors, spacing, or durations — use the tokens and components from `packages/app_ui`.
+- **Keep screens thin**: a screen composes widgets and wires providers. Components go in their own file under `presentation/widgets/<screen_name>/`, not as private classes trailing the screen file, and not as `_buildX()` helper methods. See [Widget organization](architecture.md#widget-organization).
+- **Match the design system**: no inline colors, spacing, or durations. Use the tokens and components from `packages/app_ui`.
 - **Add tests** for anything with logic: a repository method, a use case, a `ViewModel`, a widget's behavior. `packages/app_ui` is a separate package with its own test suite; changes there need their own tests too.
-- **Every doc, string, and localized asset ships in every supported language** (English, Spanish, Portuguese, Chinese) — the `lib/l10n/*.arb` files, and any documentation in `docs/`.
+- **Every doc, string, and localized asset ships in every supported language** (English, Spanish, Portuguese, Chinese): the `lib/l10n/*.arb` files, and any documentation in `docs/`.
 - **Run the full check locally** before pushing:
 
   ```sh
@@ -76,18 +76,18 @@ Every push and pull request runs [`.github/workflows/ci.yaml`](../.github/workfl
 
 | Job | What it does |
 | --- | --- |
-| `music_app` | Installs dependencies, regenerates code and localizations, then **fails if that regeneration produced a diff** — generated files must be committed and up to date. Then formatting, analysis, tests, and the 97% coverage gate, and uploads the report to Codecov under the `app` flag. |
+| `music_app` | Installs dependencies, regenerates code and localizations, then **fails if that regeneration produced a diff**, since generated files must be committed and up to date. Then formatting, analysis, tests, and the 97% coverage gate, and uploads the report to Codecov under the `app` flag. |
 | `Build APK` | Runs after `music_app` passes, and builds a release APK, uploaded as a workflow artifact kept for 14 days. |
 | `packages/app_ui` | Formatting, analysis, tests, and the 98% coverage gate for the design-system package, independently of the app, uploaded to Codecov under the `app_ui` flag. |
 | `Integration tests` | Runs after `music_app` passes, boots an Android emulator and runs every `integration_test/` suite on it in one session, since booting is by far the slowest step. These need a device: the flows read through drift's stream queries, which never emit under the fake async a plain `flutter test` run uses. The job enables KVM first, without which the emulator falls back to software rendering and times out. It also builds a debug APK **before** booting the emulator: a cold Android build downloads an extra SDK platform and CMake and compiles native sources, which on its own outruns the 8-minute bound each suite runs under. Between the two, the job gets a 40-minute budget. |
 
-Pushing a `v*.*.*` tag runs [`.github/workflows/release.yml`](../.github/workflows/release.yml) instead: the same checks, then a release APK published to a GitHub release with generated notes. Note that the release build is signed with the **debug keystore** on purpose — this app has no production signing config.
+Pushing a `v*.*.*` tag runs [`.github/workflows/release.yml`](../.github/workflows/release.yml) instead: the same checks, then a release APK published to a GitHub release with generated notes. Note that the release build is signed with the **debug keystore** on purpose, since this app has no production signing config.
 
 ### Coverage reports
 
 [`scripts/check_coverage.sh`](../scripts/check_coverage.sh) is what fails a build; [Codecov](https://codecov.io/gh/dariomatias-dev/music_app) is what makes the number readable. Each package uploads its `lcov.info` under its own flag, so the two thresholds are tracked separately, and a pull request gets a comment with the per-flag delta and inline annotations on uncovered new lines. [`codecov.yml`](../codecov.yml) holds the targets and repeats the script's exclusions: generated sources, `lib/l10n/`, and the drift table declarations.
 
-Uploads authenticate with a `CODECOV_TOKEN` repository secret. Pull requests from forks cannot read it and fall back to Codecov's tokenless upload, so the step is deliberately set to `fail_ci_if_error: false` — a failed upload is a missing report, never a failed build.
+Uploads authenticate with a `CODECOV_TOKEN` repository secret. Pull requests from forks cannot read it and fall back to Codecov's tokenless upload, so the step is deliberately set to `fail_ci_if_error: false`, since a failed upload is a missing report, never a failed build.
 
 For the same thing locally, without an account, render the `lcov` file to HTML:
 
@@ -108,9 +108,9 @@ act pull_request -j app               # one job, by its id
 act pull_request -j app --dryrun      # print the steps without running them
 ```
 
-`act` cannot run the emulator job's own action, so two of its constraints only bite on CI. The emulator action splits its `script` on newlines and runs **each line as its own `sh -c`**, so a loop or any other multi-line shell construct arrives without its closing keyword; write one self-contained command per line. And `--no-dds`, the obvious reach when a run fails to start the Dart Development Service, breaks the golden-file comparator `flutter_tools` registers for integration tests — the suite then fails at load having passed every test.
+`act` cannot run the emulator job's own action, so two of its constraints only surface on CI. The emulator action splits its `script` on newlines and runs **each line as its own `sh -c`**, so a loop or any other multi-line shell construct arrives without its closing keyword; write one self-contained command per line. Second, `--no-dds`, the obvious thing to try when a run fails to start the Dart Development Service, breaks the golden-file comparator `flutter_tools` registers for integration tests, so the suite then fails at load having passed every test.
 
-`-j` takes the job **id** (`app`, `build_apk`, `integration`, `app_ui`, `release`), not the display name in the table above; `act -l` prints both. The first real run pulls a multi-gigabyte runner image, and `act` approximates GitHub's runners rather than reproducing them exactly — a green `act` run is a good signal, not a guarantee.
+`-j` takes the job **id** (`app`, `build_apk`, `integration`, `app_ui`, `release`), not the display name in the table above; `act -l` prints both. The first real run pulls a multi-gigabyte runner image, and `act` approximates GitHub's runners rather than reproducing them exactly, so a green `act` run is a good signal, not a guarantee.
 
 ## Working with an AI agent
 

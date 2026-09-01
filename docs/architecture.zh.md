@@ -39,18 +39,18 @@ packages/
 
 每个涉及持久化状态的功能模块都遵循相同的三层结构：
 
-- **`domain`（领域层）**——纯 Dart 代码。实体（`freezed` 数据类）、抽象仓库接口，以及针对真正有分支逻辑的操作（如 `CreateBackup`、`RestoreBackup`、`DeleteTrackFile`）编写的用例类（只有一个 `call()` 方法）。这一层不导入 Flutter、Riverpod 或 drift。
-- **`data`（数据层）**——针对具体数据源（drift 的 DAO、`shared_preferences`、平台插件）实现 `domain` 层定义的仓库接口。映射器负责在 drift 的行类型与领域实体之间转换。
-- **`presentation`（表现层）**——界面和组件，以及 `ViewModel`：通过 `riverpod_generator` 生成的 provider 暴露的 Riverpod `Notifier`/`AsyncNotifier` 类。界面只监听 provider；除了由用户操作触发的一次性 `ref.read(...)` 调用外，界面从不直接与仓库通信。
+- **`domain`（领域层）**：纯 Dart 代码。实体（`freezed` 数据类）、抽象仓库接口，以及针对真正有分支逻辑的操作（如 `CreateBackup`、`RestoreBackup`、`DeleteTrackFile`）编写的用例类（只有一个 `call()` 方法）。这一层不导入 Flutter、Riverpod 或 drift。
+- **`data`（数据层）**：针对具体数据源（drift 的 DAO、`shared_preferences`、平台插件）实现 `domain` 层定义的仓库接口。映射器负责在 drift 的行类型与领域实体之间转换。
+- **`presentation`（表现层）**：界面和组件，以及 `ViewModel`：通过 `riverpod_generator` 生成的 provider 暴露的 Riverpod `Notifier`/`AsyncNotifier` 类。界面只监听 provider；除了由用户操作触发的一次性 `ref.read(...)` 调用外，界面从不直接与仓库通信。
 
 一个功能模块只能依赖另一个功能模块的 `domain` 层（实体、仓库接口），绝不依赖其 `data` 或 `presentation` 层。具体实现通过各功能模块自己的 `*_data_providers.dart` 文件接入。
 
 ## 组件组织方式
 
-界面文件保持精简。它只负责监听所需的 provider、处理用户操作触发的回调，并组合各个组件——界面渲染的内容一律不在界面文件内内联定义。这些组件放在该功能模块的 `presentation/widgets/` 下，分为两类：
+界面文件保持精简。它只负责监听所需的 provider、处理用户操作触发的回调，并组合各个组件：界面渲染的内容一律不在界面文件内内联定义。这些组件放在该功能模块的 `presentation/widgets/` 下，分为两类：
 
-- `widgets/<名称>.dart`——功能模块内共享：被多个界面使用，或被该模块暴露的 sheet、对话框使用（`media_row.dart`、`playlist_cover_art.dart`、`track_more_sheet.dart`）。
-- `widgets/<界面名>/<组件名>.dart`——仅属于某一个界面，每个文件一个公开类，以其渲染的内容命名（`widgets/album_screen/album_header.dart`、`widgets/storage_screen/storage_folder_header.dart`）。
+- `widgets/<名称>.dart`，功能模块内共享：被多个界面使用，或被该模块暴露的 sheet、对话框使用（`media_row.dart`、`playlist_cover_art.dart`、`track_more_sheet.dart`）。
+- `widgets/<界面名>/<组件名>.dart`，仅属于某一个界面，每个文件一个公开类，以其渲染的内容命名（`widgets/album_screen/album_header.dart`、`widgets/storage_screen/storage_folder_header.dart`）。
 
 由此衍生出两条约定：
 
@@ -86,18 +86,18 @@ Provider 按角色分组存放，而不是一个 provider 一个文件：例如 
 
 应用提供两套独立的备份机制，都可以在 设置 → 存储空间 中找到：
 
-- 可移植的 **JSON 导出**（`CreateBackup`/`RestoreBackup`），只包含用户创建的数据——播放列表、收藏、历史记录、被排除的文件夹、搜索历史和偏好设置——通过每首曲目稳定的 `sourceId`（而非仅在本次安装中有效的内部 id）进行关联，恢复时是合并而非覆盖。
-- **原始数据库文件备份**（`CreateDatabaseBackup`/`RestoreDatabaseBackup`），通过 `VACUUM INTO` 对整个 SQLite 文件做逐字节快照，包含已索引的音乐库。恢复时会直接替换整个文件，并重启应用（通过 `RestartWidget`——一种通过更换 `Key` 来销毁并重建整个 `ProviderScope` 的方式）以重新打开一个干净的数据库连接。
+- 可移植的 **JSON 导出**（`CreateBackup`/`RestoreBackup`），只包含用户创建的数据（播放列表、收藏、历史记录、被排除的文件夹、搜索历史和偏好设置），通过每首曲目稳定的 `sourceId`（而非仅在本次安装中有效的内部 id）进行关联，恢复时是合并而非覆盖。
+- **原始数据库文件备份**（`CreateDatabaseBackup`/`RestoreDatabaseBackup`），通过 `VACUUM INTO` 对整个 SQLite 文件做逐字节快照，包含已索引的音乐库。恢复时会直接替换整个文件，并重启应用（通过 `RestartWidget`，一种通过更换 `Key` 来销毁并重建整个 `ProviderScope` 的方式）以重新打开一个干净的数据库连接。
 
 ## 音频
 
-[just_audio](https://pub.dev/packages/just_audio) 负责实际播放；[audio_service](https://pub.dev/packages/audio_service) 通过 `MusicAudioHandler` 将其暴露给操作系统（锁屏界面、通知栏、蓝牙控制）。系统侧的元数据更新和应用自身的交叉淡入淡出效果都基于同一个上游信号——`just_audio` 在曲目切换边界触发的原生 `currentIndex` 变化——因此两者永远不会失去同步。
+[just_audio](https://pub.dev/packages/just_audio) 负责实际播放；[audio_service](https://pub.dev/packages/audio_service) 通过 `MusicAudioHandler` 将其暴露给操作系统（锁屏界面、通知栏、蓝牙控制）。系统侧的元数据更新和应用自身的交叉淡入淡出效果都基于同一个上游信号（`just_audio` 在曲目切换边界触发的原生 `currentIndex` 变化），因此两者永远不会失去同步。
 
-目前实现的交叉淡入淡出，本质上是单一播放器的音量渐变：原生引擎自身完成从曲目 A 到 B 的瞬时无缝切换，`PlaybackTransitionEffects` 只是随后让 B 从静音状态淡入——并不是两路音频真正地相互叠加。这是已知的简化实现，不是缺陷。
+目前实现的交叉淡入淡出，本质上是单一播放器的音量渐变：原生引擎自身完成从曲目 A 到 B 的瞬时无缝切换，`PlaybackTransitionEffects` 只是随后让 B 从静音状态淡入。这并不是两路音频真正地相互叠加。这是已知的简化实现，不是缺陷。
 
 ## 错误处理
 
-`main.dart` 在其他任何代码运行之前先装好应用最外层的错误边界。`FlutterError.onError` 与 `PlatformDispatcher.onError` 都汇入一个 `ErrorReporter`（`lib/src/core/errors/`），因为这两者的默认行为是在 debug 下打印、在 release 下什么都不做——没有它们，构建期抛异常的组件只会留下一个错误框而不留任何线索，从游离的异步回调中逃逸的错误则会彻底消失。平台处理器在上报后将错误标记为已处理，这样插件通道或无监听者的 stream 里的失败就不会拖垮 isolate、把播放一起带走。
+`main.dart` 在其他任何代码运行之前先装好应用最外层的错误边界。`FlutterError.onError` 与 `PlatformDispatcher.onError` 都汇入一个 `ErrorReporter`（`lib/src/core/errors/`），因为这两者的默认行为是在 debug 下打印、在 release 下什么都不做。没有它们，构建期抛异常的组件只会留下一个错误框而不留任何线索，从游离的异步回调中逃逸的错误则会彻底消失。平台处理器在上报后将错误标记为已处理，这样插件通道或无监听者的 stream 里的失败就不会拖垮 isolate、把播放一起带走。
 
 有两条路径会把无法对用户隐藏的失败呈现出来，都经由 `AppFailureScreen`（`lib/src/core/widgets/`）：一是 `ErrorWidget.builder`，用于运行中的应用某一部分构建失败时；二是启动兜底，用于 `main.dart` 的平台初始化在应用尚不存在时就抛出异常，此时会提供重跑整个初始化流程的入口。两者都可能在上方没有 `Theme`、`Directionality` 或 `Localizations` 的情况下被调用，因此 `AppFailureScreen` 从平台而非自身的 `BuildContext` 解析这三者；读取一个不存在的祖先，会让这块专门用来上报异常的界面自己抛出异常。
 
@@ -113,7 +113,7 @@ Provider 按角色分组存放，而不是一个 provider 一个文件：例如 
 - **主题**：浅色/深色 `AppTheme`，通过 `BuildContext` 扩展（`context.colors`）暴露给组件。
 - **组件**：按钮、卡片、对话框、底部弹窗、导航、反馈提示（toast）、状态展示（空状态/错误/权限/索引中），以及所有可点击组件都基于的交互基础组件 `Pressable`。
 
-应用中从不直接内联定义颜色、间距或动画曲线——一切都来自 `app_ui`。
+应用中从不直接内联定义颜色、间距或动画曲线。一切都来自 `app_ui`。
 
 ## 测试
 

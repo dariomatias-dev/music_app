@@ -4,7 +4,7 @@
 <a href="contributing.md">English</a> · <a href="contributing.es.md">Español</a> · <strong>Português (BR)</strong> · <a href="contributing.zh.md">中文</a>
 </p>
 
-Obrigado por considerar contribuir. Este documento cobre a configuração do ambiente, convenções, e o que um pull request precisa ter antes de estar pronto pra revisão. Pra entender como o código está organizado, veja [`architecture.md`](architecture.pt-BR.md).
+Obrigado por considerar contribuir. Este documento cobre a configuração do ambiente, convenções, e o que um pull request precisa ter antes de estar pronto para revisão. Pra entender como o código está organizado, veja [`architecture.md`](architecture.pt-BR.md).
 
 ## Configuração
 
@@ -20,7 +20,7 @@ git config core.hooksPath .githooks
 
 Essa última linha aponta o git para [`.githooks/`](../.githooks), onde um hook `commit-msg` rejeita um assunto que não segue a convenção descrita abaixo. O git não compartilha hooks pelo clone, então é um comando por cópia local.
 
-Código gerado (freezed, json_serializable, drift, riverpod_generator, go_router_builder) e as localizações não ficam versionados já compilados a cada mudança — regenere depois de puxar o repositório ou editar qualquer coisa que dependa deles:
+Código gerado (freezed, json_serializable, drift, riverpod_generator, go_router_builder) e as localizações não ficam versionados já compilados a cada mudança. Regenere depois de puxar o repositório ou editar qualquer coisa que dependa deles:
 
 ```sh
 fvm dart run build_runner build --delete-conflicting-outputs
@@ -33,23 +33,23 @@ Os ícones do launcher também são gerados, a partir da arte em `assets/icons/`
 fvm dart run flutter_launcher_icons
 ```
 
-Rode o app num dispositivo conectado ou emulador com `fvm flutter run`.
+Execute o app em um dispositivo conectado ou emulador com `fvm flutter run`.
 
 ## Antes de abrir um pull request
 
-- **Abra uma issue primeiro** pra discutir a mudança, a menos que seja uma correção pequena e óbvia.
-- **Siga a estrutura existente**: feature-first, camadas `data`/`domain`/`presentation`, Riverpod pro estado, e nenhum padrão novo sem discutir antes. Veja [`architecture.md`](architecture.pt-BR.md).
-- **Mantenha as telas enxutas**: uma tela compõe widgets e liga providers. Componentes vão pro próprio arquivo em `presentation/widgets/<nome_da_tela>/` — não como classes privadas no fim do arquivo da tela, nem como métodos auxiliares `_buildX()`. Veja [Organização dos widgets](architecture.pt-BR.md#organização-dos-widgets).
-- **Combine com o design system**: nada de cor, espaçamento ou duração inline — use os tokens e componentes do `packages/app_ui`.
-- **Adicione testes** pra qualquer coisa com lógica: um método de repositório, um caso de uso, um `ViewModel`, o comportamento de um widget. O `packages/app_ui` é um pacote separado com sua própria suíte de testes; mudanças ali também precisam dos próprios testes.
-- **Todo documento, string e recurso localizado sai em todo idioma suportado** (inglês, espanhol, português, chinês) — os arquivos `lib/l10n/*.arb`, e qualquer documentação em `docs/`.
-- **Rode a checagem completa localmente** antes de dar push:
+- **Abra uma issue primeiro** para discutir a mudança, a menos que seja uma correção pequena e óbvia.
+- **Siga a estrutura existente**: feature-first, camadas `data`/`domain`/`presentation`, Riverpod para o estado, e nenhum padrão novo sem discutir antes. Veja [`architecture.md`](architecture.pt-BR.md).
+- **Mantenha as telas enxutas**: uma tela compõe widgets e liga providers. Componentes vão para o próprio arquivo em `presentation/widgets/<nome_da_tela>/`, não como classes privadas no fim do arquivo da tela, nem como métodos auxiliares `_buildX()`. Veja [Organização dos widgets](architecture.pt-BR.md#organização-dos-widgets).
+- **Combine com o design system**: nada de cor, espaçamento ou duração inline. Use os tokens e componentes do `packages/app_ui`.
+- **Adicione testes** para qualquer coisa com lógica: um método de repositório, um caso de uso, um `ViewModel`, o comportamento de um widget. O `packages/app_ui` é um pacote separado com sua própria suíte de testes; mudanças ali também precisam dos próprios testes.
+- **Todo documento, string e recurso localizado sai em todo idioma suportado** (inglês, espanhol, português, chinês): os arquivos `lib/l10n/*.arb`, e qualquer documentação em `docs/`.
+- **Execute a checagem completa localmente** antes do push:
 
   ```sh
   ./scripts/verify.sh
   ```
 
-  Ele roda o que o CI roda, limitado aos pacotes que você mudou: formatação, análise, testes e o limite de cobertura (97% para o app, 98% para `packages/app_ui`). Use `--gen` quando a mudança tocou algo que o `build_runner` ou o `gen-l10n` leem, `--all` para checar os dois pacotes independentemente do que mudou, ou `--skip-tests` para uma passada rápida de formatação e análise no meio do trabalho.
+  Ele executa o que o CI executa, limitado aos pacotes que você mudou: formatação, análise, testes e o limite de cobertura (97% para o app, 98% para `packages/app_ui`). Use `--gen` quando a mudança tocou algo que o `build_runner` ou o `gen-l10n` leem, `--all` para checar os dois pacotes independentemente do que mudou, ou `--skip-tests` para uma passada rápida de formatação e análise no meio do trabalho.
 
   As mesmas checagens na mão, rodadas dentro do pacote que está sendo alterado:
 
@@ -68,20 +68,20 @@ Rode o app num dispositivo conectado ou emulador com `fvm flutter run`.
 
   O tipo é um de `build`, `chore`, `ci`, `docs`, `feat`, `fix`, `perf`, `refactor`, `revert`, `style` ou `test`; o escopo vai em minúsculas (`player`, `app_ui`, `l10n`); o assunto é curto e no imperativo, começa em minúscula e não leva ponto final. Use `!` antes dos dois pontos para uma mudança incompatível.
 
-  O hook também mantém a mensagem no formato que as ferramentas do git esperam: a linha de assunto inteira fica dentro de **72 caracteres**, que é onde o `git log --oneline` e o GitHub cortam; o corpo é separado do assunto por uma linha em branco, e suas linhas quebram em **80**. URLs, footers como `Co-Authored-By:`, `BREAKING CHANGE:` e `Refs #123`, e blocos de código cercados ficam isentos, porque quebrá-los destrói o que eles significam. Commits de merge e revert que o próprio git escreve ficam de fora. Olhe o `git log` pra ver exemplos já no repositório.
+  O hook também mantém a mensagem no formato que as ferramentas do git esperam: a linha de assunto inteira fica dentro de **72 caracteres**, que é onde o `git log --oneline` e o GitHub cortam; o corpo é separado do assunto por uma linha em branco, e suas linhas quebram em **80**. URLs, footers como `Co-Authored-By:`, `BREAKING CHANGE:` e `Refs #123`, e blocos de código cercados ficam isentos, porque quebrá-los destrói o que eles significam. Commits de merge e revert que o próprio git escreve ficam de fora. Olhe o `git log` para ver exemplos já no repositório.
 
 ## O que o CI checa
 
-Todo push e pull request roda o [`.github/workflows/ci.yaml`](../.github/workflows/ci.yaml), em quatro jobs:
+Todo push e pull request executa o [`.github/workflows/ci.yaml`](../.github/workflows/ci.yaml), em quatro jobs:
 
 | Job | O que faz |
 | --- | --- |
-| `music_app` | Instala dependências, regenera código e localizações, e então **falha se essa regeneração produzir um diff** — os arquivos gerados precisam estar commitados e atualizados. Depois: formatação, análise, testes e o limite de 97% de cobertura, e envia o relatório para o Codecov sob a flag `app`. |
-| `Build APK` | Roda depois do `music_app` passar, e builda uma APK de release, publicada como artefato do workflow e mantida por 14 dias. |
+| `music_app` | Instala dependências, regenera código e localizações, e então **falha se essa regeneração produzir um diff**, pois os arquivos gerados precisam estar commitados e atualizados. Depois: formatação, análise, testes e o limite de 97% de cobertura, e envia o relatório para o Codecov sob a flag `app`. |
+| `Build APK` | Executa depois do `music_app` passar, e builda uma APK de release, publicada como artefato do workflow e mantida por 14 dias. |
 | `packages/app_ui` | Formatação, análise, testes e o limite de 98% de cobertura do pacote do design system, de forma independente do app, enviado ao Codecov sob a flag `app_ui`. |
-| `Integration tests` | Roda depois do `music_app` passar, sobe um emulador Android e roda nele todas as suítes de `integration_test/` numa mesma sessão, já que subir o emulador é de longe o passo mais lento. Elas exigem um device: os fluxos leem através das stream queries do drift, que nunca emitem sob o fake async de um `flutter test` comum. O job habilita o KVM antes, sem o qual o emulador cai em renderização por software e estoura o tempo. Ele também builda uma APK de debug **antes** de subir o emulador: um build Android frio baixa uma plataforma extra do SDK e o CMake e compila fontes nativas, o que sozinho ultrapassa o limite de 8 minutos sob o qual cada suíte roda. Somando os dois, o job tem orçamento de 40 minutos. |
+| `Integration tests` | Executa depois do `music_app` passar, inicia um emulador Android e executa nele todas as suítes de `integration_test/` em uma mesma sessão, já que subir o emulador é de longe o passo mais lento. Elas exigem um device: os fluxos leem através das stream queries do drift, que nunca emitem sob o fake async de um `flutter test` comum. O job habilita o KVM antes, sem o qual o emulador cai em renderização por software e estoura o tempo. Ele também builda uma APK de debug **antes** de subir o emulador: um build Android frio baixa uma plataforma extra do SDK e o CMake e compila fontes nativas, o que sozinho ultrapassa o limite de 8 minutos sob o qual cada suíte executa. Somando os dois, o job tem orçamento de 40 minutos. |
 
-Dar push numa tag `v*.*.*` roda o [`.github/workflows/release.yml`](../.github/workflows/release.yml): as mesmas checagens, e então uma APK de release publicada num release do GitHub com notas geradas automaticamente. Vale notar que o build de release é assinado com a **keystore de debug** de propósito — este app não tem configuração de assinatura de produção.
+Publicar uma tag `v*.*.*` executa o [`.github/workflows/release.yml`](../.github/workflows/release.yml): as mesmas checagens, e então uma APK de release publicada em um release do GitHub com notas geradas automaticamente. Vale notar que o build de release é assinado com a **keystore de debug** de propósito, pois este app não tem configuração de assinatura de produção.
 
 ### Relatórios de cobertura
 
@@ -99,18 +99,18 @@ xdg-open coverage/html/index.html
 
 ### Rodando os workflows localmente
 
-O [`act`](https://github.com/nektos/act) roda os workflows no Docker, o que vale a pena antes de dar push em qualquer mudança em `.github/workflows/`. O `.actrc` do repositório já fixa a imagem do runner, então nenhuma flag é necessária:
+O [`act`](https://github.com/nektos/act) executa os workflows no Docker, o que vale a pena antes do push em qualquer mudança em `.github/workflows/`. O `.actrc` do repositório já fixa a imagem do runner, então nenhuma flag é necessária:
 
 ```sh
 act -l                                # lista todos os jobs, com id e stage
-act pull_request                      # tudo que o CI rodaria num PR
+act pull_request                      # tudo que o CI rodaria em um PR
 act pull_request -j app               # um job só, pelo id
 act pull_request -j app --dryrun      # imprime os passos sem executar
 ```
 
-O `act` não roda a action do job de emulador, então duas restrições dela só aparecem no CI. A action divide o `script` por quebra de linha e roda **cada linha como um `sh -c` próprio**, então um loop ou qualquer construção shell de várias linhas chega sem a palavra-chave de fechamento; escreva um comando completo por linha. E o `--no-dds`, o primeiro instinto quando uma execução falha ao subir o Dart Development Service, quebra o comparador de goldens que o `flutter_tools` registra para integration tests — a suíte passa a falhar no load mesmo com todos os testes passando.
+O `act` não executa a action do job de emulador, então duas restrições dela só aparecem no CI. A action divide o `script` por quebra de linha e executa **cada linha como um `sh -c` próprio**, então um loop ou qualquer construção shell de várias linhas chega sem a palavra-chave de fechamento; escreva um comando completo por linha. Além disso, o `--no-dds`, o primeiro instinto quando uma execução falha ao subir o Dart Development Service, quebra o comparador de goldens que o `flutter_tools` registra para integration tests, e a suíte passa a falhar no load mesmo com todos os testes passando.
 
-O `-j` recebe o **id** do job (`app`, `build_apk`, `integration`, `app_ui`, `release`), não o nome de exibição da tabela acima; o `act -l` mostra os dois. A primeira execução de verdade baixa uma imagem de runner de vários gigabytes, e o `act` aproxima os runners do GitHub em vez de reproduzi-los exatamente — um `act` verde é um bom sinal, não uma garantia.
+O `-j` recebe o **id** do job (`app`, `build_apk`, `integration`, `app_ui`, `release`), não o nome de exibição da tabela acima; o `act -l` mostra os dois. A primeira execução de verdade baixa uma imagem de runner de vários gigabytes, e o `act` aproxima os runners do GitHub em vez de reproduzi-los exatamente, então um `act` verde é um bom sinal, não uma garantia.
 
 ## Trabalhando com um agente de IA
 
@@ -125,7 +125,7 @@ Nada disso substitui o CI, que continua sendo a autoridade. Existe para que a ch
 
 ## Atualizações de dependências
 
-O Dependabot está configurado em [`.github/dependabot.yml`](../.github/dependabot.yml) e abre pull requests semanais pra quatro ecossistemas: pub (o app), pub (`packages/app_ui`), Gradle (`android/`) e GitHub Actions.
+O Dependabot está configurado em [`.github/dependabot.yml`](../.github/dependabot.yml) e abre pull requests semanais para quatro ecossistemas: pub (o app), pub (`packages/app_ui`), Gradle (`android/`) e GitHub Actions.
 
 Esses pull requests passam pelo mesmo CI que qualquer outro. Antes de aprovar um, veja o [`dependencies.md`](dependencies.pt-BR.md): alguns pacotes estão presos abaixo da última versão de propósito, e um PR do Dependabot que suba uma dessas cadeias deve ser fechado, não mergeado.
 

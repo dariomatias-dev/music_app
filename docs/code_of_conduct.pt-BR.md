@@ -26,7 +26,7 @@ Exemplos de comportamento inaceitável:
 - Trolling, comentários insultuosos ou depreciativos, e ataques pessoais ou políticos.
 - Assédio público ou privado.
 - Publicar informações privadas de terceiros sem permissão explícita.
-- Outras condutas que poderiam ser razoavelmente consideradas inapropriadas num ambiente profissional.
+- Outras condutas que poderiam ser razoavelmente consideradas inapropriadas em um ambiente profissional.
 
 ## Responsabilidades de Aplicação
 

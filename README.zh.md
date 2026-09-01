@@ -89,11 +89,11 @@
 - **storage**：按文件夹统计的空间占用，以及扫描的纳入/排除设置。
 - **search**、**home**、**settings**、**onboarding**、**splash**：其余的顶层界面。
 
-状态通过 Riverpod 管理（通过 provider 暴露的 `ViewModel`/`Notifier` 类），路由使用 `go_router`，持久化通过 `drift`（SQLite）和 `shared_preferences` 实现。共享的设计系统——从按钮到全应用通用的底部弹窗等所有带主题的组件——都放在独立的本地包 `packages/app_ui` 中；横切关注点（导航、数据库、音频、权限）则位于 `lib/src/core`。界面文件保持精简：每个界面只负责组合放在 `presentation/widgets/<界面名>/` 下的组件，而不是在界面文件内内联定义。
+状态通过 Riverpod 管理（通过 provider 暴露的 `ViewModel`/`Notifier` 类），路由使用 `go_router`，持久化通过 `drift`（SQLite）和 `shared_preferences` 实现。共享的设计系统（从按钮到全应用通用的底部弹窗等所有带主题的组件）都放在独立的本地包 `packages/app_ui` 中；横切关注点（导航、数据库、音频、权限）则位于 `lib/src/core`。界面文件保持精简：每个界面只负责组合放在 `presentation/widgets/<界面名>/` 下的组件，而不是在界面文件内内联定义。
 
 ## 测试
 
-项目共有 186 个测试文件（应用本体 129 个，`packages/app_ui` 中 57 个），覆盖仓库、view model 和组件——其中 40 个是 golden 测试，为设计系统和关键界面渲染 86 张参考图——此外还有 `integration_test/` 中的集成测试，覆盖引导、播放、数据持久化、播放列表、收藏、搜索、语言切换以及备份/恢复流程。CI 强制要求应用本体的行覆盖率不低于 97%，`packages/app_ui` 不低于 98%，并配合严格的 `very_good_analysis` lint 规则集和 `dart format` 检查。
+项目共有 186 个测试文件（应用本体 129 个，`packages/app_ui` 中 57 个），覆盖仓库、view model 和组件（其中 40 个是 golden 测试，为设计系统和关键界面渲染 86 张参考图），此外还有 `integration_test/` 中的集成测试，覆盖引导、播放、数据持久化、播放列表、收藏、搜索、语言切换以及备份/恢复流程。CI 强制要求应用本体的行覆盖率不低于 97%，`packages/app_ui` 不低于 98%，并配合严格的 `very_good_analysis` lint 规则集和 `dart format` 检查。
 
 每次 CI 运行都会将 `lcov` 报告上传到 [Codecov](https://codecov.io/gh/dariomatias-dev/music_app)，它将两个包作为独立的 flag 跟踪，并在每个 pull request 上评论覆盖率变化。如需在本地查看逐行报告，可以用同一份文件生成：
 

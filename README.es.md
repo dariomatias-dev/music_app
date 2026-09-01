@@ -104,9 +104,9 @@ mantienen ligeras: cada una compone componentes ubicados en
 ## Pruebas
 
 El proyecto tiene 186 archivos de prueba (129 en la app, 57 en
-`packages/app_ui`), cubriendo repositorios, view models y widgets — 40 de
+`packages/app_ui`), cubriendo repositorios, view models y widgets (40 de
 ellos son pruebas golden, que renderizan 86 imágenes de referencia del
-sistema de diseño y las pantallas principales — más las suites de
+sistema de diseño y las pantallas principales), más las suites de
 `integration_test/` que cubren onboarding, reproducción, persistencia,
 listas de reproducción, favoritos, búsqueda, cambio de idioma y
 copia de seguridad/restauración. La CI exige una cobertura de línea mínima del
