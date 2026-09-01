@@ -128,9 +128,11 @@ act pull_request -j app --dryrun      # 只打印步骤，不实际执行
 
 ## 依赖更新
 
-Dependabot 的配置在 [`.github/dependabot.yml`](../.github/dependabot.yml)，每周为四个生态开启更新 pull request：pub（应用本体）、pub（`packages/app_ui`）、Gradle（`android/`）和 GitHub Actions。
+[Renovate](https://docs.renovatebot.com/) 的配置在 [`renovate.json`](../renovate.json)，每周为 pub、Gradle 和 GitHub Actions 开启更新 pull request，并同时跟踪两个 `pubspec.yaml`。它还会维护一个 Dependency Dashboard issue，列出所有被它拦下的升级及其原因。
 
-这些 pull request 与其他 PR 一样要通过同样的 CI。在批准之前，请先查看 [`dependencies.md`](dependencies.zh.md)：有几个包是被刻意限制在最新版本之下的，如果 Dependabot 的 PR 想升级这些依赖链中的某一个，应当关闭而不是合并。
+[`dependencies.md`](dependencies.zh.md) 中的版本锁定直接写进了配置，而不是留给评审去发现：`drift`、`sqlite3`、`intl` 和 `flutter_rust_bridge` 被完全禁用，Gradle 与 Android Gradle Plugin 被限制在 9.x 之下，Riverpod 相关包则被分为一组，使整条依赖链一起升级。这取代了每周关闭被锁定规则禁止的 pull request 这一例行操作。
+
+这些 pull request 与其他 PR 一样要通过同样的 CI。当某个锁定被解除时，请在更新 [`dependencies.md`](dependencies.zh.md) 的同一次改动中删除 `renovate.json` 里对应的规则。
 
 ## 行为准则
 

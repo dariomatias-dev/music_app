@@ -38,4 +38,4 @@ fvm flutter pub outdated
 
 Execute isso de vez em quando para ver o que realmente é resolvível versus o que está bloqueado pelas cadeias acima.
 
-O Dependabot também abre pull requests de atualização semanais (veja o [`contributing.md`](contributing.pt-BR.md#atualizações-de-dependências)). Ele lê as constraints de versão, não este documento, então vai propor de tempos em tempos bumps que as cadeias acima bloqueiam. Feche esses PRs em vez de mergear: os pins têm razão de ser, e cada um só sai junto com a cadeia à qual pertence.
+O Renovate lê as constraints de versão, não este documento, então cada cadeia acima também está codificada no [`renovate.json`](../renovate.json): `drift`, `sqlite3`, `intl` e `flutter_rust_bridge` estão desabilitados, e o Gradle e o Android Gradle Plugin ficam limitados abaixo do 9.x. Levantar um pin significa apagar a regra dele ali na mesma mudança que atualizar este arquivo, para que os dois nunca se contradigam. A issue de Dependency Dashboard do Renovate lista tudo o que está segurado.

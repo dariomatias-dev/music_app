@@ -128,9 +128,11 @@ Nada disso substitui o CI, que continua sendo a autoridade. Existe para que a ch
 
 ## Atualizações de dependências
 
-O Dependabot está configurado em [`.github/dependabot.yml`](../.github/dependabot.yml) e abre pull requests semanais para quatro ecossistemas: pub (o app), pub (`packages/app_ui`), Gradle (`android/`) e GitHub Actions.
+O [Renovate](https://docs.renovatebot.com/) está configurado em [`renovate.json`](../renovate.json) e abre pull requests semanais para pub, Gradle e GitHub Actions, acompanhando os dois arquivos `pubspec.yaml`. Ele também mantém uma issue de Dependency Dashboard listando tudo o que está segurando e por quê.
 
-Esses pull requests passam pelo mesmo CI que qualquer outro. Antes de aprovar um, veja o [`dependencies.md`](dependencies.pt-BR.md): alguns pacotes estão presos abaixo da última versão de propósito, e um PR do Dependabot que suba uma dessas cadeias deve ser fechado, não mergeado.
+Os pins do [`dependencies.md`](dependencies.pt-BR.md) ficam codificados ali em vez de dependerem de serem pegos na revisão: `drift`, `sqlite3`, `intl` e `flutter_rust_bridge` estão desabilitados por completo, o Gradle e o Android Gradle Plugin ficam limitados abaixo da linha 9.x, e os pacotes do Riverpod são agrupados para a cadeia se mover junta. Isso substitui o ritual semanal de fechar pull requests que os pins proíbem.
+
+Esses pull requests passam pelo mesmo CI que qualquer outro. Quando um pin for levantado, remova a regra dele do `renovate.json` na mesma mudança que atualizar o [`dependencies.md`](dependencies.pt-BR.md).
 
 ## Código de Conduta
 
