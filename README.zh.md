@@ -144,6 +144,7 @@ fvm flutter run
 | `workspace_hash` | `scripts/workspace_hash.sh`                        | 输出质量门禁所覆盖源文件的哈希值。`verify.sh` 和 agent 工作流用它判断自上次通过检查以来代码是否发生变化；通常不需要手动运行。                                                                                                                                          |
 | `screenshot`     | `scripts/screenshot.sh [device-id]`                | 在已连接的设备或模拟器上依次打开应用的主要界面，并将每个界面的截图保存到 `screenshots/` 中，用于 README。运行 `fvm flutter devices` 可以列出可用的设备 id。                                                                                                            |
 | `check_coverage` | `scripts/check_coverage.sh <lcov-file> <minimum>`  | 如果 `lcov.info` 报告（由 `flutter test --coverage` 生成）中的行覆盖率低于 `<minimum>`，则该脚本会失败。CI 用它来强制执行上面的覆盖率门槛；生成覆盖率报告后，也可以在本地运行它，在推送前先自查。                                                                      |
+| `check_l10n`     | `scripts/check_l10n.sh [arb-dir]`                  | 当各 ARB 文件所包含的键不一致时失败。`gen-l10n` 遇到缺失的键会静默回退到模板，因此翻译到一半的改动会让用户在中文构建里看到英文文案。由 `verify.sh` 和 CI 调用。 |
 
 ## 文档
 

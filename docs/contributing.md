@@ -42,7 +42,7 @@ Run the app on a connected device or emulator with `fvm flutter run`.
 - **Keep screens thin**: a screen composes widgets and wires providers. Components go in their own file under `presentation/widgets/<screen_name>/`, not as private classes trailing the screen file, and not as `_buildX()` helper methods. See [Widget organization](architecture.md#widget-organization).
 - **Match the design system**: no inline colors, spacing, or durations. Use the tokens and components from `packages/app_ui`.
 - **Add tests** for anything with logic: a repository method, a use case, a `ViewModel`, a widget's behavior. `packages/app_ui` is a separate package with its own test suite; changes there need their own tests too.
-- **Every doc, string, and localized asset ships in every supported language** (English, Spanish, Portuguese, Chinese): the `lib/l10n/*.arb` files, and any documentation in `docs/`.
+- **Every doc, string, and localized asset ships in every supported language** (English, Spanish, Portuguese, Chinese): the `lib/l10n/*.arb` files, and any documentation in `docs/`. [`scripts/check_l10n.sh`](../scripts/check_l10n.sh) enforces the ARB half of that, in `verify.sh` and in CI.
 - **Run the full check locally** before pushing:
 
   ```sh
