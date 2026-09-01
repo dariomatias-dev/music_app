@@ -4,7 +4,8 @@
     ".": {
       "release-type": "dart",
       "package-name": "music_app",
-      "changelog-path": "CHANGELOG.md"
+      "changelog-path": "CHANGELOG.md",
+      "last-release-sha": "f73457c43c34946acdda755ff0c0781db8068714"
     }
   }
 }
