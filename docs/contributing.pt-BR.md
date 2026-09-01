@@ -27,6 +27,12 @@ fvm dart run build_runner build --delete-conflicting-outputs
 fvm flutter gen-l10n
 ```
 
+Os ícones do launcher também são gerados, a partir da arte em `assets/icons/`. Regenere depois de alterá-la e versione o que for escrito em `android/` e `ios/`:
+
+```sh
+fvm dart run flutter_launcher_icons
+```
+
 Rode o app num dispositivo conectado ou emulador com `fvm flutter run`.
 
 ## Antes de abrir um pull request

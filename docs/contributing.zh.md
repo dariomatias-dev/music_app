@@ -27,6 +27,12 @@ fvm dart run build_runner build --delete-conflicting-outputs
 fvm flutter gen-l10n
 ```
 
+启动器图标同样是生成的，来源是 `assets/icons/` 中的图形。修改图形后需要重新生成，并提交写入 `android/` 和 `ios/` 的结果：
+
+```sh
+fvm dart run flutter_launcher_icons
+```
+
 在已连接的设备或模拟器上用 `fvm flutter run` 运行应用。
 
 ## 提交 pull request 之前
