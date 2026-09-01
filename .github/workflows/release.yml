@@ -4,6 +4,14 @@ on:
   push:
     tags:
       - "v*.*.*"
+  # Called by release_please.yml, whose tag cannot start this workflow on its
+  # own: GitHub does not trigger a run from a push made with GITHUB_TOKEN.
+  workflow_call:
+    inputs:
+      tag:
+        description: "The tag to build and publish."
+        required: true
+        type: string
 
 env:
   FLUTTER_VERSION: "3.44.9"
@@ -19,8 +27,12 @@ jobs:
     name: Build and publish release
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    env:
+      TAG: ${{ inputs.tag || github.ref_name }}
     steps:
       - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.tag || github.ref_name }}
 
       - uses: subosito/flutter-action@v2
         with:
@@ -64,13 +76,18 @@ jobs:
         run: |
           mkdir -p release
           cp build/app/outputs/flutter-apk/app-release.apk \
-            "release/music_app-${{ github.ref_name }}.apk"
+            "release/music_app-$TAG.apk"
 
-      - name: Create GitHub release
+      # release-please publishes the release itself, notes included, so the
+      # APK is attached to what already exists. A tag pushed by hand has no
+      # release yet, and gets one here.
+      - name: Publish the APK
         run: |
-          gh release create "${{ github.ref_name }}" \
-            "release/music_app-${{ github.ref_name }}.apk" \
-            --title "${{ github.ref_name }}" \
-            --generate-notes
+          asset="release/music_app-$TAG.apk"
+          if gh release view "$TAG" > /dev/null 2>&1; then
+            gh release upload "$TAG" "$asset" --clobber
+          else
+            gh release create "$TAG" "$asset" --title "$TAG" --generate-notes
+          fi
         env:
           GH_TOKEN: ${{ github.token }}

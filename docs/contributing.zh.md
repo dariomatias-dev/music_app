@@ -81,7 +81,9 @@ fvm dart run flutter_launcher_icons
 | `packages/app_ui` | 独立于应用本体，对设计系统包执行格式检查、静态分析、测试，以及 98% 的覆盖率门槛，并以 `app_ui` flag 上传到 Codecov。 |
 | `Integration tests` | 在 `music_app` 通过后运行，启动一个 Android 模拟器，并在同一个会话中运行 `integration_test/` 下的所有测试套件，因为启动模拟器是其中最慢的一步。这些测试必须有设备：相关流程会读取 drift 的 stream query，而它们在普通 `flutter test` 的 fake async 下永远不会发出事件。该 job 会先启用 KVM，否则模拟器会退回软件渲染并超时。它还会在启动模拟器**之前**构建一个 debug APK：冷启动的 Android 构建需要下载额外的 SDK platform 和 CMake 并编译原生源码，仅这一步就会超过每个套件 8 分钟的时限。两者相加，该 job 的超时预算为 40 分钟。 |
 
-推送 `v*.*.*` 形式的 tag 则会运行 [`.github/workflows/release.yml`](../.github/workflows/release.yml)：执行同样的检查，然后把 release APK 发布到 GitHub release，并自动生成发布说明。注意 release 构建是**有意**使用 debug keystore 签名的，因为本应用没有生产环境的签名配置。
+发布由 [release-please](https://github.com/googleapis/release-please) 负责。它读取合入 `main` 的 Conventional Commits，并持续维护一个 pull request，其中包含下一个版本号和据此生成的 `CHANGELOG.md` 条目。合并该 pull request 后，版本号会写入 `pubspec.yaml`，提交会被打上 tag，GitHub release 也随之发布。
+
+随后 [`.github/workflows/release.yml`](../.github/workflows/release.yml) 会执行与 CI 相同的检查，并附上 release APK。它由 [`release_please.yml`](../.github/workflows/release_please.yml) 直接调用，因为 GitHub 不会因使用默认令牌推送的 tag 而启动新的工作流；同时它仍然响应手动推送的 `v*.*.*` tag，此时由它自己创建 release。注意 release 构建是**有意**使用 debug keystore 签名的，因为本应用没有生产环境的签名配置。
 
 ### 覆盖率报告
 
