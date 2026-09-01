@@ -8,7 +8,8 @@ class FavoriteTable extends Table {
   TextColumn get id => text()();
 
   /// The favorited track.
-  TextColumn get trackId => text().references(TrackTable, #id)();
+  TextColumn get trackId =>
+      text().references(TrackTable, #id, onDelete: KeyAction.cascade)();
 
   /// When the track was favorited.
   DateTimeColumn get createdAt => dateTime()();

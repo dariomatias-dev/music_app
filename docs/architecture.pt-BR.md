@@ -82,6 +82,8 @@ Rotas de detalhe (álbum, artista, playlist, player, ...) são empilhadas sobre 
 
 [drift](https://pub.dev/packages/drift) (uma camada SQLite com tipagem segura) sustenta tudo que é durável: a biblioteca indexada (faixas/álbuns/artistas), playlists, favoritos, histórico de reprodução, cache de letras, histórico de busca e pastas excluídas. `AppDatabase` (`lib/src/core/database/app_database.dart`) declara o schema e a estratégia de migração; cada tabela tem seu próprio par `*Table`/`*Dao`. Preferências do usuário que não precisam de consulta (tema, idioma, duração do crossfade, ...) passam por `shared_preferences` atrás de uma pequena abstração `KeyValueStorage`.
 
+O SQLite mantém as foreign keys desligadas a menos que a conexão peça, então o `beforeOpen` liga a verificação, e as linhas que pertencem a uma faixa ou a uma playlist (favoritos, letras em cache, eventos de reprodução, entradas de playlist) caem em cascata junto. Antes disso, deletar uma faixa deixava tudo isso para trás: sumia de qualquer coisa que resolvesse um id de faixa, mas as estatísticas que agregam eventos por conta própria continuavam contando, então os totais deixavam de bater com as faixas listadas embaixo deles.
+
 Existem dois mecanismos de backup independentes, ambos acessíveis em Configurações → Armazenamento:
 
 - Um **export JSON** portátil (`CreateBackup`/`RestoreBackup`) só dos dados criados pelo usuário — playlists, favoritos, histórico, pastas excluídas, histórico de busca e preferências — referenciado pelo `sourceId` estável de cada faixa (não pelo id interno específico da instalação), e mesclado (não substituído) na restauração.

@@ -82,6 +82,8 @@ Las rutas de detalle (álbum, artista, lista de reproducción, reproductor, ...)
 
 [drift](https://pub.dev/packages/drift) (una capa SQLite con tipado seguro) sostiene todo lo duradero: la biblioteca indexada (pistas/álbumes/artistas), listas de reproducción, favoritos, historial de reproducción, caché de letras, historial de búsqueda y carpetas excluidas. `AppDatabase` (`lib/src/core/database/app_database.dart`) declara el esquema y la estrategia de migración; cada tabla tiene su propio par `*Table`/`*Dao`. Las preferencias del usuario que no necesitan consultas (tema, idioma, duración del crossfade, ...) pasan por `shared_preferences` detrás de una pequeña abstracción `KeyValueStorage`.
 
+SQLite deja las claves foráneas desactivadas salvo que la conexión las pida, así que `beforeOpen` activa su aplicación, y las filas que pertenecen a una pista o a una lista (favoritos, letras en caché, eventos de reproducción, entradas de lista) se borran en cascada con ella. Antes, borrar una pista las dejaba atrás: desaparecían de todo lo que resolviera un id de pista, pero las estadísticas que agregan eventos por su cuenta seguían contándolas, de modo que los totales dejaban de cuadrar con las pistas listadas debajo.
+
 Existen dos mecanismos de respaldo independientes, ambos accesibles desde Configuración → Almacenamiento:
 
 - Una **exportación JSON** portátil (`CreateBackup`/`RestoreBackup`) solo de los datos creados por el usuario — listas de reproducción, favoritos, historial, carpetas excluidas, historial de búsqueda y preferencias — referenciados por el `sourceId` estable de cada pista en lugar de su id interno específico de la instalación, y fusionados (no reemplazados) al restaurar.

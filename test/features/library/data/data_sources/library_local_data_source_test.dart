@@ -6,6 +6,8 @@ import 'package:music_app/src/features/library/domain/entities/album.dart';
 import 'package:music_app/src/features/library/domain/entities/artist.dart';
 import 'package:music_app/src/features/library/domain/entities/track.dart';
 
+import '../../../../helpers/seed_library.dart';
+
 void main() {
   late AppDatabase database;
   late LibraryLocalDataSourceImpl dataSource;
@@ -165,6 +167,7 @@ void main() {
   });
 
   test('clearAlbumArtworkPaths forgets every cached cover', () async {
+    await seedArtist(database);
     await dataSource.upsertAlbum(
       const Album(
         id: 'album-1',

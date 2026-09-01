@@ -12,7 +12,8 @@ class PlayEventTable extends Table {
   TextColumn get id => text()();
 
   /// The played track.
-  TextColumn get trackId => text().references(TrackTable, #id)();
+  TextColumn get trackId =>
+      text().references(TrackTable, #id, onDelete: KeyAction.cascade)();
 
   /// When playback started.
   DateTimeColumn get startedAt => dateTime()();

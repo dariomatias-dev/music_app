@@ -65,7 +65,7 @@ class AppDatabase extends _$AppDatabase {
     : super(connection ?? _openConnection());
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -86,6 +86,51 @@ class AppDatabase extends _$AppDatabase {
           await m.createIndex(index);
         }
       }
+      if (from < 4) {
+        // Foreign keys were declared but never enforced, so deleting a
+        // track or a playlist left the rows pointing at it behind. Those
+        // rows are dropped before the tables below are recreated with the
+        // cascade they should always have had: turning enforcement on over
+        // rows that already violate it would leave the database failing
+        // its own integrity check with no way back.
+        Future<void> dropOrphans(String table, String column, String parent) {
+          return m.database.customStatement(
+            'DELETE FROM $table WHERE $column NOT IN (SELECT id FROM $parent)',
+          );
+        }
+
+        await dropOrphans('favorite_table', 'track_id', 'track_table');
+        await dropOrphans('lyrics_table', 'track_id', 'track_table');
+        await dropOrphans('play_event_table', 'track_id', 'track_table');
+        await dropOrphans('playlist_track_table', 'track_id', 'track_table');
+        await dropOrphans(
+          'playlist_track_table',
+          'playlist_id',
+          'playlist_table',
+        );
+
+        // A foreign key clause lives in the table's own DDL, so picking up
+        // the cascade means recreating each table and copying its rows
+        // across.
+        for (final table in <TableInfo<Table, dynamic>>[
+          favoriteTable,
+          lyricsTable,
+          playEventTable,
+          playlistTrackTable,
+        ]) {
+          // Recreating a table to change its foreign keys is what drift
+          // offers for this, experimental marker and all; the alternative
+          // is hand-writing the same create/copy/drop/rename by hand.
+          // ignore: experimental_member_use
+          await m.alterTable(TableMigration(table));
+        }
+      }
+    },
+    // Runs after any migration above, which is what lets those recreate
+    // tables freely: SQLite applies foreign keys per connection, and
+    // leaves them off unless asked.
+    beforeOpen: (details) async {
+      await customStatement('PRAGMA foreign_keys = ON');
     },
   );
 

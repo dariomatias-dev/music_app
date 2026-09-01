@@ -9,7 +9,8 @@ class LyricsTable extends Table {
   TextColumn get id => text()();
 
   /// The track this entry belongs to.
-  TextColumn get trackId => text().references(TrackTable, #id)();
+  TextColumn get trackId =>
+      text().references(TrackTable, #id, onDelete: KeyAction.cascade)();
 
   /// Raw lyrics text, `null` when [source] is `none`.
   TextColumn get content => text().nullable()();

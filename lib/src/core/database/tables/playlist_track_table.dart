@@ -16,10 +16,12 @@ class PlaylistTrackTable extends Table {
   IntColumn get id => integer().autoIncrement()();
 
   /// The playlist this entry belongs to.
-  TextColumn get playlistId => text().references(PlaylistTable, #id)();
+  TextColumn get playlistId =>
+      text().references(PlaylistTable, #id, onDelete: KeyAction.cascade)();
 
   /// The referenced track.
-  TextColumn get trackId => text().references(TrackTable, #id)();
+  TextColumn get trackId =>
+      text().references(TrackTable, #id, onDelete: KeyAction.cascade)();
 
   /// Position of the track within the playlist.
   IntColumn get position => integer()();
