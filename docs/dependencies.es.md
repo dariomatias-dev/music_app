@@ -22,11 +22,13 @@ La última versión del paquete (`0.6.0+eol`) es una lápida intencional — un 
 
 Esa migración es **el mismo bloqueo que el pin de `drift` de arriba**, no uno separado: `sqlite3` 3.x requiere `drift ^2.34`, y `drift` 2.31.0 (fijado por la razón de arriba) solo acepta `sqlite3 ^2.6`. Resolver la cadena `drift`/Riverpod resuelve esto también — no intentes actualizar `sqlite3_flutter_libs` o `sqlite3` de forma aislada.
 
-## `gradle-wrapper: 8.12`, `com.android.application: 8.9.1` (topados por debajo de la última versión)
+## `gradle-wrapper: 8.14`, `com.android.application: 8.11.1` (topados por debajo de la última versión)
 
-`metadata_god` incluye CargoKit, cuyo script de Gradle llama a `exec()`, un método que Gradle 9 eliminó. Cualquier subida a Gradle 9.x rompe la compilación de la APK con `Could not find method exec() ... on project ':metadata_god'`, así que el wrapper se queda en 8.12 hasta que `metadata_god` publique un CargoKit que compile bajo Gradle 9.
+`metadata_god` incluye CargoKit, cuyo script de Gradle llama a `exec()`, un método que Gradle 9 eliminó. Cualquier subida a Gradle 9.x rompe la compilación de la APK con `Could not find method exec() ... on project ':metadata_god'`, así que el wrapper se queda en la línea 8.x hasta que `metadata_god` publique un CargoKit que compile bajo Gradle 9.
 
-El Android Gradle Plugin es **el mismo bloqueo visto desde el otro lado**, no uno separado: AGP 9.x se niega a ejecutarse por debajo de Gradle 9.5.0, fallando con `Minimum supported Gradle version is 9.5.0`. Resolver el bloqueo de CargoKit resuelve este también — no intentes actualizar AGP o el wrapper de forma aislada.
+El Android Gradle Plugin es **el mismo bloqueo visto desde el otro lado**, no uno separado: AGP 9.x se niega a ejecutarse por debajo de Gradle 9.5.0, fallando con `Minimum supported Gradle version is 9.5.0`. Resolver el bloqueo de CargoKit resuelve este también — no intentes subir ninguno más allá de su frontera 9.x de forma aislada.
+
+El tope es esa frontera, no estas versiones exactas. Dentro de 8.x ambos pueden moverse, y están en el mínimo que Flutter avisa que pronto exigirá (Gradle 8.14, AGP 8.11.1, Kotlin 2.2.20), que compila sin avisos.
 
 ## Cómo revisar actualizaciones
 

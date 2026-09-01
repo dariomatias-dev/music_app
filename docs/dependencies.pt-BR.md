@@ -22,11 +22,13 @@ A última versão do pacote (`0.6.0+eol`) é um tombstone intencional — um pac
 
 Essa migração é **o mesmo bloqueio do pin do `drift` acima**, não um separado: `sqlite3` 3.x exige `drift ^2.34`, e o `drift` 2.31.0 (travado pelo motivo acima) só aceita `sqlite3 ^2.6`. Resolver a cadeia `drift`/Riverpod resolve esse também — não tente atualizar `sqlite3_flutter_libs` ou `sqlite3` isoladamente.
 
-## `gradle-wrapper: 8.12`, `com.android.application: 8.9.1` (limitados abaixo da última versão)
+## `gradle-wrapper: 8.14`, `com.android.application: 8.11.1` (limitados abaixo da última versão)
 
-O `metadata_god` embute o CargoKit, cujo script Gradle chama `exec()`, método que o Gradle 9 removeu. Qualquer bump pro Gradle 9.x quebra o build da APK com `Could not find method exec() ... on project ':metadata_god'`, então o wrapper fica no 8.12 até o `metadata_god` publicar um CargoKit que compile sob o Gradle 9.
+O `metadata_god` embute o CargoKit, cujo script Gradle chama `exec()`, método que o Gradle 9 removeu. Qualquer bump pro Gradle 9.x quebra o build da APK com `Could not find method exec() ... on project ':metadata_god'`, então o wrapper fica na linha 8.x até o `metadata_god` publicar um CargoKit que compile sob o Gradle 9.
 
-O Android Gradle Plugin é **o mesmo bloqueio visto do outro lado**, não um separado: o AGP 9.x se recusa a rodar abaixo do Gradle 9.5.0, falhando com `Minimum supported Gradle version is 9.5.0`. Resolver o bloqueio do CargoKit resolve esse também — não tente atualizar o AGP ou o wrapper isoladamente.
+O Android Gradle Plugin é **o mesmo bloqueio visto do outro lado**, não um separado: o AGP 9.x se recusa a rodar abaixo do Gradle 9.5.0, falhando com `Minimum supported Gradle version is 9.5.0`. Resolver o bloqueio do CargoKit resolve esse também — não tente subir nenhum dos dois além da fronteira 9.x isoladamente.
+
+O limite é essa fronteira, não estas versões exatas. Dentro do 8.x os dois podem se mover, e estão no piso que o Flutter avisa que vai passar a exigir (Gradle 8.14, AGP 8.11.1, Kotlin 2.2.20), que compila sem avisos.
 
 ## Como checar atualizações
 
