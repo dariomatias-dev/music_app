@@ -15,7 +15,10 @@ git clone https://github.com/dariomatias-dev/music_app.git
 cd music_app
 fvm install
 fvm flutter pub get
+git config core.hooksPath .githooks
 ```
+
+最后一行让 git 指向 [`.githooks/`](../.githooks)，其中的 `commit-msg` 钩子会拒绝不符合下文约定的标题行。git 不会随克隆一起带上钩子，因此每份本地副本都需要执行一次这条命令。
 
 生成的代码（freezed、json_serializable、drift、riverpod_generator、go_router_builder）和本地化文件不会在每次改动时预先编译并提交——拉取代码或修改它们所依赖的内容后，需要重新生成：
 
@@ -51,7 +54,15 @@ fvm flutter gen-l10n
   ./scripts/check_coverage.sh coverage/lcov.info 97
   ```
 
-- **提交信息**遵循 [Conventional Commits](https://www.conventionalcommits.org/) 规范：`feat:`、`fix:`、`docs:`、`refactor:`、`test:`、`ci:` 等，配一句简短的祈使句主题。可以看 `git log` 里已有的例子。
+- **提交信息**遵循 [Conventional Commits](https://www.conventionalcommits.org/) 规范，由安装步骤中启用的 `commit-msg` 钩子校验：
+
+  ```
+  <类型>(<可选范围>): <主题>
+  ```
+
+  类型取 `build`、`chore`、`ci`、`docs`、`feat`、`fix`、`perf`、`refactor`、`revert`、`style`、`test` 之一；范围用小写（`player`、`app_ui`、`l10n`）；主题简短并使用祈使句，以小写开头且结尾不加句号。破坏性变更在冒号前加 `!`。
+
+  钩子还会把信息约束成 git 工具链期望的形状：整行标题不超过 **72 个字符**，这正是 `git log --oneline` 和 GitHub 截断的位置；正文与标题之间空一行，正文每行折行在 **80** 个字符。URL、`Co-Authored-By:`、`BREAKING CHANGE:`、`Refs #123` 之类的 footer 以及围栏代码块不受此限，因为折行会破坏它们的含义。git 自己写的 merge 和 revert 提交不受约束。可以看 `git log` 里已有的例子。
 
 ## CI 检查什么
 

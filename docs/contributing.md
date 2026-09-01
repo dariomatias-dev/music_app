@@ -15,7 +15,10 @@ git clone https://github.com/dariomatias-dev/music_app.git
 cd music_app
 fvm install
 fvm flutter pub get
+git config core.hooksPath .githooks
 ```
+
+That last line points git at [`.githooks/`](../.githooks), where a `commit-msg` hook rejects a subject line that doesn't follow the convention below. Git does not share hooks through a clone, so it is one command per checkout.
 
 Generated code (freezed, json_serializable, drift, riverpod_generator, go_router_builder) and localizations aren't committed pre-built for every change — regenerate them after pulling or editing anything they depend on:
 
@@ -51,7 +54,15 @@ Run the app on a connected device or emulator with `fvm flutter run`.
   ./scripts/check_coverage.sh coverage/lcov.info 97
   ```
 
-- **Commit messages** follow [Conventional Commits](https://www.conventionalcommits.org/): `feat:`, `fix:`, `docs:`, `refactor:`, `test:`, `ci:`, etc., with a short imperative subject. Look at `git log` for examples already in the repo.
+- **Commit messages** follow [Conventional Commits](https://www.conventionalcommits.org/), enforced by the `commit-msg` hook enabled during setup:
+
+  ```
+  <type>(<optional scope>): <subject>
+  ```
+
+  The type is one of `build`, `chore`, `ci`, `docs`, `feat`, `fix`, `perf`, `refactor`, `revert`, `style` or `test`; the scope is lowercase (`player`, `app_ui`, `l10n`); the subject is short and imperative, starts lowercase and carries no trailing period. Append `!` before the colon for a breaking change.
+
+  The hook also holds the message to the shape git tooling expects: the whole subject line stays within **72 characters**, which is where `git log --oneline` and GitHub truncate it; a body is separated from the subject by a blank line, and its lines wrap at **80**. URLs, footers such as `Co-Authored-By:`, `BREAKING CHANGE:` and `Refs #123`, and fenced code blocks are exempt, since wrapping those breaks what they mean. Merge and revert commits git writes itself are left alone. Look at `git log` for examples already in the repo.
 
 ## What CI checks
 

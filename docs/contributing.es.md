@@ -15,7 +15,10 @@ git clone https://github.com/dariomatias-dev/music_app.git
 cd music_app
 fvm install
 fvm flutter pub get
+git config core.hooksPath .githooks
 ```
+
+Esa última línea apunta git a [`.githooks/`](../.githooks), donde un hook `commit-msg` rechaza un asunto que no sigue la convención descrita más abajo. Git no comparte los hooks al clonar, así que es un comando por cada copia local.
 
 El código generado (freezed, json_serializable, drift, riverpod_generator, go_router_builder) y las localizaciones no se commitean ya compilados en cada cambio — regenéralos después de actualizar el repositorio o de editar cualquier cosa de la que dependan:
 
@@ -51,7 +54,15 @@ Ejecuta la app en un dispositivo conectado o emulador con `fvm flutter run`.
   ./scripts/check_coverage.sh coverage/lcov.info 97
   ```
 
-- **Los mensajes de commit** siguen [Conventional Commits](https://www.conventionalcommits.org/): `feat:`, `fix:`, `docs:`, `refactor:`, `test:`, `ci:`, etc., con un asunto corto en imperativo. Revisa el `git log` para ver ejemplos ya presentes en el repositorio.
+- **Los mensajes de commit** siguen [Conventional Commits](https://www.conventionalcommits.org/), verificados por el hook `commit-msg` que se activa en la instalación:
+
+  ```
+  <tipo>(<ámbito opcional>): <asunto>
+  ```
+
+  El tipo es uno de `build`, `chore`, `ci`, `docs`, `feat`, `fix`, `perf`, `refactor`, `revert`, `style` o `test`; el ámbito va en minúsculas (`player`, `app_ui`, `l10n`); el asunto es corto y en imperativo, empieza en minúscula y no lleva punto final. Añade `!` antes de los dos puntos para un cambio incompatible.
+
+  El hook también ajusta el mensaje a la forma que esperan las herramientas de git: la línea de asunto completa se mantiene dentro de **72 caracteres**, que es donde `git log --oneline` y GitHub la cortan; el cuerpo se separa del asunto con una línea en blanco y sus líneas se ajustan a **80**. Las URL, los footers como `Co-Authored-By:`, `BREAKING CHANGE:` y `Refs #123`, y los bloques de código delimitados quedan exentos, porque ajustarlos rompería su significado. Los commits de merge y revert que git escribe por su cuenta quedan exentos. Revisa el `git log` para ver ejemplos ya presentes en el repositorio.
 
 ## Qué verifica el CI
 
