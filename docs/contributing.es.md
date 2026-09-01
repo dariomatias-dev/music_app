@@ -20,7 +20,7 @@ git config core.hooksPath .githooks
 
 Esa última línea apunta git a [`.githooks/`](../.githooks), donde un hook `commit-msg` rechaza un asunto que no sigue la convención descrita más abajo. Git no comparte los hooks al clonar, así que es un comando por cada copia local.
 
-El código generado (freezed, json_serializable, drift, riverpod_generator, go_router_builder) y las localizaciones no se commitean ya compilados en cada cambio — regenéralos después de actualizar el repositorio o de editar cualquier cosa de la que dependan:
+El código generado (freezed, json_serializable, drift, riverpod_generator, go_router_builder) y las localizaciones no se commitean ya compilados en cada cambio. Regenéralos después de actualizar el repositorio o de editar cualquier cosa de la que dependan:
 
 ```sh
 fvm dart run build_runner build --delete-conflicting-outputs
@@ -39,10 +39,10 @@ Ejecuta la app en un dispositivo conectado o emulador con `fvm flutter run`.
 
 - **Abre un issue primero** para discutir el cambio, a menos que sea una corrección pequeña y obvia.
 - **Sigue la estructura existente**: feature-first, capas `data`/`domain`/`presentation`, Riverpod para el estado, ningún patrón nuevo sin discutirlo antes. Consulta [`architecture.md`](architecture.es.md).
-- **Mantén las pantallas ligeras**: una pantalla compone widgets y conecta providers. Los componentes van en su propio archivo bajo `presentation/widgets/<nombre_de_pantalla>/` — no como clases privadas al final del archivo de la pantalla, ni como métodos auxiliares `_buildX()`. Consulta [Organización de los widgets](architecture.es.md#organización-de-los-widgets).
-- **Respeta el sistema de diseño**: nada de colores, espaciados o duraciones en línea — usa los tokens y componentes de `packages/app_ui`.
+- **Mantén las pantallas ligeras**: una pantalla compone widgets y conecta providers. Los componentes van en su propio archivo bajo `presentation/widgets/<nombre_de_pantalla>/`, no como clases privadas al final del archivo de la pantalla, ni como métodos auxiliares `_buildX()`. Consulta [Organización de los widgets](architecture.es.md#organización-de-los-widgets).
+- **Respeta el sistema de diseño**: nada de colores, espaciados o duraciones en línea. Usa los tokens y componentes de `packages/app_ui`.
 - **Agrega pruebas** para todo lo que tenga lógica: un método de repositorio, un caso de uso, un `ViewModel`, el comportamiento de un widget. `packages/app_ui` es un paquete separado con su propia suite de pruebas; los cambios ahí también necesitan sus propias pruebas.
-- **Todo documento, cadena de texto y recurso localizado se publica en todos los idiomas soportados** (inglés, español, portugués, chino) — los archivos `lib/l10n/*.arb`, y cualquier documentación en `docs/`.
+- **Todo documento, cadena de texto y recurso localizado se publica en todos los idiomas soportados** (inglés, español, portugués, chino): los archivos `lib/l10n/*.arb`, y cualquier documentación en `docs/`.
 - **Ejecuta la verificación completa localmente** antes de hacer push:
 
   ```sh
@@ -76,12 +76,12 @@ Cada push y pull request ejecuta [`.github/workflows/ci.yaml`](../.github/workfl
 
 | Job | Qué hace |
 | --- | --- |
-| `music_app` | Instala dependencias, regenera código y localizaciones, y luego **falla si esa regeneración produce un diff** — los archivos generados deben estar commiteados y actualizados. Después: formato, análisis, pruebas y el umbral del 97% de cobertura, y sube el informe a Codecov bajo el flag `app`. |
+| `music_app` | Instala dependencias, regenera código y localizaciones, y luego **falla si esa regeneración produce un diff**, pues los archivos generados deben estar commiteados y actualizados. Después: formato, análisis, pruebas y el umbral del 97% de cobertura, y sube el informe a Codecov bajo el flag `app`. |
 | `Build APK` | Se ejecuta tras aprobar `music_app`, y compila una APK de release, publicada como artefacto del workflow y conservada durante 14 días. |
 | `packages/app_ui` | Formato, análisis, pruebas y el umbral del 98% de cobertura del paquete del sistema de diseño, de forma independiente de la app, subido a Codecov bajo el flag `app_ui`. |
 | `Integration tests` | Se ejecuta tras aprobar `music_app`, arranca un emulador de Android y ejecuta en él todas las suites de `integration_test/` en una misma sesión, ya que arrancarlo es con diferencia el paso más lento. Necesitan un dispositivo: los flujos leen a través de las stream queries de drift, que nunca emiten bajo el fake async de un `flutter test` normal. El job habilita KVM primero, sin lo cual el emulador cae en renderizado por software y agota el tiempo. También compila una APK de debug **antes** de arrancar el emulador: una compilación de Android en frío descarga una plataforma del SDK adicional y CMake, y compila fuentes nativas, lo que por sí solo supera el límite de 8 minutos con el que se ejecuta cada suite. Entre ambas cosas, el job dispone de 40 minutos. |
 
-Hacer push de una etiqueta `v*.*.*` ejecuta [`.github/workflows/release.yml`](../.github/workflows/release.yml): las mismas verificaciones, y luego una APK de release publicada en un release de GitHub con notas generadas automáticamente. Ten en cuenta que la compilación de release se firma con la **keystore de debug** a propósito — esta app no tiene configuración de firma de producción.
+Hacer push de una etiqueta `v*.*.*` ejecuta [`.github/workflows/release.yml`](../.github/workflows/release.yml): las mismas verificaciones, y luego una APK de release publicada en un release de GitHub con notas generadas automáticamente. Ten en cuenta que la compilación de release se firma con la **keystore de debug** a propósito, pues esta app no tiene configuración de firma de producción.
 
 ### Informes de cobertura
 
@@ -108,9 +108,9 @@ act pull_request -j app               # un solo job, por su id
 act pull_request -j app --dryrun      # imprime los pasos sin ejecutarlos
 ```
 
-`act` no ejecuta la action del job del emulador, así que dos de sus restricciones solo aparecen en CI. La action divide el `script` por saltos de línea y ejecuta **cada línea como su propio `sh -c`**, de modo que un bucle o cualquier construcción de shell multilínea llega sin su palabra clave de cierre; escribe un comando completo por línea. Y `--no-dds`, el primer impulso cuando una ejecución falla al arrancar el Dart Development Service, rompe el comparador de goldens que `flutter_tools` registra para las pruebas de integración — la suite pasa a fallar en la carga aun con todas las pruebas en verde.
+`act` no ejecuta la action del job del emulador, así que dos de sus restricciones solo aparecen en CI. La action divide el `script` por saltos de línea y ejecuta **cada línea como su propio `sh -c`**, de modo que un bucle o cualquier construcción de shell multilínea llega sin su palabra clave de cierre; escribe un comando completo por línea. Además, `--no-dds`, el primer impulso cuando una ejecución falla al arrancar el Dart Development Service, rompe el comparador de goldens que `flutter_tools` registra para las pruebas de integración, y la suite pasa a fallar en la carga aun con todas las pruebas en verde.
 
-`-j` recibe el **id** del job (`app`, `build_apk`, `integration`, `app_ui`, `release`), no el nombre visible de la tabla de arriba; `act -l` muestra ambos. La primera ejecución real descarga una imagen de runner de varios gigabytes, y `act` aproxima los runners de GitHub en lugar de reproducirlos exactamente — un `act` en verde es una buena señal, no una garantía.
+`-j` recibe el **id** del job (`app`, `build_apk`, `integration`, `app_ui`, `release`), no el nombre visible de la tabla de arriba; `act -l` muestra ambos. La primera ejecución real descarga una imagen de runner de varios gigabytes, y `act` aproxima los runners de GitHub en lugar de reproducirlos exactamente, así que un `act` en verde es una buena señal, no una garantía.
 
 ## Trabajar con un agente de IA
 

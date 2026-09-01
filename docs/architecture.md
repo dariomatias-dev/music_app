@@ -39,18 +39,18 @@ Each feature under `lib/src/features/` is a vertical slice: `library`, `player`,
 
 Every feature that touches persisted state follows the same three layers:
 
-- **`domain`** — pure Dart. Entities (`freezed` data classes), abstract repository interfaces, and use-case classes (a single `call()` method) for anything with real branching logic (e.g. `CreateBackup`, `RestoreBackup`, `DeleteTrackFile`). No Flutter, no Riverpod, no drift imports here.
-- **`data`** — implements the `domain` repository interfaces against a concrete data source (drift DAOs, `shared_preferences`, platform plugins). Mappers convert between drift row types and domain entities.
-- **`presentation`** — screens and widgets, plus `ViewModel`s: Riverpod `Notifier`/`AsyncNotifier` classes exposed through generated (`riverpod_generator`) providers. A screen watches providers; it never talks to a repository directly for anything beyond a `ref.read(...)` one-off call triggered by a user action.
+- **`domain`**: pure Dart. Entities (`freezed` data classes), abstract repository interfaces, and use-case classes (a single `call()` method) for anything with real branching logic (e.g. `CreateBackup`, `RestoreBackup`, `DeleteTrackFile`). No Flutter, no Riverpod, no drift imports here.
+- **`data`**: implements the `domain` repository interfaces against a concrete data source (drift DAOs, `shared_preferences`, platform plugins). Mappers convert between drift row types and domain entities.
+- **`presentation`**: screens and widgets, plus `ViewModel`s: Riverpod `Notifier`/`AsyncNotifier` classes exposed through generated (`riverpod_generator`) providers. A screen watches providers; it never talks to a repository directly for anything beyond a `ref.read(...)` one-off call triggered by a user action.
 
 A feature only depends on another feature's `domain` layer (entities, repository interfaces), never its `data` or `presentation`. Providers wire the concrete implementation in per-feature `*_data_providers.dart` files.
 
 ## Widget organization
 
-Screens stay thin. A screen file watches the providers it needs, owns the callbacks a user action triggers, and composes widgets — nothing it renders is defined inline. Those widgets live under the feature's `presentation/widgets/`, split two ways:
+Screens stay thin. A screen file watches the providers it needs, owns the callbacks a user action triggers, and composes widgets: nothing it renders is defined inline. Those widgets live under the feature's `presentation/widgets/`, split two ways:
 
-- `widgets/<name>.dart` — shared within the feature: used by more than one screen, or by a sheet or dialog the feature exposes (`media_row.dart`, `playlist_cover_art.dart`, `track_more_sheet.dart`).
-- `widgets/<screen_name>/<component>.dart` — owned by a single screen, one public class per file, named for what it renders (`widgets/album_screen/album_header.dart`, `widgets/storage_screen/storage_folder_header.dart`).
+- `widgets/<name>.dart`, shared within the feature: used by more than one screen, or by a sheet or dialog the feature exposes (`media_row.dart`, `playlist_cover_art.dart`, `track_more_sheet.dart`).
+- `widgets/<screen_name>/<component>.dart`, owned by a single screen, one public class per file, named for what it renders (`widgets/album_screen/album_header.dart`, `widgets/storage_screen/storage_folder_header.dart`).
 
 Two conventions follow from this:
 
@@ -86,20 +86,20 @@ SQLite leaves foreign keys off unless a connection asks for them, so `beforeOpen
 
 Two independent backup mechanisms exist, both reachable from Settings → Storage:
 
-- A portable **JSON export** (`CreateBackup`/`RestoreBackup`) of user-created data only — playlists, favorites, history, excluded folders, search history, and preferences — keyed by each track's stable `sourceId` rather than its install-specific internal id, and merged (not replaced) on restore.
+- A portable **JSON export** (`CreateBackup`/`RestoreBackup`) of user-created data only (playlists, favorites, history, excluded folders, search history, and preferences), keyed by each track's stable `sourceId` rather than its install-specific internal id, and merged (not replaced) on restore.
 - A raw **database file backup** (`CreateDatabaseBackup`/`RestoreDatabaseBackup`), a byte-for-byte `VACUUM INTO` snapshot of the whole SQLite file, including the indexed library. Restoring it replaces the file outright and restarts the app (via `RestartWidget`, a `Key`-swap that tears down and rebuilds the whole `ProviderScope`) to reopen a clean connection.
 
 ## Audio
 
-[just_audio](https://pub.dev/packages/just_audio) drives actual playback; [audio_service](https://pub.dev/packages/audio_service) exposes it to the OS (lock screen, notification, Bluetooth controls) through `MusicAudioHandler`. Both the OS-facing metadata and the app's own crossfade effect key off the same upstream signal — `just_audio`'s native `currentIndex` change on a track boundary — so they never drift out of sync with each other.
+[just_audio](https://pub.dev/packages/just_audio) drives actual playback; [audio_service](https://pub.dev/packages/audio_service) exposes it to the OS (lock screen, notification, Bluetooth controls) through `MusicAudioHandler`. Both the OS-facing metadata and the app's own crossfade effect key off the same upstream signal (`just_audio`'s native `currentIndex` change on a track boundary), so they never drift out of sync with each other.
 
-Crossfade, as implemented today, is a single-player volume ramp: the native engine performs its own instant gapless switch from track A to B, and `PlaybackTransitionEffects` only fades B in from silence afterward — it is not two overlapping audible sources. This is a known simplification, not a bug.
+Crossfade, as implemented today, is a single-player volume ramp: the native engine performs its own instant gapless switch from track A to B, and `PlaybackTransitionEffects` only fades B in from silence afterward. It is not two overlapping audible sources. This is a known simplification, not a bug.
 
 ## Error handling
 
-`main.dart` installs the app's outermost boundary before anything else runs. `FlutterError.onError` and `PlatformDispatcher.onError` both route into an `ErrorReporter` (`lib/src/core/errors/`), because both default to printing in debug and doing nothing in release — without them, a widget that throws during build leaves an error box and no trace, and an error escaping a detached async callback disappears outright. The platform handler reports and marks the error handled, so a failure in a plugin's channel or an unlistened stream cannot tear the isolate down and take playback with it.
+`main.dart` installs the app's outermost boundary before anything else runs. `FlutterError.onError` and `PlatformDispatcher.onError` both route into an `ErrorReporter` (`lib/src/core/errors/`), because both default to printing in debug and doing nothing in release. Without them, a widget that throws during build leaves an error box and no trace, and an error escaping a detached async callback disappears outright. The platform handler reports and marks the error handled, so a failure in a plugin's channel or an unlistened stream cannot tear the isolate down and take playback with it.
 
-Two paths surface a failure the user cannot be shielded from, both through `AppFailureScreen` (`lib/src/core/widgets/`): `ErrorWidget.builder`, when a part of a running app fails to build, and the startup fallback, when the platform setup in `main.dart` throws before there is an app at all — the latter offering to run the whole sequence again. Both can be invoked with no `Theme`, `Directionality` or `Localizations` above them, so `AppFailureScreen` resolves all three from the platform rather than from its `BuildContext`; reading a missing ancestor would throw from inside the screen that exists to report the throw.
+Two paths surface a failure the user cannot be shielded from, both through `AppFailureScreen` (`lib/src/core/widgets/`): `ErrorWidget.builder`, when a part of a running app fails to build, and the startup fallback, when the platform setup in `main.dart` throws before there is an app at all, the latter offering to run the whole sequence again. Both can be invoked with no `Theme`, `Directionality` or `Localizations` above them, so `AppFailureScreen` resolves all three from the platform rather than from its `BuildContext`; reading a missing ancestor would throw from inside the screen that exists to report the throw.
 
 Below that boundary, `AppException` (`lib/src/core/errors/`) is the app's own failure vocabulary: `PermissionException`, `FileException` and `PlaybackException`. Third-party failures are converted before they leave the layer that caused them, so upper layers have one type to reason about instead of whatever `dart:io`, drift or a plugin happens to throw. `FileException.guard` wraps the disk and file-picker calls in the data layer and the storage use cases, keeping the message and the original `cause` together.
 
@@ -113,7 +113,7 @@ A self-contained Flutter package, versioned and tested independently of the app 
 - **Theme**: light/dark `AppTheme`, exposed to widgets via a `BuildContext` extension (`context.colors`).
 - **Components**: buttons, cards, dialogs, sheets, navigation, feedback (toasts), states (empty/error/permission/indexing), and the `Pressable` interaction primitive every tappable widget builds on.
 
-The app never redefines a color, spacing value, or animation curve inline — everything comes from `app_ui`.
+The app never redefines a color, spacing value, or animation curve inline. Everything comes from `app_ui`.
 
 ## Testing
 

@@ -39,18 +39,18 @@ Cada feature bajo `lib/src/features/` es un corte vertical: `library`, `player`,
 
 Toda feature que toca estado persistido sigue las mismas tres capas:
 
-- **`domain`** — Dart puro. Entidades (data classes `freezed`), interfaces abstractas de repositorio, y clases de caso de uso (un único método `call()`) para cualquier cosa con lógica de ramificación real (p. ej. `CreateBackup`, `RestoreBackup`, `DeleteTrackFile`). Sin imports de Flutter, Riverpod ni drift aquí.
-- **`data`** — implementa las interfaces de repositorio de `domain` contra una fuente de datos concreta (DAOs de drift, `shared_preferences`, plugins de plataforma). Los mappers convierten entre los tipos de fila de drift y las entidades de dominio.
-- **`presentation`** — pantallas y widgets, más `ViewModel`s: clases `Notifier`/`AsyncNotifier` de Riverpod expuestas mediante providers generados (`riverpod_generator`). Una pantalla observa providers; nunca habla directamente con un repositorio salvo por una llamada puntual vía `ref.read(...)` disparada por una acción del usuario.
+- **`domain`**: Dart puro. Entidades (data classes `freezed`), interfaces abstractas de repositorio, y clases de caso de uso (un único método `call()`) para cualquier cosa con lógica de ramificación real (p. ej. `CreateBackup`, `RestoreBackup`, `DeleteTrackFile`). Sin imports de Flutter, Riverpod ni drift aquí.
+- **`data`**: implementa las interfaces de repositorio de `domain` contra una fuente de datos concreta (DAOs de drift, `shared_preferences`, plugins de plataforma). Los mappers convierten entre los tipos de fila de drift y las entidades de dominio.
+- **`presentation`**: pantallas y widgets, más `ViewModel`s: clases `Notifier`/`AsyncNotifier` de Riverpod expuestas mediante providers generados (`riverpod_generator`). Una pantalla observa providers; nunca habla directamente con un repositorio salvo por una llamada puntual vía `ref.read(...)` disparada por una acción del usuario.
 
 Una feature solo depende de la capa `domain` de otra feature (entidades, interfaces de repositorio), nunca de su `data` o `presentation`. Los providers conectan la implementación concreta en archivos `*_data_providers.dart` por feature.
 
 ## Organización de los widgets
 
-Las pantallas se mantienen ligeras. Un archivo de pantalla observa los providers que necesita, se encarga de los callbacks que dispara una acción del usuario y compone widgets — nada de lo que renderiza se define inline. Esos widgets viven en `presentation/widgets/`, divididos en dos grupos:
+Las pantallas se mantienen ligeras. Un archivo de pantalla observa los providers que necesita, se encarga de los callbacks que dispara una acción del usuario y compone widgets: nada de lo que renderiza se define inline. Esos widgets viven en `presentation/widgets/`, divididos en dos grupos:
 
-- `widgets/<nombre>.dart` — compartidos dentro de la feature: usados por más de una pantalla, o por un sheet o diálogo que la feature expone (`media_row.dart`, `playlist_cover_art.dart`, `track_more_sheet.dart`).
-- `widgets/<nombre_de_pantalla>/<componente>.dart` — pertenecen a una sola pantalla, una clase pública por archivo, nombrada por lo que renderiza (`widgets/album_screen/album_header.dart`, `widgets/storage_screen/storage_folder_header.dart`).
+- `widgets/<nombre>.dart`, compartidos dentro de la feature: usados por más de una pantalla, o por un sheet o diálogo que la feature expone (`media_row.dart`, `playlist_cover_art.dart`, `track_more_sheet.dart`).
+- `widgets/<nombre_de_pantalla>/<componente>.dart`, pertenecen a una sola pantalla, una clase pública por archivo, nombrada por lo que renderiza (`widgets/album_screen/album_header.dart`, `widgets/storage_screen/storage_folder_header.dart`).
 
 De esto se derivan dos convenciones:
 
@@ -86,14 +86,14 @@ SQLite deja las claves foráneas desactivadas salvo que la conexión las pida, a
 
 Existen dos mecanismos de respaldo independientes, ambos accesibles desde Configuración → Almacenamiento:
 
-- Una **exportación JSON** portátil (`CreateBackup`/`RestoreBackup`) solo de los datos creados por el usuario — listas de reproducción, favoritos, historial, carpetas excluidas, historial de búsqueda y preferencias — referenciados por el `sourceId` estable de cada pista en lugar de su id interno específico de la instalación, y fusionados (no reemplazados) al restaurar.
+- Una **exportación JSON** portátil (`CreateBackup`/`RestoreBackup`) solo de los datos creados por el usuario (listas de reproducción, favoritos, historial, carpetas excluidas, historial de búsqueda y preferencias), referenciados por el `sourceId` estable de cada pista en lugar de su id interno específico de la instalación, y fusionados (no reemplazados) al restaurar.
 - Un **respaldo crudo de la base de datos** (`CreateDatabaseBackup`/`RestoreDatabaseBackup`), una instantánea byte a byte vía `VACUUM INTO` de todo el archivo SQLite, incluyendo la biblioteca indexada. Restaurarlo reemplaza el archivo por completo y reinicia la app (mediante `RestartWidget`, un cambio de `Key` que desmonta y reconstruye todo el `ProviderScope`) para reabrir una conexión limpia.
 
 ## Audio
 
-[just_audio](https://pub.dev/packages/just_audio) maneja la reproducción en sí; [audio_service](https://pub.dev/packages/audio_service) la expone al sistema operativo (pantalla de bloqueo, notificación, controles Bluetooth) a través de `MusicAudioHandler`. Tanto los metadatos que ve el sistema como el efecto de crossfade propio de la app se disparan a partir de la misma señal — el cambio nativo de `currentIndex` de `just_audio` en un límite de pista — así que nunca se desincronizan entre sí.
+[just_audio](https://pub.dev/packages/just_audio) maneja la reproducción en sí; [audio_service](https://pub.dev/packages/audio_service) la expone al sistema operativo (pantalla de bloqueo, notificación, controles Bluetooth) a través de `MusicAudioHandler`. Tanto los metadatos que ve el sistema como el efecto de crossfade propio de la app se disparan a partir de la misma señal (el cambio nativo de `currentIndex` de `just_audio` en un límite de pista), así que nunca se desincronizan entre sí.
 
-El crossfade, tal como está implementado hoy, es una rampa de volumen de un solo reproductor: el motor nativo hace su propio cambio gapless instantáneo de la pista A a la B, y `PlaybackTransitionEffects` solo hace un fade-in de B desde el silencio después de eso — no son dos fuentes audibles superponiéndose de verdad. Es una simplificación conocida, no un error.
+El crossfade, tal como está implementado hoy, es una rampa de volumen de un solo reproductor: el motor nativo hace su propio cambio gapless instantáneo de la pista A a la B, y `PlaybackTransitionEffects` solo hace un fade-in de B desde el silencio después de eso. No son dos fuentes audibles superponiéndose de verdad. Es una simplificación conocida, no un error.
 
 ## Manejo de errores
 
@@ -113,7 +113,7 @@ Un paquete Flutter autocontenido, versionado y probado de forma independiente de
 - **Tema**: `AppTheme` claro/oscuro, expuesto a los widgets vía una extensión de `BuildContext` (`context.colors`).
 - **Componentes**: botones, cards, diálogos, sheets, navegación, feedback (toasts), estados (vacío/error/permiso/indexación), y el primitivo de interacción `Pressable` sobre el que se construye todo widget tocable.
 
-La app nunca redefine un color, un valor de espaciado o una curva de animación en línea — todo viene de `app_ui`.
+La app nunca redefine un color, un valor de espaciado o una curva de animación en línea. Todo viene de `app_ui`.
 
 ## Pruebas
 

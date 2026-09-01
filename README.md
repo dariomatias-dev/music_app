@@ -103,8 +103,8 @@ concerns (navigation, the database, audio, permissions) live under
 ## Testing
 
 The project has 186 test files (129 in the app, 57 in `packages/app_ui`)
-covering repositories, view models, and widgets — 40 of them golden tests,
-rendering 86 reference images across the design system and key screens —
+covering repositories, view models, and widgets (40 of them golden tests,
+rendering 86 reference images across the design system and key screens),
 plus `integration_test/` suites covering onboarding, playback, persistence,
 playlists, favorites, search, language switching, and backup/restore. CI
 enforces a minimum line coverage of 97% for the app

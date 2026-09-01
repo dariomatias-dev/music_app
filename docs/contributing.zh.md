@@ -20,7 +20,7 @@ git config core.hooksPath .githooks
 
 最后一行让 git 指向 [`.githooks/`](../.githooks)，其中的 `commit-msg` 钩子会拒绝不符合下文约定的标题行。git 不会随克隆一起带上钩子，因此每份本地副本都需要执行一次这条命令。
 
-生成的代码（freezed、json_serializable、drift、riverpod_generator、go_router_builder）和本地化文件不会在每次改动时预先编译并提交——拉取代码或修改它们所依赖的内容后，需要重新生成：
+生成的代码（freezed、json_serializable、drift、riverpod_generator、go_router_builder）和本地化文件不会在每次改动时预先编译并提交。拉取代码或修改它们所依赖的内容后，需要重新生成：
 
 ```sh
 fvm dart run build_runner build --delete-conflicting-outputs
@@ -40,9 +40,9 @@ fvm dart run flutter_launcher_icons
 - **先开一个 issue** 讨论这个改动，除非它是一个很小且明显的修复。
 - **遵循现有结构**：功能优先（feature-first）、`data`/`domain`/`presentation` 分层、状态用 Riverpod，不要在未讨论的情况下引入新模式。参见 [`architecture.md`](architecture.zh.md)。
 - **保持界面文件精简**：界面只负责组合组件、连接 provider。组件要放进 `presentation/widgets/<界面名>/` 下各自的文件，而不是写成界面文件末尾的私有类，也不是写成 `_buildX()` 辅助方法。参见[组件组织方式](architecture.zh.md#组件组织方式)。
-- **符合设计系统**：不要内联写颜色、间距或动画时长——使用 `packages/app_ui` 中的 token 和组件。
+- **符合设计系统**：不要内联写颜色、间距或动画时长。请使用 `packages/app_ui` 中的 token 和组件。
 - **为带逻辑的内容编写测试**：仓库方法、用例、`ViewModel`、组件行为等。`packages/app_ui` 是独立的包，有自己的测试套件；对它的改动也需要相应的测试。
-- **每一份文档、字符串和本地化资源都要覆盖所有支持的语言**（英语、西班牙语、葡萄牙语、中文）——包括 `lib/l10n/*.arb` 文件，以及 `docs/` 下的任何文档。
+- **每一份文档、字符串和本地化资源都要覆盖所有支持的语言**（英语、西班牙语、葡萄牙语、中文）：包括 `lib/l10n/*.arb` 文件，以及 `docs/` 下的任何文档。
 - **提交前在本地跑完整检查**：
 
   ```sh
@@ -76,18 +76,18 @@ fvm dart run flutter_launcher_icons
 
 | Job | 具体做什么 |
 | --- | --- |
-| `music_app` | 安装依赖，重新生成代码和本地化文件，**如果这一步产生了 diff 就直接失败**——生成的文件必须已提交且是最新的。随后是格式检查、静态分析、测试，以及 97% 的覆盖率门槛，并以 `app` flag 将报告上传到 Codecov。 |
+| `music_app` | 安装依赖，重新生成代码和本地化文件，**如果这一步产生了 diff 就直接失败**，因为生成的文件必须已提交且是最新的。随后是格式检查、静态分析、测试，以及 97% 的覆盖率门槛，并以 `app` flag 将报告上传到 Codecov。 |
 | `Build APK` | 在 `music_app` 通过后运行，构建 release APK，作为 workflow 产物上传并保留 14 天。 |
 | `packages/app_ui` | 独立于应用本体，对设计系统包执行格式检查、静态分析、测试，以及 98% 的覆盖率门槛，并以 `app_ui` flag 上传到 Codecov。 |
-| `Integration tests` | 在 `music_app` 通过后运行，启动一个 Android 模拟器，并在同一个会话中运行 `integration_test/` 下的所有测试套件——启动模拟器是其中最慢的一步。这些测试必须有设备：相关流程会读取 drift 的 stream query，而它们在普通 `flutter test` 的 fake async 下永远不会发出事件。该 job 会先启用 KVM，否则模拟器会退回软件渲染并超时。它还会在启动模拟器**之前**构建一个 debug APK：冷启动的 Android 构建需要下载额外的 SDK platform 和 CMake 并编译原生源码，仅这一步就会超过每个套件 8 分钟的时限。两者相加，该 job 的超时预算为 40 分钟。 |
+| `Integration tests` | 在 `music_app` 通过后运行，启动一个 Android 模拟器，并在同一个会话中运行 `integration_test/` 下的所有测试套件，因为启动模拟器是其中最慢的一步。这些测试必须有设备：相关流程会读取 drift 的 stream query，而它们在普通 `flutter test` 的 fake async 下永远不会发出事件。该 job 会先启用 KVM，否则模拟器会退回软件渲染并超时。它还会在启动模拟器**之前**构建一个 debug APK：冷启动的 Android 构建需要下载额外的 SDK platform 和 CMake 并编译原生源码，仅这一步就会超过每个套件 8 分钟的时限。两者相加，该 job 的超时预算为 40 分钟。 |
 
-推送 `v*.*.*` 形式的 tag 则会运行 [`.github/workflows/release.yml`](../.github/workflows/release.yml)：执行同样的检查，然后把 release APK 发布到 GitHub release，并自动生成发布说明。注意 release 构建是**有意**使用 debug keystore 签名的——本应用没有生产环境的签名配置。
+推送 `v*.*.*` 形式的 tag 则会运行 [`.github/workflows/release.yml`](../.github/workflows/release.yml)：执行同样的检查，然后把 release APK 发布到 GitHub release，并自动生成发布说明。注意 release 构建是**有意**使用 debug keystore 签名的，因为本应用没有生产环境的签名配置。
 
 ### 覆盖率报告
 
 让构建失败的是 [`scripts/check_coverage.sh`](../scripts/check_coverage.sh)；让这个数字变得可读的是 [Codecov](https://codecov.io/gh/dariomatias-dev/music_app)。每个包用各自的 flag 上传自己的 `lcov.info`，因此两个门槛是分开跟踪的；每个 pull request 都会收到一条按 flag 列出覆盖率变化的评论，并在未覆盖的新增行上给出行内标注。[`codecov.yml`](../codecov.yml) 保存这些目标，并重复了脚本中的排除项：生成的源文件、`lib/l10n/` 以及 drift 的表声明。
 
-上传使用仓库 secret `CODECOV_TOKEN` 认证。来自 fork 的 pull request 读不到它，会退回 Codecov 的免 token 上传，因此这一步特意设为 `fail_ci_if_error: false`——上传失败只意味着少了一份报告，绝不该让构建失败。
+上传使用仓库 secret `CODECOV_TOKEN` 认证。来自 fork 的 pull request 读不到它，会退回 Codecov 的免 token 上传，因此这一步特意设为 `fail_ci_if_error: false`，因为上传失败只意味着少了一份报告，绝不该让构建失败。
 
 若想在本地得到同样的东西（无需账号），把 `lcov` 文件渲染成 HTML：
 
@@ -108,9 +108,9 @@ act pull_request -j app               # 只运行某一个 job，按 id 指定
 act pull_request -j app --dryrun      # 只打印步骤，不实际执行
 ```
 
-`act` 无法运行模拟器 job 所使用的 action，因此它的两条限制只会在 CI 上暴露。该 action 会按换行拆分 `script`，并把**每一行作为独立的 `sh -c` 执行**，所以循环或任何跨行的 shell 结构都会在缺少结束关键字的情况下被送进 shell；请每行写一条自成一体的命令。另外，当运行因无法启动 Dart Development Service 而失败时，最容易想到的 `--no-dds` 会破坏 `flutter_tools` 为集成测试注册的 golden 比较器——即使所有测试都通过，测试套件也会在加载阶段失败。
+`act` 无法运行模拟器 job 所使用的 action，因此它的两条限制只会在 CI 上暴露。该 action 会按换行拆分 `script`，并把**每一行作为独立的 `sh -c` 执行**，所以循环或任何跨行的 shell 结构都会在缺少结束关键字的情况下被送进 shell；请每行写一条自成一体的命令。另外，当运行因无法启动 Dart Development Service 而失败时，最容易想到的 `--no-dds` 会破坏 `flutter_tools` 为集成测试注册的 golden 比较器，即使所有测试都通过，测试套件也会在加载阶段失败。
 
-`-j` 接收的是 job 的 **id**（`app`、`build_apk`、`integration`、`app_ui`、`release`），而不是上表中的显示名称；`act -l` 会同时列出两者。首次真正运行会拉取数 GB 的 runner 镜像，而且 `act` 只是近似模拟 GitHub 的 runner，并非完全一致——`act` 跑通是一个好信号，但不能作为保证。
+`-j` 接收的是 job 的 **id**（`app`、`build_apk`、`integration`、`app_ui`、`release`），而不是上表中的显示名称；`act -l` 会同时列出两者。首次真正运行会拉取数 GB 的 runner 镜像，而且 `act` 只是近似模拟 GitHub 的 runner，并非完全一致，因此 `act` 跑通是一个好信号，但不能作为保证。
 
 ## 与 AI agent 协作
 
