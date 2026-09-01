@@ -22,11 +22,13 @@
 
 这次迁移**和上面 `drift` 的固定是同一个阻塞点**，不是另一个独立问题：`sqlite3` 3.x 需要 `drift ^2.34`，而被固定的 `drift` 2.31.0 只接受 `sqlite3 ^2.6`。解决了 `drift`/Riverpod 那条依赖链，这个问题也就一并解决了——不要试图单独升级 `sqlite3_flutter_libs` 或 `sqlite3`。
 
-## `gradle-wrapper: 8.12`、`com.android.application: 8.9.1`（限制在低于最新版本）
+## `gradle-wrapper: 8.14`、`com.android.application: 8.11.1`（限制在低于最新版本）
 
-`metadata_god` 内置了 CargoKit，其 Gradle 脚本调用了 `exec()`——这个方法已被 Gradle 9 移除。任何升级到 Gradle 9.x 的尝试都会让 APK 构建失败并报 `Could not find method exec() ... on project ':metadata_god'`，因此 wrapper 保持在 8.12，直到 `metadata_god` 发布能在 Gradle 9 下构建的 CargoKit。
+`metadata_god` 内置了 CargoKit，其 Gradle 脚本调用了 `exec()`——这个方法已被 Gradle 9 移除。任何升级到 Gradle 9.x 的尝试都会让 APK 构建失败并报 `Could not find method exec() ... on project ':metadata_god'`，因此 wrapper 保持在 8.x 线上，直到 `metadata_god` 发布能在 Gradle 9 下构建的 CargoKit。
 
-Android Gradle Plugin 是**同一个阻塞的另一面**，而不是另一个独立问题：AGP 9.x 拒绝在低于 Gradle 9.5.0 的环境下运行，会以 `Minimum supported Gradle version is 9.5.0` 失败。解决了 CargoKit 的阻塞，这个问题也就一并解决了——不要试图单独升级 AGP 或 wrapper。
+Android Gradle Plugin 是**同一个阻塞的另一面**，而不是另一个独立问题：AGP 9.x 拒绝在低于 Gradle 9.5.0 的环境下运行，会以 `Minimum supported Gradle version is 9.5.0` 失败。解决了 CargoKit 的阻塞，这个问题也就一并解决了——不要单独把两者升过各自的 9.x 边界。
+
+受限的是这条边界，而不是这两个具体版本。在 8.x 之内两者都可以自由移动，目前它们停在 Flutter 预告即将要求的下限（Gradle 8.14、AGP 8.11.1、Kotlin 2.2.20），并且构建时没有任何警告。
 
 ## 如何检查可用更新
 

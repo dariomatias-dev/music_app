@@ -22,11 +22,13 @@ The package's latest release (`0.6.0+eol`) is an intentional tombstone — an em
 
 That migration is **the same blocker as the `drift` pin above**, not a separate one: `sqlite3` 3.x requires `drift ^2.34`, and `drift` 2.31.0 (pinned for the reason above) only accepts `sqlite3 ^2.6`. Resolving the `drift`/Riverpod chain resolves this one too — don't try to bump `sqlite3_flutter_libs` or `sqlite3` in isolation.
 
-## `gradle-wrapper: 8.12`, `com.android.application: 8.9.1` (capped below latest)
+## `gradle-wrapper: 8.14`, `com.android.application: 8.11.1` (capped below latest)
 
-`metadata_god` bundles CargoKit, whose Gradle script calls `exec()`, a method Gradle 9 removed. Any bump to Gradle 9.x fails the APK build with `Could not find method exec() ... on project ':metadata_god'`, so the wrapper stays on 8.12 until `metadata_god` ships a CargoKit that builds under Gradle 9.
+`metadata_god` bundles CargoKit, whose Gradle script calls `exec()`, a method Gradle 9 removed. Any bump to Gradle 9.x fails the APK build with `Could not find method exec() ... on project ':metadata_god'`, so the wrapper stays on the 8.x line until `metadata_god` ships a CargoKit that builds under Gradle 9.
 
-The Android Gradle Plugin is **the same blocker seen from the other side**, not a separate one: AGP 9.x refuses to run on anything below Gradle 9.5.0, failing with `Minimum supported Gradle version is 9.5.0`. Clearing the CargoKit blocker clears this one too — don't try to bump AGP or the wrapper in isolation.
+The Android Gradle Plugin is **the same blocker seen from the other side**, not a separate one: AGP 9.x refuses to run on anything below Gradle 9.5.0, failing with `Minimum supported Gradle version is 9.5.0`. Clearing the CargoKit blocker clears this one too — don't try to bump either past its 9.x boundary in isolation.
+
+The cap is that boundary, not these exact versions. Within 8.x both are free to move, and they sit at the floor Flutter warns it will soon require (Gradle 8.14, AGP 8.11.1, Kotlin 2.2.20), which builds cleanly.
 
 ## Checking for updates
 
