@@ -17,6 +17,25 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # Runs on its own rather than gating the others: a newly disclosed
+  # advisory is not a reason to stop the tests from reporting.
+  vulnerabilities:
+    name: Vulnerabilities
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+
+      # Reads pubspec.lock against the OSV database, which carries pub
+      # advisories. The lockfile is what matters here: the caret ranges in
+      # pubspec.yaml say what could resolve, not what actually ships.
+      - name: Scan the lockfiles
+        uses: google/osv-scanner-action/osv-scanner-action@v2.2.4
+        with:
+          scan-args: |-
+            --lockfile=pubspec.lock
+            --lockfile=packages/app_ui/pubspec.lock
+
   app:
     name: music_app
     runs-on: ubuntu-latest

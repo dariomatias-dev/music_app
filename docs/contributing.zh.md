@@ -72,10 +72,11 @@ fvm dart run flutter_launcher_icons
 
 ## CI 检查什么
 
-每次 push 和 pull request 都会运行 [`.github/workflows/ci.yaml`](../.github/workflows/ci.yaml)，共四个 job：
+每次 push 和 pull request 都会运行 [`.github/workflows/ci.yaml`](../.github/workflows/ci.yaml)，共五个 job：
 
 | Job | 具体做什么 |
 | --- | --- |
+| `Vulnerabilities` | 使用 [OSV-Scanner](https://google.github.io/osv-scanner/) 将 `pubspec.lock` 和 `packages/app_ui/pubspec.lock` 与 OSV 数据库比对，该数据库收录了 pub 的安全公告。它独立于其他 job 运行，因为一条新披露的公告不该妨碍测试给出结果。 |
 | `music_app` | 安装依赖，重新生成代码和本地化文件，**如果这一步产生了 diff 就直接失败**，因为生成的文件必须已提交且是最新的。随后是格式检查、静态分析、测试，以及 97% 的覆盖率门槛，并以 `app` flag 将报告上传到 Codecov。 |
 | `Build APK` | 在 `music_app` 通过后运行，构建 release APK，作为 workflow 产物上传并保留 14 天。 |
 | `packages/app_ui` | 独立于应用本体，对设计系统包执行格式检查、静态分析、测试，以及 98% 的覆盖率门槛，并以 `app_ui` flag 上传到 Codecov。 |

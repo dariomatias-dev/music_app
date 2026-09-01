@@ -72,10 +72,11 @@ Execute o app em um dispositivo conectado ou emulador com `fvm flutter run`.
 
 ## O que o CI checa
 
-Todo push e pull request executa o [`.github/workflows/ci.yaml`](../.github/workflows/ci.yaml), em quatro jobs:
+Todo push e pull request executa o [`.github/workflows/ci.yaml`](../.github/workflows/ci.yaml), em cinco jobs:
 
 | Job | O que faz |
 | --- | --- |
+| `Vulnerabilities` | Analisa o `pubspec.lock` e o `packages/app_ui/pubspec.lock` contra a base OSV com o [OSV-Scanner](https://google.github.io/osv-scanner/), que cobre os avisos do pub. Executa de forma independente dos demais jobs, já que um aviso recém-divulgado não é motivo para impedir que os testes reportem. |
 | `music_app` | Instala dependências, regenera código e localizações, e então **falha se essa regeneração produzir um diff**, pois os arquivos gerados precisam estar commitados e atualizados. Depois: formatação, análise, testes e o limite de 97% de cobertura, e envia o relatório para o Codecov sob a flag `app`. |
 | `Build APK` | Executa depois do `music_app` passar, e builda uma APK de release, publicada como artefato do workflow e mantida por 14 dias. |
 | `packages/app_ui` | Formatação, análise, testes e o limite de 98% de cobertura do pacote do design system, de forma independente do app, enviado ao Codecov sob a flag `app_ui`. |
