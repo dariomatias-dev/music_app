@@ -113,8 +113,14 @@ change.
 - `very_good_analysis` lints, with the exceptions in `analysis_options.yaml`.
 - Comments explain **why**, never what. Most code needs none; a deliberate
   deviation needs one.
-- Conventional Commits for messages: `feat:`, `fix:`, `docs:`, `refactor:`,
-  `test:`, `ci:`, `chore:`, with a short imperative subject.
+- Conventional Commits for messages, enforced by `.githooks/commit-msg`
+  (enabled with `git config core.hooksPath .githooks`): `build`, `chore`,
+  `ci`, `docs`, `feat`, `fix`, `perf`, `refactor`, `revert`, `style` or
+  `test`, an optional lowercase scope, and a short imperative subject that
+  starts lowercase and carries no trailing period. The whole subject line
+  stays within 72 characters; a body is separated from it by a blank line
+  and wraps at 80, except for URLs, footers (`Co-Authored-By:`,
+  `BREAKING CHANGE:`, `Refs #123`) and fenced code blocks.
 - Prefer `const`, immutable data, and composition over inheritance.
 
 ## Reference

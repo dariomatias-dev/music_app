@@ -1,0 +1,92 @@
+#!/usr/bin/env bash
+# Enforces Conventional Commits (https://www.conventionalcommits.org).
+# Enabled via: git config core.hooksPath .githooks
+
+commit_msg_file="$1"
+
+# Comment lines are git's own scissors/help text, never part of the message.
+mapfile -t lines < <(grep -v '^#' "$commit_msg_file")
+subject_line="${lines[0]-}"
+
+# type(optional-scope)!: subject
+pattern='^(build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(\([a-z0-9_-]+\))?!?: .+$'
+# The subject is what GitHub and `git log --oneline` truncate, so it gets
+# the conventional 72. Body lines only need to stay readable in a terminal,
+# and this repo's prose naturally lands just past 72, so they get 80: enough
+# to catch a paragraph written as one long line, not enough to argue over a
+# sentence that ran three characters long.
+subject_limit=72
+body_limit=80
+
+if [[ "$subject_line" =~ ^Merge ]] || [[ "$subject_line" =~ ^Revert ]]; then
+  exit 0
+fi
+
+reject() {
+  echo "Commit message rejected: $1" >&2
+  echo "" >&2
+  shift
+  for detail in "$@"; do
+    echo "  $detail" >&2
+  done
+  echo "" >&2
+  echo "  Format:   <type>(<scope>): <subject>" >&2
+  echo "  Types:    build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test" >&2
+  echo "  Limits:   subject ${subject_limit}, body lines ${body_limit}" >&2
+  echo "  Example:  feat(playlist): add a description field" >&2
+  exit 1
+}
+
+if ! [[ "$subject_line" =~ $pattern ]]; then
+  reject "does not follow Conventional Commits." "Got: $subject_line"
+fi
+
+if (( ${#subject_line} > subject_limit )); then
+  reject "subject is ${#subject_line} characters, over ${subject_limit}." \
+    "Got: $subject_line"
+fi
+
+# commitlint's subject-full-stop: a subject is a title, not a sentence.
+if [[ "$subject_line" == *. ]]; then
+  reject "subject ends with a period." "Got: $subject_line"
+fi
+
+# commitlint's subject-case, which bans sentence-, start-, pascal- and
+# upper-case. All four start with a capital, so one check covers them.
+description="${subject_line#*: }"
+if [[ "$description" =~ ^[A-Z] ]]; then
+  reject "subject starts with a capital letter." \
+    "Got: $subject_line" \
+    "Try: ${subject_line%%: *}: $(tr '[:upper:]' '[:lower:]' <<<"${description:0:1}")${description:1}"
+fi
+
+if (( ${#lines[@]} > 1 )) && [[ -n "${lines[1]}" ]]; then
+  reject "the subject and the body need a blank line between them." \
+    "Got: ${lines[1]}"
+fi
+
+in_code_fence=false
+for index in "${!lines[@]}"; do
+  (( index < 2 )) && continue
+  line="${lines[index]}"
+
+  if [[ "$line" == '```'* ]]; then
+    "$in_code_fence" && in_code_fence=false || in_code_fence=true
+    continue
+  fi
+  "$in_code_fence" && continue
+
+  # A URL and a trailer carry no wrap point, so wrapping them would break
+  # what they mean rather than tidy it. `BREAKING CHANGE` is the one footer
+  # token the spec allows a space in, and `<token> #value` is its second
+  # separator form.
+  [[ "$line" == *"://"* ]] && continue
+  [[ "$line" =~ ^(BREAKING[\ -]CHANGE|[A-Z][A-Za-z-]*)(:\ |\ \#) ]] && continue
+
+  if (( ${#line} > body_limit )); then
+    reject "body line $((index + 1)) is ${#line} characters, over ${body_limit}." \
+      "Got: $line"
+  fi
+done
+
+exit 0

@@ -15,7 +15,10 @@ git clone https://github.com/dariomatias-dev/music_app.git
 cd music_app
 fvm install
 fvm flutter pub get
+git config core.hooksPath .githooks
 ```
+
+Essa última linha aponta o git para [`.githooks/`](../.githooks), onde um hook `commit-msg` rejeita um assunto que não segue a convenção descrita abaixo. O git não compartilha hooks pelo clone, então é um comando por cópia local.
 
 Código gerado (freezed, json_serializable, drift, riverpod_generator, go_router_builder) e as localizações não ficam versionados já compilados a cada mudança — regenere depois de puxar o repositório ou editar qualquer coisa que dependa deles:
 
@@ -51,7 +54,15 @@ Rode o app num dispositivo conectado ou emulador com `fvm flutter run`.
   ./scripts/check_coverage.sh coverage/lcov.info 97
   ```
 
-- **Mensagens de commit** seguem [Conventional Commits](https://www.conventionalcommits.org/): `feat:`, `fix:`, `docs:`, `refactor:`, `test:`, `ci:`, etc., com um assunto curto no imperativo. Olhe o `git log` pra ver exemplos já no repositório.
+- **Mensagens de commit** seguem [Conventional Commits](https://www.conventionalcommits.org/), verificadas pelo hook `commit-msg` ativado na instalação:
+
+  ```
+  <tipo>(<escopo opcional>): <assunto>
+  ```
+
+  O tipo é um de `build`, `chore`, `ci`, `docs`, `feat`, `fix`, `perf`, `refactor`, `revert`, `style` ou `test`; o escopo vai em minúsculas (`player`, `app_ui`, `l10n`); o assunto é curto e no imperativo, começa em minúscula e não leva ponto final. Use `!` antes dos dois pontos para uma mudança incompatível.
+
+  O hook também mantém a mensagem no formato que as ferramentas do git esperam: a linha de assunto inteira fica dentro de **72 caracteres**, que é onde o `git log --oneline` e o GitHub cortam; o corpo é separado do assunto por uma linha em branco, e suas linhas quebram em **80**. URLs, footers como `Co-Authored-By:`, `BREAKING CHANGE:` e `Refs #123`, e blocos de código cercados ficam isentos, porque quebrá-los destrói o que eles significam. Commits de merge e revert que o próprio git escreve ficam de fora. Olhe o `git log` pra ver exemplos já no repositório.
 
 ## O que o CI checa
 
