@@ -1,0 +1,15 @@
+flutter_launcher_icons:
+  image_path: "assets/icons/app_icon.png"
+
+  # Keeps the resource name the manifest already points at
+  # (android:icon="@mipmap/ic_launcher").
+  android: "ic_launcher"
+  min_sdk_android: 21
+  # The mark is drawn on white, so the adaptive background matches the
+  # artwork and the white swoosh inside the mark reads correctly.
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/icons/app_icon_foreground.png"
+
+  ios: true
+  # iOS rejects icons with an alpha channel.
+  remove_alpha_ios: true
