@@ -53,6 +53,8 @@ class _TrackRow extends _Row {
 
 class _ClearCacheRow extends _Row {}
 
+class _PurgeMissingRow extends _Row {}
+
 class _BackupActionsRow extends _Row {}
 
 class _DatabaseBackupActionsRow extends _Row {}
@@ -98,6 +100,7 @@ class _StorageScreenState extends ConsumerState<StorageScreen> {
     }
     rows
       ..add(_ClearCacheRow())
+      ..add(_PurgeMissingRow())
       ..add(_SectionLabelRow(l10n.backupSectionLabel))
       ..add(_BackupActionsRow())
       ..add(_SectionLabelRow(l10n.databaseBackupSectionLabel))
@@ -161,6 +164,17 @@ class _StorageScreenState extends ConsumerState<StorageScreen> {
                           : () => unawaited(_confirmClearArtworkCache()),
                     ),
                   ),
+                  _PurgeMissingRow() => Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.lg,
+                    ),
+                    child: AppTextButton(
+                      label: l10n.purgeMissingTracksLabel,
+                      onPressed: busy
+                          ? null
+                          : () => unawaited(_confirmPurgeMissingTracks()),
+                    ),
+                  ),
                   _BackupActionsRow() => StorageBackupActions(
                     enabled: !busy,
                     onExport: () => unawaited(_exportBackup()),
@@ -203,6 +217,21 @@ class _StorageScreenState extends ConsumerState<StorageScreen> {
 
     final outcome = await _viewModel.clearArtworkCache();
     _announce(outcome, onSuccess: (l10n) => l10n.artworkCacheClearedMessage);
+  }
+
+  Future<void> _confirmPurgeMissingTracks() async {
+    final l10n = AppLocalizations.of(context)!;
+    final confirmed = await AppDestructiveDialog.show(
+      context,
+      title: l10n.purgeMissingTracksConfirmTitle,
+      message: l10n.purgeMissingTracksConfirmMessage,
+      confirmLabel: l10n.purgeMissingTracksConfirmAction,
+      cancelLabel: l10n.cancelLabel,
+    );
+    if (!confirmed) return;
+
+    final outcome = await _viewModel.purgeMissingTracks();
+    _announce(outcome, onSuccess: (l10n) => l10n.missingTracksPurgedMessage);
   }
 
   Future<void> _confirmDeleteTrack(Track track) async {
@@ -302,6 +331,8 @@ class _StorageScreenState extends ConsumerState<StorageScreen> {
         StorageOutcome.rescanFailed => l10n.scanErrorMessage,
         StorageOutcome.artworkCacheClearFailed =>
           l10n.artworkCacheClearFailedMessage,
+        StorageOutcome.missingTracksPurgeFailed =>
+          l10n.purgeMissingTracksFailedMessage,
         StorageOutcome.fileDeleteFailed => l10n.fileDeleteFailedMessage,
         StorageOutcome.backupExportFailed => l10n.backupExportFailedMessage,
         StorageOutcome.backupImportFailed => l10n.backupImportFailedMessage,

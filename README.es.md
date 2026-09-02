@@ -59,7 +59,7 @@ El reproductor soporta reproducción sin pausas (gapless) y crossfade, una cola 
 - **Favoritos**: Marca cualquier pista como favorita para acceso rápido desde su propia pestaña.
 - **Búsqueda**: Filtra tu biblioteca por título o artista mientras escribes.
 - **Letras**: Ve la letra de una pista mientras suena, leída desde archivos locales o metadatos incrustados.
-- **Gestión de Almacenamiento**: Ve el espacio usado por carpeta, incluye o excluye carpetas del escaneo, elimina archivos y limpia la caché de carátulas.
+- **Gestión de Almacenamiento**: Ve el espacio usado por carpeta, incluye o excluye carpetas del escaneo, elimina archivos, limpia la caché de carátulas y olvida las pistas cuyos archivos ya no están.
 - **Estadísticas**: Historial de escucha y tiempo dedicado, desglosado por pista y artista.
 - **Tema Claro y Oscuro**: Temas en toda la app, siguiendo el sistema o elegido manualmente, con preferencia guardada.
 - **Múltiples Idiomas**: Interfaz completa en inglés, español, portugués y chino.

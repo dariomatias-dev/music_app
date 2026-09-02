@@ -33,6 +33,9 @@ enum StorageOutcome {
   /// The cached artwork could not be removed.
   artworkCacheClearFailed,
 
+  /// The tracks whose files are gone could not be forgotten.
+  missingTracksPurgeFailed,
+
   /// A track's file could not be deleted.
   fileDeleteFailed,
 
@@ -106,6 +109,24 @@ class StorageViewModel extends _$StorageViewModel {
       } on Object catch (error, stackTrace) {
         _report('Clearing the artwork cache', error, stackTrace);
         return StorageOutcome.artworkCacheClearFailed;
+      }
+    });
+  }
+
+  /// Forgets every track whose file is no longer on the device.
+  ///
+  /// Scanning marks those tracks missing rather than deleting them, which
+  /// keeps the playlists, favorites and history pointing at a file that
+  /// may come back. This is the point where the user decides they are not
+  /// coming back.
+  Future<StorageOutcome> purgeMissingTracks() {
+    return _whileBusy(() async {
+      try {
+        await ref.read(libraryRepositoryProvider).purgeMissingTracks();
+        return StorageOutcome.succeeded;
+      } on Object catch (error, stackTrace) {
+        _report('Purging missing tracks', error, stackTrace);
+        return StorageOutcome.missingTracksPurgeFailed;
       }
     });
   }

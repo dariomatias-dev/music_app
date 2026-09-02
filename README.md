@@ -59,7 +59,7 @@ The player supports gapless playback and crossfade, a persistent queue, a sleep 
 - **Favorites**: Favorite any track for quick access from its own tab.
 - **Search**: Filter your library by title or artist as you type.
 - **Lyrics**: View a track's lyrics alongside playback, read from local files or embedded metadata.
-- **Storage Management**: See space used per folder, include or exclude folders from scanning, delete files, and clear the cached artwork.
+- **Storage Management**: See space used per folder, include or exclude folders from scanning, delete files, clear the cached artwork, and forget the tracks whose files are gone.
 - **Statistics**: Listening history and time spent, broken down by track and artist.
 - **Light & Dark Theme**: App-wide theming, following the system or set manually, with a persisted preference.
 - **Multiple Languages**: Full app UI in English, Spanish, Portuguese, and Chinese.

@@ -59,7 +59,7 @@ O player suporta reprodução sem pausas (gapless) e crossfade, uma fila persist
 - **Favoritos**: Favorite qualquer faixa para acesso rápido na sua própria aba.
 - **Busca**: Filtre sua biblioteca por título ou artista enquanto digita.
 - **Letras**: Veja a letra de uma faixa junto com a reprodução, lida de arquivos locais ou de metadados embutidos.
-- **Gerenciamento de Armazenamento**: Veja o espaço usado por pasta, inclua ou exclua pastas do escaneamento, exclua arquivos e limpe o cache de capas.
+- **Gerenciamento de Armazenamento**: Veja o espaço usado por pasta, inclua ou exclua pastas do escaneamento, exclua arquivos, limpe o cache de capas e esqueça as faixas cujos arquivos não estão mais lá.
 - **Estatísticas**: Histórico de audição e tempo gasto, detalhado por faixa e artista.
 - **Tema Claro e Escuro**: Temas em todo o app, seguindo o sistema ou escolhido manualmente, com preferência salva.
 - **Múltiplos Idiomas**: Interface completa em inglês, espanhol, português e chinês.

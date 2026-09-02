@@ -608,6 +608,26 @@ class AppLocalizationsPt extends AppLocalizations {
       'Não foi possível limpar o cache de capas.';
 
   @override
+  String get purgeMissingTracksLabel => 'Remover faixas ausentes';
+
+  @override
+  String get purgeMissingTracksConfirmTitle => 'Remover as faixas ausentes?';
+
+  @override
+  String get purgeMissingTracksConfirmMessage =>
+      'Isso esquece as faixas cujos arquivos não estão mais no dispositivo, junto com suas entradas em playlists, favoritos e histórico de reprodução. As faixas que continuam no dispositivo não são afetadas.';
+
+  @override
+  String get purgeMissingTracksConfirmAction => 'Remover';
+
+  @override
+  String get missingTracksPurgedMessage => 'Faixas ausentes removidas';
+
+  @override
+  String get purgeMissingTracksFailedMessage =>
+      'Não foi possível remover as faixas ausentes.';
+
+  @override
   String get backupSectionLabel => 'Backup';
 
   @override
