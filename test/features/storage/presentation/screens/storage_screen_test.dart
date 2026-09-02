@@ -55,6 +55,7 @@ class _FakeLibraryRepository implements LibraryRepository {
   final List<Track> tracks;
   int reindexCalls = 0;
   bool artworkCacheCleared = false;
+  bool missingTracksPurged = false;
   bool reindexShouldThrow = false;
 
   /// Held open so a test can observe the screen mid-rescan.
@@ -78,7 +79,9 @@ class _FakeLibraryRepository implements LibraryRepository {
   }
 
   @override
-  Future<void> purgeMissingTracks() async {}
+  Future<void> purgeMissingTracks() async {
+    missingTracksPurged = true;
+  }
 
   @override
   Future<void> updateTrackTags(
@@ -495,6 +498,39 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(libraryRepository.artworkCacheCleared, isTrue);
+  });
+
+  testWidgets('purging missing tracks calls it after confirming', (
+    tester,
+  ) async {
+    final libraryRepository = _FakeLibraryRepository(
+      tracks: [_track('a', filePath: '/music/rock/a.mp3')],
+    );
+    await tester.pumpWidget(_app(libraryRepository: libraryRepository));
+    await tester.pump();
+
+    await tester.tap(find.text('Remove missing tracks'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Remove'));
+    await tester.pumpAndSettle();
+
+    expect(libraryRepository.missingTracksPurged, isTrue);
+    expect(find.text('Missing tracks removed'), findsOneWidget);
+  });
+
+  testWidgets('cancelling the purge confirmation does nothing', (tester) async {
+    final libraryRepository = _FakeLibraryRepository(
+      tracks: [_track('a', filePath: '/music/rock/a.mp3')],
+    );
+    await tester.pumpWidget(_app(libraryRepository: libraryRepository));
+    await tester.pump();
+
+    await tester.tap(find.text('Remove missing tracks'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Cancel'));
+    await tester.pumpAndSettle();
+
+    expect(libraryRepository.missingTracksPurged, isFalse);
   });
 
   testWidgets('deleting a file removes it after confirming', (tester) async {

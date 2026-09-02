@@ -607,6 +607,26 @@ class AppLocalizationsEs extends AppLocalizations {
       'No se pudo vaciar la caché de carátulas.';
 
   @override
+  String get purgeMissingTracksLabel => 'Eliminar pistas ausentes';
+
+  @override
+  String get purgeMissingTracksConfirmTitle => '¿Eliminar las pistas ausentes?';
+
+  @override
+  String get purgeMissingTracksConfirmMessage =>
+      'Esto olvida las pistas cuyos archivos ya no están en el dispositivo, junto con sus entradas de listas, favoritos e historial de reproducción. Las pistas que siguen en el dispositivo no se tocan.';
+
+  @override
+  String get purgeMissingTracksConfirmAction => 'Eliminar';
+
+  @override
+  String get missingTracksPurgedMessage => 'Pistas ausentes eliminadas';
+
+  @override
+  String get purgeMissingTracksFailedMessage =>
+      'No se pudieron eliminar las pistas ausentes.';
+
+  @override
   String get backupSectionLabel => 'Copia de seguridad';
 
   @override

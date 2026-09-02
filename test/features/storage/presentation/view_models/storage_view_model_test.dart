@@ -22,6 +22,8 @@ import '../../../../helpers/fake_excluded_folder_repository.dart';
 class _FakeLibraryRepository implements LibraryRepository {
   bool reindexShouldThrow = false;
   bool clearShouldThrow = false;
+  bool purgeShouldThrow = false;
+  bool missingTracksPurged = false;
   int reindexCalls = 0;
   bool artworkCacheCleared = false;
 
@@ -47,7 +49,10 @@ class _FakeLibraryRepository implements LibraryRepository {
   Stream<List<Album>> watchAlbums() => Stream.value(const []);
 
   @override
-  Future<void> purgeMissingTracks() async {}
+  Future<void> purgeMissingTracks() async {
+    if (purgeShouldThrow) throw Exception('purge boom');
+    missingTracksPurged = true;
+  }
 
   @override
   Future<void> updateTrackTags(
@@ -178,6 +183,28 @@ void main() {
         errorReporter.reports.single.context,
         'Clearing the artwork cache',
       );
+    });
+  });
+
+  group('purgeMissingTracks', () {
+    test('forgets the tracks whose files are gone', () async {
+      final outcome = await container()
+          .read(storageViewModelProvider.notifier)
+          .purgeMissingTracks();
+
+      expect(outcome, StorageOutcome.succeeded);
+      expect(library.missingTracksPurged, isTrue);
+    });
+
+    test('reports a failure instead of letting it escape', () async {
+      library.purgeShouldThrow = true;
+
+      final outcome = await container()
+          .read(storageViewModelProvider.notifier)
+          .purgeMissingTracks();
+
+      expect(outcome, StorageOutcome.missingTracksPurgeFailed);
+      expect(errorReporter.reports.single.context, 'Purging missing tracks');
     });
   });
 

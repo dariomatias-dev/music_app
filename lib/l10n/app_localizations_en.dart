@@ -605,6 +605,26 @@ class AppLocalizationsEn extends AppLocalizations {
       'Couldn\'t clear the artwork cache.';
 
   @override
+  String get purgeMissingTracksLabel => 'Remove missing tracks';
+
+  @override
+  String get purgeMissingTracksConfirmTitle => 'Remove missing tracks?';
+
+  @override
+  String get purgeMissingTracksConfirmMessage =>
+      'This forgets the tracks whose files are no longer on the device, along with their playlist entries, favorites and listening history. Tracks still on the device are untouched.';
+
+  @override
+  String get purgeMissingTracksConfirmAction => 'Remove';
+
+  @override
+  String get missingTracksPurgedMessage => 'Missing tracks removed';
+
+  @override
+  String get purgeMissingTracksFailedMessage =>
+      'Couldn\'t remove the missing tracks.';
+
+  @override
   String get backupSectionLabel => 'Backup';
 
   @override

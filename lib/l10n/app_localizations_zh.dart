@@ -574,6 +574,25 @@ class AppLocalizationsZh extends AppLocalizations {
   String get artworkCacheClearFailedMessage => '无法清除封面缓存。';
 
   @override
+  String get purgeMissingTracksLabel => '移除丢失的曲目';
+
+  @override
+  String get purgeMissingTracksConfirmTitle => '移除丢失的曲目？';
+
+  @override
+  String get purgeMissingTracksConfirmMessage =>
+      '这会清除文件已不在设备上的曲目，连同它们的播放列表条目、收藏和播放历史一并移除。仍在设备上的曲目不受影响。';
+
+  @override
+  String get purgeMissingTracksConfirmAction => '移除';
+
+  @override
+  String get missingTracksPurgedMessage => '已移除丢失的曲目';
+
+  @override
+  String get purgeMissingTracksFailedMessage => '无法移除丢失的曲目。';
+
+  @override
   String get backupSectionLabel => '备份';
 
   @override

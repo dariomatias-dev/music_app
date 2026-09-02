@@ -1170,6 +1170,42 @@ abstract class AppLocalizations {
   /// **'Couldn\'t clear the artwork cache.'**
   String get artworkCacheClearFailedMessage;
 
+  /// No description provided for @purgeMissingTracksLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove missing tracks'**
+  String get purgeMissingTracksLabel;
+
+  /// No description provided for @purgeMissingTracksConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove missing tracks?'**
+  String get purgeMissingTracksConfirmTitle;
+
+  /// No description provided for @purgeMissingTracksConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This forgets the tracks whose files are no longer on the device, along with their playlist entries, favorites and listening history. Tracks still on the device are untouched.'**
+  String get purgeMissingTracksConfirmMessage;
+
+  /// No description provided for @purgeMissingTracksConfirmAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get purgeMissingTracksConfirmAction;
+
+  /// No description provided for @missingTracksPurgedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Missing tracks removed'**
+  String get missingTracksPurgedMessage;
+
+  /// No description provided for @purgeMissingTracksFailedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t remove the missing tracks.'**
+  String get purgeMissingTracksFailedMessage;
+
   /// No description provided for @backupSectionLabel.
   ///
   /// In en, this message translates to:
