@@ -24,8 +24,6 @@ final deleteTrackFileProvider = Provider<DeleteTrackFile>(
   (ref) => DeleteTrackFile(
     dataSource: ref.watch(libraryLocalDataSourceProvider),
     mediaScanner: ref.watch(mediaScannerProvider),
-    playlistRepository: ref.watch(playlistRepositoryProvider),
-    favoriteRepository: ref.watch(favoriteRepositoryProvider),
   ),
 );
 

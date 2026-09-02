@@ -8,9 +8,6 @@ import 'package:music_app/src/features/library/domain/entities/artist.dart';
 import 'package:music_app/src/features/library/domain/entities/track.dart';
 import 'package:music_app/src/features/storage/domain/delete_track_file.dart';
 
-import '../../../helpers/fake_favorite_repository.dart';
-import '../../../helpers/fake_playlist_repository.dart';
-
 class _FakeMediaScanner implements MediaScanner {
   final List<String> notifiedPaths = [];
 
@@ -96,21 +93,15 @@ void main() {
   late Directory tempDir;
   late _FakeMediaScanner mediaScanner;
   late _FakeLibraryLocalDataSource dataSource;
-  late FakePlaylistRepository playlistRepository;
-  late FakeFavoriteRepository favoriteRepository;
   late DeleteTrackFile deleteTrackFile;
 
   setUp(() async {
     tempDir = await Directory.systemTemp.createTemp('delete_track_file_test');
     mediaScanner = _FakeMediaScanner();
     dataSource = _FakeLibraryLocalDataSource();
-    playlistRepository = FakePlaylistRepository();
-    favoriteRepository = FakeFavoriteRepository();
     deleteTrackFile = DeleteTrackFile(
       dataSource: dataSource,
       mediaScanner: mediaScanner,
-      playlistRepository: playlistRepository,
-      favoriteRepository: favoriteRepository,
     );
   });
 
@@ -125,28 +116,6 @@ void main() {
     expect(file.existsSync(), isFalse);
     expect(mediaScanner.notifiedPaths, [file.path]);
     expect(dataSource.deletedTrackIds, ['track-1']);
-  });
-
-  test('removes the track from every playlist and favorites', () async {
-    final file = File('${tempDir.path}/track.mp3')..writeAsStringSync('data');
-    final track = _track('track-1', filePath: file.path);
-    final playlistId = await playlistRepository.createPlaylist('Road Trip');
-    await playlistRepository.setPlaylistTracks(playlistId, [
-      'track-1',
-      'track-2',
-    ]);
-    await favoriteRepository.setFavorite('track-1', isFavorite: true);
-
-    await deleteTrackFile(track);
-
-    expect(
-      await playlistRepository.watchPlaylistTrackIds(playlistId).first,
-      ['track-2'],
-    );
-    expect(
-      await favoriteRepository.watchIsFavorite('track-1').first,
-      isFalse,
-    );
   });
 
   test('is a no-op on disk when the file is already gone', () async {
