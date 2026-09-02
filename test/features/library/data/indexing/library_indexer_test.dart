@@ -78,6 +78,12 @@ class _FakeLibraryLocalDataSource implements LibraryLocalDataSource {
       artists[sourceId];
 
   @override
+  Future<Map<String, Artist>> findArtistsBySourceId() async => Map.of(artists);
+
+  @override
+  Future<Map<String, Album>> findAlbumsBySourceId() async => Map.of(albums);
+
+  @override
   Future<void> upsertArtist(Artist artist) async {
     writes.add('artist:${artist.id}');
     if (_transactionDepth == 0) {

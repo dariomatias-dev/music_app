@@ -64,6 +64,51 @@ void main() {
     );
   });
 
+  test('findArtistsBySourceId keys every indexed artist', () async {
+    const artist = Artist(
+      id: 'artist-1',
+      sourceId: 'charcoal',
+      name: 'Charcoal',
+      albumCount: 1,
+      trackCount: 3,
+    );
+    await dataSource.upsertArtist(artist);
+
+    expect(await dataSource.findArtistsBySourceId(), {'charcoal': artist});
+  });
+
+  test('findArtistsBySourceId is empty without artists', () async {
+    expect(await dataSource.findArtistsBySourceId(), isEmpty);
+  });
+
+  test('findAlbumsBySourceId keys every indexed album', () async {
+    const artist = Artist(
+      id: 'artist-1',
+      sourceId: 'charcoal',
+      name: 'Charcoal',
+      albumCount: 1,
+      trackCount: 1,
+    );
+    const album = Album(
+      id: 'album-1',
+      sourceId: 'charcoal::embers',
+      title: 'Embers',
+      artistId: 'artist-1',
+      trackCount: 1,
+      totalDuration: Duration(minutes: 3),
+    );
+    await dataSource.upsertArtist(artist);
+    await dataSource.upsertAlbum(album);
+
+    expect(await dataSource.findAlbumsBySourceId(), {
+      'charcoal::embers': album,
+    });
+  });
+
+  test('findAlbumsBySourceId is empty without albums', () async {
+    expect(await dataSource.findAlbumsBySourceId(), isEmpty);
+  });
+
   test('upsertTrack persists the track', () async {
     const artist = Artist(
       id: 'artist-1',

@@ -18,6 +18,16 @@ class AlbumDao extends DatabaseAccessor<AppDatabase> with _$AlbumDaoMixin {
     albumTable,
   )..where((t) => t.sourceId.equals(sourceId))).getSingleOrNull();
 
+  /// Every album, keyed by `sourceId`.
+  ///
+  /// Read once per scan for the same reason the artist DAO reads its own
+  /// table whole: resolving albums file by file is a query per album in
+  /// the library.
+  Future<Map<String, AlbumRow>> getAllBySourceId() async {
+    final rows = await select(albumTable).get();
+    return {for (final row in rows) row.sourceId: row};
+  }
+
   /// Inserts or updates [entry].
   Future<void> upsertOne(Insertable<AlbumRow> entry) =>
       into(albumTable).insertOnConflictUpdate(entry);

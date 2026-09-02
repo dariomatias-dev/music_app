@@ -19,6 +19,12 @@ abstract interface class LibraryLocalDataSource {
   /// Reads the id of every indexed track, keyed by its `sourceId`.
   Future<Map<String, String>> findTrackIdsBySourceId();
 
+  /// Every indexed artist, keyed by `sourceId`.
+  Future<Map<String, Artist>> findArtistsBySourceId();
+
+  /// Every indexed album, keyed by `sourceId`.
+  Future<Map<String, Album>> findAlbumsBySourceId();
+
   /// Reads the track with [id], if any.
   Future<Track?> findTrackById(String id);
 
