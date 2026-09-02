@@ -47,14 +47,14 @@ class AppNavigationBar extends StatelessWidget {
 
   /// [height] plus the device's bottom safe-area inset.
   static double totalHeight(BuildContext context) =>
-      height + MediaQuery.of(context).padding.bottom;
+      height + MediaQuery.paddingOf(context).bottom;
 
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
 
     return Container(
-      padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
+      padding: EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom),
       decoration: BoxDecoration(
         color: colors.background,
         boxShadow: [

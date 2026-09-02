@@ -51,7 +51,7 @@ class _PlaybackCoverState extends State<PlaybackCover>
   // reduced motion both mask the visual effect in build() already, so
   // there's no point spending a frame callback on it every 4.2s cycle.
   void _syncBreath() {
-    final reduceMotion = MediaQuery.of(context).disableAnimations;
+    final reduceMotion = MediaQuery.disableAnimationsOf(context);
     if (widget.playing && !reduceMotion) {
       if (!_breath.isAnimating) unawaited(_breath.repeat(reverse: true));
     } else if (_breath.isAnimating) {
@@ -69,7 +69,7 @@ class _PlaybackCoverState extends State<PlaybackCover>
   Widget build(BuildContext context) {
     final colors = context.colors;
     final screenSize = MediaQuery.sizeOf(context);
-    final reduceMotion = MediaQuery.of(context).disableAnimations;
+    final reduceMotion = MediaQuery.disableAnimationsOf(context);
     final artSize = math
         .min(screenSize.width - 96, screenSize.height * 0.38)
         .clamp(140.0, 320.0);

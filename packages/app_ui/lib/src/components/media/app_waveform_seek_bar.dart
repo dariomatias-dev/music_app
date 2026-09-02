@@ -83,7 +83,7 @@ class _AppWaveformSeekBarState extends State<AppWaveformSeekBar>
   }
 
   void _syncPulse() {
-    final reduceMotion = MediaQuery.of(context).disableAnimations;
+    final reduceMotion = MediaQuery.disableAnimationsOf(context);
     if (widget.isPlaying && !reduceMotion && !_pulse.isAnimating) {
       unawaited(_pulse.repeat());
     } else if ((!widget.isPlaying || reduceMotion) && _pulse.isAnimating) {
@@ -106,7 +106,7 @@ class _AppWaveformSeekBarState extends State<AppWaveformSeekBar>
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    final reduceMotion = MediaQuery.of(context).disableAnimations;
+    final reduceMotion = MediaQuery.disableAnimationsOf(context);
 
     return LayoutBuilder(
       builder: (context, constraints) {

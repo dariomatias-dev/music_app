@@ -44,7 +44,7 @@ class _EditNameSheetContentState extends State<_EditNameSheetContent> {
 
     return Padding(
       padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom,
+        bottom: MediaQuery.viewInsetsOf(context).bottom,
       ),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(

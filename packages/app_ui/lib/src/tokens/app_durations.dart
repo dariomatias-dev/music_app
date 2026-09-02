@@ -17,6 +17,6 @@ abstract final class AppDurations {
   /// Returns [duration], or [Duration.zero] when the system requests
   /// reduced motion.
   static Duration resolve(BuildContext context, Duration duration) {
-    return MediaQuery.of(context).disableAnimations ? Duration.zero : duration;
+    return MediaQuery.disableAnimationsOf(context) ? Duration.zero : duration;
   }
 }

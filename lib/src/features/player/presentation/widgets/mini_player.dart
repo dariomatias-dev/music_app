@@ -107,7 +107,7 @@ class MiniPlayerDock extends StatelessWidget {
   static double insetOf(BuildContext context) =>
       MiniPlayer.height +
       AppSpacing.lgXl +
-      MediaQuery.of(context).padding.bottom;
+      MediaQuery.paddingOf(context).bottom;
 
   @override
   Widget build(BuildContext context) {
@@ -129,7 +129,7 @@ class MiniPlayerDock extends StatelessWidget {
                 const MiniPlayer(enableHeroAnimation: false),
                 SizedBox(
                   height:
-                      AppSpacing.smMd + MediaQuery.of(context).padding.bottom,
+                      AppSpacing.smMd + MediaQuery.paddingOf(context).bottom,
                 ),
               ],
             ),
