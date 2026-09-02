@@ -1,6 +1,6 @@
 import 'package:app_ui/src/components/buttons/app_primary_button.dart';
-import 'package:app_ui/src/theme/app_theme_extensions.dart';
-import 'package:app_ui/src/typography/app_typography.dart';
+import 'package:app_ui/src/components/states/app_state_layout.dart';
+import 'package:app_ui/src/tokens/app_spacing.dart';
 import 'package:flutter/material.dart';
 
 /// Shown when the main available action is repeating an operation (e.g.
@@ -33,46 +33,14 @@ class AppRetryState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
-
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 48),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 60,
-              height: 60,
-              decoration: BoxDecoration(
-                color: colors.surface,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(icon, size: 26, color: colors.textTertiary),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: AppTypography.rowTitle.copyWith(
-                color: colors.textPrimary,
-                fontSize: 15,
-              ),
-            ),
-            const SizedBox(height: 5),
-            Text(
-              message,
-              textAlign: TextAlign.center,
-              style: AppTypography.rowSubtitle.copyWith(
-                color: colors.textSecondary,
-                height: 1.45,
-              ),
-            ),
-            const SizedBox(height: 20),
-            AppPrimaryButton(label: retryLabel, onPressed: onRetry),
-          ],
-        ),
-      ),
+    return AppStateLayout(
+      icon: icon,
+      title: title,
+      message: message,
+      children: [
+        const SizedBox(height: AppSpacing.lg),
+        AppPrimaryButton(label: retryLabel, onPressed: onRetry),
+      ],
     );
   }
 }
