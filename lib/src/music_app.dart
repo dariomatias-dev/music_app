@@ -39,6 +39,9 @@ class MusicApp extends ConsumerWidget {
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       builder: (context, child) {
+        // The whole data, not one aspect: this rebuilds a MediaQueryData
+        // to clamp the text scale, and has to carry every other value
+        // through untouched.
         final mediaQuery = MediaQuery.of(context);
         return AppThemeSwitcher(
           data: theme,

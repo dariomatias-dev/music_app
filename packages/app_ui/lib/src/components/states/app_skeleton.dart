@@ -43,7 +43,7 @@ class _AppSkeletonState extends State<AppSkeleton>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final reducedMotion = MediaQuery.of(context).disableAnimations;
+    final reducedMotion = MediaQuery.disableAnimationsOf(context);
     if (reducedMotion == _reducedMotion) return;
     _reducedMotion = reducedMotion;
     if (reducedMotion) {

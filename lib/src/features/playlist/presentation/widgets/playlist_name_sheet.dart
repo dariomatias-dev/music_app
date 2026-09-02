@@ -84,7 +84,7 @@ class _PlaylistNameSheetContentState extends State<_PlaylistNameSheetContent> {
 
     return Padding(
       padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom,
+        bottom: MediaQuery.viewInsetsOf(context).bottom,
       ),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(22, 10, 22, 22),
