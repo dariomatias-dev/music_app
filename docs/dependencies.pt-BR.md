@@ -4,7 +4,7 @@
 <a href="dependencies.md">English</a> · <a href="dependencies.es.md">Español</a> · <strong>Português (BR)</strong> · <a href="dependencies.zh.md">中文</a>
 </p>
 
-A maioria das dependências no `pubspec.yaml` usa uma faixa flexível (`^x.y.z`) e é atualizada livremente. Algumas (ali, e nos arquivos de build do Android) ficam presas em uma versão exata, ou limitadas abaixo da última disponível, por motivos que não são óbvios só olhando a constraint. Este documento é esse contexto, para ninguém precisar redescobrir do zero (ou pior, "corrigir" o pin sem entender por que ele existe).
+A maioria das dependências no `pubspec.yaml` usa uma faixa flexível (`^x.y.z`) e é atualizada livremente. Algumas (ali, e nos arquivos de build do Android) ficam presas em uma versão exata, limitadas abaixo da última disponível, ou forçadas via `dependency_overrides`, por motivos que não são óbvios só olhando a constraint. Este documento é esse contexto, para ninguém precisar redescobrir do zero (ou pior, "corrigir" o pin sem entender por que ele existe).
 
 ## `intl: 0.20.2` (pin exato)
 
@@ -21,6 +21,12 @@ Forçado pelo `flutter_localizations`, que vem do próprio SDK do Flutter, não 
 A última versão do pacote (`0.6.0+eol`) é um tombstone intencional, um pacote vazio cuja descrição diz *"Not used anymore, update to version 3.x of package:sqlite3 instead"* (não é mais usado, atualize para versão 3.x do package:sqlite3). Os binários nativos dele deixam de ser necessários quando o `sqlite3` (os bindings Dart) migra para sua linha 3.x, que passa a cuidar disso sozinho.
 
 Essa migração é **o mesmo bloqueio do pin do `drift` acima**, não um separado: `sqlite3` 3.x exige `drift ^2.34`, e o `drift` 2.31.0 (travado pelo motivo acima) só aceita `sqlite3 ^2.6`. Resolver a cadeia `drift`/Riverpod resolve esse também, então não tente atualizar `sqlite3_flutter_libs` ou `sqlite3` isoladamente.
+
+## `flutter_rust_bridge: 2.11.1` (dependency override)
+
+O `metadata_god` 1.1.0 é publicado com código gerado contra o `flutter_rust_bridge` 2.11.1, e a dependência dele nesse pacote não tem restrição. Sem intervenção, o pub resolve uma versão mais nova e os bindings gerados falham na própria checagem de versão em tempo de execução, na inicialização do app. O override segura a versão para a qual os bindings foram gerados.
+
+É uma entrada de `dependency_overrides`, não uma constraint normal, o que significa que vale para toda a resolução e vence em silêncio sobre o que qualquer pacote pedir. Ela sai quando o `metadata_god` publicar bindings gerados contra um `flutter_rust_bridge` atual.
 
 ## `gradle-wrapper: 8.14`, `com.android.application: 8.11.1` (limitados abaixo da última versão)
 
