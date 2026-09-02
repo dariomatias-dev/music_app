@@ -48,6 +48,18 @@ class LibraryLocalDataSourceImpl implements LibraryLocalDataSource {
       _database.trackDao.getIdsBySourceId();
 
   @override
+  Future<Map<String, Artist>> findArtistsBySourceId() async {
+    final rows = await _database.artistDao.getAllBySourceId();
+    return rows.map((sourceId, row) => MapEntry(sourceId, _artistFromRow(row)));
+  }
+
+  @override
+  Future<Map<String, Album>> findAlbumsBySourceId() async {
+    final rows = await _database.albumDao.getAllBySourceId();
+    return rows.map((sourceId, row) => MapEntry(sourceId, row.toEntity()));
+  }
+
+  @override
   Future<Track?> findTrackById(String id) async {
     final row = await _database.trackDao.getById(id);
     return row?.toEntity();

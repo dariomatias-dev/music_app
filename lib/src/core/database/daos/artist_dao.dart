@@ -18,6 +18,16 @@ class ArtistDao extends DatabaseAccessor<AppDatabase> with _$ArtistDaoMixin {
     artistTable,
   )..where((t) => t.sourceId.equals(sourceId))).getSingleOrNull();
 
+  /// Every artist, keyed by `sourceId`.
+  ///
+  /// A scan resolves one artist per distinct name it meets, and asking the
+  /// database each time is a query per artist in the library. This reads
+  /// the table once instead.
+  Future<Map<String, ArtistRow>> getAllBySourceId() async {
+    final rows = await select(artistTable).get();
+    return {for (final row in rows) row.sourceId: row};
+  }
+
   /// Inserts or updates [entry].
   Future<void> upsertOne(Insertable<ArtistRow> entry) =>
       into(artistTable).insertOnConflictUpdate(entry);

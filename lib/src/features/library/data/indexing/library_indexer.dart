@@ -82,6 +82,11 @@ class LibraryIndexer {
     // already indexed, and asking per file is one query per file on a table
     // as large as the library.
     final trackIdsBySourceId = await _dataSource.findTrackIdsBySourceId();
+    // Same reasoning, for the two smaller tables: resolving an artist or an
+    // album used to be a query apiece, so a library of a few hundred of
+    // each paid a few hundred round trips per scan.
+    final indexedArtists = await _dataSource.findArtistsBySourceId();
+    final indexedAlbums = await _dataSource.findAlbumsBySourceId();
 
     var processed = 0;
     for (var start = 0; start < files.length; start += _commitBatchSize) {
@@ -93,15 +98,17 @@ class LibraryIndexer {
         for (final file in batch) {
           final metadata = await _metadataReader.read(file.filePath);
 
-          var artist = await _resolveArtist(
+          var artist = _resolveArtist(
             name: metadata.artist ?? file.artist ?? _unknownArtist,
             cache: artistsBySourceId,
+            indexed: indexedArtists,
           );
 
-          final albumResolution = await _resolveAlbum(
+          final albumResolution = _resolveAlbum(
             title: metadata.album ?? file.album ?? _unknownAlbum,
             artist: artist,
             cache: albumsBySourceId,
+            indexed: indexedAlbums,
           );
           var album = albumResolution.album;
 
@@ -186,16 +193,20 @@ class LibraryIndexer {
     });
   }
 
-  Future<Artist> _resolveArtist({
+  /// [cache] is what this run has already seen; [indexed] is what the
+  /// database held when the run started. The two are kept apart because
+  /// only the first answers "first time seen in this run".
+  Artist _resolveArtist({
     required String name,
     required Map<String, Artist> cache,
-  }) async {
+    required Map<String, Artist> indexed,
+  }) {
     final sourceId = _normalize(name);
 
     final cached = cache[sourceId];
     if (cached != null) return cached;
 
-    final existing = await _dataSource.findArtistBySourceId(sourceId);
+    final existing = indexed[sourceId];
     if (existing != null) {
       // This run recomputes aggregates from scratch as files are seen.
       final reset = existing.copyWith(albumCount: 0, trackCount: 0);
@@ -214,17 +225,18 @@ class LibraryIndexer {
     return artist;
   }
 
-  Future<_AlbumResolution> _resolveAlbum({
+  _AlbumResolution _resolveAlbum({
     required String title,
     required Artist artist,
     required Map<String, Album> cache,
-  }) async {
+    required Map<String, Album> indexed,
+  }) {
     final sourceId = '${artist.sourceId}::${_normalize(title)}';
 
     final cached = cache[sourceId];
     if (cached != null) return _AlbumResolution(cached, isNew: false);
 
-    final existing = await _dataSource.findAlbumBySourceId(sourceId);
+    final existing = indexed[sourceId];
     if (existing != null) {
       // This run recomputes aggregates from scratch as files are seen.
       // isNew here means "first time seen in this run", so the owning
