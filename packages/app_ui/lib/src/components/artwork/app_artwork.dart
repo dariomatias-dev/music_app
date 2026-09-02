@@ -40,6 +40,14 @@ class AppArtwork extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final image = imageBytes;
+    // Decoded at the size it is drawn at whenever that is known. Embedded
+    // cover art routinely arrives at a thousand pixels a side and is shown
+    // in a list row at forty, and decoding it whole costs the memory of
+    // the pixels that get thrown away. Left full when `size` is null,
+    // since the artwork then fills whatever space it is given.
+    final decodeSize = size == null
+        ? null
+        : (size! * MediaQuery.devicePixelRatioOf(context)).round();
     final content = image != null
         ? Image.memory(
             image,
@@ -47,6 +55,8 @@ class AppArtwork extends StatelessWidget {
             gaplessPlayback: true,
             width: double.infinity,
             height: double.infinity,
+            cacheWidth: decodeSize,
+            cacheHeight: decodeSize,
           )
         : CustomPaint(
             painter: _ArtworkPainter(seed: _fnv1aHash(seed)),
