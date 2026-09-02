@@ -4,7 +4,7 @@
 <strong>English</strong> · <a href="dependencies.es.md">Español</a> · <a href="dependencies.pt-BR.md">Português (BR)</a> · <a href="dependencies.zh.md">中文</a>
 </p>
 
-Most dependencies in `pubspec.yaml` float on a caret constraint (`^x.y.z`) and get bumped freely. A few (there, and in the Android build files) are pinned to an exact version, or capped below their latest, for reasons that aren't obvious from the constraint alone. This document is that context, so nobody re-discovers it from scratch (or worse, "fixes" the pin without realizing why it's there).
+Most dependencies in `pubspec.yaml` float on a caret constraint (`^x.y.z`) and get bumped freely. A few (there, and in the Android build files) are pinned to an exact version, capped below their latest, or forced through `dependency_overrides`, for reasons that aren't obvious from the constraint alone. This document is that context, so nobody re-discovers it from scratch (or worse, "fixes" the pin without realizing why it's there).
 
 ## `intl: 0.20.2` (exact pin)
 
@@ -21,6 +21,12 @@ Forced by `flutter_localizations`, which comes from the Flutter SDK itself rathe
 The package's latest release (`0.6.0+eol`) is an intentional tombstone, an empty package whose description reads *"Not used anymore, update to version 3.x of package:sqlite3 instead."* Its native binaries aren't needed once `sqlite3` (the Dart bindings) moves to its 3.x line, which bundles that responsibility itself.
 
 That migration is **the same blocker as the `drift` pin above**, not a separate one: `sqlite3` 3.x requires `drift ^2.34`, and `drift` 2.31.0 (pinned for the reason above) only accepts `sqlite3 ^2.6`. Resolving the `drift`/Riverpod chain resolves this one too, so don't try to bump `sqlite3_flutter_libs` or `sqlite3` in isolation.
+
+## `flutter_rust_bridge: 2.11.1` (dependency override)
+
+`metadata_god` 1.1.0 ships code generated against `flutter_rust_bridge` 2.11.1, and its own dependency on that package is unconstrained. Left alone, pub resolves a newer release, and the generated bindings fail their runtime version check as the app starts. The override holds the version the bindings were built for.
+
+This is a `dependency_overrides` entry rather than a normal constraint, which means it applies to the whole resolution and silently wins over what any package asks for. It goes away when `metadata_god` publishes bindings generated against a current `flutter_rust_bridge`.
 
 ## `gradle-wrapper: 8.14`, `com.android.application: 8.11.1` (capped below latest)
 

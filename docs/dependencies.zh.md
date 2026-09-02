@@ -4,7 +4,7 @@
 <a href="dependencies.md">English</a> · <a href="dependencies.es.md">Español</a> · <a href="dependencies.pt-BR.md">Português (BR)</a> · <strong>中文</strong>
 </p>
 
-`pubspec.yaml` 中的大多数依赖都使用宽松的版本约束（`^x.y.z`），可以自由升级。但有几个（包括这里以及 Android 构建文件中的依赖）被固定在某个具体版本，或者被限制在低于最新版本，原因单看约束本身并不明显。本文档记录这些原因，避免有人重新从头排查（或更糟，在不明白原因的情况下"修复"这个 pin）。
+`pubspec.yaml` 中的大多数依赖都使用宽松的版本约束（`^x.y.z`），可以自由升级。但有几个（包括这里以及 Android 构建文件中的依赖）被固定在某个具体版本、被限制在低于最新版本，或通过 `dependency_overrides` 强制指定，原因单看约束本身并不明显。本文档记录这些原因，避免有人重新从头排查（或更糟，在不明白原因的情况下"修复"这个 pin）。
 
 ## `intl: 0.20.2`（精确固定）
 
@@ -21,6 +21,12 @@
 该包的最新版本（`0.6.0+eol`）是一次有意为之的"墓碑"发布，即一个空包，其描述写着 *"Not used anymore, update to version 3.x of package:sqlite3 instead"*（不再使用，请改用 package:sqlite3 的 3.x 版本）。一旦 `sqlite3`（Dart 绑定层）迁移到其 3.x 系列（该系列自行承担原生库的职责），就不再需要这个包的原生二进制文件。
 
 这次迁移**和上面 `drift` 的固定是同一个阻塞点**，不是另一个独立问题：`sqlite3` 3.x 需要 `drift ^2.34`，而被固定的 `drift` 2.31.0 只接受 `sqlite3 ^2.6`。解决了 `drift`/Riverpod 那条依赖链，这个问题也就一并解决了，因此不要试图单独升级 `sqlite3_flutter_libs` 或 `sqlite3`。
+
+## `flutter_rust_bridge: 2.11.1`（dependency override）
+
+`metadata_god` 1.1.0 发布时所带的代码是针对 `flutter_rust_bridge` 2.11.1 生成的，而它自身对该包的依赖没有任何约束。若不干预，pub 会解析到更新的版本，生成的绑定会在应用启动时未通过自身的运行时版本校验。这个 override 把版本固定在绑定所对应的那一版。
+
+它是一条 `dependency_overrides` 条目，而不是普通约束，这意味着它作用于整个依赖解析过程，并会无声地覆盖任何包提出的要求。等到 `metadata_god` 发布针对当前 `flutter_rust_bridge` 生成的绑定时，这条 override 即可移除。
 
 ## `gradle-wrapper: 8.14`、`com.android.application: 8.11.1`（限制在低于最新版本）
 
