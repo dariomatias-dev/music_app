@@ -62,7 +62,7 @@ final class StorageViewModelProvider
   }
 }
 
-String _$storageViewModelHash() => r'676cac4ccd72f1c71b47114f277331e3d3ca146e';
+String _$storageViewModelHash() => r'b558f5802811f65621c87e4fd546a9be061208bc';
 
 /// Runs the storage screen's operations, exposing whether one is in
 /// flight so the screen can disable itself while it runs.
