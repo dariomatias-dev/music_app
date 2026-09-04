@@ -53,15 +53,41 @@ final artistsByIdProvider = Provider<Map<String, Artist>>((ref) {
   return {for (final artist in artists) artist.id: artist};
 });
 
-/// Every indexed album, ordered alphabetically by title.
-final sortedAlbumsProvider = Provider<List<Album>>((ref) {
+/// Every album with at least one track still on the device.
+///
+/// An album whose files are all gone keeps its row, so playlists, history
+/// and favorites that point at its tracks still resolve, but it has
+/// nothing left to show and browsing into it would land on an empty
+/// screen.
+final visibleAlbumsProvider = Provider<List<Album>>((ref) {
   final albums = ref.watch(albumsStreamProvider).value ?? const [];
+  final tracksByAlbum = ref.watch(tracksByAlbumProvider);
+  return [
+    for (final album in albums)
+      if (tracksByAlbum.containsKey(album.id)) album,
+  ];
+});
+
+/// Every artist with at least one track still on the device, for the same
+/// reason as [visibleAlbumsProvider].
+final visibleArtistsProvider = Provider<List<Artist>>((ref) {
+  final artists = ref.watch(artistsStreamProvider).value ?? const [];
+  final tracksByArtist = ref.watch(tracksByArtistProvider);
+  return [
+    for (final artist in artists)
+      if (tracksByArtist.containsKey(artist.id)) artist,
+  ];
+});
+
+/// Every album still on the device, ordered alphabetically by title.
+final sortedAlbumsProvider = Provider<List<Album>>((ref) {
+  final albums = ref.watch(visibleAlbumsProvider);
   return _sortedByKey(albums, (album) => album.title.toLowerCase());
 });
 
-/// Every indexed artist, ordered alphabetically by name.
+/// Every artist still on the device, ordered alphabetically by name.
 final sortedArtistsProvider = Provider<List<Artist>>((ref) {
-  final artists = ref.watch(artistsStreamProvider).value ?? const [];
+  final artists = ref.watch(visibleArtistsProvider);
   return _sortedByKey(artists, (artist) => artist.name.toLowerCase());
 });
 
@@ -128,6 +154,17 @@ Album? albumById(Ref ref, String albumId) =>
 @riverpod
 List<Track> albumTracks(Ref ref, String albumId) =>
     ref.watch(tracksByAlbumProvider)[albumId] ?? const [];
+
+/// Total playing time of [albumTracks].
+///
+/// Derived rather than read from the album's stored total, which is only
+/// recomputed by a scan and so still counts files deleted since.
+@riverpod
+Duration albumDuration(Ref ref, String albumId) {
+  return ref
+      .watch(albumTracksProvider(albumId))
+      .fold(Duration.zero, (total, track) => total + track.duration);
+}
 
 /// Ids of every favorited track, most recently favorited first.
 final favoriteTrackIdsProvider = StreamProvider<List<String>>(

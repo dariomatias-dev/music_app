@@ -15,6 +15,7 @@ class ArtistsTab extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final artists = ref.watch(sortedArtistsProvider);
+    final tracksByArtist = ref.watch(tracksByArtistProvider);
 
     if (artists.isEmpty) {
       return AppEmptyState(
@@ -27,15 +28,22 @@ class ArtistsTab extends ConsumerWidget {
     return ListView.builder(
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.smMd),
       itemCount: artists.length,
-      itemBuilder: (context, index) => _ArtistRow(artist: artists[index]),
+      itemBuilder: (context, index) => _ArtistRow(
+        artist: artists[index],
+        trackCount: tracksByArtist[artists[index].id]?.length ?? 0,
+      ),
     );
   }
 }
 
 class _ArtistRow extends StatelessWidget {
-  const _ArtistRow({required this.artist});
+  const _ArtistRow({required this.artist, required this.trackCount});
 
   final Artist artist;
+
+  /// How many of the artist's tracks are still on the device, which their
+  /// stored total only catches up with on the next scan.
+  final int trackCount;
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +77,7 @@ class _ArtistRow extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    l10n.trackCountLabel(artist.trackCount),
+                    l10n.trackCountLabel(trackCount),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: AppTypography.rowSubtitle.copyWith(

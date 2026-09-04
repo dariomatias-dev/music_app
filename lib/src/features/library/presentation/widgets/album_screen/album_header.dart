@@ -13,6 +13,8 @@ class AlbumHeader extends StatelessWidget {
   const AlbumHeader({
     required this.album,
     required this.artistName,
+    required this.trackCount,
+    required this.totalDuration,
     super.key,
   });
 
@@ -21,6 +23,16 @@ class AlbumHeader extends StatelessWidget {
 
   /// The album's artist name, if resolved.
   final String? artistName;
+
+  /// How many of the album's tracks are still on the device.
+  ///
+  /// Passed in rather than read off [album]: its stored total is only
+  /// recomputed by a scan, so it would keep counting files deleted since
+  /// and disagree with the list right below this header.
+  final int trackCount;
+
+  /// Total playing time of those tracks.
+  final Duration totalDuration;
 
   @override
   Widget build(BuildContext context) {
@@ -60,8 +72,8 @@ class AlbumHeader extends StatelessWidget {
           ],
           const SizedBox(height: 4),
           Text(
-            '${l10n.trackCountLabel(album.trackCount)} · '
-            '${formatDuration(album.totalDuration)}',
+            '${l10n.trackCountLabel(trackCount)} · '
+            '${formatDuration(totalDuration)}',
             style: AppTypography.caption.copyWith(color: colors.textTertiary),
           ),
         ],

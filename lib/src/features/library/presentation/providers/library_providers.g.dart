@@ -448,6 +448,107 @@ final class AlbumTracksFamily extends $Family
   String toString() => r'albumTracksProvider';
 }
 
+/// Total playing time of [albumTracks].
+///
+/// Derived rather than read from the album's stored total, which is only
+/// recomputed by a scan and so still counts files deleted since.
+
+@ProviderFor(albumDuration)
+const albumDurationProvider = AlbumDurationFamily._();
+
+/// Total playing time of [albumTracks].
+///
+/// Derived rather than read from the album's stored total, which is only
+/// recomputed by a scan and so still counts files deleted since.
+
+final class AlbumDurationProvider
+    extends $FunctionalProvider<Duration, Duration, Duration>
+    with $Provider<Duration> {
+  /// Total playing time of [albumTracks].
+  ///
+  /// Derived rather than read from the album's stored total, which is only
+  /// recomputed by a scan and so still counts files deleted since.
+  const AlbumDurationProvider._({
+    required AlbumDurationFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'albumDurationProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$albumDurationHash();
+
+  @override
+  String toString() {
+    return r'albumDurationProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $ProviderElement<Duration> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  Duration create(Ref ref) {
+    final argument = this.argument as String;
+    return albumDuration(ref, argument);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(Duration value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<Duration>(value),
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is AlbumDurationProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$albumDurationHash() => r'fc694dcc8f8ed61a81b426d583858f877f2a8150';
+
+/// Total playing time of [albumTracks].
+///
+/// Derived rather than read from the album's stored total, which is only
+/// recomputed by a scan and so still counts files deleted since.
+
+final class AlbumDurationFamily extends $Family
+    with $FunctionalFamilyOverride<Duration, String> {
+  const AlbumDurationFamily._()
+    : super(
+        retry: null,
+        name: r'albumDurationProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  /// Total playing time of [albumTracks].
+  ///
+  /// Derived rather than read from the album's stored total, which is only
+  /// recomputed by a scan and so still counts files deleted since.
+
+  AlbumDurationProvider call(String albumId) =>
+      AlbumDurationProvider._(argument: albumId, from: this);
+
+  @override
+  String toString() => r'albumDurationProvider';
+}
+
 /// Every indexed, non-missing track, ordered by the Tracks tab's current
 /// sort. Recomputed only when the tracks, artists or sort order change.
 

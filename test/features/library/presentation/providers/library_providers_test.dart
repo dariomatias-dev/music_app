@@ -138,8 +138,24 @@ void main() {
     ),
   ];
 
+  final albumsTracks = [
+    _track(
+      id: 'z-1',
+      title: 'On Zeta',
+      artistId: 'artist-a',
+      albumId: 'album-z',
+    ),
+    _track(
+      id: 'a-1',
+      title: 'On Alpha',
+      artistId: 'artist-b',
+      albumId: 'album-a',
+    ),
+  ];
+
   Future<ProviderContainer> buildContainer({
     List<Album> albums = const [],
+    List<Track>? libraryTracks,
   }) async {
     // Without an external listener, a bare ProviderContainer disposes an
     // autoDispose StreamProvider before its stream gets a chance to emit.
@@ -147,7 +163,11 @@ void main() {
         ProviderContainer(
             overrides: [
               libraryRepositoryProvider.overrideWithValue(
-                _FakeLibraryRepository(tracks, artists, albums),
+                _FakeLibraryRepository(
+                  libraryTracks ?? tracks,
+                  artists,
+                  albums,
+                ),
               ),
             ],
           )
@@ -219,13 +239,98 @@ void main() {
   });
 
   test('sortedAlbumsProvider orders albums alphabetically', () async {
-    final container = await buildContainer(albums: albums);
+    final container = await buildContainer(
+      albums: albums,
+      libraryTracks: albumsTracks,
+    );
     addTearDown(container.dispose);
 
     expect(container.read(sortedAlbumsProvider).map((a) => a.title), [
       'Alpha',
       'Zeta',
     ]);
+  });
+
+  test('sortedAlbumsProvider leaves out an album with nothing left', () async {
+    final container = await buildContainer(
+      albums: albums,
+      libraryTracks: [
+        _track(
+          id: 'z-1',
+          title: 'On Zeta',
+          artistId: 'artist-a',
+          albumId: 'album-z',
+        ),
+        _track(
+          id: 'a-1',
+          title: 'Gone',
+          artistId: 'artist-b',
+          albumId: 'album-a',
+          isMissing: true,
+        ),
+      ],
+    );
+    addTearDown(container.dispose);
+
+    expect(container.read(sortedAlbumsProvider).map((a) => a.title), ['Zeta']);
+    expect(container.read(albumByIdProvider('album-a'))?.title, 'Alpha');
+  });
+
+  test(
+    'sortedArtistsProvider leaves out an artist with nothing left',
+    () async {
+      final container = await buildContainer(
+        libraryTracks: [
+          _track(id: 'b-1', title: 'Zebra', artistId: 'artist-b'),
+          _track(
+            id: 'a-1',
+            title: 'Gone',
+            artistId: 'artist-a',
+            isMissing: true,
+          ),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      expect(container.read(sortedArtistsProvider).map((a) => a.name), [
+        'Brambles',
+      ]);
+    },
+  );
+
+  test('albumDurationProvider adds up the tracks still there', () async {
+    final container = await buildContainer(
+      albums: albums,
+      libraryTracks: [
+        _track(
+          id: 'z-1',
+          title: 'On Zeta',
+          artistId: 'artist-a',
+          albumId: 'album-z',
+          duration: const Duration(minutes: 4),
+        ),
+        _track(
+          id: 'z-2',
+          title: 'Also Zeta',
+          artistId: 'artist-a',
+          albumId: 'album-z',
+        ),
+        _track(
+          id: 'z-gone',
+          title: 'Gone',
+          artistId: 'artist-a',
+          albumId: 'album-z',
+          duration: const Duration(minutes: 10),
+          isMissing: true,
+        ),
+      ],
+    );
+    addTearDown(container.dispose);
+
+    expect(
+      container.read(albumDurationProvider('album-z')),
+      const Duration(minutes: 7),
+    );
   });
 
   test('albumByIdProvider finds an indexed album', () async {
@@ -319,7 +424,10 @@ void main() {
   });
 
   test("artistAlbumsProvider only returns that artist's albums", () async {
-    final container = await buildContainer(albums: albums);
+    final container = await buildContainer(
+      albums: albums,
+      libraryTracks: albumsTracks,
+    );
     addTearDown(container.dispose);
 
     expect(

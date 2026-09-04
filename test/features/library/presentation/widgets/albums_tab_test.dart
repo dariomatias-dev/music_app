@@ -14,12 +14,18 @@ import 'package:music_app/src/features/library/domain/repositories/library_repos
 import 'package:music_app/src/features/library/presentation/widgets/albums_tab.dart';
 
 class _FakeLibraryRepository implements LibraryRepository {
-  const _FakeLibraryRepository(this.albums);
+  const _FakeLibraryRepository(this.albums, {this.tracks});
 
   final List<Album> albums;
 
+  /// The library's tracks; one per album by default, since an album with
+  /// nothing left on the device is not listed at all.
+  final List<Track>? tracks;
+
   @override
-  Stream<List<Track>> watchTracks() => const Stream.empty();
+  Stream<List<Track>> watchTracks() => Stream.value(
+    tracks ?? [for (final album in albums) _track(albumId: album.id)],
+  );
 
   @override
   Stream<List<Artist>> watchArtists() => Stream.value(const [
@@ -69,11 +75,29 @@ Album _album({
   );
 }
 
-Widget _app(List<Album> albums, {GoRouter? router}) {
+Track _track({required String albumId, bool isMissing = false}) {
+  return Track(
+    id: 'track-$albumId',
+    sourceId: 'track-$albumId',
+    filePath: '/music/$albumId.mp3',
+    title: 'Track $albumId',
+    artistId: 'artist-1',
+    albumId: albumId,
+    duration: const Duration(minutes: 4),
+    format: 'mp3',
+    fileSize: 1000,
+    hasEmbeddedArtwork: false,
+    dateAdded: DateTime(2026),
+    dateModified: DateTime(2026),
+    isMissing: isMissing,
+  );
+}
+
+Widget _app(List<Album> albums, {GoRouter? router, List<Track>? tracks}) {
   return ProviderScope(
     overrides: [
       libraryRepositoryProvider.overrideWithValue(
-        _FakeLibraryRepository(albums),
+        _FakeLibraryRepository(albums, tracks: tracks),
       ),
     ],
     child: router == null
@@ -101,9 +125,30 @@ void main() {
       ]),
     );
     await tester.pump();
+    await tester.pump();
 
     expect(find.text('Chill Vibes'), findsOneWidget);
     expect(find.text('Night Drive'), findsOneWidget);
+  });
+
+  testWidgets('leaves out an album whose files are all gone', (tester) async {
+    await tester.pumpWidget(
+      _app(
+        [
+          _album(id: 'album-1', title: 'Chill Vibes'),
+          _album(id: 'album-2', title: 'Night Drive'),
+        ],
+        tracks: [
+          _track(albumId: 'album-1'),
+          _track(albumId: 'album-2', isMissing: true),
+        ],
+      ),
+    );
+    await tester.pump();
+    await tester.pump();
+
+    expect(find.text('Chill Vibes'), findsOneWidget);
+    expect(find.text('Night Drive'), findsNothing);
   });
 
   testWidgets('shows the empty state when there are no albums', (
@@ -137,6 +182,7 @@ void main() {
       _app([_album(id: 'album-1', title: 'Chill Vibes')], router: router),
     );
     await tester.pump();
+    await tester.pump();
 
     await tester.tap(find.text('Chill Vibes'));
     await tester.pumpAndSettle();
@@ -155,6 +201,7 @@ void main() {
       ]),
     );
     await tester.pump();
+    await tester.pump();
 
     expect(find.byType(CachedSquareImage), findsOneWidget);
     expect(find.byType(AppArtwork), findsNothing);
@@ -165,6 +212,7 @@ void main() {
     await tester.pumpWidget(
       _app([_album(id: 'album-1', title: 'Chill Vibes')]),
     );
+    await tester.pump();
     await tester.pump();
 
     expect(find.byType(AppArtwork), findsOneWidget);

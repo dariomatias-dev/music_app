@@ -58,7 +58,11 @@ class ArtistScreen extends ConsumerWidget {
         itemCount: fixedRowCount + tracks.length,
         itemBuilder: (context, index) {
           if (index == 0) {
-            return ArtistHeader(artist: artist, albumCount: albums.length);
+            return ArtistHeader(
+              artist: artist,
+              trackCount: tracks.length,
+              albumCount: albums.length,
+            );
           }
           if (index == 1) {
             return Padding(
