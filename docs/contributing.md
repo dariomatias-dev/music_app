@@ -113,7 +113,7 @@ act pull_request -j app --dryrun      # print the steps without running them
 
 `act` cannot run the emulator job's own action, so two of its constraints only surface on CI. The emulator action splits its `script` on newlines and runs **each line as its own `sh -c`**, so a loop or any other multi-line shell construct arrives without its closing keyword; write one self-contained command per line. Second, `--no-dds`, the obvious thing to try when a run fails to start the Dart Development Service, breaks the golden-file comparator `flutter_tools` registers for integration tests, so the suite then fails at load having passed every test.
 
-`-j` takes the job **id** (`app`, `build_apk`, `integration`, `app_ui`, `release`), not the display name in the table above; `act -l` prints both. The first real run pulls a multi-gigabyte runner image, and `act` approximates GitHub's runners rather than reproducing them exactly, so a green `act` run is a good signal, not a guarantee.
+`-j` takes the job **id** (`vulnerabilities`, `app`, `build_apk`, `integration`, `app_ui`, `release`), not the display name in the table above; `act -l` prints both. The first real run pulls a multi-gigabyte runner image, and `act` approximates GitHub's runners rather than reproducing them exactly, so a green `act` run is a good signal, not a guarantee.
 
 ## Working with an AI agent
 
