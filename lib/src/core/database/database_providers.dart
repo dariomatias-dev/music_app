@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:music_app/src/core/database/app_database.dart';
+import 'package:music_app/src/core/database/app_database_connection.dart';
 import 'package:music_app/src/core/database/daos/album_dao.dart';
 import 'package:music_app/src/core/database/daos/artist_dao.dart';
 import 'package:music_app/src/core/database/daos/excluded_folder_dao.dart';
@@ -13,7 +14,7 @@ import 'package:music_app/src/core/database/daos/track_dao.dart';
 
 /// Provides the app's [AppDatabase] instance.
 final appDatabaseProvider = Provider<AppDatabase>((ref) {
-  final database = AppDatabase();
+  final database = AppDatabase(openAppDatabaseConnection());
   ref.onDispose(database.close);
   return database;
 });

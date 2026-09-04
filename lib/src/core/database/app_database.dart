@@ -1,7 +1,4 @@
-import 'dart:io';
-
 import 'package:drift/drift.dart';
-import 'package:drift/native.dart';
 import 'package:music_app/src/core/database/daos/album_dao.dart';
 import 'package:music_app/src/core/database/daos/artist_dao.dart';
 import 'package:music_app/src/core/database/daos/excluded_folder_dao.dart';
@@ -22,8 +19,6 @@ import 'package:music_app/src/core/database/tables/playlist_table.dart';
 import 'package:music_app/src/core/database/tables/playlist_track_table.dart';
 import 'package:music_app/src/core/database/tables/search_history_table.dart';
 import 'package:music_app/src/core/database/tables/track_table.dart';
-import 'package:path/path.dart' as p;
-import 'package:path_provider/path_provider.dart';
 
 part 'app_database.g.dart';
 
@@ -32,6 +27,11 @@ const appDatabaseFileName = 'music_app.sqlite';
 
 /// The local database storing the library index, playlists, favorites and
 /// playback history.
+///
+/// Knows nothing about where its file lives: the connection is handed in,
+/// which is what lets a test open it in memory and the seed script open it
+/// from a plain Dart process, with no Flutter engine to resolve a
+/// documents directory.
 @DriftDatabase(
   tables: [
     ArtistTable,
@@ -59,10 +59,8 @@ const appDatabaseFileName = 'music_app.sqlite';
   ],
 )
 class AppDatabase extends _$AppDatabase {
-  /// Creates the database using [connection], or opens the default file
-  /// location when omitted.
-  AppDatabase([QueryExecutor? connection])
-    : super(connection ?? _openConnection());
+  /// Creates the database over the given query executor.
+  AppDatabase(super.e);
 
   @override
   int get schemaVersion => 4;
@@ -133,12 +131,4 @@ class AppDatabase extends _$AppDatabase {
       await customStatement('PRAGMA foreign_keys = ON');
     },
   );
-
-  static QueryExecutor _openConnection() {
-    return LazyDatabase(() async {
-      final directory = await getApplicationDocumentsDirectory();
-      final file = p.join(directory.path, appDatabaseFileName);
-      return NativeDatabase.createInBackground(File(file));
-    });
-  }
 }
