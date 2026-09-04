@@ -349,7 +349,10 @@ void main() {
           totalDuration: Duration(minutes: 4),
         ),
       ],
-      tracks: [_track(id: 'track-1', title: 'Night Drive')],
+      tracks: [
+        _track(id: 'track-1', title: 'Night Drive'),
+        _track(id: 'track-2', title: 'Late Shift', albumId: 'album-2'),
+      ],
       artistId: 'artist-1',
     );
 

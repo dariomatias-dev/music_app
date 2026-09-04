@@ -41,8 +41,8 @@ class AboutScreen extends ConsumerWidget {
     final colors = context.colors;
     final packageInfo = ref.watch(appInfoProvider).value;
     final trackCount = ref.watch(tracksStreamProvider).value?.length ?? 0;
-    final albumCount = ref.watch(albumsStreamProvider).value?.length ?? 0;
-    final artistCount = ref.watch(artistsStreamProvider).value?.length ?? 0;
+    final albumCount = ref.watch(visibleAlbumsProvider).length;
+    final artistCount = ref.watch(visibleArtistsProvider).length;
 
     Widget fact(String label, String value) => Padding(
       padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),

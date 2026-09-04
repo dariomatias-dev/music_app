@@ -181,6 +181,7 @@ Future<ProviderContainer> _pumpResults(
     ),
   );
   await tester.pump();
+  await tester.pump();
 
   final container = ProviderScope.containerOf(
     tester.element(find.byType(SearchResultsList)),
@@ -221,6 +222,7 @@ void main() {
       term: 'ch',
       tracks: [
         _track(id: 'track-1', title: 'Chasing Cars', artistId: 'artist-2'),
+        _track(id: 'track-2', title: 'Backing Track'),
       ],
       albums: const [_album],
       artists: const [_artist],
@@ -302,7 +304,12 @@ void main() {
   });
 
   testWidgets('tapping an album opens its detail route', (tester) async {
-    await _pumpResults(tester, term: 'chill', albums: const [_album]);
+    await _pumpResults(
+      tester,
+      term: 'chill',
+      tracks: [_track(id: 'track-1', title: 'Night Drive')],
+      albums: const [_album],
+    );
 
     await tester.tap(find.text('Chill Vibes'));
     await tester.pumpAndSettle();
@@ -311,7 +318,12 @@ void main() {
   });
 
   testWidgets('tapping an artist opens its detail route', (tester) async {
-    await _pumpResults(tester, term: 'charcoal', artists: const [_artist]);
+    await _pumpResults(
+      tester,
+      term: 'charcoal',
+      tracks: [_track(id: 'track-1', title: 'Night Drive')],
+      artists: const [_artist],
+    );
 
     await tester.tap(find.text('Charcoal'));
     await tester.pumpAndSettle();

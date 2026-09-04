@@ -50,7 +50,12 @@ class AlbumScreen extends ConsumerWidget {
         itemCount: tracks.length + 2,
         itemBuilder: (context, index) {
           if (index == 0) {
-            return AlbumHeader(album: album, artistName: artistName);
+            return AlbumHeader(
+              album: album,
+              artistName: artistName,
+              trackCount: tracks.length,
+              totalDuration: ref.watch(albumDurationProvider(albumId)),
+            );
           }
           if (index == 1) {
             return Padding(

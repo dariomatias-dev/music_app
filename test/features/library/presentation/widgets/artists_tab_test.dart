@@ -13,12 +13,24 @@ import 'package:music_app/src/features/library/domain/repositories/library_repos
 import 'package:music_app/src/features/library/presentation/widgets/artists_tab.dart';
 
 class _FakeLibraryRepository implements LibraryRepository {
-  const _FakeLibraryRepository(this.artists);
+  const _FakeLibraryRepository(this.artists, {this.tracks});
 
   final List<Artist> artists;
 
+  /// The library's tracks; two per artist by default, since an artist with
+  /// nothing left on the device is not listed at all.
+  final List<Track>? tracks;
+
   @override
-  Stream<List<Track>> watchTracks() => const Stream.empty();
+  Stream<List<Track>> watchTracks() => Stream.value(
+    tracks ??
+        [
+          for (final artist in artists) ...[
+            _track(id: '${artist.id}-1', artistId: artist.id),
+            _track(id: '${artist.id}-2', artistId: artist.id),
+          ],
+        ],
+  );
 
   @override
   Stream<List<Artist>> watchArtists() => Stream.value(artists);
@@ -54,11 +66,33 @@ Artist _artist({required String id, required String name}) {
   );
 }
 
-Widget _app(List<Artist> artists, {GoRouter? router}) {
+Track _track({
+  required String id,
+  required String artistId,
+  bool isMissing = false,
+}) {
+  return Track(
+    id: id,
+    sourceId: id,
+    filePath: '/music/$id.mp3',
+    title: 'Track $id',
+    artistId: artistId,
+    albumId: 'album-1',
+    duration: const Duration(minutes: 4),
+    format: 'mp3',
+    fileSize: 1000,
+    hasEmbeddedArtwork: false,
+    dateAdded: DateTime(2026),
+    dateModified: DateTime(2026),
+    isMissing: isMissing,
+  );
+}
+
+Widget _app(List<Artist> artists, {GoRouter? router, List<Track>? tracks}) {
   return ProviderScope(
     overrides: [
       libraryRepositoryProvider.overrideWithValue(
-        _FakeLibraryRepository(artists),
+        _FakeLibraryRepository(artists, tracks: tracks),
       ),
     ],
     child: router == null
@@ -86,9 +120,46 @@ void main() {
       ]),
     );
     await tester.pump();
+    await tester.pump();
 
     expect(find.text('Charcoal'), findsOneWidget);
     expect(find.text('Brambles'), findsOneWidget);
+  });
+
+  testWidgets('counts only the tracks still on the device', (tester) async {
+    await tester.pumpWidget(
+      _app(
+        [_artist(id: 'artist-1', name: 'Charcoal')],
+        tracks: [
+          _track(id: 'track-1', artistId: 'artist-1'),
+          _track(id: 'track-2', artistId: 'artist-1', isMissing: true),
+        ],
+      ),
+    );
+    await tester.pump();
+    await tester.pump();
+
+    expect(find.text('1 track'), findsOneWidget);
+  });
+
+  testWidgets('leaves out an artist whose files are all gone', (tester) async {
+    await tester.pumpWidget(
+      _app(
+        [
+          _artist(id: 'artist-1', name: 'Charcoal'),
+          _artist(id: 'artist-2', name: 'Brambles'),
+        ],
+        tracks: [
+          _track(id: 'track-1', artistId: 'artist-1'),
+          _track(id: 'track-2', artistId: 'artist-2', isMissing: true),
+        ],
+      ),
+    );
+    await tester.pump();
+    await tester.pump();
+
+    expect(find.text('Charcoal'), findsOneWidget);
+    expect(find.text('Brambles'), findsNothing);
   });
 
   testWidgets('shows the empty state when there are no artists', (
@@ -121,6 +192,7 @@ void main() {
     await tester.pumpWidget(
       _app([_artist(id: 'artist-1', name: 'Charcoal')], router: router),
     );
+    await tester.pump();
     await tester.pump();
 
     await tester.tap(find.text('Charcoal'));

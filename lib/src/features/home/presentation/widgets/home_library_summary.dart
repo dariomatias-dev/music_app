@@ -17,8 +17,8 @@ class HomeLibrarySummary extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final tracks = ref.watch(tracksStreamProvider).value ?? const [];
-    final albums = ref.watch(albumsStreamProvider).value ?? const [];
-    final artists = ref.watch(artistsStreamProvider).value ?? const [];
+    final albums = ref.watch(visibleAlbumsProvider);
+    final artists = ref.watch(visibleArtistsProvider);
 
     final visibleTracks = tracks.where((track) => !track.isMissing);
     final totalDuration = visibleTracks.fold(

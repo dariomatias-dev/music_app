@@ -23,7 +23,9 @@ class _FakeLibraryRepository implements LibraryRepository {
   final List<Album> albums;
 
   @override
-  Stream<List<Track>> watchTracks() => const Stream.empty();
+  Stream<List<Track>> watchTracks() => Stream.value([
+    for (final album in albums) _track(albumId: album.id),
+  ]);
 
   @override
   Stream<List<Artist>> watchArtists() => const Stream.empty();
@@ -47,6 +49,23 @@ class _FakeLibraryRepository implements LibraryRepository {
 
   @override
   Future<void> clearArtworkCache() async {}
+}
+
+Track _track({required String albumId}) {
+  return Track(
+    id: 'track-$albumId',
+    sourceId: 'track-$albumId',
+    filePath: '/music/$albumId.mp3',
+    title: 'Track $albumId',
+    artistId: 'artist-1',
+    albumId: albumId,
+    duration: const Duration(minutes: 4),
+    format: 'mp3',
+    fileSize: 1000,
+    hasEmbeddedArtwork: false,
+    dateAdded: DateTime(2026),
+    dateModified: DateTime(2026),
+  );
 }
 
 Album _album({required String id, required String title}) {
