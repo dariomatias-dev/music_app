@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:music_app/l10n/app_localizations.dart';
 import 'package:music_app/src/core/audio/audio_providers.dart';
 import 'package:music_app/src/core/audio/music_audio_handler.dart';
+import 'package:music_app/src/core/storage/storage_providers.dart';
 import 'package:music_app/src/features/library/data/indexing/library_indexer.dart';
 import 'package:music_app/src/features/library/data/providers/library_data_providers.dart';
 import 'package:music_app/src/features/library/domain/entities/album.dart';
@@ -15,6 +16,7 @@ import 'package:music_app/src/features/queue/presentation/screens/queue_screen.d
 import 'package:music_app/src/features/queue/presentation/view_models/queue_view_model.dart';
 
 import '../../../../helpers/fake_audio_player_service.dart';
+import '../../../../helpers/fake_key_value_storage.dart';
 
 class _FakeLibraryRepository implements LibraryRepository {
   const _FakeLibraryRepository();
@@ -120,6 +122,7 @@ void main() {
           libraryRepositoryProvider.overrideWithValue(
             const _FakeLibraryRepository(),
           ),
+          keyValueStorageProvider.overrideWithValue(FakeKeyValueStorage()),
         ],
         child: _app(const QueueScreen()),
       ),
@@ -151,6 +154,7 @@ void main() {
           libraryRepositoryProvider.overrideWithValue(
             const _FakeLibraryRepository(),
           ),
+          keyValueStorageProvider.overrideWithValue(FakeKeyValueStorage()),
         ],
         child: _app(const QueueScreen()),
       ),
@@ -185,6 +189,7 @@ void main() {
           libraryRepositoryProvider.overrideWithValue(
             const _FakeLibraryRepository(),
           ),
+          keyValueStorageProvider.overrideWithValue(FakeKeyValueStorage()),
         ],
         child: _app(const QueueScreen()),
       ),
@@ -228,6 +233,7 @@ void main() {
           libraryRepositoryProvider.overrideWithValue(
             const _FakeLibraryRepository(),
           ),
+          keyValueStorageProvider.overrideWithValue(FakeKeyValueStorage()),
         ],
         child: _app(const QueueScreen()),
       ),
@@ -264,6 +270,7 @@ void main() {
           libraryRepositoryProvider.overrideWithValue(
             const _FakeLibraryRepository(),
           ),
+          keyValueStorageProvider.overrideWithValue(FakeKeyValueStorage()),
         ],
         child: _app(const QueueScreen()),
       ),

@@ -155,6 +155,7 @@ void main() {
           libraryRepositoryProvider.overrideWithValue(
             const _FakeLibraryRepository(),
           ),
+          keyValueStorageProvider.overrideWithValue(FakeKeyValueStorage()),
         ],
         child: _scaffold(const MiniPlayer()),
       ),
@@ -192,6 +193,7 @@ void main() {
             libraryRepositoryProvider.overrideWithValue(
               const _FakeLibraryRepository(),
             ),
+            keyValueStorageProvider.overrideWithValue(FakeKeyValueStorage()),
           ],
           child: _scaffold(const MiniPlayer()),
         ),
@@ -233,6 +235,7 @@ void main() {
           libraryRepositoryProvider.overrideWithValue(
             const _FakeLibraryRepository(),
           ),
+          keyValueStorageProvider.overrideWithValue(FakeKeyValueStorage()),
         ],
         child: _routedScaffold(const MiniPlayer()),
       ),
@@ -279,6 +282,7 @@ void main() {
           libraryRepositoryProvider.overrideWithValue(
             const _FakeLibraryRepository(),
           ),
+          keyValueStorageProvider.overrideWithValue(FakeKeyValueStorage()),
         ],
         child: _scaffold(const MiniPlayer()),
       ),
@@ -344,6 +348,7 @@ void main() {
             libraryRepositoryProvider.overrideWithValue(
               const _FakeLibraryRepository(),
             ),
+            keyValueStorageProvider.overrideWithValue(FakeKeyValueStorage()),
             favoriteRepositoryProvider.overrideWithValue(
               FakeFavoriteRepository(),
             ),
@@ -425,6 +430,7 @@ void main() {
             libraryRepositoryProvider.overrideWithValue(
               const _FakeLibraryRepository(),
             ),
+            keyValueStorageProvider.overrideWithValue(FakeKeyValueStorage()),
           ],
           child: _scaffold(
             const Column(

@@ -1,9 +1,11 @@
 import 'dart:async';
 
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:music_app/src/core/audio/audio_player_service.dart';
 import 'package:music_app/src/core/audio/audio_providers.dart';
 import 'package:music_app/src/core/audio/queue_media_item.dart';
+import 'package:music_app/src/core/services/app_lifecycle/app_lifecycle_providers.dart';
 import 'package:music_app/src/features/library/data/providers/library_data_providers.dart';
 import 'package:music_app/src/features/library/domain/entities/album.dart';
 import 'package:music_app/src/features/library/domain/entities/artist.dart';
@@ -30,11 +32,26 @@ class QueueViewModel extends _$QueueViewModel {
     final isPlayingProvider = playbackViewModelProvider.select(
       (state) => state.value?.playing,
     );
-    ref.listen(isPlayingProvider, (previous, current) {
-      if (current == null) return;
-      final wasPlaying = previous ?? false;
-      if (wasPlaying && !current) unawaited(saveSession());
-    });
+    final currentIndexProvider = playbackViewModelProvider.select(
+      (state) => state.value?.currentIndex,
+    );
+    ref
+      ..listen(isPlayingProvider, (previous, current) {
+        if (current == null) return;
+        final wasPlaying = previous ?? false;
+        if (wasPlaying && !current) unawaited(saveSession());
+      })
+      ..listen(currentIndexProvider, (previous, current) {
+        if (previous == null || current == null) return;
+        if (previous != current) unawaited(saveSession());
+      })
+      ..listen(appLifecycleStateProvider, (previous, current) {
+        final state = current.value;
+        if (state == AppLifecycleState.paused ||
+            state == AppLifecycleState.detached) {
+          unawaited(saveSession());
+        }
+      });
     return const [];
   }
 
@@ -125,6 +142,11 @@ class QueueViewModel extends _$QueueViewModel {
 
   /// Persists the current queue, track and position, so it can be restored
   /// the next time the app starts.
+  ///
+  /// Saved on pause, on every track change and as the app goes to the
+  /// background: playback carries on there through the media notification,
+  /// and the process can be killed without ever pausing, which would leave
+  /// what is stored as stale as the last pause.
   Future<void> saveSession() async {
     if (state.isEmpty) return;
 
