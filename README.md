@@ -102,7 +102,7 @@ concerns (navigation, the database, audio, permissions) live under
 
 ## Testing
 
-The project has 189 test files (132 in the app, 57 in `packages/app_ui`)
+The project has 196 test files (139 in the app, 57 in `packages/app_ui`)
 covering repositories, view models, and widgets (40 of them golden tests,
 rendering 86 reference images across the design system and key screens),
 plus `integration_test/` suites covering onboarding, playback, persistence,
@@ -164,6 +164,7 @@ Utility scripts live under `scripts/`.
 | `screenshot`     | `scripts/screenshot.sh [device-id]`                | Drives the app through its main screens on a connected device or emulator and saves a screenshot of each one into `screenshots/<locale>/`, one folder per README language, used by each of them. Run `fvm flutter devices` to list available device ids.                                                                                                                                                                                  |
 | `check_coverage` | `scripts/check_coverage.sh <lcov-file> <minimum>`  | Fails if line coverage in an `lcov.info` report (from `flutter test --coverage`) falls below `<minimum>`. Used in CI to enforce the thresholds above; run it locally after generating coverage to check before pushing.                                                                                                                                                                        |
 | `check_l10n`     | `scripts/check_l10n.sh [arb-dir]`                  | Fails when the ARB files disagree on which keys they carry. `gen-l10n` falls back to the template for a missing key without saying anything, so a half-translated change would otherwise reach users as English text in a Spanish build. Run by `verify.sh` and by CI. |
+| `seed`           | `dart run scripts/seed.dart [db-path]`             | Writes a development library (artists, albums, tracks, playlists, favorites, listening history, recent searches) into a database file, with no device and no build. Defaults to `build/seed/music_app.sqlite`. To seed the app in place instead, run it with `fvm flutter run --dart-define=SEED_ENABLED=true`. |
 
 ## Documentation
 

@@ -14,7 +14,7 @@ lib/
   src/
     core/                   # cross-cutting concerns, shared by every feature
       audio/                # just_audio + audio_service integration
-      database/             # drift schema, tables, DAOs, migrations
+      database/             # drift schema, tables, DAOs, migrations, dev seeds
       navigation/            # go_router config, MainShell, adaptive nav
       permissions/            # media and notification permission abstractions
       services/               # metadata reading/writing, id generation, file pickers, ...
@@ -22,7 +22,7 @@ lib/
       widgets/                 # small app-wide widgets not tied to a feature
     features/
       <feature>/
-        data/                # repositories implementations, data sources, DTOs/mappers
+        data/                # repositories implementations, data sources, DTOs/mappers, seeds
         domain/              # entities, repository interfaces, use cases
         presentation/
           providers/         # derived/presentation state

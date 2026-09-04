@@ -93,7 +93,7 @@
 
 ## 测试
 
-项目共有 189 个测试文件（应用本体 132 个，`packages/app_ui` 中 57 个），覆盖仓库、view model 和组件（其中 40 个是 golden 测试，为设计系统和关键界面渲染 86 张参考图），此外还有 `integration_test/` 中的集成测试，覆盖引导、播放、数据持久化、播放列表、收藏、搜索、语言切换以及备份/恢复流程。CI 强制要求应用本体的行覆盖率不低于 97%，`packages/app_ui` 不低于 98%，并配合严格的 `very_good_analysis` lint 规则集和 `dart format` 检查。
+项目共有 196 个测试文件（应用本体 139 个，`packages/app_ui` 中 57 个），覆盖仓库、view model 和组件（其中 40 个是 golden 测试，为设计系统和关键界面渲染 86 张参考图），此外还有 `integration_test/` 中的集成测试，覆盖引导、播放、数据持久化、播放列表、收藏、搜索、语言切换以及备份/恢复流程。CI 强制要求应用本体的行覆盖率不低于 97%，`packages/app_ui` 不低于 98%，并配合严格的 `very_good_analysis` lint 规则集和 `dart format` 检查。
 
 每次 CI 运行都会将 `lcov` 报告上传到 [Codecov](https://codecov.io/gh/dariomatias-dev/music_app)，它将两个包作为独立的 flag 跟踪，并在每个 pull request 上评论覆盖率变化。如需在本地查看逐行报告，可以用同一份文件生成：
 
@@ -145,6 +145,7 @@ fvm flutter run
 | `screenshot`     | `scripts/screenshot.sh [device-id]`                | 在已连接的设备或模拟器上依次打开应用的主要界面，并将每个界面的截图保存到 `screenshots/<locale>/` 中，每种 README 语言各一个目录，供各自的 README 使用。运行 `fvm flutter devices` 可以列出可用的设备 id。                                                                                                            |
 | `check_coverage` | `scripts/check_coverage.sh <lcov-file> <minimum>`  | 如果 `lcov.info` 报告（由 `flutter test --coverage` 生成）中的行覆盖率低于 `<minimum>`，则该脚本会失败。CI 用它来强制执行上面的覆盖率门槛；生成覆盖率报告后，也可以在本地运行它，在推送前先自查。                                                                      |
 | `check_l10n`     | `scripts/check_l10n.sh [arb-dir]`                  | 当各 ARB 文件所包含的键不一致时失败。`gen-l10n` 遇到缺失的键会静默回退到模板，因此翻译到一半的改动会让用户在中文构建里看到英文文案。由 `verify.sh` 和 CI 调用。 |
+| `seed`           | `dart run scripts/seed.dart [db-path]`             | 在不连接设备、也不构建的情况下，把一套开发用音乐库（艺人、专辑、曲目、播放列表、收藏、收听历史、最近搜索）写入数据库文件，默认写到 `build/seed/music_app.sqlite`。若想直接给应用填充数据，用 `fvm flutter run --dart-define=SEED_ENABLED=true` 运行。 |
 
 ## 文档
 

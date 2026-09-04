@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:music_app/l10n/app_localizations.dart';
 import 'package:music_app/src/core/database/database_providers.dart';
+import 'package:music_app/src/core/database/seeds/dev_seed_guard.dart';
 import 'package:music_app/src/core/navigation/navigators/home_navigator.dart';
 import 'package:music_app/src/features/history/presentation/view_models/playback_history_recorder.dart';
 import 'package:music_app/src/features/player/presentation/view_models/playback_transition_effects.dart';
@@ -32,6 +33,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   }
 
   Future<void> _prepare() async {
+    await runDevSeedsIfEnabled(ref.read(appDatabaseProvider));
     await ref.read(appDatabaseProvider).trackDao.getAll();
     ref
       ..read(playbackHistoryRecorderProvider)

@@ -14,7 +14,7 @@ lib/
   src/
     core/                   # preocupações transversais, compartilhadas por toda feature
       audio/                # integração just_audio + audio_service
-      database/             # schema drift, tabelas, DAOs, migrações
+      database/             # schema drift, tabelas, DAOs, migrações, seeds de desenvolvimento
       navigation/            # config do go_router, MainShell, navegação adaptativa
       permissions/            # abstração de permissões de mídia e notificação
       services/               # leitura/escrita de metadado, gerador de id, seletores de arquivo, ...
@@ -22,7 +22,7 @@ lib/
       widgets/                 # widgets pequenos usados em todo o app, sem ligação a uma feature
     features/
       <feature>/
-        data/                # implementações de repositório, data sources, DTOs/mappers
+        data/                # implementações de repositório, data sources, DTOs/mappers, seeds
         domain/              # entidades, interfaces de repositório, casos de uso
         presentation/
           providers/         # estado derivado/de apresentação
