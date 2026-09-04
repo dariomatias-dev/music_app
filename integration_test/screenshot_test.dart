@@ -63,7 +63,15 @@ class _FakeGrantedPermissionService implements MediaPermissionService {
 class _FakeGrantedNotificationPermissionService
     implements NotificationPermissionService {
   @override
-  Future<bool> request() async => true;
+  Future<NotificationPermissionStatus> check() async =>
+      NotificationPermissionStatus.granted;
+
+  @override
+  Future<NotificationPermissionStatus> request() async =>
+      NotificationPermissionStatus.granted;
+
+  @override
+  Future<void> openSystemSettings() async {}
 }
 
 /// Drives the app through its main screens, once per README locale, taking

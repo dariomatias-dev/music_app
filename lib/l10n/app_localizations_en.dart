@@ -750,6 +750,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsPlaybackRowLabel => 'Gapless, crossfade & speed';
 
   @override
+  String get settingsNotificationsLabel => 'Playback notification';
+
+  @override
+  String get settingsNotificationsBlockedValue => 'Blocked';
+
+  @override
   String get settingsAboutLabel => 'About';
 
   @override

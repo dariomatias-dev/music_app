@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:music_app/l10n/app_localizations.dart';
+import 'package:music_app/src/core/permissions/notification_permission_service.dart';
+import 'package:music_app/src/core/permissions/permission_providers.dart';
 import 'package:music_app/src/core/storage/storage_providers.dart';
 import 'package:music_app/src/features/library/data/indexing/library_indexer.dart';
 import 'package:music_app/src/features/library/data/providers/library_data_providers.dart';
@@ -16,6 +18,7 @@ import 'package:music_app/src/features/settings/presentation/screens/settings_sc
 import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../../../helpers/fake_key_value_storage.dart';
+import '../../../../helpers/fake_notification_permission_service.dart';
 
 class _FakeLibraryRepository implements LibraryRepository {
   int reindexCalls = 0;
@@ -56,6 +59,7 @@ Widget _app({
   FakeKeyValueStorage? storage,
   LibraryRepository? libraryRepository,
   PackageInfo? packageInfo,
+  FakeNotificationPermissionService? notificationPermissionService,
 }) {
   final router = GoRouter(
     initialLocation: '/',
@@ -99,6 +103,9 @@ Widget _app({
       libraryRepositoryProvider.overrideWithValue(
         libraryRepository ?? _FakeLibraryRepository(),
       ),
+      notificationPermissionServiceProvider.overrideWithValue(
+        notificationPermissionService ?? FakeNotificationPermissionService(),
+      ),
       if (packageInfo != null)
         appInfoProvider.overrideWith((ref) async => packageInfo),
     ],
@@ -121,6 +128,68 @@ void main() {
           ..devicePixelRatio = 1;
     addTearDown(view.resetPhysicalSize);
     addTearDown(view.resetDevicePixelRatio);
+  });
+
+  testWidgets('leaves the notification row out while it is allowed', (
+    tester,
+  ) async {
+    await tester.pumpWidget(_app());
+    await tester.pump();
+
+    expect(find.text('Playback notification'), findsNothing);
+  });
+
+  testWidgets('leaves the notification row out where it does not apply', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _app(
+        notificationPermissionService: FakeNotificationPermissionService(
+          status: NotificationPermissionStatus.notApplicable,
+        ),
+      ),
+    );
+    await tester.pump();
+
+    expect(find.text('Playback notification'), findsNothing);
+  });
+
+  testWidgets('reports blocked notifications and asks again on tap', (
+    tester,
+  ) async {
+    final service = FakeNotificationPermissionService(
+      status: NotificationPermissionStatus.denied,
+      requestedStatus: NotificationPermissionStatus.granted,
+    );
+
+    await tester.pumpWidget(_app(notificationPermissionService: service));
+    await tester.pump();
+
+    expect(find.text('Playback notification'), findsOneWidget);
+    expect(find.text('Blocked'), findsOneWidget);
+
+    await tester.tap(find.text('Playback notification'));
+    await tester.pump();
+
+    expect(service.requestCalls, 1);
+    expect(find.text('Playback notification'), findsNothing);
+  });
+
+  testWidgets('sends the user to the system settings once denied for good', (
+    tester,
+  ) async {
+    final service = FakeNotificationPermissionService(
+      status: NotificationPermissionStatus.permanentlyDenied,
+    );
+
+    await tester.pumpWidget(_app(notificationPermissionService: service));
+    await tester.pump();
+
+    await tester.tap(find.text('Playback notification'));
+    await tester.pump();
+
+    expect(service.openSettingsCalls, 1);
+    expect(service.requestCalls, 0);
   });
 
   testWidgets('shows every section title', (tester) async {

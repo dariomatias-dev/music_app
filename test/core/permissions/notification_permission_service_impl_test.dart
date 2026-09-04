@@ -1,5 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:music_app/src/core/permissions/notification_permission_service.dart';
 import 'package:music_app/src/core/permissions/notification_permission_service_impl.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -16,13 +17,19 @@ const _statusValues = <PermissionStatus, int>{
 };
 
 void main() {
-  const service = NotificationPermissionServiceImpl();
+  const service = NotificationPermissionServiceImpl(
+    platform: TargetPlatform.android,
+  );
 
   final calls = <MethodCall>[];
 
   /// Answers the plugin's channel with [status] for the current status and
   /// [requested] for the prompt's outcome.
-  void stubPlatform(PermissionStatus status, {PermissionStatus? requested}) {
+  void stubPlatform(
+    PermissionStatus status, {
+    PermissionStatus? requested,
+    bool settingsOpened = true,
+  }) {
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(_channel, (call) async {
           calls.add(call);
@@ -34,6 +41,8 @@ void main() {
                 Permission.notification.value:
                     _statusValues[requested ?? status],
               };
+            case 'openAppSettings':
+              return settingsOpened;
             default:
               return null;
           }
@@ -47,34 +56,122 @@ void main() {
         .setMockMethodCallHandler(_channel, null);
   });
 
-  test('prompts when the permission has not been decided yet', () async {
-    stubPlatform(PermissionStatus.denied, requested: PermissionStatus.granted);
+  group('check', () {
+    test('asks the platform about the notification permission', () async {
+      stubPlatform(PermissionStatus.granted);
 
-    expect(await service.request(), isTrue);
-    expect(
-      calls.map((call) => call.method),
-      ['checkPermissionStatus', 'requestPermissions'],
-    );
-    expect(calls.last.arguments, [Permission.notification.value]);
+      await service.check();
+
+      expect(calls.single.method, 'checkPermissionStatus');
+      expect(calls.single.arguments, Permission.notification.value);
+    });
+
+    test('reports a granted permission', () async {
+      stubPlatform(PermissionStatus.granted);
+
+      expect(await service.check(), NotificationPermissionStatus.granted);
+    });
+
+    test('reports a denied permission', () async {
+      stubPlatform(PermissionStatus.denied);
+
+      expect(await service.check(), NotificationPermissionStatus.denied);
+    });
+
+    test('reports a permanently denied permission', () async {
+      stubPlatform(PermissionStatus.permanentlyDenied);
+
+      expect(
+        await service.check(),
+        NotificationPermissionStatus.permanentlyDenied,
+      );
+    });
+
+    test('folds an OS restriction into denied', () async {
+      stubPlatform(PermissionStatus.restricted);
+
+      expect(await service.check(), NotificationPermissionStatus.denied);
+    });
+
+    test('reports nothing to ask for off Android', () async {
+      const iosService = NotificationPermissionServiceImpl(
+        platform: TargetPlatform.iOS,
+      );
+      stubPlatform(PermissionStatus.denied);
+
+      expect(
+        await iosService.check(),
+        NotificationPermissionStatus.notApplicable,
+      );
+      expect(calls, isEmpty);
+    });
   });
 
-  test('reports a refused prompt', () async {
-    stubPlatform(PermissionStatus.denied);
+  group('request', () {
+    test("prompts while the answer is still the app's to ask for", () async {
+      stubPlatform(
+        PermissionStatus.denied,
+        requested: PermissionStatus.granted,
+      );
 
-    expect(await service.request(), isFalse);
+      expect(await service.request(), NotificationPermissionStatus.granted);
+      expect(
+        calls.map((call) => call.method),
+        ['checkPermissionStatus', 'requestPermissions'],
+      );
+      expect(calls.last.arguments, [Permission.notification.value]);
+    });
+
+    test('reports a refused prompt', () async {
+      stubPlatform(PermissionStatus.denied);
+
+      expect(await service.request(), NotificationPermissionStatus.denied);
+    });
+
+    test('does not prompt again once granted', () async {
+      stubPlatform(PermissionStatus.granted);
+
+      expect(await service.request(), NotificationPermissionStatus.granted);
+      expect(calls.single.method, 'checkPermissionStatus');
+    });
+
+    test('does not prompt again once permanently denied', () async {
+      stubPlatform(PermissionStatus.permanentlyDenied);
+
+      expect(
+        await service.request(),
+        NotificationPermissionStatus.permanentlyDenied,
+      );
+      expect(calls.single.method, 'checkPermissionStatus');
+    });
+
+    test('does not prompt at all off Android', () async {
+      const iosService = NotificationPermissionServiceImpl(
+        platform: TargetPlatform.iOS,
+      );
+      stubPlatform(PermissionStatus.denied);
+
+      expect(
+        await iosService.request(),
+        NotificationPermissionStatus.notApplicable,
+      );
+      expect(calls, isEmpty);
+    });
   });
 
-  test('does not prompt again once granted', () async {
-    stubPlatform(PermissionStatus.granted);
+  group('openSystemSettings', () {
+    test('asks the platform to open the app settings', () async {
+      stubPlatform(PermissionStatus.denied);
 
-    expect(await service.request(), isTrue);
-    expect(calls.single.method, 'checkPermissionStatus');
-  });
+      await service.openSystemSettings();
 
-  test('does not prompt again once permanently denied', () async {
-    stubPlatform(PermissionStatus.permanentlyDenied);
+      expect(calls.single.method, 'openAppSettings');
+    });
 
-    expect(await service.request(), isFalse);
-    expect(calls.single.method, 'checkPermissionStatus');
+    test('completes even when the platform could not open them', () async {
+      stubPlatform(PermissionStatus.denied, settingsOpened: false);
+
+      await expectLater(service.openSystemSettings(), completes);
+    });
   });
 }

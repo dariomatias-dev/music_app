@@ -9,11 +9,13 @@ import 'package:music_app/src/core/navigation/navigators/onboarding_navigator.da
 import 'package:music_app/src/core/navigation/navigators/settings_navigator.dart';
 import 'package:music_app/src/core/navigation/navigators/statistics_navigator.dart';
 import 'package:music_app/src/core/navigation/navigators/storage_navigator.dart';
+import 'package:music_app/src/core/permissions/notification_permission_service.dart';
 import 'package:music_app/src/core/utils/language_names.dart';
 import 'package:music_app/src/features/library/data/providers/library_data_providers.dart';
 import 'package:music_app/src/features/onboarding/presentation/view_models/onboarding_view_model.dart';
 import 'package:music_app/src/features/settings/data/providers/app_info_provider.dart';
 import 'package:music_app/src/features/settings/presentation/view_models/locale_view_model.dart';
+import 'package:music_app/src/features/settings/presentation/view_models/notification_permission_view_model.dart';
 import 'package:music_app/src/features/settings/presentation/view_models/theme_mode_view_model.dart';
 import 'package:music_app/src/features/settings/presentation/view_models/user_profile_view_model.dart';
 import 'package:music_app/src/features/settings/presentation/widgets/edit_name_sheet.dart';
@@ -69,6 +71,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final themeMode = ref.watch(themeModeViewModelProvider).value;
     final isDark = _resolveIsDark(context, themeMode);
     final packageInfo = ref.watch(appInfoProvider).value;
+    final notifications = ref
+        .watch(notificationPermissionViewModelProvider)
+        .value;
 
     return AppScaffold(
       topBar: AppTopBar(title: l10n.settingsTabLabel, showBack: false),
@@ -106,6 +111,18 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             label: l10n.settingsPlaybackRowLabel,
             onTap: () => unawaited(showPlaybackSheet(context, ref)),
           ),
+          if (notifications == NotificationPermissionStatus.denied ||
+              notifications == NotificationPermissionStatus.permanentlyDenied)
+            AppSettingsRow(
+              icon: Icons.notifications_off_outlined,
+              label: l10n.settingsNotificationsLabel,
+              value: l10n.settingsNotificationsBlockedValue,
+              onTap: () => unawaited(
+                ref
+                    .read(notificationPermissionViewModelProvider.notifier)
+                    .requestOrOpenSettings(),
+              ),
+            ),
           SettingsGroupLabel(l10n.settingsSectionLibraryLabel),
           AppSettingsRow(
             icon: Icons.sd_storage_outlined,

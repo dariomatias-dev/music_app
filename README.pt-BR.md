@@ -54,7 +54,7 @@ O player suporta reprodução sem pausas (gapless) e crossfade, uma fila persist
 ## Funcionalidades
 
 - **Biblioteca Local**: Escaneia seu dispositivo em busca de arquivos de áudio e indexa faixas, álbuns e artistas, com capas e metadados.
-- **Reprodução**: Reprodução sem pausas (gapless), crossfade, aleatório, repetição, velocidade ajustável e temporizador de suspensão.
+- **Reprodução**: Reprodução sem pausas (gapless), crossfade, aleatório, repetição, velocidade ajustável e temporizador de suspensão, com controles de mídia na central de notificações e na tela de bloqueio.
 - **Playlists**: Crie, renomeie, duplique e exclua playlists, com descrição opcional, favoritar, reordenar arrastando, busca dentro da playlist e múltiplos critérios de ordenação.
 - **Favoritos**: Favorite qualquer faixa para acesso rápido na sua própria aba.
 - **Busca**: Filtre sua biblioteca por título ou artista enquanto digita.
@@ -103,7 +103,7 @@ cada uma compõe componentes mantidos em
 
 ## Testes
 
-O projeto tem 188 arquivos de teste (131 no app, 57 em
+O projeto tem 189 arquivos de teste (132 no app, 57 em
 `packages/app_ui`), cobrindo repositórios, view models e widgets (40
 deles são testes golden, que renderizam 86 imagens de referência do design
 system e das telas principais), além das suítes em `integration_test/`

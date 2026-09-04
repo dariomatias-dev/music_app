@@ -250,6 +250,8 @@
   "settingsLanguageLabel": "Language",
   "settingsLanguageSystemValue": "System default",
   "settingsPlaybackRowLabel": "Gapless, crossfade & speed",
+  "settingsNotificationsLabel": "Playback notification",
+  "settingsNotificationsBlockedValue": "Blocked",
   "settingsAboutLabel": "About",
   "settingsAboutRowLabel": "App info & version",
   "settingsEditNameSheetTitle": "Your name",
