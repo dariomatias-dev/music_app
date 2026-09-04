@@ -113,7 +113,7 @@ act pull_request -j app --dryrun      # imprime los pasos sin ejecutarlos
 
 `act` no ejecuta la action del job del emulador, así que dos de sus restricciones solo aparecen en CI. La action divide el `script` por saltos de línea y ejecuta **cada línea como su propio `sh -c`**, de modo que un bucle o cualquier construcción de shell multilínea llega sin su palabra clave de cierre; escribe un comando completo por línea. Además, `--no-dds`, el primer impulso cuando una ejecución falla al arrancar el Dart Development Service, rompe el comparador de goldens que `flutter_tools` registra para las pruebas de integración, y la suite pasa a fallar en la carga aun con todas las pruebas en verde.
 
-`-j` recibe el **id** del job (`app`, `build_apk`, `integration`, `app_ui`, `release`), no el nombre visible de la tabla de arriba; `act -l` muestra ambos. La primera ejecución real descarga una imagen de runner de varios gigabytes, y `act` aproxima los runners de GitHub en lugar de reproducirlos exactamente, así que un `act` en verde es una buena señal, no una garantía.
+`-j` recibe el **id** del job (`vulnerabilities`, `app`, `build_apk`, `integration`, `app_ui`, `release`), no el nombre visible de la tabla de arriba; `act -l` muestra ambos. La primera ejecución real descarga una imagen de runner de varios gigabytes, y `act` aproxima los runners de GitHub en lugar de reproducirlos exactamente, así que un `act` en verde es una buena señal, no una garantía.
 
 ## Trabajar con un agente de IA
 
