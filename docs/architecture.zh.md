@@ -16,7 +16,7 @@ lib/
       audio/                # just_audio + audio_service 集成
       database/             # drift 数据库结构、表、DAO、迁移
       navigation/            # go_router 配置、MainShell、自适应导航
-      permissions/            # 媒体权限抽象层
+      permissions/            # 媒体与通知权限抽象层
       services/               # 元数据读写、id 生成、文件选择器等
       storage/                # 键值存储抽象层（shared_preferences）
       widgets/                 # 不属于任何具体功能模块的小型通用组件

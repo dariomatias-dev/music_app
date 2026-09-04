@@ -16,7 +16,7 @@ lib/
       audio/                # integração just_audio + audio_service
       database/             # schema drift, tabelas, DAOs, migrações
       navigation/            # config do go_router, MainShell, navegação adaptativa
-      permissions/            # abstração de permissão de mídia
+      permissions/            # abstração de permissões de mídia e notificação
       services/               # leitura/escrita de metadado, gerador de id, seletores de arquivo, ...
       storage/                # abstração de armazenamento chave-valor (shared_preferences)
       widgets/                 # widgets pequenos usados em todo o app, sem ligação a uma feature

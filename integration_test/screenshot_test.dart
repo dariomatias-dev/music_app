@@ -10,6 +10,7 @@ import 'package:music_app/src/core/constants/preference_keys.dart';
 import 'package:music_app/src/core/database/app_database.dart';
 import 'package:music_app/src/core/database/database_providers.dart';
 import 'package:music_app/src/core/permissions/media_permission_service.dart';
+import 'package:music_app/src/core/permissions/notification_permission_service.dart';
 import 'package:music_app/src/core/permissions/permission_providers.dart';
 import 'package:music_app/src/core/services/id_generator/uuid_v7_generator.dart';
 import 'package:music_app/src/core/storage/shared_preferences_storage.dart';
@@ -57,6 +58,12 @@ class _FakeGrantedPermissionService implements MediaPermissionService {
 
   @override
   Future<void> openSystemSettings() async {}
+}
+
+class _FakeGrantedNotificationPermissionService
+    implements NotificationPermissionService {
+  @override
+  Future<bool> request() async => true;
 }
 
 /// Drives the app through its main screens, once per README locale, taking
@@ -306,6 +313,9 @@ void main() {
             audioHandlerProvider.overrideWithValue(audioHandler),
             mediaPermissionServiceProvider.overrideWithValue(
               _FakeGrantedPermissionService(),
+            ),
+            notificationPermissionServiceProvider.overrideWithValue(
+              _FakeGrantedNotificationPermissionService(),
             ),
           ],
           child: const MusicApp(),

@@ -13,6 +13,7 @@ import 'package:music_app/src/core/constants/preference_keys.dart';
 import 'package:music_app/src/core/database/app_database.dart';
 import 'package:music_app/src/core/database/database_providers.dart';
 import 'package:music_app/src/core/permissions/media_permission_service.dart';
+import 'package:music_app/src/core/permissions/notification_permission_service.dart';
 import 'package:music_app/src/core/permissions/permission_providers.dart';
 import 'package:music_app/src/core/storage/key_value_storage.dart';
 import 'package:music_app/src/core/storage/shared_preferences_storage.dart';
@@ -43,6 +44,12 @@ class _FakeGrantedPermissionService implements MediaPermissionService {
 
   @override
   Future<void> openSystemSettings() async {}
+}
+
+class _FakeGrantedNotificationPermissionService
+    implements NotificationPermissionService {
+  @override
+  Future<bool> request() async => true;
 }
 
 class _FakeEmptyLibraryRepository implements LibraryRepository {
@@ -119,6 +126,9 @@ void main() {
           audioHandlerProvider.overrideWithValue(handler),
           mediaPermissionServiceProvider.overrideWithValue(
             _FakeGrantedPermissionService(),
+          ),
+          notificationPermissionServiceProvider.overrideWithValue(
+            _FakeGrantedNotificationPermissionService(),
           ),
           libraryRepositoryProvider.overrideWithValue(
             const _FakeEmptyLibraryRepository(),
@@ -204,6 +214,9 @@ void main() {
           appDatabaseProvider.overrideWithValue(database),
           mediaPermissionServiceProvider.overrideWithValue(
             _FakeGrantedPermissionService(),
+          ),
+          notificationPermissionServiceProvider.overrideWithValue(
+            _FakeGrantedNotificationPermissionService(),
           ),
         ],
         child: const MusicApp(),

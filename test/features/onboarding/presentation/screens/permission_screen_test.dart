@@ -7,6 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:music_app/l10n/app_localizations.dart';
 import 'package:music_app/src/core/permissions/media_permission_service.dart';
+import 'package:music_app/src/core/permissions/notification_permission_service.dart';
 import 'package:music_app/src/core/permissions/permission_providers.dart';
 import 'package:music_app/src/features/library/data/indexing/library_indexer.dart';
 import 'package:music_app/src/features/library/data/providers/library_data_providers.dart';
@@ -34,6 +35,17 @@ class _FakeMediaPermissionService implements MediaPermissionService {
   @override
   Future<void> openSystemSettings() async {
     openSettingsCalls++;
+  }
+}
+
+class _FakeNotificationPermissionService
+    implements NotificationPermissionService {
+  int requestCalls = 0;
+
+  @override
+  Future<bool> request() async {
+    requestCalls++;
+    return true;
   }
 }
 
@@ -82,6 +94,7 @@ class _FakeLibraryRepository implements LibraryRepository {
 Widget _app({
   required _FakeMediaPermissionService permissionService,
   required _FakeLibraryRepository libraryRepository,
+  _FakeNotificationPermissionService? notificationService,
 }) {
   final router = GoRouter(
     initialLocation: '/',
@@ -102,6 +115,9 @@ Widget _app({
   return ProviderScope(
     overrides: [
       mediaPermissionServiceProvider.overrideWithValue(permissionService),
+      notificationPermissionServiceProvider.overrideWithValue(
+        notificationService ?? _FakeNotificationPermissionService(),
+      ),
       libraryRepositoryProvider.overrideWithValue(libraryRepository),
     ],
     child: MaterialApp.router(
@@ -192,6 +208,36 @@ void main() {
     await tester.pump();
 
     expect(find.text('Home screen reached'), findsOneWidget);
+    expect(libraryRepository.reindexCalls, 2);
+  });
+
+  testWidgets('asks for notifications once, before the first scan', (
+    tester,
+  ) async {
+    final notificationService = _FakeNotificationPermissionService();
+    final libraryRepository = _FakeLibraryRepository(shouldThrow: true);
+
+    await tester.pumpWidget(
+      _app(
+        permissionService: _FakeMediaPermissionService(),
+        libraryRepository: libraryRepository,
+        notificationService: notificationService,
+      ),
+    );
+    await tester.pump();
+
+    await tester.tap(find.text('Allow access'));
+    await tester.pump();
+    await tester.pump();
+
+    expect(notificationService.requestCalls, 1);
+
+    libraryRepository.shouldThrow = false;
+    await tester.tap(find.text('Try again'));
+    await tester.pump();
+    await tester.pump();
+
+    expect(notificationService.requestCalls, 1);
     expect(libraryRepository.reindexCalls, 2);
   });
 
