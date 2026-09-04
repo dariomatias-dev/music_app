@@ -1,8 +1,10 @@
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:music_app/src/core/audio/audio_player_service.dart';
 import 'package:music_app/src/core/audio/audio_providers.dart';
 import 'package:music_app/src/core/audio/music_audio_handler.dart';
+import 'package:music_app/src/core/services/app_lifecycle/app_lifecycle_providers.dart';
 import 'package:music_app/src/core/storage/storage_providers.dart';
 import 'package:music_app/src/features/library/data/indexing/library_indexer.dart';
 import 'package:music_app/src/features/library/data/providers/library_data_providers.dart';
@@ -17,6 +19,7 @@ import 'package:music_app/src/features/queue/domain/playback_session.dart';
 import 'package:music_app/src/features/queue/presentation/view_models/queue_view_model.dart';
 import 'package:music_app/src/features/settings/presentation/view_models/playback_preferences_view_model.dart';
 
+import '../../../../helpers/fake_app_lifecycle_service.dart';
 import '../../../../helpers/fake_audio_player_service.dart';
 import '../../../../helpers/fake_key_value_storage.dart';
 
@@ -296,6 +299,66 @@ void main() {
     expect(saved?.trackIds, ['a', 'b']);
     expect(saved?.currentIndex, 0);
     expect(saved?.position, const Duration(seconds: 10));
+  });
+
+  test('backgrounding the app saves the session', () async {
+    final storage = PlaybackSessionStorage(FakeKeyValueStorage());
+    final lifecycle = FakeAppLifecycleService();
+    addTearDown(lifecycle.dispose);
+    final sessionContainer = ProviderContainer(
+      overrides: [
+        audioPlayerServiceProvider.overrideWithValue(playerService),
+        audioHandlerProvider.overrideWithValue(handler),
+        playbackSessionStorageProvider.overrideWithValue(storage),
+        libraryRepositoryProvider.overrideWithValue(_FakeLibraryRepository()),
+        appLifecycleServiceProvider.overrideWithValue(lifecycle),
+      ],
+    );
+    addTearDown(sessionContainer.dispose);
+    addTearDown(
+      sessionContainer.listen(playbackViewModelProvider, (_, _) {}).close,
+    );
+    addTearDown(
+      sessionContainer.listen(appLifecycleStateProvider, (_, _) {}).close,
+    );
+
+    await sessionContainer.read(queueViewModelProvider.notifier).playFromSource(
+      [_track('a'), _track('b')],
+      startIndex: 0,
+    );
+    await playerService.seek(const Duration(seconds: 42));
+    lifecycle.emit(AppLifecycleState.paused);
+    await pumpEventQueue();
+
+    final saved = await storage.load();
+    expect(saved?.trackIds, ['a', 'b']);
+    expect(saved?.position, const Duration(seconds: 42));
+  });
+
+  test('moving to the next track saves the session', () async {
+    final storage = PlaybackSessionStorage(FakeKeyValueStorage());
+    final sessionContainer = ProviderContainer(
+      overrides: [
+        audioPlayerServiceProvider.overrideWithValue(playerService),
+        audioHandlerProvider.overrideWithValue(handler),
+        playbackSessionStorageProvider.overrideWithValue(storage),
+        libraryRepositoryProvider.overrideWithValue(_FakeLibraryRepository()),
+      ],
+    );
+    addTearDown(sessionContainer.dispose);
+    addTearDown(
+      sessionContainer.listen(playbackViewModelProvider, (_, _) {}).close,
+    );
+
+    await sessionContainer.read(queueViewModelProvider.notifier).playFromSource(
+      [_track('a'), _track('b')],
+      startIndex: 0,
+    );
+    await playerService.seekToNext();
+    await pumpEventQueue();
+
+    final saved = await storage.load();
+    expect(saved?.currentIndex, 1);
   });
 
   test('restoreSession loads the queue without playing', () async {
