@@ -8,6 +8,10 @@ import 'package:music_app/src/core/services/device_file/device_file_service_prov
 import 'package:music_app/src/features/library/data/providers/library_data_providers.dart';
 import 'package:music_app/src/features/library/domain/entities/track.dart';
 import 'package:music_app/src/features/queue/presentation/view_models/queue_view_model.dart';
+import 'package:music_app/src/features/settings/presentation/view_models/locale_view_model.dart';
+import 'package:music_app/src/features/settings/presentation/view_models/playback_preferences_view_model.dart';
+import 'package:music_app/src/features/settings/presentation/view_models/theme_mode_view_model.dart';
+import 'package:music_app/src/features/settings/presentation/view_models/user_profile_view_model.dart';
 import 'package:music_app/src/features/storage/data/providers/storage_data_providers.dart';
 import 'package:music_app/src/features/storage/domain/restore_backup.dart';
 import 'package:music_app/src/features/storage/domain/restore_database_backup.dart';
@@ -172,6 +176,12 @@ class StorageViewModel extends _$StorageViewModel {
   }
 
   /// Restores a JSON backup the user picks, merging it into this install.
+  ///
+  /// The library, playlists and favorites reach the screens through query
+  /// streams, which pick the restored rows up on their own. The settings
+  /// do not: their view models read the key-value store once, when they
+  /// are built, so the ones a backup can carry are dropped here and read
+  /// again.
   Future<BackupImportResult> importBackup() async {
     final bytes = await _pickFile('Picking a backup file', const ['json']);
     if (bytes == null) {
@@ -182,6 +192,7 @@ class StorageViewModel extends _$StorageViewModel {
       try {
         final snapshot = readBackupSnapshot(bytes);
         final result = await ref.read(restoreBackupProvider)(snapshot);
+        _refreshRestoredSettings();
         return (
           outcome: StorageOutcome.succeeded,
           skippedTracks: result.skippedTracks,
@@ -196,6 +207,14 @@ class StorageViewModel extends _$StorageViewModel {
         return (outcome: StorageOutcome.backupImportFailed, skippedTracks: 0);
       }
     });
+  }
+
+  void _refreshRestoredSettings() {
+    ref
+      ..invalidate(localeViewModelProvider)
+      ..invalidate(themeModeViewModelProvider)
+      ..invalidate(userProfileViewModelProvider)
+      ..invalidate(playbackPreferencesViewModelProvider);
   }
 
   /// Writes a byte-for-byte database snapshot to a destination the user

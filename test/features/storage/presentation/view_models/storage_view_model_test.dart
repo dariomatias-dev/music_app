@@ -1,23 +1,33 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:music_app/src/core/constants/preference_keys.dart';
 import 'package:music_app/src/core/errors/app_exception.dart';
 import 'package:music_app/src/core/errors/error_reporter_provider.dart';
 import 'package:music_app/src/core/services/device_file/device_file_service_provider.dart';
+import 'package:music_app/src/core/storage/key_value_storage.dart';
+import 'package:music_app/src/core/storage/storage_providers.dart';
 import 'package:music_app/src/features/library/data/indexing/library_indexer.dart';
 import 'package:music_app/src/features/library/data/providers/library_data_providers.dart';
 import 'package:music_app/src/features/library/domain/entities/album.dart';
 import 'package:music_app/src/features/library/domain/entities/artist.dart';
 import 'package:music_app/src/features/library/domain/entities/track.dart';
 import 'package:music_app/src/features/library/domain/repositories/library_repository.dart';
+import 'package:music_app/src/features/settings/presentation/view_models/theme_mode_view_model.dart';
 import 'package:music_app/src/features/storage/data/providers/storage_data_providers.dart';
+import 'package:music_app/src/features/storage/domain/create_backup.dart';
+import 'package:music_app/src/features/storage/domain/entities/backup_settings.dart';
+import 'package:music_app/src/features/storage/domain/entities/backup_snapshot.dart';
+import 'package:music_app/src/features/storage/domain/restore_backup.dart';
 import 'package:music_app/src/features/storage/presentation/view_models/storage_view_model.dart';
 
 import '../../../../helpers/fake_device_file_service.dart';
 import '../../../../helpers/fake_error_reporter.dart';
 import '../../../../helpers/fake_excluded_folder_repository.dart';
+import '../../../../helpers/fake_key_value_storage.dart';
 
 class _FakeLibraryRepository implements LibraryRepository {
   bool reindexShouldThrow = false;
@@ -63,19 +73,67 @@ class _FakeLibraryRepository implements LibraryRepository {
   }) async {}
 }
 
+/// Applies only the settings a restore would, so the test can assert what
+/// the view model does once they land.
+class _SettingsOnlyRestoreBackup implements RestoreBackup {
+  _SettingsOnlyRestoreBackup(this._storage);
+
+  final KeyValueStorage _storage;
+
+  @override
+  Future<RestoreBackupResult> call(BackupSnapshot snapshot) async {
+    final themeMode = snapshot.settings.themeMode;
+    if (themeMode != null) {
+      await _storage.setString(PreferenceKeys.themeMode, themeMode);
+    }
+    return (
+      restoredPlaylists: 0,
+      restoredFavorites: 0,
+      restoredHistoryEntries: 0,
+      skippedTracks: 0,
+    );
+  }
+}
+
+Uint8List _backupBytes({required String themeMode}) {
+  final snapshot = BackupSnapshot(
+    formatVersion: backupFormatVersion,
+    createdAt: DateTime(2026),
+    playlists: const [],
+    favoriteTrackSourceIds: const [],
+    playHistory: const [],
+    excludedFolders: const [],
+    searchHistoryTerms: const [],
+    settings: BackupSettings(
+      gaplessEnabled: true,
+      crossfadeDurationSeconds: 0,
+      defaultPlaybackSpeed: 1,
+      hapticsEnabled: true,
+      themeMode: themeMode,
+    ),
+  );
+  return Uint8List.fromList(utf8.encode(jsonEncode(snapshot.toJson())));
+}
+
 void main() {
   late FakeErrorReporter errorReporter;
   late FakeExcludedFolderRepository excludedFolders;
   late _FakeLibraryRepository library;
   late FakeDeviceFileService deviceFiles;
 
-  ProviderContainer container() {
+  ProviderContainer container({
+    FakeKeyValueStorage? storage,
+    RestoreBackup? restoreBackup,
+  }) {
     final result = ProviderContainer(
       overrides: [
         errorReporterProvider.overrideWithValue(errorReporter),
         excludedFolderRepositoryProvider.overrideWithValue(excludedFolders),
         libraryRepositoryProvider.overrideWithValue(library),
         deviceFileServiceProvider.overrideWithValue(deviceFiles),
+        if (storage != null) keyValueStorageProvider.overrideWithValue(storage),
+        if (restoreBackup != null)
+          restoreBackupProvider.overrideWithValue(restoreBackup),
       ],
     );
     addTearDown(result.dispose);
@@ -239,6 +297,32 @@ void main() {
           .importBackup();
 
       expect(result.outcome, StorageOutcome.unsupportedBackupFormat);
+    });
+
+    test('re-reads the settings the backup restored', () async {
+      final storage = FakeKeyValueStorage();
+      final restored = container(
+        storage: storage,
+        restoreBackup: _SettingsOnlyRestoreBackup(storage),
+      );
+      addTearDown(
+        restored.listen(themeModeViewModelProvider, (_, _) {}).close,
+      );
+      expect(
+        await restored.read(themeModeViewModelProvider.future),
+        ThemeMode.system,
+      );
+      deviceFiles.fileToPick = _backupBytes(themeMode: 'dark');
+
+      final result = await restored
+          .read(storageViewModelProvider.notifier)
+          .importBackup();
+
+      expect(result.outcome, StorageOutcome.succeeded);
+      expect(
+        await restored.read(themeModeViewModelProvider.future),
+        ThemeMode.dark,
+      );
     });
 
     test('reports a file that is not a backup at all', () async {
