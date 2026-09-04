@@ -3,8 +3,9 @@
 # Runs the same quality gate CI enforces, on the packages a change touched.
 #
 # The steps mirror .github/workflows/ci.yaml exactly, so a green run here means
-# CI has no new reason to fail: formatting, analysis, tests, and the coverage
-# threshold, for the app and for packages/app_ui independently.
+# CI has no new reason to fail: generated output, formatting, analysis, tests,
+# and the coverage threshold, for the app and for packages/app_ui
+# independently.
 #
 # Scope is derived from the working tree: only the packages with pending
 # changes are checked. Pass --all to check everything regardless.
@@ -12,15 +13,16 @@
 # On success the current workspace hash is recorded in .dart_tool/verify_stamp.
 # The Stop hook reads it to tell whether the tree still matches a passing run.
 #
-# Usage: scripts/verify.sh [--all] [--gen] [--skip-tests]
+# Code generation runs on every invocation, and the run fails when it changed
+# anything: CI regenerates from a clean checkout and rejects the build when the
+# result differs from what was committed, which is a failure no other local
+# check can see coming.
+#
+# Usage: scripts/verify.sh [--all] [--skip-tests]
 #
 #   --all         Check the app and packages/app_ui, ignoring what changed.
-#   --gen         Run build_runner and gen-l10n first. Needed after editing
-#                 anything the generators read: drift tables, freezed or
-#                 json_serializable models, riverpod providers, go_router
-#                 routes, or lib/l10n/*.arb.
-#   --skip-tests  Formatting and analysis only. For a quick mid-change check,
-#                 never as the final gate.
+#   --skip-tests  Generation, formatting and analysis only. For a quick
+#                 mid-change check, never as the final gate.
 
 set -euo pipefail
 
@@ -30,16 +32,14 @@ readonly root="$(git rev-parse --show-toplevel)"
 cd "$root"
 
 check_all=false
-run_gen=false
 skip_tests=false
 
 for arg in "$@"; do
   case "$arg" in
     --all) check_all=true ;;
-    --gen) run_gen=true ;;
     --skip-tests) skip_tests=true ;;
     -h|--help)
-      sed -n '2,25p' "$0" | sed 's/^# \{0,1\}//'
+      sed -n '2,28p' "$0" | sed 's/^# \{0,1\}//'
       exit 0
       ;;
     *)
@@ -55,6 +55,37 @@ if command -v fvm >/dev/null 2>&1 && [[ -f .fvmrc ]]; then
 else
   flutter=(flutter)
   dart=(dart)
+fi
+
+step() {
+  printf '\n\033[1m==> %s\033[0m\n' "$1"
+}
+
+# Fingerprints every generated file, tracked or not, so a regeneration that
+# changes one can be told apart from one that confirms them all.
+generated_fingerprint() {
+  git ls-files -co --exclude-standard \
+    -- '*.g.dart' '*.freezed.dart' 'lib/l10n/app_localizations*.dart' \
+    | sort \
+    | xargs -r sha1sum \
+    | sha1sum
+}
+
+step "generate code and localizations"
+before_generation="$(generated_fingerprint)"
+"${dart[@]}" run build_runner build --delete-conflicting-outputs
+"${flutter[@]}" gen-l10n
+
+if [[ "$(generated_fingerprint)" != "$before_generation" ]]; then
+  cat >&2 <<'MESSAGE'
+
+Generated output was out of date and has just been refreshed. Review the
+changes and commit them: CI regenerates from a clean checkout and fails when
+the result differs from what the branch carries.
+MESSAGE
+  git status --porcelain -- '*.g.dart' '*.freezed.dart' \
+    'lib/l10n/app_localizations*.dart' >&2
+  exit 1
 fi
 
 changed_paths() {
@@ -87,10 +118,6 @@ if ! "$check_app" && ! "$check_app_ui"; then
   exit 0
 fi
 
-step() {
-  printf '\n\033[1m==> %s\033[0m\n' "$1"
-}
-
 # Runs formatting, analysis, tests and the coverage gate for one package.
 #
 #   $1  directory to run in, relative to the repo root
@@ -116,14 +143,6 @@ verify_package() {
   step "$name: coverage (minimum ${minimum}%)"
   "$root/scripts/check_coverage.sh" "$dir/coverage/lcov.info" "$minimum"
 }
-
-if "$run_gen"; then
-  step "generate code"
-  "${dart[@]}" run build_runner build --delete-conflicting-outputs
-
-  step "generate localizations"
-  "${flutter[@]}" gen-l10n
-fi
 
 if "$check_app_ui"; then
   verify_package packages/app_ui 98 "packages/app_ui"

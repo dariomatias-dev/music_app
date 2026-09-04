@@ -17,10 +17,12 @@ fvm flutter run                                       # run on a device
 ./scripts/verify.sh                                   # the quality gate
 ```
 
-`./scripts/verify.sh` runs exactly what CI runs (format, analyze, test,
-coverage), scoped to the packages with pending changes. Flags: `--all` to check
-everything, `--gen` to regenerate first, `--skip-tests` for a quick mid-change
-look (never as the final check).
+`./scripts/verify.sh` runs exactly what CI runs (generation, format, analyze,
+test, coverage), scoped to the packages with pending changes. Code generation
+runs every time and the script fails when it changed anything, so regenerate
+and commit the output rather than leaving it to CI. Flags: `--all` to check
+everything, `--skip-tests` for a quick mid-change look (never as the final
+check).
 
 ## The loop, every change
 
