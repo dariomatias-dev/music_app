@@ -106,15 +106,15 @@ genhtml coverage/lcov.info -o coverage/html   # 需要先安装 lcov
 ## 截图
 
 <div align="center">
-<img src="screenshots/en/01_home.png" width="200" alt="首页"/>
-<img src="screenshots/en/02_library_playlists.png" width="200" alt="播放列表"/>
-<img src="screenshots/en/03_playlist_detail.png" width="200" alt="播放列表详情"/>
-<img src="screenshots/en/04_library_tracks.png" width="200" alt="曲目"/>
-<img src="screenshots/en/05_now_playing.png" width="200" alt="正在播放"/>
-<img src="screenshots/en/06_search.png" width="200" alt="搜索"/>
-<img src="screenshots/en/07_settings.png" width="200" alt="设置"/>
-<img src="screenshots/en/08_storage.png" width="200" alt="存储空间"/>
-<img src="screenshots/en/09_statistics.png" width="200" alt="统计"/>
+<img src="screenshots/zh/01_home.png" width="200" alt="首页"/>
+<img src="screenshots/zh/02_library_playlists.png" width="200" alt="播放列表"/>
+<img src="screenshots/zh/03_playlist_detail.png" width="200" alt="播放列表详情"/>
+<img src="screenshots/zh/04_library_tracks.png" width="200" alt="曲目"/>
+<img src="screenshots/zh/05_now_playing.png" width="200" alt="正在播放"/>
+<img src="screenshots/zh/06_search.png" width="200" alt="搜索"/>
+<img src="screenshots/zh/07_settings.png" width="200" alt="设置"/>
+<img src="screenshots/zh/08_storage.png" width="200" alt="存储空间"/>
+<img src="screenshots/zh/09_statistics.png" width="200" alt="统计"/>
 </div>
 
 ## 快速开始
@@ -142,7 +142,7 @@ fvm flutter run
 | ---------------- | -------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `verify`         | `scripts/verify.sh [--all] [--gen] [--skip-tests]` | 运行与 CI 相同的检查（格式化、静态分析、测试、覆盖率），范围限定为有改动的包。`--all` 无论如何都检查全部，`--gen` 先重新生成代码和本地化文件，`--skip-tests` 只做格式化和分析。通过后会写入一个标记，仓库的 agent 工作流用它判断当前工作区是否仍与上次通过的运行一致。 |
 | `workspace_hash` | `scripts/workspace_hash.sh`                        | 输出质量门禁所覆盖源文件的哈希值。`verify.sh` 和 agent 工作流用它判断自上次通过检查以来代码是否发生变化；通常不需要手动运行。                                                                                                                                          |
-| `screenshot`     | `scripts/screenshot.sh [device-id]`                | 在已连接的设备或模拟器上依次打开应用的主要界面，并将每个界面的截图保存到 `screenshots/` 中，用于 README。运行 `fvm flutter devices` 可以列出可用的设备 id。                                                                                                            |
+| `screenshot`     | `scripts/screenshot.sh [device-id]`                | 在已连接的设备或模拟器上依次打开应用的主要界面，并将每个界面的截图保存到 `screenshots/<locale>/` 中，每种 README 语言各一个目录，供各自的 README 使用。运行 `fvm flutter devices` 可以列出可用的设备 id。                                                                                                            |
 | `check_coverage` | `scripts/check_coverage.sh <lcov-file> <minimum>`  | 如果 `lcov.info` 报告（由 `flutter test --coverage` 生成）中的行覆盖率低于 `<minimum>`，则该脚本会失败。CI 用它来强制执行上面的覆盖率门槛；生成覆盖率报告后，也可以在本地运行它，在推送前先自查。                                                                      |
 | `check_l10n`     | `scripts/check_l10n.sh [arb-dir]`                  | 当各 ARB 文件所包含的键不一致时失败。`gen-l10n` 遇到缺失的键会静默回退到模板，因此翻译到一半的改动会让用户在中文构建里看到英文文案。由 `verify.sh` 和 CI 调用。 |
 
