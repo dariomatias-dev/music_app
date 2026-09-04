@@ -140,12 +140,12 @@ fvm flutter run
 
 | 脚本             | 命令                                               | 说明                                                                                                                                                                                                                                                                   |
 | ---------------- | -------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `verify`         | `scripts/verify.sh [--all] [--gen] [--skip-tests]` | 运行与 CI 相同的检查（格式化、静态分析、测试、覆盖率），范围限定为有改动的包。`--all` 无论如何都检查全部，`--gen` 先重新生成代码和本地化文件，`--skip-tests` 只做格式化和分析。通过后会写入一个标记，仓库的 agent 工作流用它判断当前工作区是否仍与上次通过的运行一致。 |
+| `verify`         | `scripts/verify.sh [--all] [--skip-tests]`         | 运行与 CI 相同的检查（生成产物、格式化、静态分析、测试、覆盖率），范围限定为有改动的包。代码生成每次都会执行，只要它改动了任何文件本次运行就失败，因为 CI 会从干净检出重新生成，并拒绝生成文件过期的分支。`--all` 无论如何都检查两个包，`--skip-tests` 只做生成、格式化和分析。通过后会写入一个标记，仓库的 agent 工作流用它判断当前工作区是否仍与上次通过的运行一致。 |
 | `workspace_hash` | `scripts/workspace_hash.sh`                        | 输出质量门禁所覆盖源文件的哈希值。`verify.sh` 和 agent 工作流用它判断自上次通过检查以来代码是否发生变化；通常不需要手动运行。                                                                                                                                          |
 | `screenshot`     | `scripts/screenshot.sh [device-id]`                | 在已连接的设备或模拟器上依次打开应用的主要界面，并将每个界面的截图保存到 `screenshots/<locale>/` 中，每种 README 语言各一个目录，供各自的 README 使用。运行 `fvm flutter devices` 可以列出可用的设备 id。                                                                                                            |
 | `check_coverage` | `scripts/check_coverage.sh <lcov-file> <minimum>`  | 如果 `lcov.info` 报告（由 `flutter test --coverage` 生成）中的行覆盖率低于 `<minimum>`，则该脚本会失败。CI 用它来强制执行上面的覆盖率门槛；生成覆盖率报告后，也可以在本地运行它，在推送前先自查。                                                                      |
 | `check_l10n`     | `scripts/check_l10n.sh [arb-dir]`                  | 当各 ARB 文件所包含的键不一致时失败。`gen-l10n` 遇到缺失的键会静默回退到模板，因此翻译到一半的改动会让用户在中文构建里看到英文文案。由 `verify.sh` 和 CI 调用。 |
-| `seed`           | `dart run scripts/seed.dart [db-path]`             | 在不连接设备、也不构建的情况下，把一套开发用音乐库（艺人、专辑、曲目、播放列表、收藏、收听历史、最近搜索）写入数据库文件，默认写到 `build/seed/music_app.sqlite`。若想直接给应用填充数据，用 `fvm flutter run --dart-define=SEED_ENABLED=true` 运行。 |
+| `seed`           | `dart run scripts/seed.dart [db-path]`             | 在不连接设备、也不构建的情况下，把一套开发用音乐库（艺人、专辑、曲目、播放列表、收藏、缓存歌词、收听历史、最近搜索、已排除的文件夹）写入数据库文件，默认写到 `build/seed/music_app.sqlite`。若想直接给应用填充数据，用 `fvm flutter run --dart-define=SEED_ENABLED=true` 运行。 |
 
 ## 文档
 

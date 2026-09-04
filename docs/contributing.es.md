@@ -37,17 +37,17 @@ Ejecuta la app en un dispositivo conectado o emulador con `fvm flutter run`.
 
 ### Datos de ejemplo
 
-Hasta que un escaneo encuentre archivos de audio en el dispositivo, la app abre con una biblioteca vacía, que es una forma lenta de mirar una pantalla. Ejecútala con los seeds de desarrollo:
+La app abre con una biblioteca vacía hasta que un escaneo encuentra archivos de audio en el dispositivo. Para trabajar sobre una app poblada sin depender de eso, ejecútala con los seeds de desarrollo:
 
 ```sh
 fvm flutter run --dart-define=SEED_ENABLED=true
 ```
 
-Eso escribe una biblioteca con artistas, álbumes, pistas, playlists, favoritos, historial de escucha y búsquedas recientes, fechados con respecto al momento en que se ejecuta. Volver a ejecutarlo reemplaza esas filas en lugar de añadir una segunda copia, y deja intacto todo lo demás en la base de datos.
+Los seeds escriben artistas, álbumes, pistas, playlists, favoritos, letras en caché, historial de escucha, búsquedas recientes y carpetas excluidas, fechados con respecto al momento en que se ejecutan. Una nueva ejecución reemplaza esas filas en lugar de añadir una segunda copia, y deja intacto el resto de la base de datos.
 
-El flag es de tiempo de compilación y los seeds se niegan a ejecutarse fuera del modo debug, así que ni los datos de ejemplo ni el código que los escribe llegan a una build de release.
+El flag es de tiempo de compilación y los seeds además se niegan a ejecutarse fuera del modo debug, de modo que ni los datos de ejemplo ni el código que los escribe llegan a una build de release.
 
-Para llenar un archivo de base de datos sin dispositivo y sin build, `dart run scripts/seed.dart` escribe uno en `build/seed/`.
+`dart run scripts/seed.dart` escribe un archivo de base de datos poblado en `build/seed/`, sin dispositivo y sin build.
 
 ## Antes de abrir un pull request
 
@@ -63,7 +63,7 @@ Para llenar un archivo de base de datos sin dispositivo y sin build, `dart run s
   ./scripts/verify.sh
   ```
 
-  Ejecuta lo mismo que CI, limitado a los paquetes que cambiaste: formato, análisis, pruebas y el umbral de cobertura (97% para la app, 98% para `packages/app_ui`). Agrega `--gen` cuando el cambio tocó algo que leen `build_runner` o `gen-l10n`, `--all` para verificar ambos paquetes sin importar qué cambió, o `--skip-tests` para una pasada rápida de formato y análisis a mitad del trabajo.
+  Ejecuta lo mismo que CI, limitado a los paquetes que cambiaste: archivos generados, formato, análisis, pruebas y el umbral de cobertura (97% para la app, 98% para `packages/app_ui`). La generación de código corre en cada invocación y el script se detiene si alteró algún archivo, de modo que los archivos generados desactualizados se detectan aquí y no en CI. Revisa lo que se escribió y haz commit. Agrega `--all` para verificar ambos paquetes sin importar qué cambió, o `--skip-tests` para una pasada rápida a mitad del trabajo.
 
   Las mismas verificaciones a mano, ejecutadas dentro del paquete que estás cambiando:
 

@@ -37,17 +37,17 @@ Run the app on a connected device or emulator with `fvm flutter run`.
 
 ### Sample data
 
-Until a scan finds audio files on the device, the app opens on an empty library, which is a slow way to look at a screen. Run it with the development seeds instead:
+The app opens on an empty library until a device scan finds audio files. To work against a populated app without one, run it with the development seeds:
 
 ```sh
 fvm flutter run --dart-define=SEED_ENABLED=true
 ```
 
-That writes a library of artists, albums, tracks, playlists, favorites, listening history and recent searches, dated relative to the moment it runs. Rerunning replaces those rows rather than adding a second copy, and leaves anything else in the database alone.
+The seeds write artists, albums, tracks, playlists, favorites, cached lyrics, listening history, recent searches and excluded folders, dated relative to the moment they run. A rerun replaces those rows instead of adding a second copy, and leaves the rest of the database untouched.
 
-The flag is compile-time and the seeds refuse to run outside debug mode, so no sample data and none of the code that writes it reaches a release build.
+The flag is compile-time and the seeds also refuse to run outside debug mode, so neither the sample data nor the code that writes it reaches a release build.
 
-To fill a database file with no device and no build at all, `dart run scripts/seed.dart` writes one under `build/seed/`.
+`dart run scripts/seed.dart` writes a seeded database file under `build/seed/`, without a device and without a build.
 
 ## Before opening a pull request
 
@@ -63,7 +63,7 @@ To fill a database file with no device and no build at all, `dart run scripts/se
   ./scripts/verify.sh
   ```
 
-  It runs what CI runs, scoped to the packages you changed: formatting, analysis, tests, and the coverage threshold (97% for the app, 98% for `packages/app_ui`). Add `--gen` when the change touched anything `build_runner` or `gen-l10n` reads, `--all` to check both packages regardless of what changed, or `--skip-tests` for a quick formatting and analysis pass mid-change.
+  It runs what CI runs, scoped to the packages you changed: generated output, formatting, analysis, tests, and the coverage threshold (97% for the app, 98% for `packages/app_ui`). Code generation runs on every invocation and the script stops when it changed anything, so generated files that are out of date are caught here rather than in CI. Review what was written and commit it. Add `--all` to check both packages regardless of what changed, or `--skip-tests` for a quick pass mid-change.
 
   The same checks by hand, run inside the package being changed:
 
