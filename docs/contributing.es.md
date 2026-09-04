@@ -35,6 +35,20 @@ fvm dart run flutter_launcher_icons
 
 Ejecuta la app en un dispositivo conectado o emulador con `fvm flutter run`.
 
+### Datos de ejemplo
+
+Hasta que un escaneo encuentre archivos de audio en el dispositivo, la app abre con una biblioteca vacía, que es una forma lenta de mirar una pantalla. Ejecútala con los seeds de desarrollo:
+
+```sh
+fvm flutter run --dart-define=SEED_ENABLED=true
+```
+
+Eso escribe una biblioteca con artistas, álbumes, pistas, playlists, favoritos, historial de escucha y búsquedas recientes, fechados con respecto al momento en que se ejecuta. Volver a ejecutarlo reemplaza esas filas en lugar de añadir una segunda copia, y deja intacto todo lo demás en la base de datos.
+
+El flag es de tiempo de compilación y los seeds se niegan a ejecutarse fuera del modo debug, así que ni los datos de ejemplo ni el código que los escribe llegan a una build de release.
+
+Para llenar un archivo de base de datos sin dispositivo y sin build, `dart run scripts/seed.dart` escribe uno en `build/seed/`.
+
 ## Antes de abrir un pull request
 
 - **Abre un issue primero** para discutir el cambio, a menos que sea una corrección pequeña y obvia.

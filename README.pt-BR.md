@@ -103,7 +103,7 @@ cada uma compõe componentes mantidos em
 
 ## Testes
 
-O projeto tem 189 arquivos de teste (132 no app, 57 em
+O projeto tem 196 arquivos de teste (139 no app, 57 em
 `packages/app_ui`), cobrindo repositórios, view models e widgets (40
 deles são testes golden, que renderizam 86 imagens de referência do design
 system e das telas principais), além das suítes em `integration_test/`
@@ -166,6 +166,7 @@ Scripts utilitários ficam em `scripts/`.
 | `screenshot`     | `scripts/screenshot.sh [device-id]`                | Percorre as principais telas do app em um dispositivo ou emulador conectado e salva uma captura de cada uma em `screenshots/<locale>/`, uma pasta por idioma do README, usadas por cada um deles. Execute `fvm flutter devices` para listar os ids de dispositivos disponíveis.                                                                                                                                                                                                                  |
 | `check_coverage` | `scripts/check_coverage.sh <lcov-file> <minimum>`  | Falha se a cobertura de linha de um relatório `lcov.info` (gerado com `flutter test --coverage`) ficar abaixo de `<minimum>`. Usado no CI para impor os limites acima; execute localmente após gerar a cobertura para checar antes do push.                                                                                                                                                                                                 |
 | `check_l10n`     | `scripts/check_l10n.sh [arb-dir]`                  | Falha quando os arquivos ARB divergem nas chaves que carregam. O `gen-l10n` recorre ao template diante de uma chave faltando sem avisar nada, então uma mudança traduzida pela metade chegaria ao usuário como texto em inglês dentro de um build em português. Executado pelo `verify.sh` e pelo CI. |
+| `seed`           | `dart run scripts/seed.dart [db-path]`             | Escreve uma biblioteca de desenvolvimento (artistas, álbuns, faixas, playlists, favoritos, histórico de reprodução, buscas recentes) em um arquivo de banco, sem dispositivo e sem build. O padrão é `build/seed/music_app.sqlite`. Para popular o app no lugar, execute-o com `fvm flutter run --dart-define=SEED_ENABLED=true`. |
 
 ## Documentação
 

@@ -14,7 +14,7 @@ lib/
   src/
     core/                   # 横切关注点，被所有功能模块共享
       audio/                # just_audio + audio_service 集成
-      database/             # drift 数据库结构、表、DAO、迁移
+      database/             # drift 数据库结构、表、DAO、迁移、开发种子数据
       navigation/            # go_router 配置、MainShell、自适应导航
       permissions/            # 媒体与通知权限抽象层
       services/               # 元数据读写、id 生成、文件选择器等
@@ -22,7 +22,7 @@ lib/
       widgets/                 # 不属于任何具体功能模块的小型通用组件
     features/
       <feature>/
-        data/                # 仓库实现、数据源、DTO/映射器
+        data/                # 仓库实现、数据源、DTO/映射器、种子数据
         domain/              # 实体、仓库接口、用例
         presentation/
           providers/         # 派生状态/表现层状态

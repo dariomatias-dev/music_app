@@ -35,6 +35,20 @@ fvm dart run flutter_launcher_icons
 
 在已连接的设备或模拟器上用 `fvm flutter run` 运行应用。
 
+### 示例数据
+
+在扫描到设备上的音频文件之前，应用打开时音乐库是空的，用这种状态看界面很慢。改用开发种子数据运行：
+
+```sh
+fvm flutter run --dart-define=SEED_ENABLED=true
+```
+
+这会写入一整套艺人、专辑、曲目、播放列表、收藏、收听历史与最近搜索，日期相对运行时刻生成。再次运行会覆盖这些行，而不是追加第二份副本，数据库里的其他内容保持不变。
+
+该开关是编译期常量，并且种子数据在非 debug 模式下拒绝运行，所以示例数据及其写入代码都不会进入 release 构建。
+
+若要在没有设备、也不构建的情况下生成一个数据库文件，`dart run scripts/seed.dart` 会在 `build/seed/` 下写出一个。
+
 ## 提交 pull request 之前
 
 - **先开一个 issue** 讨论这个改动，除非它是一个很小且明显的修复。
