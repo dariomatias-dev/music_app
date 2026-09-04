@@ -35,10 +35,11 @@ class PlayHistoryRepositoryImpl implements PlayHistoryRepository {
     required DateTime startedAt,
     required Duration playedDuration,
     required bool completed,
+    String? id,
   }) {
     return _database.playEventDao.upsertOne(
       PlayEventTableCompanion.insert(
-        id: _idGenerator.generate(),
+        id: id ?? _idGenerator.generate(),
         trackId: trackId,
         startedAt: startedAt,
         playedDuration: playedDuration.inMilliseconds,

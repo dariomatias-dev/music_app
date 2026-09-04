@@ -19,20 +19,32 @@ class FakePlayHistoryRepository implements PlayHistoryRepository {
 
   final recordedPlays = <String>[];
 
+  /// Where each recorded id landed in [entries], so writing the same id
+  /// again rewrites that entry, as the database's upsert does.
+  final _indexById = <String, int>{};
+
   @override
   Future<void> recordPlay({
     required String trackId,
     required DateTime startedAt,
     required Duration playedDuration,
     required bool completed,
+    String? id,
   }) async {
-    recordedPlays.add(trackId);
-    entries.add((
+    final entry = (
       trackId: trackId,
       startedAt: startedAt,
       playedDuration: playedDuration,
       completed: completed,
-    ));
+    );
+    final index = id == null ? null : _indexById[id];
+    if (index != null) {
+      entries[index] = entry;
+      return;
+    }
+    if (id != null) _indexById[id] = entries.length;
+    recordedPlays.add(trackId);
+    entries.add(entry);
   }
 
   bool historyCleared = false;

@@ -1,7 +1,9 @@
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:music_app/src/core/audio/audio_providers.dart';
 import 'package:music_app/src/core/audio/music_audio_handler.dart';
+import 'package:music_app/src/core/services/app_lifecycle/app_lifecycle_providers.dart';
 import 'package:music_app/src/features/history/data/providers/history_data_providers.dart';
 import 'package:music_app/src/features/history/presentation/view_models/playback_history_recorder.dart';
 import 'package:music_app/src/features/library/data/indexing/library_indexer.dart';
@@ -15,6 +17,7 @@ import 'package:music_app/src/features/queue/data/playback_session_storage.dart'
 import 'package:music_app/src/features/queue/data/providers/queue_data_providers.dart';
 import 'package:music_app/src/features/queue/presentation/view_models/queue_view_model.dart';
 
+import '../../../../helpers/fake_app_lifecycle_service.dart';
 import '../../../../helpers/fake_audio_player_service.dart';
 import '../../../../helpers/fake_key_value_storage.dart';
 import '../../../../helpers/fake_play_history_repository.dart';
@@ -70,6 +73,7 @@ void main() {
   late FakeAudioPlayerService playerService;
   late MusicAudioHandler handler;
   late FakePlayHistoryRepository historyRepository;
+  late FakeAppLifecycleService lifecycle;
   late ProviderContainer container;
   late DateTime now;
 
@@ -86,6 +90,8 @@ void main() {
     playerService = FakeAudioPlayerService();
     handler = MusicAudioHandler(playerService);
     historyRepository = FakePlayHistoryRepository();
+    lifecycle = FakeAppLifecycleService();
+    addTearDown(lifecycle.dispose);
     container = ProviderContainer(
       overrides: [
         audioPlayerServiceProvider.overrideWithValue(playerService),
@@ -97,6 +103,7 @@ void main() {
         playbackSessionStorageProvider.overrideWithValue(
           PlaybackSessionStorage(FakeKeyValueStorage()),
         ),
+        appLifecycleServiceProvider.overrideWithValue(lifecycle),
       ],
     );
     container.read(playbackHistoryRecorderProvider.notifier).clock = () => now;
@@ -105,6 +112,9 @@ void main() {
     // queue_view_model_test.dart.
     addTearDown(
       container.listen(playbackViewModelProvider, (_, _) {}).close,
+    );
+    addTearDown(
+      container.listen(appLifecycleStateProvider, (_, _) {}).close,
     );
     await flush();
   });
@@ -177,6 +187,47 @@ void main() {
     // 20s (before pause) + 5s (after resume) = 25s: still under the
     // minimum, since the 40s spent paused shouldn't count.
     expect(historyRepository.recordedPlays, isEmpty);
+  });
+
+  test('backgrounding writes out the play in progress', () async {
+    await container.read(queueViewModelProvider.notifier).playFromSource([
+      _track('a'),
+      _track('b'),
+    ], startIndex: 0);
+    await flush();
+
+    now = now.add(const Duration(seconds: 31));
+    lifecycle.emit(AppLifecycleState.paused);
+    await flush();
+
+    expect(historyRepository.recordedPlays, ['a']);
+    expect(
+      historyRepository.entries.single.playedDuration,
+      const Duration(seconds: 31),
+    );
+    expect(historyRepository.entries.single.completed, isFalse);
+  });
+
+  test('a play written out early is not counted twice when it ends', () async {
+    await container.read(queueViewModelProvider.notifier).playFromSource([
+      _track('a'),
+      _track('b'),
+    ], startIndex: 0);
+    await flush();
+
+    now = now.add(const Duration(seconds: 31));
+    lifecycle.emit(AppLifecycleState.paused);
+    await flush();
+
+    now = now.add(const Duration(seconds: 30));
+    await playerService.seekToNext();
+    await flush();
+
+    expect(historyRepository.recordedPlays, ['a']);
+    expect(
+      historyRepository.entries.single.playedDuration,
+      const Duration(seconds: 61),
+    );
   });
 
   test('starts a fresh session for the next track', () async {

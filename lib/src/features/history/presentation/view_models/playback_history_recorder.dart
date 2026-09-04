@@ -1,8 +1,11 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:music_app/src/core/audio/audio_player_service.dart';
+import 'package:music_app/src/core/services/app_lifecycle/app_lifecycle_providers.dart';
+import 'package:music_app/src/core/services/id_generator/id_generator.dart';
+import 'package:music_app/src/core/services/id_generator/id_generator_provider.dart';
 import 'package:music_app/src/features/history/data/providers/history_data_providers.dart';
 import 'package:music_app/src/features/history/domain/repositories/play_history_repository.dart';
 import 'package:music_app/src/features/player/presentation/view_models/playback_view_model.dart';
@@ -27,12 +30,14 @@ class PlaybackHistoryRecorder extends _$PlaybackHistoryRecorder {
   DateTime? _startedAt;
   Duration _playedDuration = Duration.zero;
   DateTime? _accumulatingSince;
+  String? _playId;
 
   // Read once in `build`, not inside `onDispose`: Riverpod forbids
   // `ref.read` from within a dispose callback, since it's a mutation of
   // the provider graph made while that same graph is already tearing
   // down.
   late PlayHistoryRepository _repository;
+  late IdGenerator _idGenerator;
 
   /// Source of the current time, overridable so tests can simulate elapsed
   /// playback without real waits.
@@ -42,6 +47,7 @@ class PlaybackHistoryRecorder extends _$PlaybackHistoryRecorder {
   @override
   void build() {
     _repository = ref.read(playHistoryRepositoryProvider);
+    _idGenerator = ref.read(idGeneratorProvider);
     ref
       // Selects only currentIndex, playing and processingState: the
       // frequent position ticks during playback don't touch any of these,
@@ -60,6 +66,13 @@ class PlaybackHistoryRecorder extends _$PlaybackHistoryRecorder {
           processingState: next.$3,
         ),
       )
+      ..listen(appLifecycleStateProvider, (previous, current) {
+        final state = current.value;
+        if (state == AppLifecycleState.paused ||
+            state == AppLifecycleState.detached) {
+          _checkpoint();
+        }
+      })
       ..onDispose(() => _finalize(completed: false));
   }
 
@@ -105,22 +118,36 @@ class PlaybackHistoryRecorder extends _$PlaybackHistoryRecorder {
     _accumulatingSince = now;
   }
 
+  /// Writes the play in progress out without ending it, so it survives the
+  /// process being killed while playback continues in the background.
+  ///
+  /// Every write of a play reuses that play's id, so this replaces the row
+  /// it wrote before rather than recording a play the user never made.
+  void _checkpoint() {
+    _accumulate();
+    _write(completed: false);
+  }
+
   void _finalize({required bool completed}) {
     _accumulate();
-    final trackId = _trackId;
-    final startedAt = _startedAt;
-    final playedDuration = _playedDuration;
+    _write(completed: completed);
     _playedDuration = Duration.zero;
     _accumulatingSince = null;
+    _playId = null;
+  }
 
+  void _write({required bool completed}) {
+    final trackId = _trackId;
+    final startedAt = _startedAt;
     if (trackId == null || startedAt == null) return;
-    if (playedDuration < _minPlayedDuration && !completed) return;
+    if (_playedDuration < _minPlayedDuration && !completed) return;
 
     unawaited(
       _repository.recordPlay(
+        id: _playId ??= _idGenerator.generate(),
         trackId: trackId,
         startedAt: startedAt,
-        playedDuration: playedDuration,
+        playedDuration: _playedDuration,
         completed: completed,
       ),
     );
