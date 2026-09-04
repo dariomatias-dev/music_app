@@ -12,6 +12,7 @@ import 'package:music_app/src/core/constants/preference_keys.dart';
 import 'package:music_app/src/core/database/app_database.dart';
 import 'package:music_app/src/core/database/database_providers.dart';
 import 'package:music_app/src/core/permissions/media_permission_service.dart';
+import 'package:music_app/src/core/permissions/notification_permission_service.dart';
 import 'package:music_app/src/core/permissions/permission_providers.dart';
 import 'package:music_app/src/core/services/device_file/device_file_service_provider.dart';
 import 'package:music_app/src/core/storage/shared_preferences_storage.dart';
@@ -39,6 +40,14 @@ class FakeGrantedPermissionService implements MediaPermissionService {
 
   @override
   Future<void> openSystemSettings() async {}
+}
+
+/// Reports notifications as allowed without reaching the platform, so a
+/// launch never waits on a system prompt.
+class FakeGrantedNotificationPermissionService
+    implements NotificationPermissionService {
+  @override
+  Future<bool> request() async => true;
 }
 
 /// The library the flow tests are seeded with: one artist, one album, and
@@ -201,6 +210,9 @@ Future<LaunchedApp> launchSeededApp(
         deviceFileServiceProvider.overrideWithValue(files),
         mediaPermissionServiceProvider.overrideWithValue(
           FakeGrantedPermissionService(),
+        ),
+        notificationPermissionServiceProvider.overrideWithValue(
+          FakeGrantedNotificationPermissionService(),
         ),
       ],
       child: const MusicApp(),

@@ -36,18 +36,29 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
     final status = await ref.read(mediaPermissionServiceProvider).check();
     if (!mounted) return;
     setState(() => _status = status);
-    if (status == MediaPermissionStatus.granted) await _startScanAndContinue();
+    if (status == MediaPermissionStatus.granted) await _onMediaGranted();
   }
 
   Future<void> _requestPermission() async {
     final status = await ref.read(mediaPermissionServiceProvider).request();
     if (!mounted) return;
     setState(() => _status = status);
-    if (status == MediaPermissionStatus.granted) await _startScanAndContinue();
+    if (status == MediaPermissionStatus.granted) await _onMediaGranted();
   }
 
   Future<void> _openSettings() async {
     await ref.read(mediaPermissionServiceProvider).openSystemSettings();
+  }
+
+  /// Asks for the notification permission before the first scan, and only
+  /// then: the playback controls in the shade and on the lock screen
+  /// depend on it from Android 13, but a refusal costs the notification
+  /// and not the app, so it never blocks and a scan retry doesn't ask
+  /// again.
+  Future<void> _onMediaGranted() async {
+    await ref.read(notificationPermissionServiceProvider).request();
+    if (!mounted) return;
+    await _startScanAndContinue();
   }
 
   Future<void> _startScanAndContinue() async {

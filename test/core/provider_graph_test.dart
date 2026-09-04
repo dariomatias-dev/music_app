@@ -8,7 +8,10 @@ import 'package:music_app/src/core/database/database_providers.dart';
 import 'package:music_app/src/core/errors/error_reporter.dart';
 import 'package:music_app/src/core/errors/error_reporter_provider.dart';
 import 'package:music_app/src/core/permissions/media_permission_service_impl.dart';
+import 'package:music_app/src/core/permissions/notification_permission_service_impl.dart';
 import 'package:music_app/src/core/permissions/permission_providers.dart';
+import 'package:music_app/src/core/services/app_lifecycle/app_lifecycle_providers.dart';
+import 'package:music_app/src/core/services/app_lifecycle/widgets_binding_app_lifecycle_service.dart';
 import 'package:music_app/src/core/services/artwork_cache/artwork_cache_providers.dart';
 import 'package:music_app/src/core/services/artwork_cache/file_system_artwork_cache.dart';
 import 'package:music_app/src/core/services/device_file/device_file_service_provider.dart';
@@ -85,10 +88,18 @@ void main() {
         isA<MediaPermissionServiceImpl>(),
       );
       expect(
+        container.read(notificationPermissionServiceProvider),
+        isA<NotificationPermissionServiceImpl>(),
+      );
+      expect(
         container.read(deviceFileServiceProvider),
         isA<FilePickerDeviceFileService>(),
       );
       expect(container.read(errorReporterProvider), isA<LogErrorReporter>());
+      expect(
+        container.read(appLifecycleServiceProvider),
+        isA<WidgetsBindingAppLifecycleService>(),
+      );
     });
 
     test('clock reports the current time by default', () {
