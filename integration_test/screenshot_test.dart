@@ -9,19 +9,13 @@ import 'package:music_app/src/core/audio/music_audio_handler.dart';
 import 'package:music_app/src/core/constants/preference_keys.dart';
 import 'package:music_app/src/core/database/app_database.dart';
 import 'package:music_app/src/core/database/database_providers.dart';
+import 'package:music_app/src/core/database/seeds/dev_seeds.dart';
 import 'package:music_app/src/core/permissions/media_permission_service.dart';
 import 'package:music_app/src/core/permissions/notification_permission_service.dart';
 import 'package:music_app/src/core/permissions/permission_providers.dart';
-import 'package:music_app/src/core/services/id_generator/uuid_v7_generator.dart';
 import 'package:music_app/src/core/storage/shared_preferences_storage.dart';
 import 'package:music_app/src/core/storage/storage_providers.dart';
-import 'package:music_app/src/features/history/data/repositories/play_history_repository_impl.dart';
-import 'package:music_app/src/features/library/data/data_sources/library_local_data_source_impl.dart';
-import 'package:music_app/src/features/library/domain/entities/album.dart';
-import 'package:music_app/src/features/library/domain/entities/artist.dart';
-import 'package:music_app/src/features/library/domain/entities/track.dart';
 import 'package:music_app/src/features/player/presentation/widgets/mini_player.dart';
-import 'package:music_app/src/features/playlist/data/repositories/playlist_repository_impl.dart';
 import 'package:music_app/src/music_app.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -74,6 +68,11 @@ class _FakeGrantedNotificationPermissionService
   Future<void> openSystemSettings() async {}
 }
 
+/// Pins what the seeded library calls "now", so two captures of the same
+/// build produce the same dates, the same listening history and therefore
+/// the same images.
+final _seedClock = DateTime(2026, 3, 15, 10, 30);
+
 /// Drives the app through its main screens, once per README locale, taking
 /// a screenshot of each screen, so marketing assets (READMEs, Play Store
 /// listing, official website) can be generated without manually navigating
@@ -94,195 +93,7 @@ void main() {
     testWidgets('capture marketing screenshots ($localeArg)', (tester) async {
       final database = AppDatabase(NativeDatabase.memory());
       addTearDown(database.close);
-      const idGenerator = UuidV7Generator();
-      final library = LibraryLocalDataSourceImpl(database);
-      final playlists = PlaylistRepositoryImpl(database, idGenerator);
-      final history = PlayHistoryRepositoryImpl(database, idGenerator);
-
-      final artists = [
-        const Artist(
-          id: 'artist-1',
-          sourceId: 'charcoal',
-          name: 'Charcoal',
-          albumCount: 1,
-          trackCount: 4,
-        ),
-        const Artist(
-          id: 'artist-2',
-          sourceId: 'night-bloom',
-          name: 'Night Bloom',
-          albumCount: 1,
-          trackCount: 3,
-        ),
-        const Artist(
-          id: 'artist-3',
-          sourceId: 'solar-drift',
-          name: 'Solar Drift',
-          albumCount: 1,
-          trackCount: 3,
-        ),
-      ];
-      for (final artist in artists) {
-        await library.upsertArtist(artist);
-      }
-
-      final albums = [
-        const Album(
-          id: 'album-1',
-          sourceId: 'charcoal::chill-vibes',
-          title: 'Chill Vibes',
-          artistId: 'artist-1',
-          trackCount: 4,
-          totalDuration: Duration(minutes: 15),
-        ),
-        const Album(
-          id: 'album-2',
-          sourceId: 'night-bloom::afterglow',
-          title: 'Afterglow',
-          artistId: 'artist-2',
-          trackCount: 3,
-          totalDuration: Duration(minutes: 12),
-        ),
-        const Album(
-          id: 'album-3',
-          sourceId: 'solar-drift::horizon-line',
-          title: 'Horizon Line',
-          artistId: 'artist-3',
-          trackCount: 3,
-          totalDuration: Duration(minutes: 11),
-        ),
-      ];
-      for (final album in albums) {
-        await library.upsertAlbum(album);
-      }
-
-      Track buildTrack({
-        required String id,
-        required String title,
-        required String artistId,
-        required String albumId,
-      }) => Track(
-        id: id,
-        sourceId: id,
-        filePath: '/music/${_folderForAlbum(albumId)}/$id.mp3',
-        title: title,
-        artistId: artistId,
-        albumId: albumId,
-        duration: const Duration(minutes: 4),
-        format: 'mp3',
-        fileSize: 4 * 1024 * 1024,
-        hasEmbeddedArtwork: false,
-        dateAdded: DateTime.now(),
-        dateModified: DateTime.now(),
-      );
-
-      final tracks = [
-        buildTrack(
-          id: 'track-1',
-          title: 'Night Drive',
-          artistId: 'artist-1',
-          albumId: 'album-1',
-        ),
-        buildTrack(
-          id: 'track-2',
-          title: 'Slow Fade',
-          artistId: 'artist-1',
-          albumId: 'album-1',
-        ),
-        buildTrack(
-          id: 'track-3',
-          title: 'Warm Static',
-          artistId: 'artist-1',
-          albumId: 'album-1',
-        ),
-        buildTrack(
-          id: 'track-4',
-          title: 'Glass Hours',
-          artistId: 'artist-1',
-          albumId: 'album-1',
-        ),
-        buildTrack(
-          id: 'track-5',
-          title: 'Afterglow',
-          artistId: 'artist-2',
-          albumId: 'album-2',
-        ),
-        buildTrack(
-          id: 'track-6',
-          title: 'Paper Moon',
-          artistId: 'artist-2',
-          albumId: 'album-2',
-        ),
-        buildTrack(
-          id: 'track-7',
-          title: 'Low Tide',
-          artistId: 'artist-2',
-          albumId: 'album-2',
-        ),
-        buildTrack(
-          id: 'track-8',
-          title: 'Horizon Line',
-          artistId: 'artist-3',
-          albumId: 'album-3',
-        ),
-        buildTrack(
-          id: 'track-9',
-          title: 'Ember Sky',
-          artistId: 'artist-3',
-          albumId: 'album-3',
-        ),
-        buildTrack(
-          id: 'track-10',
-          title: 'Halflight',
-          artistId: 'artist-3',
-          albumId: 'album-3',
-        ),
-      ];
-      for (final track in tracks) {
-        await library.upsertTrack(track);
-      }
-
-      for (final trackId in ['track-1', 'track-5', 'track-8']) {
-        await database.favoriteDao.upsertOne(
-          FavoriteTableCompanion.insert(
-            id: 'favorite-$trackId',
-            trackId: trackId,
-            createdAt: DateTime.now(),
-          ),
-        );
-      }
-
-      final windDownId = await playlists.createPlaylist('Evening Wind Down');
-      await playlists.setPlaylistTracks(windDownId, [
-        'track-1',
-        'track-2',
-        'track-5',
-        'track-8',
-        'track-9',
-      ]);
-      final focusId = await playlists.createPlaylist('Focus');
-      await playlists.setPlaylistTracks(focusId, [
-        'track-3',
-        'track-6',
-        'track-10',
-      ]);
-
-      final now = DateTime.now();
-      for (final (trackId, daysAgo) in [
-        ('track-1', 0),
-        ('track-5', 1),
-        ('track-8', 1),
-        ('track-2', 2),
-        ('track-9', 3),
-        ('track-1', 4),
-      ]) {
-        await history.recordPlay(
-          trackId: trackId,
-          startedAt: now.subtract(Duration(days: daysAgo)),
-          playedDuration: const Duration(minutes: 4),
-          completed: true,
-        );
-      }
+      await runDevSeeds(database, clock: () => _seedClock);
 
       final locale = _parseLocaleArg(localeArg);
 
@@ -385,11 +196,3 @@ void main() {
     });
   }
 }
-
-/// The folder each seeded track's fake file path is placed under, purely
-/// for cosmetic variety in the Storage screenshot.
-String _folderForAlbum(String albumId) => switch (albumId) {
-  'album-1' => 'chill-vibes',
-  'album-2' => 'afterglow',
-  _ => 'horizon-line',
-};
