@@ -89,21 +89,17 @@ class StatisticsRepositoryImpl implements StatisticsRepository {
       var run = 0;
       DateTime? previous;
       for (final date in sortedDates) {
-        run = (previous != null && date.difference(previous).inDays == 1)
-            ? run + 1
-            : 1;
+        run = (previous != null && date == _dayAfter(previous)) ? run + 1 : 1;
         if (run > longestDays) longestDays = run;
         previous = date;
       }
 
       final today = _dateOnly(clock());
-      var cursor = dates.contains(today)
-          ? today
-          : today.subtract(const Duration(days: 1));
+      var cursor = dates.contains(today) ? today : _dayBefore(today);
       var currentDays = 0;
       while (dates.contains(cursor)) {
         currentDays++;
-        cursor = cursor.subtract(const Duration(days: 1));
+        cursor = _dayBefore(cursor);
       }
 
       return ListeningStreak(
@@ -115,4 +111,17 @@ class StatisticsRepositoryImpl implements StatisticsRepository {
 
   DateTime _dateOnly(DateTime dateTime) =>
       DateTime(dateTime.year, dateTime.month, dateTime.day);
+
+  /// The calendar day after [date].
+  ///
+  /// By the calendar rather than by adding 24 hours: a daylight saving
+  /// change makes a local day 23 or 25 hours long, and a fixed duration
+  /// then reads two consecutive days as further apart than they are,
+  /// cutting the streak the user actually has.
+  DateTime _dayAfter(DateTime date) =>
+      DateTime(date.year, date.month, date.day + 1);
+
+  /// The calendar day before [date], for the same reason as [_dayAfter].
+  DateTime _dayBefore(DateTime date) =>
+      DateTime(date.year, date.month, date.day - 1);
 }

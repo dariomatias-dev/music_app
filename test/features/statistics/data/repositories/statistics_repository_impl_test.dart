@@ -215,6 +215,18 @@ void main() {
       expect(streak.currentDays, 0);
     });
 
+    test('counts days across a daylight saving change', () async {
+      repository.clock = () => DateTime(2026, 3, 30);
+      await seedPlay(id: '1', trackId: 'a', startedAt: DateTime(2026, 3, 28));
+      await seedPlay(id: '2', trackId: 'a', startedAt: DateTime(2026, 3, 29));
+      await seedPlay(id: '3', trackId: 'a', startedAt: DateTime(2026, 3, 30));
+
+      final streak = await repository.watchListeningStreak().first;
+
+      expect(streak.currentDays, 3);
+      expect(streak.longestDays, 3);
+    });
+
     test(
       'longest streak survives even after the current streak breaks',
       () async {
