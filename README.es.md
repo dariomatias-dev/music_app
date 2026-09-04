@@ -54,7 +54,7 @@ El reproductor soporta reproducción sin pausas (gapless) y crossfade, una cola 
 ## Características
 
 - **Biblioteca Local**: Escanea tu dispositivo en busca de archivos de audio e indexa pistas, álbumes y artistas, con carátulas y metadatos.
-- **Reproducción**: Reproducción sin pausas (gapless), crossfade, aleatorio, repetición, velocidad ajustable y temporizador de suspensión.
+- **Reproducción**: Reproducción sin pausas (gapless), crossfade, aleatorio, repetición, velocidad ajustable y temporizador de suspensión, con controles multimedia en la barra de notificaciones y en la pantalla de bloqueo.
 - **Playlists**: Crea, renombra, duplica y elimina playlists, con descripción opcional, favoritos, reordenar arrastrando, búsqueda dentro de la playlist y múltiples criterios de ordenación.
 - **Favoritos**: Marca cualquier pista como favorita para acceso rápido desde su propia pestaña.
 - **Búsqueda**: Filtra tu biblioteca por título o artista mientras escribes.
@@ -103,7 +103,7 @@ mantienen ligeras: cada una compone componentes ubicados en
 
 ## Pruebas
 
-El proyecto tiene 188 archivos de prueba (131 en la app, 57 en
+El proyecto tiene 189 archivos de prueba (132 en la app, 57 en
 `packages/app_ui`), cubriendo repositorios, view models y widgets (40 de
 ellos son pruebas golden, que renderizan 86 imágenes de referencia del
 sistema de diseño y las pantallas principales), más las suites de

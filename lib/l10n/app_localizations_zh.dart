@@ -710,6 +710,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settingsPlaybackRowLabel => '无间隔播放、淡入淡出与速度';
 
   @override
+  String get settingsNotificationsLabel => '播放通知';
+
+  @override
+  String get settingsNotificationsBlockedValue => '已阻止';
+
+  @override
   String get settingsAboutLabel => '关于';
 
   @override

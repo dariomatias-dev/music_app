@@ -1422,6 +1422,18 @@ abstract class AppLocalizations {
   /// **'Gapless, crossfade & speed'**
   String get settingsPlaybackRowLabel;
 
+  /// No description provided for @settingsNotificationsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Playback notification'**
+  String get settingsNotificationsLabel;
+
+  /// No description provided for @settingsNotificationsBlockedValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Blocked'**
+  String get settingsNotificationsBlockedValue;
+
   /// No description provided for @settingsAboutLabel.
   ///
   /// In en, this message translates to:

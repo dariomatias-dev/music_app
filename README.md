@@ -54,7 +54,7 @@ The player supports gapless playback and crossfade, a persistent queue, a sleep 
 ## Features
 
 - **Local Library**: Scans your device for audio files and indexes tracks, albums, and artists, with cover art and metadata.
-- **Playback**: Gapless playback, crossfade, shuffle, repeat, adjustable speed, and a sleep timer.
+- **Playback**: Gapless playback, crossfade, shuffle, repeat, adjustable speed, and a sleep timer, with media controls in the notification shade and on the lock screen.
 - **Playlists**: Create, rename, duplicate, and delete playlists, with an optional description, favoriting, drag-to-reorder, search within a playlist, and multiple sort orders.
 - **Favorites**: Favorite any track for quick access from its own tab.
 - **Search**: Filter your library by title or artist as you type.
@@ -102,7 +102,7 @@ concerns (navigation, the database, audio, permissions) live under
 
 ## Testing
 
-The project has 188 test files (131 in the app, 57 in `packages/app_ui`)
+The project has 189 test files (132 in the app, 57 in `packages/app_ui`)
 covering repositories, view models, and widgets (40 of them golden tests,
 rendering 86 reference images across the design system and key screens),
 plus `integration_test/` suites covering onboarding, playback, persistence,

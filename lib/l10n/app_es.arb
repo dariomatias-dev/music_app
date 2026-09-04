@@ -245,6 +245,8 @@
   "settingsLanguageLabel": "Idioma",
   "settingsLanguageSystemValue": "Predeterminado del sistema",
   "settingsPlaybackRowLabel": "Sin intervalo, crossfade y velocidad",
+  "settingsNotificationsLabel": "Notificación de reproducción",
+  "settingsNotificationsBlockedValue": "Bloqueada",
   "settingsAboutLabel": "Acerca de",
   "settingsAboutRowLabel": "Información y versión de la app",
   "settingsEditNameSheetTitle": "Tu nombre",

@@ -49,7 +49,15 @@ class _FakeGrantedPermissionService implements MediaPermissionService {
 class _FakeGrantedNotificationPermissionService
     implements NotificationPermissionService {
   @override
-  Future<bool> request() async => true;
+  Future<NotificationPermissionStatus> check() async =>
+      NotificationPermissionStatus.granted;
+
+  @override
+  Future<NotificationPermissionStatus> request() async =>
+      NotificationPermissionStatus.granted;
+
+  @override
+  Future<void> openSystemSettings() async {}
 }
 
 class _FakeEmptyLibraryRepository implements LibraryRepository {

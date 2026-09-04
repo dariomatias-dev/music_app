@@ -245,6 +245,8 @@
   "settingsLanguageLabel": "语言",
   "settingsLanguageSystemValue": "跟随系统",
   "settingsPlaybackRowLabel": "无间隔播放、淡入淡出与速度",
+  "settingsNotificationsLabel": "播放通知",
+  "settingsNotificationsBlockedValue": "已阻止",
   "settingsAboutLabel": "关于",
   "settingsAboutRowLabel": "应用信息与版本",
   "settingsEditNameSheetTitle": "你的姓名",

@@ -47,7 +47,15 @@ class FakeGrantedPermissionService implements MediaPermissionService {
 class FakeGrantedNotificationPermissionService
     implements NotificationPermissionService {
   @override
-  Future<bool> request() async => true;
+  Future<NotificationPermissionStatus> check() async =>
+      NotificationPermissionStatus.granted;
+
+  @override
+  Future<NotificationPermissionStatus> request() async =>
+      NotificationPermissionStatus.granted;
+
+  @override
+  Future<void> openSystemSettings() async {}
 }
 
 /// The library the flow tests are seeded with: one artist, one album, and

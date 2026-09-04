@@ -754,6 +754,12 @@ class AppLocalizationsPt extends AppLocalizations {
       'Sem intervalo, crossfade e velocidade';
 
   @override
+  String get settingsNotificationsLabel => 'Notificação de reprodução';
+
+  @override
+  String get settingsNotificationsBlockedValue => 'Bloqueada';
+
+  @override
   String get settingsAboutLabel => 'Sobre';
 
   @override

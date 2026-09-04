@@ -1,3 +1,19 @@
+/// Status of the permission the OS playback notification needs.
+enum NotificationPermissionStatus {
+  /// Notifications are allowed.
+  granted,
+
+  /// Denied, and asking again still shows the system prompt.
+  denied,
+
+  /// Denied for good; only the system settings can change it.
+  permanentlyDenied,
+
+  /// The platform shows the media controls without a permission of its
+  /// own, so there is nothing to ask for or to report.
+  notApplicable,
+}
+
 /// Abstraction over the platform's notification permission.
 ///
 /// Separate from the media permission: media access gates the whole
@@ -5,10 +21,17 @@
 /// only decide whether the playback controls reach the notification shade
 /// and the lock screen, and the app stays usable without them.
 abstract interface class NotificationPermissionService {
-  /// Prompts the user for the notification permission, unless the platform
-  /// has no such permission (Android 12 and below, iOS), where playback
-  /// notifications need no consent and this does nothing.
+  /// Returns the current status without prompting the user.
+  Future<NotificationPermissionStatus> check();
+
+  /// Prompts the user for the notification permission.
   ///
-  /// Returns whether notifications are allowed once the prompt is done.
-  Future<bool> request();
+  /// Returns the current status untouched when there is nothing to ask:
+  /// the platform has no such permission, the permission is already
+  /// granted, or the answer is permanently denied and only the system
+  /// settings can change it.
+  Future<NotificationPermissionStatus> request();
+
+  /// Opens the system settings screen for this app.
+  Future<void> openSystemSettings();
 }
