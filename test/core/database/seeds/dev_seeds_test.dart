@@ -14,15 +14,28 @@ void main() {
     addTearDown(database.close);
   });
 
-  Future<({int tracks, int favorites, int playlists, int plays, int searches})>
+  Future<
+    ({
+      int tracks,
+      int favorites,
+      int playlists,
+      int plays,
+      int lyrics,
+      int searches,
+      int excludedFolders,
+    })
+  >
   counts() async {
     return (
       tracks: (await database.trackDao.getAll()).length,
       favorites: (await database.favoriteDao.watchAll().first).length,
       playlists: (await database.playlistDao.watchAll().first).length,
       plays: (await database.playEventDao.getAll()).length,
+      lyrics: (await database.select(database.lyricsTable).get()).length,
       searches: (await database.searchHistoryDao.watchRecent(limit: 100).first)
           .length,
+      excludedFolders:
+          (await database.excludedFolderDao.watchAll().first).length,
     );
   }
 
@@ -35,7 +48,9 @@ void main() {
     expect(filled.favorites, greaterThan(0));
     expect(filled.playlists, greaterThan(0));
     expect(filled.plays, greaterThan(0));
+    expect(filled.lyrics, greaterThan(0));
     expect(filled.searches, greaterThan(0));
+    expect(filled.excludedFolders, greaterThan(0));
   });
 
   test('running twice leaves the same data behind', () async {
