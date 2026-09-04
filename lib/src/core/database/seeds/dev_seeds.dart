@@ -3,8 +3,10 @@ import 'package:music_app/src/core/database/seeds/seed.dart';
 import 'package:music_app/src/features/history/data/seeds/play_history_seed.dart';
 import 'package:music_app/src/features/library/data/seeds/favorite_seed.dart';
 import 'package:music_app/src/features/library/data/seeds/library_seed.dart';
+import 'package:music_app/src/features/player/data/seeds/lyrics_seed.dart';
 import 'package:music_app/src/features/playlist/data/seeds/playlist_seed.dart';
 import 'package:music_app/src/features/search/data/seeds/search_history_seed.dart';
+import 'package:music_app/src/features/storage/data/seeds/excluded_folder_seed.dart';
 
 /// The development seeds, in the order they have to run: a seed that
 /// references another aggregate's rows comes after the seed that writes
@@ -21,7 +23,9 @@ List<Seed> devSeeds(AppDatabase database, {DateTime Function()? clock}) {
     FavoriteSeed(database, clock: now),
     PlaylistSeed(database, clock: now),
     PlayHistorySeed(database, clock: now),
+    LyricsSeed(database, clock: now),
     SearchHistorySeed(database, clock: now),
+    ExcludedFolderSeed(database),
   ];
 }
 

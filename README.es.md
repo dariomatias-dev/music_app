@@ -103,7 +103,7 @@ mantienen ligeras: cada una compone componentes ubicados en
 
 ## Pruebas
 
-El proyecto tiene 196 archivos de prueba (139 en la app, 57 en
+El proyecto tiene 198 archivos de prueba (141 en la app, 57 en
 `packages/app_ui`), cubriendo repositorios, view models y widgets (40 de
 ellos son pruebas golden, que renderizan 86 imágenes de referencia del
 sistema de diseño y las pantallas principales), más las suites de
