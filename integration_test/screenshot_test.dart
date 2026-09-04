@@ -26,9 +26,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../test/helpers/fake_audio_player_service.dart';
 
-/// One README per locale (README.md, README.es.md, README.pt-BR.md); each
-/// gets its own `screenshots/<folder>` subfolder, named to match.
-const _localesToCapture = ['en', 'es', 'pt-BR'];
+/// One README per locale (README.md, README.es.md, README.pt-BR.md,
+/// README.zh.md); each gets its own `screenshots/<folder>` subfolder,
+/// named to match.
+const _localesToCapture = ['en', 'es', 'pt-BR', 'zh'];
 
 /// Parses a locale arg ('en', 'es', 'pt-BR', ...) into a [Locale].
 Locale _parseLocaleArg(String arg) {
