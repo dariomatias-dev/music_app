@@ -18,7 +18,7 @@ fvm flutter pub get
 git config core.hooksPath .githooks
 ```
 
-最后一行让 git 指向 [`.githooks/`](../.githooks)，其中的 `commit-msg` 钩子会拒绝不符合下文约定的标题行。git 不会随克隆一起带上钩子，因此每份本地副本都需要执行一次这条命令。
+最后一行让 git 指向 [`.githooks/`](../.githooks)，其中的 `commit-msg` 钩子会拒绝不符合下文约定的标题行，`pre-push` 钩子会在推送离开本机之前运行质量闸门。git 不会随克隆一起带上钩子，因此每份本地副本都需要执行一次这条命令。
 
 生成的代码（freezed、json_serializable、drift、riverpod_generator、go_router_builder）和本地化文件不会在每次改动时预先编译并提交。拉取代码或修改它们所依赖的内容后，需要重新生成：
 
@@ -83,6 +83,24 @@ fvm flutter run --dart-define=SEED_ENABLED=true
   类型取 `build`、`chore`、`ci`、`docs`、`feat`、`fix`、`perf`、`refactor`、`revert`、`style`、`test` 之一；范围用小写（`player`、`app_ui`、`l10n`）；主题简短并使用祈使句，以小写开头且结尾不加句号。破坏性变更在冒号前加 `!`。
 
   钩子还会把信息约束成 git 工具链期望的形状：整行标题不超过 **72 个字符**，这正是 `git log --oneline` 和 GitHub 截断的位置；正文与标题之间空一行，正文每行折行在 **80** 个字符。URL、`Co-Authored-By:`、`BREAKING CHANGE:`、`Refs #123` 之类的 footer 以及围栏代码块不受此限，因为折行会破坏它们的含义。git 自己写的 merge 和 revert 提交不受约束。可以看 `git log` 里已有的例子。
+
+## 一次改动如何进入 `main`
+
+`main` 受保护：不接受直接推送、强制推送和删除，pull request 只有在 CI 通过后才能合并。在分支上工作，开出 pull request，然后让它自己合并：
+
+```sh
+git switch -c feat/<简短名称>
+# ... 开发、提交 ...
+git push -u origin feat/<简短名称>
+gh pr create --fill
+gh pr merge --auto --squash --delete-branch
+```
+
+`--auto` 会把合并排进队列，等必需的检查通过时自动执行，因此不需要盯着 pull request。分支在合并前还必须与 `main` 保持同步。
+
+有三项检查会拦住合并：`Vulnerabilities`、`music_app` 和 `packages/app_ui`。`Build APK` 与 `Integration tests` 在每个 pull request 上都会运行并汇报，但不会拦截：两者都要等 `music_app` 结束才开始，把它们设为必需就等于在每次合并前插入一次模拟器启动。它们覆盖的内容不会因此丢失，因为 [`release.yml`](../.github/workflows/release.yml) 会在发布之前运行完整闸门和 release 构建。
+
+环境搭建时装上的 `pre-push` 钩子会先在本地运行 `./scripts/verify.sh --all`，把一次失败的检查变成即时答案，而不是一个红色的 pull request。它刻意不做范围裁剪：`verify.sh` 的范围来自工作区里待提交的改动，而推送时这些改动已经是提交，裁剪后的运行会找不到任何要检查的东西。`git push --no-verify` 会跳过它；真正兜底的是分支保护。
 
 ## CI 检查什么
 

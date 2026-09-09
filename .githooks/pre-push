@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+#
+# Runs the quality gate before a push, so a failure surfaces here rather than
+# as a red CI run minutes later.
+#
+# The gate runs with --all rather than letting verify.sh scope itself. That
+# scoping reads the working tree, which at push time is usually clean: the
+# changes being pushed live in commits, not in pending edits, so a scoped run
+# would find nothing to check and pass on anything.
+#
+# Branch protection on main is what actually blocks a broken change. This hook
+# is a local shortcut to the same answer, and `git push --no-verify` skips it.
+
+set -euo pipefail
+
+readonly root="$(git rev-parse --show-toplevel)"
+cd "$root"
+
+readonly deleted_ref="0000000000000000000000000000000000000000"
+
+# stdin carries one line per ref being pushed: <local ref> <local sha>
+# <remote ref> <remote sha>. A branch deletion has no commits to check.
+pushing_commits=false
+while read -r _ local_sha _ _; do
+  [[ "$local_sha" == "$deleted_ref" ]] && continue
+  pushing_commits=true
+done
+
+"$pushing_commits" || exit 0
+
+exec "$root/scripts/verify.sh" --all

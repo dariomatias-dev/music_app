@@ -18,7 +18,7 @@ fvm flutter pub get
 git config core.hooksPath .githooks
 ```
 
-That last line points git at [`.githooks/`](../.githooks), where a `commit-msg` hook rejects a subject line that doesn't follow the convention below. Git does not share hooks through a clone, so it is one command per checkout.
+That last line points git at [`.githooks/`](../.githooks), where a `commit-msg` hook rejects a subject line that doesn't follow the convention below, and a `pre-push` hook runs the quality gate before a push leaves the machine. Git does not share hooks through a clone, so it is one command per checkout.
 
 Generated code (freezed, json_serializable, drift, riverpod_generator, go_router_builder) and localizations aren't committed pre-built for every change. Regenerate them after pulling or editing anything they depend on:
 
@@ -83,6 +83,24 @@ The flag is compile-time and the seeds also refuse to run outside debug mode, so
   The type is one of `build`, `chore`, `ci`, `docs`, `feat`, `fix`, `perf`, `refactor`, `revert`, `style` or `test`; the scope is lowercase (`player`, `app_ui`, `l10n`); the subject is short and imperative, starts lowercase and carries no trailing period. Append `!` before the colon for a breaking change.
 
   The hook also holds the message to the shape git tooling expects: the whole subject line stays within **72 characters**, which is where `git log --oneline` and GitHub truncate it; a body is separated from the subject by a blank line, and its lines wrap at **80**. URLs, footers such as `Co-Authored-By:`, `BREAKING CHANGE:` and `Refs #123`, and fenced code blocks are exempt, since wrapping those breaks what they mean. Merge and revert commits git writes itself are left alone. Look at `git log` for examples already in the repo.
+
+## How a change reaches `main`
+
+`main` is protected: it takes no direct push, no force push and no deletion, and a pull request merges only once CI is green. Work on a branch, open the pull request, and let it merge itself:
+
+```sh
+git switch -c feat/<short-name>
+# ... work, commit ...
+git push -u origin feat/<short-name>
+gh pr create --fill
+gh pr merge --auto --squash --delete-branch
+```
+
+`--auto` queues the merge for the moment the required checks pass, so the pull request does not need watching. The branch also has to be up to date with `main` before it merges.
+
+Three checks gate a merge: `Vulnerabilities`, `music_app` and `packages/app_ui`. `Build APK` and `Integration tests` run on every pull request and report, but do not block one: both wait on `music_app` before they start, and requiring them would put an emulator boot in front of every merge. What they cover is not lost, since [`release.yml`](../.github/workflows/release.yml) runs the full gate and the release build before anything is published.
+
+The `pre-push` hook installed during setup runs `./scripts/verify.sh --all` locally first, which turns a failing check into an immediate answer rather than a red pull request. It runs the gate unscoped on purpose: `verify.sh` derives its scope from pending working-tree changes, and at push time those changes are already commits, so a scoped run would find nothing to check. `git push --no-verify` skips it; branch protection is what actually holds.
 
 ## What CI checks
 

@@ -18,7 +18,7 @@ fvm flutter pub get
 git config core.hooksPath .githooks
 ```
 
-Essa última linha aponta o git para [`.githooks/`](../.githooks), onde um hook `commit-msg` rejeita um assunto que não segue a convenção descrita abaixo. O git não compartilha hooks pelo clone, então é um comando por cópia local.
+Essa última linha aponta o git para [`.githooks/`](../.githooks), onde um hook `commit-msg` rejeita um assunto que não segue a convenção descrita abaixo, e um hook `pre-push` roda o portão de qualidade antes de um push sair da máquina. O git não compartilha hooks pelo clone, então é um comando por cópia local.
 
 Código gerado (freezed, json_serializable, drift, riverpod_generator, go_router_builder) e as localizações não ficam versionados já compilados a cada mudança. Regenere depois de puxar o repositório ou editar qualquer coisa que dependa deles:
 
@@ -83,6 +83,24 @@ A flag é de tempo de compilação e os seeds também se recusam a executar fora
   O tipo é um de `build`, `chore`, `ci`, `docs`, `feat`, `fix`, `perf`, `refactor`, `revert`, `style` ou `test`; o escopo vai em minúsculas (`player`, `app_ui`, `l10n`); o assunto é curto e no imperativo, começa em minúscula e não leva ponto final. Use `!` antes dos dois pontos para uma mudança incompatível.
 
   O hook também mantém a mensagem no formato que as ferramentas do git esperam: a linha de assunto inteira fica dentro de **72 caracteres**, que é onde o `git log --oneline` e o GitHub cortam; o corpo é separado do assunto por uma linha em branco, e suas linhas quebram em **80**. URLs, footers como `Co-Authored-By:`, `BREAKING CHANGE:` e `Refs #123`, e blocos de código cercados ficam isentos, porque quebrá-los destrói o que eles significam. Commits de merge e revert que o próprio git escreve ficam de fora. Olhe o `git log` para ver exemplos já no repositório.
+
+## Como uma mudança chega na `main`
+
+A `main` é protegida: não aceita push direto, push forçado nem exclusão, e um pull request só faz merge com o CI verde. Trabalhe em uma branch, abra o pull request e deixe que ele faça o merge sozinho:
+
+```sh
+git switch -c feat/<nome-curto>
+# ... trabalho, commits ...
+git push -u origin feat/<nome-curto>
+gh pr create --fill
+gh pr merge --auto --squash --delete-branch
+```
+
+`--auto` deixa o merge na fila para o momento em que as checagens obrigatórias passarem, então o pull request não precisa de babá. A branch também precisa estar em dia com a `main` antes do merge.
+
+Três checagens bloqueiam o merge: `Vulnerabilities`, `music_app` e `packages/app_ui`. `Build APK` e `Integration tests` rodam em todo pull request e reportam, mas não o bloqueiam: os dois esperam o `music_app` para começar, e torná-los obrigatórios colocaria um boot de emulador na frente de cada merge. O que eles cobrem não se perde, já que o [`release.yml`](../.github/workflows/release.yml) roda o portão completo e o build de release antes de qualquer publicação.
+
+O hook `pre-push` instalado na configuração roda antes `./scripts/verify.sh --all` localmente, o que transforma uma checagem falha em resposta imediata em vez de pull request vermelho. Ele roda o portão sem escopo de propósito: o `verify.sh` deriva o escopo das mudanças pendentes na árvore de trabalho, e na hora do push essas mudanças já são commits, então uma execução com escopo não acharia nada para checar. `git push --no-verify` pula o hook; quem realmente segura é a proteção de branch.
 
 ## O que o CI checa
 
