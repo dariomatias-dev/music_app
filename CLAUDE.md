@@ -22,7 +22,9 @@ test, coverage), scoped to the packages with pending changes. Code generation
 runs every time and the script fails when it changed anything, so regenerate
 and commit the output rather than leaving it to CI. Flags: `--all` to check
 everything, `--skip-tests` for a quick mid-change look (never as the final
-check).
+check). `.githooks/pre-push` runs it with `--all` before a push, and `main`
+is protected: changes land through a pull request with CI green, never a
+direct push.
 
 ## The loop, every change
 

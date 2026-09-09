@@ -18,7 +18,7 @@ fvm flutter pub get
 git config core.hooksPath .githooks
 ```
 
-Esa última línea apunta git a [`.githooks/`](../.githooks), donde un hook `commit-msg` rechaza un asunto que no sigue la convención descrita más abajo. Git no comparte los hooks al clonar, así que es un comando por cada copia local.
+Esa última línea apunta git a [`.githooks/`](../.githooks), donde un hook `commit-msg` rechaza un asunto que no sigue la convención descrita más abajo, y un hook `pre-push` ejecuta el control de calidad antes de que un push salga de la máquina. Git no comparte los hooks al clonar, así que es un comando por cada copia local.
 
 El código generado (freezed, json_serializable, drift, riverpod_generator, go_router_builder) y las localizaciones no se commitean ya compilados en cada cambio. Regenéralos después de actualizar el repositorio o de editar cualquier cosa de la que dependan:
 
@@ -83,6 +83,24 @@ El flag es de tiempo de compilación y los seeds además se niegan a ejecutarse 
   El tipo es uno de `build`, `chore`, `ci`, `docs`, `feat`, `fix`, `perf`, `refactor`, `revert`, `style` o `test`; el ámbito va en minúsculas (`player`, `app_ui`, `l10n`); el asunto es corto y en imperativo, empieza en minúscula y no lleva punto final. Añade `!` antes de los dos puntos para un cambio incompatible.
 
   El hook también ajusta el mensaje a la forma que esperan las herramientas de git: la línea de asunto completa se mantiene dentro de **72 caracteres**, que es donde `git log --oneline` y GitHub la cortan; el cuerpo se separa del asunto con una línea en blanco y sus líneas se ajustan a **80**. Las URL, los footers como `Co-Authored-By:`, `BREAKING CHANGE:` y `Refs #123`, y los bloques de código delimitados quedan exentos, porque ajustarlos rompería su significado. Los commits de merge y revert que git escribe por su cuenta quedan exentos. Revisa el `git log` para ver ejemplos ya presentes en el repositorio.
+
+## Cómo llega un cambio a `main`
+
+`main` está protegida: no acepta push directo, ni push forzado, ni borrado, y un pull request se fusiona solo cuando el CI está en verde. Trabaja en una rama, abre el pull request y deja que se fusione solo:
+
+```sh
+git switch -c feat/<nombre-corto>
+# ... trabajo, commits ...
+git push -u origin feat/<nombre-corto>
+gh pr create --fill
+gh pr merge --auto --squash --delete-branch
+```
+
+`--auto` deja la fusión en cola para el momento en que pasen las comprobaciones requeridas, así que no hace falta vigilar el pull request. La rama también tiene que estar al día con `main` antes de fusionarse.
+
+Tres comprobaciones bloquean la fusión: `Vulnerabilities`, `music_app` y `packages/app_ui`. `Build APK` e `Integration tests` se ejecutan en cada pull request e informan, pero no lo bloquean: ambos esperan a `music_app` para empezar, y exigirlos pondría un arranque de emulador delante de cada fusión. Lo que cubren no se pierde, porque [`release.yml`](../.github/workflows/release.yml) ejecuta el control completo y la compilación de release antes de publicar nada.
+
+El hook `pre-push` instalado durante la configuración ejecuta antes `./scripts/verify.sh --all` en local, lo que convierte una comprobación fallida en una respuesta inmediata en vez de en un pull request en rojo. Ejecuta el control sin acotar a propósito: `verify.sh` deriva su alcance de los cambios pendientes en el árbol de trabajo, y al hacer push esos cambios ya son commits, así que una ejecución acotada no encontraría nada que comprobar. `git push --no-verify` lo omite; lo que realmente sostiene es la protección de rama.
 
 ## Qué verifica el CI
 
