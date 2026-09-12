@@ -37,7 +37,7 @@ Tick what applies, delete what does not, and say why for anything left out.
 
 **Gate**
 
-- [ ] `./scripts/verify.sh` passes locally
+- [ ] `./scripts/verify.sh --all` passes locally (the `pre-push` hook already ran this; a red push means fixing it, not `--no-verify`)
 - [ ] `act pull_request` run, if this touches `.github/workflows/`
 
 ## Notes for the reviewer
