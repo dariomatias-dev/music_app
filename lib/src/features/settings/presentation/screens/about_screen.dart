@@ -138,11 +138,13 @@ class AboutScreen extends ConsumerWidget {
               ),
               child: Column(
                 children: [
+                  const SizedBox(height: AppSpacing.xs),
                   fact(l10n.libraryTracksTab, '$trackCount'),
                   Divider(color: colors.divider, height: 1),
                   fact(l10n.libraryAlbumsTab, '$albumCount'),
                   Divider(color: colors.divider, height: 1),
                   fact(l10n.libraryArtistsTab, '$artistCount'),
+                  const SizedBox(height: AppSpacing.xs),
                 ],
               ),
             ),
