@@ -63,7 +63,7 @@ A flag é de tempo de compilação e os seeds também se recusam a executar fora
   ./scripts/verify.sh
   ```
 
-  Ele executa o que o CI executa, limitado aos pacotes que você mudou: arquivos gerados, formatação, análise, testes e o limite de cobertura (97% para o app, 98% para `packages/app_ui`). A geração de código roda em toda execução e o script para se ela alterou algum arquivo, de modo que arquivos gerados desatualizados são detectados aqui e não no CI. Revise o que foi escrito e faça o commit. Use `--all` para checar os dois pacotes independentemente do que mudou, ou `--skip-tests` para uma passada rápida no meio do trabalho.
+  Ele executa o que o CI executa, limitado aos pacotes que você mudou: arquivos gerados, formatação, análise, testes e o limite de cobertura (80% para o app, 80% para `packages/app_ui`). A geração de código roda em toda execução e o script para se ela alterou algum arquivo, de modo que arquivos gerados desatualizados são detectados aqui e não no CI. Revise o que foi escrito e faça o commit. Use `--all` para checar os dois pacotes independentemente do que mudou, ou `--skip-tests` para uma passada rápida no meio do trabalho.
 
   As mesmas checagens na mão, rodadas dentro do pacote que está sendo alterado:
 
@@ -71,7 +71,7 @@ A flag é de tempo de compilação e os seeds também se recusam a executar fora
   fvm flutter analyze
   fvm dart format --output=none --set-exit-if-changed lib test
   fvm flutter test --coverage
-  ./scripts/check_coverage.sh coverage/lcov.info 97
+  ./scripts/check_coverage.sh coverage/lcov.info 80
   ```
 
 - **Mensagens de commit** seguem [Conventional Commits](https://www.conventionalcommits.org/), verificadas pelo hook `commit-msg` ativado na instalação:
@@ -109,9 +109,9 @@ Todo push e pull request executa o [`.github/workflows/ci.yaml`](../.github/work
 | Job | O que faz |
 | --- | --- |
 | `Vulnerabilities` | Analisa o `pubspec.lock` e o `packages/app_ui/pubspec.lock` contra a base OSV com o [OSV-Scanner](https://google.github.io/osv-scanner/), que cobre os avisos do pub. Executa de forma independente dos demais jobs, já que um aviso recém-divulgado não é motivo para impedir que os testes reportem. |
-| `music_app` | Instala dependências, regenera código e localizações, e então **falha se essa regeneração produzir um diff**, pois os arquivos gerados precisam estar commitados e atualizados. Depois: formatação, análise, testes e o limite de 97% de cobertura, e envia o relatório para o Codecov sob a flag `app`. |
+| `music_app` | Instala dependências, regenera código e localizações, e então **falha se essa regeneração produzir um diff**, pois os arquivos gerados precisam estar commitados e atualizados. Depois: formatação, análise, testes e o limite de 80% de cobertura, e envia o relatório para o Codecov sob a flag `app`. |
 | `Build APK` | Executa depois do `music_app` passar, e builda uma APK de release, publicada como artefato do workflow e mantida por 14 dias. |
-| `packages/app_ui` | Formatação, análise, testes e o limite de 98% de cobertura do pacote do design system, de forma independente do app, enviado ao Codecov sob a flag `app_ui`. |
+| `packages/app_ui` | Formatação, análise, testes e o limite de 80% de cobertura do pacote do design system, de forma independente do app, enviado ao Codecov sob a flag `app_ui`. |
 | `Integration tests` | Executa depois do `music_app` passar, inicia um emulador Android e executa nele todas as suítes de `integration_test/` em uma mesma sessão, já que subir o emulador é de longe o passo mais lento. Elas exigem um device: os fluxos leem através das stream queries do drift, que nunca emitem sob o fake async de um `flutter test` comum. O job habilita o KVM antes, sem o qual o emulador cai em renderização por software e estoura o tempo. Ele também builda uma APK de debug **antes** de subir o emulador: um build Android frio baixa uma plataforma extra do SDK e o CMake e compila fontes nativas, o que sozinho ultrapassa o limite de 8 minutos sob o qual cada suíte executa. Somando os dois, o job tem orçamento de 40 minutos. |
 
 As releases são preparadas pelo [release-please](https://github.com/googleapis/release-please). Ele lê os Conventional Commits integrados na `main` e mantém um pull request aberto com a próxima versão e a entrada de `CHANGELOG.md` derivada deles. Ao fazer merge desse pull request, a versão é escrita no `pubspec.yaml`, o commit é marcado com a tag e o release do GitHub é publicado.

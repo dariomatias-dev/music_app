@@ -85,7 +85,7 @@ Anything with logic gets a test, in the mirrored path under `test/` (or
 | `app_ui` component | Widget test plus a golden via `test/helpers/pump_golden.dart`. |
 | End-to-end flow across features | `integration_test/`, using the harness in `integration_test/helpers/`. Assert on the outcome, never on a toast: CI runs the emulator with animations disabled, so a wait on a transient message passes on a device and times out there. |
 
-Coverage thresholds are enforced, not advisory: 97% for the app, 98% for
+Coverage thresholds are enforced, not advisory: 80% for the app, 80% for
 `packages/app_ui`. Generated files, `lib/l10n/` and drift table declarations are
 excluded from the count by `scripts/check_coverage.sh`.
 

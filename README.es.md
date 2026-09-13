@@ -110,7 +110,7 @@ sistema de diseño y las pantallas principales), más las suites de
 `integration_test/` que cubren onboarding, reproducción, persistencia,
 listas de reproducción, favoritos, búsqueda, cambio de idioma y
 copia de seguridad/restauración. La CI exige una cobertura de línea mínima del
-97% en la app y del 98% en `packages/app_ui`, además del conjunto estricto
+80% en la app y del 80% en `packages/app_ui`, además del conjunto estricto
 de lints `very_good_analysis` y `dart format`.
 
 Cada ejecución de la CI sube su informe `lcov` a

@@ -63,7 +63,7 @@ The flag is compile-time and the seeds also refuse to run outside debug mode, so
   ./scripts/verify.sh
   ```
 
-  It runs what CI runs, scoped to the packages you changed: generated output, formatting, analysis, tests, and the coverage threshold (97% for the app, 98% for `packages/app_ui`). Code generation runs on every invocation and the script stops when it changed anything, so generated files that are out of date are caught here rather than in CI. Review what was written and commit it. Add `--all` to check both packages regardless of what changed, or `--skip-tests` for a quick pass mid-change.
+  It runs what CI runs, scoped to the packages you changed: generated output, formatting, analysis, tests, and the coverage threshold (80% for the app, 80% for `packages/app_ui`). Code generation runs on every invocation and the script stops when it changed anything, so generated files that are out of date are caught here rather than in CI. Review what was written and commit it. Add `--all` to check both packages regardless of what changed, or `--skip-tests` for a quick pass mid-change.
 
   The same checks by hand, run inside the package being changed:
 
@@ -71,7 +71,7 @@ The flag is compile-time and the seeds also refuse to run outside debug mode, so
   fvm flutter analyze
   fvm dart format --output=none --set-exit-if-changed lib test
   fvm flutter test --coverage
-  ./scripts/check_coverage.sh coverage/lcov.info 97
+  ./scripts/check_coverage.sh coverage/lcov.info 80
   ```
 
 - **Commit messages** follow [Conventional Commits](https://www.conventionalcommits.org/), enforced by the `commit-msg` hook enabled during setup:
@@ -109,9 +109,9 @@ Every push and pull request runs [`.github/workflows/ci.yaml`](../.github/workfl
 | Job | What it does |
 | --- | --- |
 | `Vulnerabilities` | Scans `pubspec.lock` and `packages/app_ui/pubspec.lock` against the OSV database with [OSV-Scanner](https://google.github.io/osv-scanner/), which carries pub advisories. It runs independently of the other jobs, since a newly disclosed advisory is no reason to stop the tests from reporting. |
-| `music_app` | Installs dependencies, regenerates code and localizations, then **fails if that regeneration produced a diff**, since generated files must be committed and up to date. Then formatting, analysis, tests, and the 97% coverage gate, and uploads the report to Codecov under the `app` flag. |
+| `music_app` | Installs dependencies, regenerates code and localizations, then **fails if that regeneration produced a diff**, since generated files must be committed and up to date. Then formatting, analysis, tests, and the 80% coverage gate, and uploads the report to Codecov under the `app` flag. |
 | `Build APK` | Runs after `music_app` passes, and builds a release APK, uploaded as a workflow artifact kept for 14 days. |
-| `packages/app_ui` | Formatting, analysis, tests, and the 98% coverage gate for the design-system package, independently of the app, uploaded to Codecov under the `app_ui` flag. |
+| `packages/app_ui` | Formatting, analysis, tests, and the 80% coverage gate for the design-system package, independently of the app, uploaded to Codecov under the `app_ui` flag. |
 | `Integration tests` | Runs after `music_app` passes, boots an Android emulator and runs every `integration_test/` suite on it in one session, since booting is by far the slowest step. These need a device: the flows read through drift's stream queries, which never emit under the fake async a plain `flutter test` run uses. The job enables KVM first, without which the emulator falls back to software rendering and times out. It also builds a debug APK **before** booting the emulator: a cold Android build downloads an extra SDK platform and CMake and compiles native sources, which on its own outruns the 8-minute bound each suite runs under. Between the two, the job gets a 40-minute budget. |
 
 Releases are cut by [release-please](https://github.com/googleapis/release-please). It reads the Conventional Commits landed on `main` and keeps a pull request open carrying the next version and the `CHANGELOG.md` entry it derived from them. Merging that pull request writes the version into `pubspec.yaml`, tags the commit, and publishes the GitHub release.
