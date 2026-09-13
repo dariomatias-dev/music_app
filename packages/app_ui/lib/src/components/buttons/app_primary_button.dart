@@ -6,6 +6,15 @@ import 'package:app_ui/src/tokens/app_spacing.dart';
 import 'package:app_ui/src/typography/app_typography.dart';
 import 'package:flutter/material.dart';
 
+/// Where an [AppPrimaryButton]'s icon sits relative to its label.
+enum AppButtonIconPosition {
+  /// Before the label, for icons that identify the action (e.g. play).
+  leading,
+
+  /// After the label, for icons that indicate direction (e.g. next).
+  trailing,
+}
+
 /// A filled, pill-shaped button for the primary action of a screen.
 class AppPrimaryButton extends StatelessWidget {
   /// Creates an [AppPrimaryButton].
@@ -13,6 +22,7 @@ class AppPrimaryButton extends StatelessWidget {
     required this.label,
     required this.onPressed,
     this.icon,
+    this.iconPosition = AppButtonIconPosition.leading,
     this.isLoading = false,
     this.height = 48,
     super.key,
@@ -24,8 +34,12 @@ class AppPrimaryButton extends StatelessWidget {
   /// Called when tapped. When `null`, the button is disabled.
   final VoidCallback? onPressed;
 
-  /// Optional leading icon.
+  /// Optional icon shown alongside the label.
   final IconData? icon;
+
+  /// Where [icon] sits relative to [label]. Defaults to
+  /// [AppButtonIconPosition.leading].
+  final AppButtonIconPosition iconPosition;
 
   /// Whether to show a loading indicator instead of the content, and block
   /// taps.
@@ -63,7 +77,8 @@ class AppPrimaryButton extends StatelessWidget {
                 : Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      if (icon != null) ...[
+                      if (icon != null &&
+                          iconPosition == AppButtonIconPosition.leading) ...[
                         Icon(
                           icon,
                           size: AppSizes.iconSmall,
@@ -77,6 +92,15 @@ class AppPrimaryButton extends StatelessWidget {
                           color: colors.onAccent,
                         ),
                       ),
+                      if (icon != null &&
+                          iconPosition == AppButtonIconPosition.trailing) ...[
+                        const SizedBox(width: AppSpacing.sm),
+                        Icon(
+                          icon,
+                          size: AppSizes.iconSmall,
+                          color: colors.onAccent,
+                        ),
+                      ],
                     ],
                   ),
           ),
