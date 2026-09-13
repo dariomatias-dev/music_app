@@ -63,7 +63,7 @@ fvm flutter run --dart-define=SEED_ENABLED=true
   ./scripts/verify.sh
   ```
 
-  它运行的就是 CI 运行的内容，范围限定为你改动过的包：生成产物、格式化、静态分析、测试和覆盖率门槛（应用 97%，`packages/app_ui` 98%）。代码生成每次都会执行，只要它改动了任何文件脚本就会停止，因此过期的生成文件会在这里被发现，而不是等到 CI。请检查写出的内容并提交。`--all` 会不管改了什么都检查两个包；`--skip-tests` 用于开发过程中的快速检查。
+  它运行的就是 CI 运行的内容，范围限定为你改动过的包：生成产物、格式化、静态分析、测试和覆盖率门槛（应用 80%，`packages/app_ui` 80%）。代码生成每次都会执行，只要它改动了任何文件脚本就会停止，因此过期的生成文件会在这里被发现，而不是等到 CI。请检查写出的内容并提交。`--all` 会不管改了什么都检查两个包；`--skip-tests` 用于开发过程中的快速检查。
 
   手动执行同样的检查时，在被改动的包目录下运行：
 
@@ -71,7 +71,7 @@ fvm flutter run --dart-define=SEED_ENABLED=true
   fvm flutter analyze
   fvm dart format --output=none --set-exit-if-changed lib test
   fvm flutter test --coverage
-  ./scripts/check_coverage.sh coverage/lcov.info 97
+  ./scripts/check_coverage.sh coverage/lcov.info 80
   ```
 
 - **提交信息**遵循 [Conventional Commits](https://www.conventionalcommits.org/) 规范，由安装步骤中启用的 `commit-msg` 钩子校验：
@@ -109,9 +109,9 @@ gh pr merge --auto --squash --delete-branch
 | Job | 具体做什么 |
 | --- | --- |
 | `Vulnerabilities` | 使用 [OSV-Scanner](https://google.github.io/osv-scanner/) 将 `pubspec.lock` 和 `packages/app_ui/pubspec.lock` 与 OSV 数据库比对，该数据库收录了 pub 的安全公告。它独立于其他 job 运行，因为一条新披露的公告不该妨碍测试给出结果。 |
-| `music_app` | 安装依赖，重新生成代码和本地化文件，**如果这一步产生了 diff 就直接失败**，因为生成的文件必须已提交且是最新的。随后是格式检查、静态分析、测试，以及 97% 的覆盖率门槛，并以 `app` flag 将报告上传到 Codecov。 |
+| `music_app` | 安装依赖，重新生成代码和本地化文件，**如果这一步产生了 diff 就直接失败**，因为生成的文件必须已提交且是最新的。随后是格式检查、静态分析、测试，以及 80% 的覆盖率门槛，并以 `app` flag 将报告上传到 Codecov。 |
 | `Build APK` | 在 `music_app` 通过后运行，构建 release APK，作为 workflow 产物上传并保留 14 天。 |
-| `packages/app_ui` | 独立于应用本体，对设计系统包执行格式检查、静态分析、测试，以及 98% 的覆盖率门槛，并以 `app_ui` flag 上传到 Codecov。 |
+| `packages/app_ui` | 独立于应用本体，对设计系统包执行格式检查、静态分析、测试，以及 80% 的覆盖率门槛，并以 `app_ui` flag 上传到 Codecov。 |
 | `Integration tests` | 在 `music_app` 通过后运行，启动一个 Android 模拟器，并在同一个会话中运行 `integration_test/` 下的所有测试套件，因为启动模拟器是其中最慢的一步。这些测试必须有设备：相关流程会读取 drift 的 stream query，而它们在普通 `flutter test` 的 fake async 下永远不会发出事件。该 job 会先启用 KVM，否则模拟器会退回软件渲染并超时。它还会在启动模拟器**之前**构建一个 debug APK：冷启动的 Android 构建需要下载额外的 SDK platform 和 CMake 并编译原生源码，仅这一步就会超过每个套件 8 分钟的时限。两者相加，该 job 的超时预算为 40 分钟。 |
 
 发布由 [release-please](https://github.com/googleapis/release-please) 负责。它读取合入 `main` 的 Conventional Commits，并持续维护一个 pull request，其中包含下一个版本号和据此生成的 `CHANGELOG.md` 条目。合并该 pull request 后，版本号会写入 `pubspec.yaml`，提交会被打上 tag，GitHub release 也随之发布。
