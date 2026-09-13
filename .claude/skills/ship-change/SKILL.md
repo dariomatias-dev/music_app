@@ -76,7 +76,7 @@ The design system is a standalone package: it must not know the app exists.
    `test/helpers/pump_golden.dart`, written into the neighbouring `goldens/`.
 4. Everything visual comes from tokens; a component that hardcodes a value is
    the bug this package exists to prevent.
-5. Gate with the 98% threshold: `./scripts/verify.sh` picks it up automatically
+5. Gate with the 80% threshold: `./scripts/verify.sh` picks it up automatically
    when `packages/app_ui` has changes.
 6. `docs/architecture.md` (four languages) if the change adds a component
    category rather than a component.
