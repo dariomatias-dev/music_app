@@ -17,6 +17,12 @@ void main() {
           icon: Icons.play_arrow,
           onPressed: () {},
         ),
+        AppPrimaryButton(
+          label: 'Next',
+          icon: Icons.arrow_forward_rounded,
+          iconPosition: AppButtonIconPosition.trailing,
+          onPressed: () {},
+        ),
         const AppPrimaryButton(label: 'Play all', onPressed: null),
         AppPrimaryButton(label: 'Play all', onPressed: () {}, isLoading: true),
       ],

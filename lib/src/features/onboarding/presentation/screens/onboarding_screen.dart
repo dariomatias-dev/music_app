@@ -134,6 +134,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   icon: isLastPage
                       ? Icons.play_arrow_rounded
                       : Icons.arrow_forward_rounded,
+                  iconPosition: isLastPage
+                      ? AppButtonIconPosition.leading
+                      : AppButtonIconPosition.trailing,
                   height: 52,
                   onPressed: _next,
                 ),
