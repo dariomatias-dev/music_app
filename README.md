@@ -107,8 +107,8 @@ covering repositories, view models, and widgets (40 of them golden tests,
 rendering 86 reference images across the design system and key screens),
 plus `integration_test/` suites covering onboarding, playback, persistence,
 playlists, favorites, search, language switching, and backup/restore. CI
-enforces a minimum line coverage of 97% for the app
-and 98% for `packages/app_ui`, alongside the strict `very_good_analysis`
+enforces a minimum line coverage of 80% for the app
+and 80% for `packages/app_ui`, alongside the strict `very_good_analysis`
 lint set and `dart format`.
 
 Every CI run uploads its `lcov` report to

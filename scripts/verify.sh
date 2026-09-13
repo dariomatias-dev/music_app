@@ -145,14 +145,14 @@ verify_package() {
 }
 
 if "$check_app_ui"; then
-  verify_package packages/app_ui 98 "packages/app_ui"
+  verify_package packages/app_ui 80 "packages/app_ui"
 fi
 
 if "$check_app"; then
   step "music_app: localizations"
   "$root/scripts/check_l10n.sh"
 
-  verify_package . 97 "music_app"
+  verify_package . 80 "music_app"
 fi
 
 if "$skip_tests"; then

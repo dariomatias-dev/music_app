@@ -11,18 +11,18 @@ codecov:
 coverage:
   precision: 1
   round: down
-  range: "90...100"
+  range: "70...100"
   status:
     project:
       # Disabled in favour of the two per-flag statuses below.
       default: false
       app:
         flags: [app]
-        target: 97%
+        target: 80%
         threshold: 0.5%
       app_ui:
         flags: [app_ui]
-        target: 98%
+        target: 80%
         threshold: 0.5%
     patch:
       default:

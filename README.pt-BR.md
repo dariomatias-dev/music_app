@@ -108,7 +108,7 @@ O projeto tem 198 arquivos de teste (141 no app, 57 em
 deles são testes golden, que renderizam 86 imagens de referência do design
 system e das telas principais), além das suítes em `integration_test/`
 cobrindo onboarding, reprodução, persistência, playlists, favoritos, busca,
-troca de idioma e backup/restauração. O CI exige cobertura mínima de linha de 97% no app e 98% em
+troca de idioma e backup/restauração. O CI exige cobertura mínima de linha de 80% no app e 80% em
 `packages/app_ui`, junto do conjunto rigoroso de lints
 `very_good_analysis` e `dart format`.
 
