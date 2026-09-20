@@ -32,24 +32,39 @@ An Android app for playing the music already on your device, fully offline, no a
 
 ## Table of Contents
 
-- [About The Project](#about-the-project)
+- [About the Project](#about-the-project)
+- [Preview](#preview)
 - [Features](#features)
-- [Built With](#built-with)
+- [Tech Stack](#tech-stack)
 - [Architecture](#architecture)
-- [Testing](#testing)
-- [Screenshots](#screenshots)
 - [Getting Started](#getting-started)
 - [Scripts](#scripts)
+- [Testing](#testing)
 - [Documentation](#documentation)
 - [Contributing](#contributing)
+- [Security](#security)
 - [License](#license)
 - [Author](#author)
 
-## About The Project
+## About the Project
 
 **Music App** is an offline local music player for Android. It scans the audio files already on your device, builds a searchable library out of them, and plays it all back with no network connection, no account, and no streaming service involved.
 
 The player supports gapless playback and crossfade, a persistent queue, a sleep timer, and adjustable playback speed. Beyond playback, it gives you real control over your library: playlists, favorites, per-folder storage management (including which folders get scanned at all), and simple listening statistics.
+
+## Preview
+
+<div align="center">
+<img src="screenshots/en/01_home.png" width="200" alt="Home"/>
+<img src="screenshots/en/02_library_playlists.png" width="200" alt="Playlists"/>
+<img src="screenshots/en/03_playlist_detail.png" width="200" alt="Playlist detail"/>
+<img src="screenshots/en/04_library_tracks.png" width="200" alt="Tracks"/>
+<img src="screenshots/en/05_now_playing.png" width="200" alt="Now playing"/>
+<img src="screenshots/en/06_search.png" width="200" alt="Search"/>
+<img src="screenshots/en/07_settings.png" width="200" alt="Settings"/>
+<img src="screenshots/en/08_storage.png" width="200" alt="Storage"/>
+<img src="screenshots/en/09_statistics.png" width="200" alt="Statistics"/>
+</div>
 
 ## Features
 
@@ -65,7 +80,7 @@ The player supports gapless playback and crossfade, a persistent queue, a sleep 
 - **Multiple Languages**: Full app UI in English, Spanish, Portuguese, and Chinese.
 - **Accessibility**: Semantic labels on interactive elements for screen readers.
 
-## Built With
+## Tech Stack
 
 - **[Flutter](https://flutter.dev/)**: Google's UI toolkit for building natively compiled applications from a single codebase.
 - **[Dart](https://dart.dev/)**: The programming language behind Flutter.
@@ -100,42 +115,6 @@ concerns (navigation, the database, audio, permissions) live under
 `lib/src/core`. Screens stay thin: each one composes components kept in
 `presentation/widgets/<screen_name>/` rather than defining them inline.
 
-## Testing
-
-The project has 198 test files (141 in the app, 57 in `packages/app_ui`)
-covering repositories, view models, and widgets (40 of them golden tests,
-rendering 86 reference images across the design system and key screens),
-plus `integration_test/` suites covering onboarding, playback, persistence,
-playlists, favorites, search, language switching, and backup/restore. CI
-enforces a minimum line coverage of 80% for the app
-and 80% for `packages/app_ui`, alongside the strict `very_good_analysis`
-lint set and `dart format`.
-
-Every CI run uploads its `lcov` report to
-[Codecov](https://codecov.io/gh/dariomatias-dev/music_app), which tracks the two
-packages as separate flags and comments the coverage delta on each pull request.
-For a line-by-line report locally, generate one from the same file:
-
-```sh
-fvm flutter analyze
-fvm flutter test --coverage
-genhtml coverage/lcov.info -o coverage/html   # needs lcov installed
-```
-
-## Screenshots
-
-<div align="center">
-<img src="screenshots/en/01_home.png" width="200" alt="Home"/>
-<img src="screenshots/en/02_library_playlists.png" width="200" alt="Playlists"/>
-<img src="screenshots/en/03_playlist_detail.png" width="200" alt="Playlist detail"/>
-<img src="screenshots/en/04_library_tracks.png" width="200" alt="Tracks"/>
-<img src="screenshots/en/05_now_playing.png" width="200" alt="Now playing"/>
-<img src="screenshots/en/06_search.png" width="200" alt="Search"/>
-<img src="screenshots/en/07_settings.png" width="200" alt="Settings"/>
-<img src="screenshots/en/08_storage.png" width="200" alt="Storage"/>
-<img src="screenshots/en/09_statistics.png" width="200" alt="Statistics"/>
-</div>
-
 ## Getting Started
 
 The project pins its Flutter SDK version via [FVM](https://fvm.app/), so all commands below use `fvm flutter` rather than a bare `flutter` install.
@@ -166,6 +145,28 @@ Utility scripts live under `scripts/`.
 | `check_l10n`     | `scripts/check_l10n.sh [arb-dir]`                  | Fails when the ARB files disagree on which keys they carry. `gen-l10n` falls back to the template for a missing key without saying anything, so a half-translated change would otherwise reach users as English text in a Spanish build. Run by `verify.sh` and by CI. |
 | `seed`           | `dart run scripts/seed.dart [db-path]`             | Writes a development library (artists, albums, tracks, playlists, favorites, cached lyrics, listening history, recent searches, excluded folders) into a database file, with no device and no build. Defaults to `build/seed/music_app.sqlite`. To seed the app in place instead, run it with `fvm flutter run --dart-define=SEED_ENABLED=true`. |
 
+## Testing
+
+The project has 198 test files (141 in the app, 57 in `packages/app_ui`)
+covering repositories, view models, and widgets (40 of them golden tests,
+rendering 86 reference images across the design system and key screens),
+plus `integration_test/` suites covering onboarding, playback, persistence,
+playlists, favorites, search, language switching, and backup/restore. CI
+enforces a minimum line coverage of 80% for the app
+and 80% for `packages/app_ui`, alongside the strict `very_good_analysis`
+lint set and `dart format`.
+
+Every CI run uploads its `lcov` report to
+[Codecov](https://codecov.io/gh/dariomatias-dev/music_app), which tracks the two
+packages as separate flags and comments the coverage delta on each pull request.
+For a line-by-line report locally, generate one from the same file:
+
+```sh
+fvm flutter analyze
+fvm flutter test --coverage
+genhtml coverage/lcov.info -o coverage/html   # needs lcov installed
+```
+
 ## Documentation
 
 Deeper technical docs live under [`docs/`](docs/architecture.md), each available in every language the app supports:
@@ -180,6 +181,10 @@ Deeper technical docs live under [`docs/`](docs/architecture.md), each available
 Contributions make the open-source community an amazing place to learn and create. Any contributions you make are greatly appreciated.
 
 Open an issue to discuss a change before starting on it, follow the existing code style, and make sure `fvm flutter analyze` and `fvm flutter test` pass before opening a pull request. See the full [Contributing Guide](docs/contributing.md) for details.
+
+## Security
+
+Please do not open a public issue for a security vulnerability. See the [Security Policy](docs/security.md) for how to report one.
 
 ## License
 

@@ -33,15 +33,16 @@
 ## 目录
 
 - [关于项目](#关于项目)
+- [预览](#预览)
 - [功能](#功能)
 - [技术栈](#技术栈)
 - [架构](#架构)
-- [测试](#测试)
-- [截图](#截图)
 - [快速开始](#快速开始)
 - [脚本](#脚本)
+- [测试](#测试)
 - [文档](#文档)
 - [贡献](#贡献)
+- [安全](#安全)
 - [许可证](#许可证)
 - [作者](#作者)
 
@@ -50,6 +51,20 @@
 **Music App** 是一款离线本地音乐播放器，专为 Android 打造。它扫描设备上已有的音频文件，据此建立可搜索的音乐库，全程无需联网、无需账号，也不涉及任何流媒体服务。
 
 播放器支持无缝播放（gapless）与交叉淡入淡出、持久化播放队列、睡眠定时器，以及可调节的播放速度。除了播放本身，它还让你真正掌控自己的音乐库：播放列表、收藏、按文件夹管理存储（包括哪些文件夹会被扫描），以及简单的收听统计。
+
+## 预览
+
+<div align="center">
+<img src="screenshots/zh/01_home.png" width="200" alt="首页"/>
+<img src="screenshots/zh/02_library_playlists.png" width="200" alt="播放列表"/>
+<img src="screenshots/zh/03_playlist_detail.png" width="200" alt="播放列表详情"/>
+<img src="screenshots/zh/04_library_tracks.png" width="200" alt="曲目"/>
+<img src="screenshots/zh/05_now_playing.png" width="200" alt="正在播放"/>
+<img src="screenshots/zh/06_search.png" width="200" alt="搜索"/>
+<img src="screenshots/zh/07_settings.png" width="200" alt="设置"/>
+<img src="screenshots/zh/08_storage.png" width="200" alt="存储空间"/>
+<img src="screenshots/zh/09_statistics.png" width="200" alt="统计"/>
+</div>
 
 ## 功能
 
@@ -91,32 +106,6 @@
 
 状态通过 Riverpod 管理（通过 provider 暴露的 `ViewModel`/`Notifier` 类），路由使用 `go_router`，持久化通过 `drift`（SQLite）和 `shared_preferences` 实现。共享的设计系统（从按钮到全应用通用的底部弹窗等所有带主题的组件）都放在独立的本地包 `packages/app_ui` 中；横切关注点（导航、数据库、音频、权限）则位于 `lib/src/core`。界面文件保持精简：每个界面只负责组合放在 `presentation/widgets/<界面名>/` 下的组件，而不是在界面文件内内联定义。
 
-## 测试
-
-项目共有 198 个测试文件（应用本体 141 个，`packages/app_ui` 中 57 个），覆盖仓库、view model 和组件（其中 40 个是 golden 测试，为设计系统和关键界面渲染 86 张参考图），此外还有 `integration_test/` 中的集成测试，覆盖引导、播放、数据持久化、播放列表、收藏、搜索、语言切换以及备份/恢复流程。CI 强制要求应用本体的行覆盖率不低于 80%，`packages/app_ui` 不低于 80%，并配合严格的 `very_good_analysis` lint 规则集和 `dart format` 检查。
-
-每次 CI 运行都会将 `lcov` 报告上传到 [Codecov](https://codecov.io/gh/dariomatias-dev/music_app)，它将两个包作为独立的 flag 跟踪，并在每个 pull request 上评论覆盖率变化。如需在本地查看逐行报告，可以用同一份文件生成：
-
-```sh
-fvm flutter analyze
-fvm flutter test --coverage
-genhtml coverage/lcov.info -o coverage/html   # 需要先安装 lcov
-```
-
-## 截图
-
-<div align="center">
-<img src="screenshots/zh/01_home.png" width="200" alt="首页"/>
-<img src="screenshots/zh/02_library_playlists.png" width="200" alt="播放列表"/>
-<img src="screenshots/zh/03_playlist_detail.png" width="200" alt="播放列表详情"/>
-<img src="screenshots/zh/04_library_tracks.png" width="200" alt="曲目"/>
-<img src="screenshots/zh/05_now_playing.png" width="200" alt="正在播放"/>
-<img src="screenshots/zh/06_search.png" width="200" alt="搜索"/>
-<img src="screenshots/zh/07_settings.png" width="200" alt="设置"/>
-<img src="screenshots/zh/08_storage.png" width="200" alt="存储空间"/>
-<img src="screenshots/zh/09_statistics.png" width="200" alt="统计"/>
-</div>
-
 ## 快速开始
 
 本项目通过 [FVM](https://fvm.app/) 固定 Flutter SDK 版本，因此以下所有命令都使用 `fvm flutter`，而不是直接安装的 `flutter`。
@@ -147,6 +136,18 @@ fvm flutter run
 | `check_l10n`     | `scripts/check_l10n.sh [arb-dir]`                  | 当各 ARB 文件所包含的键不一致时失败。`gen-l10n` 遇到缺失的键会静默回退到模板，因此翻译到一半的改动会让用户在中文构建里看到英文文案。由 `verify.sh` 和 CI 调用。 |
 | `seed`           | `dart run scripts/seed.dart [db-path]`             | 在不连接设备、也不构建的情况下，把一套开发用音乐库（艺人、专辑、曲目、播放列表、收藏、缓存歌词、收听历史、最近搜索、已排除的文件夹）写入数据库文件，默认写到 `build/seed/music_app.sqlite`。若想直接给应用填充数据，用 `fvm flutter run --dart-define=SEED_ENABLED=true` 运行。 |
 
+## 测试
+
+项目共有 198 个测试文件（应用本体 141 个，`packages/app_ui` 中 57 个），覆盖仓库、view model 和组件（其中 40 个是 golden 测试，为设计系统和关键界面渲染 86 张参考图），此外还有 `integration_test/` 中的集成测试，覆盖引导、播放、数据持久化、播放列表、收藏、搜索、语言切换以及备份/恢复流程。CI 强制要求应用本体的行覆盖率不低于 80%，`packages/app_ui` 不低于 80%，并配合严格的 `very_good_analysis` lint 规则集和 `dart format` 检查。
+
+每次 CI 运行都会将 `lcov` 报告上传到 [Codecov](https://codecov.io/gh/dariomatias-dev/music_app)，它将两个包作为独立的 flag 跟踪，并在每个 pull request 上评论覆盖率变化。如需在本地查看逐行报告，可以用同一份文件生成：
+
+```sh
+fvm flutter analyze
+fvm flutter test --coverage
+genhtml coverage/lcov.info -o coverage/html   # 需要先安装 lcov
+```
+
 ## 文档
 
 更深入的技术文档存放在 [`docs/`](docs/architecture.zh.md) 中，并覆盖应用支持的每一种语言：
@@ -161,6 +162,10 @@ fvm flutter run
 贡献让开源社区成为一个学习和创造的绝佳场所。非常感谢你所做的任何贡献。
 
 在开始动手之前，请先开一个 issue 讨论这个改动，遵循现有的代码风格，并确保在提交 pull request 前 `fvm flutter analyze` 和 `fvm flutter test` 都能通过。完整的检查清单见[贡献指南](docs/contributing.zh.md)。
+
+## 安全
+
+请不要为安全漏洞公开创建 issue。请查看[安全政策](docs/security.zh.md)了解如何报告。
 
 ## 许可证
 

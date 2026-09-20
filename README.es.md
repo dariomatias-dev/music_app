@@ -32,24 +32,39 @@ Una aplicación Android para reproducir la música que ya tienes en tu dispositi
 
 ## Tabla de Contenidos
 
-- [Acerca Del Proyecto](#acerca-del-proyecto)
+- [Acerca del Proyecto](#acerca-del-proyecto)
+- [Vista Previa](#vista-previa)
 - [Características](#características)
-- [Construido Con](#construido-con)
+- [Stack Tecnológico](#stack-tecnológico)
 - [Arquitectura](#arquitectura)
-- [Pruebas](#pruebas)
-- [Capturas de Pantalla](#capturas-de-pantalla)
 - [Primeros Pasos](#primeros-pasos)
 - [Scripts](#scripts)
+- [Pruebas](#pruebas)
 - [Documentación](#documentación)
 - [Contribuir](#contribuir)
+- [Seguridad](#seguridad)
 - [Licencia](#licencia)
 - [Autor](#autor)
 
-## Acerca Del Proyecto
+## Acerca del Proyecto
 
 **Music App** es un reproductor de música local y offline para Android. Escanea los archivos de audio que ya están en tu dispositivo, construye una biblioteca navegable a partir de ellos, y los reproduce sin conexión a internet, sin cuenta y sin ningún servicio de streaming de por medio.
 
 El reproductor soporta reproducción sin pausas (gapless) y crossfade, una cola persistente, temporizador de suspensión, y velocidad de reproducción ajustable. Más allá de la reproducción, te da control real sobre tu biblioteca: playlists, favoritos, gestión de almacenamiento por carpeta (incluyendo cuáles carpetas se escanean), y estadísticas simples de escucha.
+
+## Vista Previa
+
+<div align="center">
+<img src="screenshots/es/01_home.png" width="200" alt="Inicio"/>
+<img src="screenshots/es/02_library_playlists.png" width="200" alt="Playlists"/>
+<img src="screenshots/es/03_playlist_detail.png" width="200" alt="Detalle de playlist"/>
+<img src="screenshots/es/04_library_tracks.png" width="200" alt="Pistas"/>
+<img src="screenshots/es/05_now_playing.png" width="200" alt="Reproduciendo ahora"/>
+<img src="screenshots/es/06_search.png" width="200" alt="Búsqueda"/>
+<img src="screenshots/es/07_settings.png" width="200" alt="Configuración"/>
+<img src="screenshots/es/08_storage.png" width="200" alt="Almacenamiento"/>
+<img src="screenshots/es/09_statistics.png" width="200" alt="Estadísticas"/>
+</div>
 
 ## Características
 
@@ -65,7 +80,7 @@ El reproductor soporta reproducción sin pausas (gapless) y crossfade, una cola 
 - **Múltiples Idiomas**: Interfaz completa en inglés, español, portugués y chino.
 - **Accesibilidad**: Etiquetas semánticas en elementos interactivos para lectores de pantalla.
 
-## Construido Con
+## Stack Tecnológico
 
 - **[Flutter](https://flutter.dev/)**: Kit de herramientas de UI de Google para construir aplicaciones nativas desde una única base de código.
 - **[Dart](https://dart.dev/)**: El lenguaje de programación detrás de Flutter.
@@ -101,43 +116,6 @@ base de datos, audio, permisos) están en `lib/src/core`. Las pantallas se
 mantienen ligeras: cada una compone componentes ubicados en
 `presentation/widgets/<nombre_de_pantalla>/` en lugar de definirlos inline.
 
-## Pruebas
-
-El proyecto tiene 198 archivos de prueba (141 en la app, 57 en
-`packages/app_ui`), cubriendo repositorios, view models y widgets (40 de
-ellos son pruebas golden, que renderizan 86 imágenes de referencia del
-sistema de diseño y las pantallas principales), más las suites de
-`integration_test/` que cubren onboarding, reproducción, persistencia,
-listas de reproducción, favoritos, búsqueda, cambio de idioma y
-copia de seguridad/restauración. La CI exige una cobertura de línea mínima del
-80% en la app y del 80% en `packages/app_ui`, además del conjunto estricto
-de lints `very_good_analysis` y `dart format`.
-
-Cada ejecución de la CI sube su informe `lcov` a
-[Codecov](https://codecov.io/gh/dariomatias-dev/music_app), que sigue los dos
-paquetes como flags separados y comenta la diferencia de cobertura en cada pull
-request. Para un informe línea a línea en local, genera uno del mismo archivo:
-
-```sh
-fvm flutter analyze
-fvm flutter test --coverage
-genhtml coverage/lcov.info -o coverage/html   # requiere lcov instalado
-```
-
-## Capturas de Pantalla
-
-<div align="center">
-<img src="screenshots/es/01_home.png" width="200" alt="Inicio"/>
-<img src="screenshots/es/02_library_playlists.png" width="200" alt="Playlists"/>
-<img src="screenshots/es/03_playlist_detail.png" width="200" alt="Detalle de playlist"/>
-<img src="screenshots/es/04_library_tracks.png" width="200" alt="Pistas"/>
-<img src="screenshots/es/05_now_playing.png" width="200" alt="Reproduciendo ahora"/>
-<img src="screenshots/es/06_search.png" width="200" alt="Búsqueda"/>
-<img src="screenshots/es/07_settings.png" width="200" alt="Configuración"/>
-<img src="screenshots/es/08_storage.png" width="200" alt="Almacenamiento"/>
-<img src="screenshots/es/09_statistics.png" width="200" alt="Estadísticas"/>
-</div>
-
 ## Primeros Pasos
 
 El proyecto fija la versión del Flutter SDK mediante [FVM](https://fvm.app/), por lo que todos los comandos siguientes usan `fvm flutter` en lugar de un `flutter` instalado directamente.
@@ -168,6 +146,29 @@ Los scripts utilitarios están en `scripts/`.
 | `check_l10n`     | `scripts/check_l10n.sh [arb-dir]`                  | Falla cuando los archivos ARB no coinciden en las claves que contienen. `gen-l10n` recurre a la plantilla ante una clave faltante sin avisar, así que un cambio traducido a medias llegaría al usuario como texto en inglés dentro de una compilación en español. Lo ejecutan `verify.sh` y CI. |
 | `seed`           | `dart run scripts/seed.dart [db-path]`             | Escribe una biblioteca de desarrollo (artistas, álbumes, pistas, playlists, favoritos, letras en caché, historial de escucha, búsquedas recientes, carpetas excluidas) en un archivo de base de datos, sin dispositivo y sin compilación. Por defecto `build/seed/music_app.sqlite`. Para poblar la app en el sitio, ejecútala con `fvm flutter run --dart-define=SEED_ENABLED=true`. |
 
+## Pruebas
+
+El proyecto tiene 198 archivos de prueba (141 en la app, 57 en
+`packages/app_ui`), cubriendo repositorios, view models y widgets (40 de
+ellos son pruebas golden, que renderizan 86 imágenes de referencia del
+sistema de diseño y las pantallas principales), más las suites de
+`integration_test/` que cubren onboarding, reproducción, persistencia,
+listas de reproducción, favoritos, búsqueda, cambio de idioma y
+copia de seguridad/restauración. La CI exige una cobertura de línea mínima del
+80% en la app y del 80% en `packages/app_ui`, además del conjunto estricto
+de lints `very_good_analysis` y `dart format`.
+
+Cada ejecución de la CI sube su informe `lcov` a
+[Codecov](https://codecov.io/gh/dariomatias-dev/music_app), que sigue los dos
+paquetes como flags separados y comenta la diferencia de cobertura en cada pull
+request. Para un informe línea a línea en local, genera uno del mismo archivo:
+
+```sh
+fvm flutter analyze
+fvm flutter test --coverage
+genhtml coverage/lcov.info -o coverage/html   # requiere lcov instalado
+```
+
 ## Documentación
 
 Documentación técnica más profunda vive en [`docs/`](docs/architecture.es.md), disponible en todos los idiomas que soporta la app:
@@ -182,6 +183,10 @@ Documentación técnica más profunda vive en [`docs/`](docs/architecture.es.md)
 Las contribuciones hacen que la comunidad de código abierto sea un lugar increíble para aprender y crear. Cualquier contribución que hagas será muy apreciada.
 
 Abre un issue para discutir un cambio antes de empezar a trabajar en él, sigue el estilo de código existente, y asegúrate de que `fvm flutter analyze` y `fvm flutter test` pasen antes de abrir un pull request. Consulta la [Guía de Contribución](docs/contributing.es.md) completa para más detalles.
+
+## Seguridad
+
+No abras un issue público para una vulnerabilidad de seguridad. Consulta la [Política de Seguridad](docs/security.es.md) para saber cómo reportarla.
 
 ## Licencia
 
