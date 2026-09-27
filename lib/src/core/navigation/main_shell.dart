@@ -81,18 +81,27 @@ class _CompactShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: navigationShell,
-      bottomNavigationBar: Column(
-        mainAxisSize: MainAxisSize.min,
+      body: Stack(
         children: [
-          const MiniPlayer(),
-          const SizedBox(height: AppSpacing.smMd),
-          AppNavigationBar(
-            items: items,
-            index: navigationShell.currentIndex,
-            onChanged: onChanged,
+          navigationShell,
+          const Positioned(
+            left: 0,
+            right: 0,
+            bottom: AppSpacing.smMd,
+            // A sibling of `navigationShell`'s own Material, not a
+            // descendant of it, so it needs its own: without one, the
+            // card's text rendered a stray underline under it.
+            child: Material(
+              type: MaterialType.transparency,
+              child: MiniPlayer(),
+            ),
           ),
         ],
+      ),
+      bottomNavigationBar: AppNavigationBar(
+        items: items,
+        index: navigationShell.currentIndex,
+        onChanged: onChanged,
       ),
     );
   }
@@ -132,10 +141,18 @@ class _WideShell extends StatelessWidget {
           ),
           const VerticalDivider(width: 1),
           Expanded(
-            child: Column(
+            child: Stack(
               children: [
-                Expanded(child: navigationShell),
-                const MiniPlayer(),
+                navigationShell,
+                const Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: AppSpacing.smMd,
+                  child: Material(
+                    type: MaterialType.transparency,
+                    child: MiniPlayer(),
+                  ),
+                ),
               ],
             ),
           ),
