@@ -1,55 +1,77 @@
 <br>
 <div align="center">
-<img src="https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white" alt="Flutter">
-<img src="https://img.shields.io/badge/Dart-0175C2?style=for-the-badge&logo=dart&logoColor=white" alt="Dart">
-<img src="https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white" alt="Android">
+  <img src="https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white" alt="Flutter">
+  <img src="https://img.shields.io/badge/Dart-0175C2?style=for-the-badge&logo=dart&logoColor=white" alt="Dart">
+  <img src="https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white" alt="Android">
 </div>
 <br>
+
 <div align="center">
-<a href="https://github.com/dariomatias-dev/music_app/actions/workflows/ci.yaml"><img src="https://github.com/dariomatias-dev/music_app/actions/workflows/ci.yaml/badge.svg" alt="CI"></a>
-<a href="https://codecov.io/gh/dariomatias-dev/music_app"><img src="https://codecov.io/gh/dariomatias-dev/music_app/branch/main/graph/badge.svg" alt="Coverage"></a>
-<img src="https://img.shields.io/badge/lints-very__good__analysis-blueviolet?style=flat" alt="very_good_analysis">
-<a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="Licencia MIT"></a>
+  <a href="https://github.com/dariomatias-dev/music_app/actions/workflows/ci.yaml">
+    <img src="https://github.com/dariomatias-dev/music_app/actions/workflows/ci.yaml/badge.svg" alt="CI">
+  </a>
+  <a href="https://codecov.io/gh/dariomatias-dev/music_app">
+    <img src="https://codecov.io/gh/dariomatias-dev/music_app/branch/main/graph/badge.svg" alt="Coverage">
+  </a>
+  <img src="https://img.shields.io/badge/lints-very__good__analysis-blueviolet?style=flat" alt="very_good_analysis">
+  <a href="LICENSE">
+    <img src="https://img.shields.io/badge/license-MIT-green.svg" alt="Licencia MIT">
+  </a>
 </div>
 <br>
 
 <p align="center">
-<a href="README.md">English</a> · <strong>Español</strong> · <a href="README.pt-BR.md">Português (BR)</a> · <a href="README.zh.md">中文</a>
+  <a href="README.md">English</a> · <strong>Español</strong> · <a href="README.pt-BR.md">Português (BR)</a> · <a href="README.zh.md">中文</a>
 </p>
 
 <h1 align="center">Music App</h1>
 
 <p align="center">
-Una aplicación Android para reproducir la música que ya tienes en tu dispositivo, totalmente offline, sin cuentas, sin streaming.
-<br>
-<a href="#acerca-del-proyecto"><strong>Explora la documentación »</strong></a>
-<br>
-<br>
-<a href="https://github.com/dariomatias-dev/music_app/issues">Reportar un Error</a>
-·
-<a href="https://github.com/dariomatias-dev/music_app/issues">Solicitar una Función</a>
+  Una aplicación Android para reproducir la música que ya tienes en tu dispositivo, totalmente offline, sin cuentas, sin streaming.
+  <br>
+  <a href="#acerca-del-proyecto"><strong>Explora la documentación »</strong></a>
+  <br>
+  <br>
+  <a href="https://github.com/dariomatias-dev/music_app/issues">Reportar un Error</a>
+  ·
+  <a href="https://github.com/dariomatias-dev/music_app/issues">Solicitar una Función</a>
 </p>
 
 ## Tabla de Contenidos
 
-- [Acerca Del Proyecto](#acerca-del-proyecto)
+- [Acerca del Proyecto](#acerca-del-proyecto)
+- [Vista Previa](#vista-previa)
 - [Características](#características)
-- [Construido Con](#construido-con)
+- [Stack Tecnológico](#stack-tecnológico)
 - [Arquitectura](#arquitectura)
-- [Pruebas](#pruebas)
-- [Capturas de Pantalla](#capturas-de-pantalla)
 - [Primeros Pasos](#primeros-pasos)
 - [Scripts](#scripts)
+- [Pruebas](#pruebas)
 - [Documentación](#documentación)
 - [Contribuir](#contribuir)
+- [Seguridad](#seguridad)
 - [Licencia](#licencia)
 - [Autor](#autor)
 
-## Acerca Del Proyecto
+## Acerca del Proyecto
 
 **Music App** es un reproductor de música local y offline para Android. Escanea los archivos de audio que ya están en tu dispositivo, construye una biblioteca navegable a partir de ellos, y los reproduce sin conexión a internet, sin cuenta y sin ningún servicio de streaming de por medio.
 
 El reproductor soporta reproducción sin pausas (gapless) y crossfade, una cola persistente, temporizador de suspensión, y velocidad de reproducción ajustable. Más allá de la reproducción, te da control real sobre tu biblioteca: playlists, favoritos, gestión de almacenamiento por carpeta (incluyendo cuáles carpetas se escanean), y estadísticas simples de escucha.
+
+## Vista Previa
+
+<div align="center">
+<img src="screenshots/es/01_home.png" width="200" alt="Inicio"/>
+<img src="screenshots/es/02_library_playlists.png" width="200" alt="Playlists"/>
+<img src="screenshots/es/03_playlist_detail.png" width="200" alt="Detalle de playlist"/>
+<img src="screenshots/es/04_library_tracks.png" width="200" alt="Pistas"/>
+<img src="screenshots/es/05_now_playing.png" width="200" alt="Reproduciendo ahora"/>
+<img src="screenshots/es/06_search.png" width="200" alt="Búsqueda"/>
+<img src="screenshots/es/07_settings.png" width="200" alt="Configuración"/>
+<img src="screenshots/es/08_storage.png" width="200" alt="Almacenamiento"/>
+<img src="screenshots/es/09_statistics.png" width="200" alt="Estadísticas"/>
+</div>
 
 ## Características
 
@@ -65,7 +87,7 @@ El reproductor soporta reproducción sin pausas (gapless) y crossfade, una cola 
 - **Múltiples Idiomas**: Interfaz completa en inglés, español, portugués y chino.
 - **Accesibilidad**: Etiquetas semánticas en elementos interactivos para lectores de pantalla.
 
-## Construido Con
+## Stack Tecnológico
 
 - **[Flutter](https://flutter.dev/)**: Kit de herramientas de UI de Google para construir aplicaciones nativas desde una única base de código.
 - **[Dart](https://dart.dev/)**: El lenguaje de programación detrás de Flutter.
@@ -101,6 +123,36 @@ base de datos, audio, permisos) están en `lib/src/core`. Las pantallas se
 mantienen ligeras: cada una compone componentes ubicados en
 `presentation/widgets/<nombre_de_pantalla>/` en lugar de definirlos inline.
 
+## Primeros Pasos
+
+El proyecto fija la versión del Flutter SDK mediante [FVM](https://fvm.app/), por lo que todos los comandos siguientes usan `fvm flutter` en lugar de un `flutter` instalado directamente.
+
+```sh
+git clone https://github.com/dariomatias-dev/music_app.git
+cd music_app
+fvm install
+fvm flutter pub get
+```
+
+Luego ejecuta la app en un dispositivo o emulador conectado:
+
+```sh
+fvm flutter run
+```
+
+## Scripts
+
+Los scripts utilitarios están en `scripts/`.
+
+| Script           | Comando                                           | Descripción                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| ---------------- | ------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `verify`         | `scripts/verify.sh [--all] [--skip-tests]`        | Ejecuta las mismas verificaciones que CI (archivos generados, formato, análisis, pruebas, cobertura), limitadas a los paquetes con cambios pendientes. La generación de código corre siempre y la ejecución falla si cambió algo, porque CI regenera desde un checkout limpio y rechaza una rama con archivos generados desactualizados. `--all` verifica ambos paquetes de todos modos, `--skip-tests` lo restringe a generación, formato y análisis. Guarda una marca al pasar, que el flujo de agente del repositorio lee para saber si el árbol de trabajo sigue correspondiendo a una ejecución aprobada. |
+| `workspace_hash` | `scripts/workspace_hash.sh`                       | Imprime un hash de los archivos fuente que cubre el control de calidad. Lo usan `verify.sh` y el flujo de agente para detectar si el código cambió desde la última ejecución aprobada; rara vez se ejecuta a mano.                                                                                                                                                                                                                                                                                                                                                                                             |
+| `screenshot`     | `scripts/screenshot.sh [device-id]`               | Recorre las pantallas principales de la app en un dispositivo o emulador conectado y guarda una captura de cada una en `screenshots/<locale>/`, una carpeta por idioma del README, usadas por cada uno de ellos. Ejecuta `fvm flutter devices` para listar los ids de dispositivos disponibles.                                                                                                                                                                                                                                                                                                                |
+| `check_coverage` | `scripts/check_coverage.sh <lcov-file> <minimum>` | Falla si la cobertura de línea de un reporte `lcov.info` (generado con `flutter test --coverage`) cae por debajo de `<minimum>`. Se usa en CI para exigir los umbrales de arriba; ejecútalo localmente tras generar la cobertura para verificar antes de hacer push.                                                                                                                                                                                                                                                                                                                                           |
+| `check_l10n`     | `scripts/check_l10n.sh [arb-dir]`                 | Falla cuando los archivos ARB no coinciden en las claves que contienen. `gen-l10n` recurre a la plantilla ante una clave faltante sin avisar, así que un cambio traducido a medias llegaría al usuario como texto en inglés dentro de una compilación en español. Lo ejecutan `verify.sh` y CI.                                                                                                                                                                                                                                                                                                                |
+| `seed`           | `dart run scripts/seed.dart [db-path]`            | Escribe una biblioteca de desarrollo (artistas, álbumes, pistas, playlists, favoritos, letras en caché, historial de escucha, búsquedas recientes, carpetas excluidas) en un archivo de base de datos, sin dispositivo y sin compilación. Por defecto `build/seed/music_app.sqlite`. Para poblar la app en el sitio, ejecútala con `fvm flutter run --dart-define=SEED_ENABLED=true`.                                                                                                                                                                                                                          |
+
 ## Pruebas
 
 El proyecto tiene 198 archivos de prueba (141 en la app, 57 en
@@ -124,50 +176,6 @@ fvm flutter test --coverage
 genhtml coverage/lcov.info -o coverage/html   # requiere lcov instalado
 ```
 
-## Capturas de Pantalla
-
-<div align="center">
-<img src="screenshots/es/01_home.png" width="200" alt="Inicio"/>
-<img src="screenshots/es/02_library_playlists.png" width="200" alt="Playlists"/>
-<img src="screenshots/es/03_playlist_detail.png" width="200" alt="Detalle de playlist"/>
-<img src="screenshots/es/04_library_tracks.png" width="200" alt="Pistas"/>
-<img src="screenshots/es/05_now_playing.png" width="200" alt="Reproduciendo ahora"/>
-<img src="screenshots/es/06_search.png" width="200" alt="Búsqueda"/>
-<img src="screenshots/es/07_settings.png" width="200" alt="Configuración"/>
-<img src="screenshots/es/08_storage.png" width="200" alt="Almacenamiento"/>
-<img src="screenshots/es/09_statistics.png" width="200" alt="Estadísticas"/>
-</div>
-
-## Primeros Pasos
-
-El proyecto fija la versión del Flutter SDK mediante [FVM](https://fvm.app/), por lo que todos los comandos siguientes usan `fvm flutter` en lugar de un `flutter` instalado directamente.
-
-```sh
-git clone https://github.com/dariomatias-dev/music_app.git
-cd music_app
-fvm install
-fvm flutter pub get
-```
-
-Luego ejecuta la app en un dispositivo o emulador conectado:
-
-```sh
-fvm flutter run
-```
-
-## Scripts
-
-Los scripts utilitarios están en `scripts/`.
-
-| Script           | Comando                                            | Descripción                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| ---------------- | -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `verify`         | `scripts/verify.sh [--all] [--skip-tests]`         | Ejecuta las mismas verificaciones que CI (archivos generados, formato, análisis, pruebas, cobertura), limitadas a los paquetes con cambios pendientes. La generación de código corre siempre y la ejecución falla si cambió algo, porque CI regenera desde un checkout limpio y rechaza una rama con archivos generados desactualizados. `--all` verifica ambos paquetes de todos modos, `--skip-tests` lo restringe a generación, formato y análisis. Guarda una marca al pasar, que el flujo de agente del repositorio lee para saber si el árbol de trabajo sigue correspondiendo a una ejecución aprobada. |
-| `workspace_hash` | `scripts/workspace_hash.sh`                        | Imprime un hash de los archivos fuente que cubre el control de calidad. Lo usan `verify.sh` y el flujo de agente para detectar si el código cambió desde la última ejecución aprobada; rara vez se ejecuta a mano.                                                                                                                                                                                                                  |
-| `screenshot`     | `scripts/screenshot.sh [device-id]`                | Recorre las pantallas principales de la app en un dispositivo o emulador conectado y guarda una captura de cada una en `screenshots/<locale>/`, una carpeta por idioma del README, usadas por cada uno de ellos. Ejecuta `fvm flutter devices` para listar los ids de dispositivos disponibles.                                                                                                                                                                                        |
-| `check_coverage` | `scripts/check_coverage.sh <lcov-file> <minimum>`  | Falla si la cobertura de línea de un reporte `lcov.info` (generado con `flutter test --coverage`) cae por debajo de `<minimum>`. Se usa en CI para exigir los umbrales de arriba; ejecútalo localmente tras generar la cobertura para verificar antes de hacer push.                                                                                                                                                                |
-| `check_l10n`     | `scripts/check_l10n.sh [arb-dir]`                  | Falla cuando los archivos ARB no coinciden en las claves que contienen. `gen-l10n` recurre a la plantilla ante una clave faltante sin avisar, así que un cambio traducido a medias llegaría al usuario como texto en inglés dentro de una compilación en español. Lo ejecutan `verify.sh` y CI. |
-| `seed`           | `dart run scripts/seed.dart [db-path]`             | Escribe una biblioteca de desarrollo (artistas, álbumes, pistas, playlists, favoritos, letras en caché, historial de escucha, búsquedas recientes, carpetas excluidas) en un archivo de base de datos, sin dispositivo y sin compilación. Por defecto `build/seed/music_app.sqlite`. Para poblar la app en el sitio, ejecútala con `fvm flutter run --dart-define=SEED_ENABLED=true`. |
-
 ## Documentación
 
 Documentación técnica más profunda vive en [`docs/`](docs/architecture.es.md), disponible en todos los idiomas que soporta la app:
@@ -182,6 +190,10 @@ Documentación técnica más profunda vive en [`docs/`](docs/architecture.es.md)
 Las contribuciones hacen que la comunidad de código abierto sea un lugar increíble para aprender y crear. Cualquier contribución que hagas será muy apreciada.
 
 Abre un issue para discutir un cambio antes de empezar a trabajar en él, sigue el estilo de código existente, y asegúrate de que `fvm flutter analyze` y `fvm flutter test` pasen antes de abrir un pull request. Consulta la [Guía de Contribución](docs/contributing.es.md) completa para más detalles.
+
+## Seguridad
+
+No abras un issue público para una vulnerabilidad de seguridad. Consulta la [Política de Seguridad](docs/security.es.md) para saber cómo reportarla.
 
 ## Licencia
 
